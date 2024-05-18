@@ -1,0 +1,96 @@
+{"_comment1": "TTV (O-C) plot settings",
+
+  "TTV_PLOT": {"title": "None",
+
+    "_comment12": "TTV fit results and samples, only change for use outside of model fit functions",
+        "constant_results_file": "None",
+        "constant_samples_file": "None",
+        "decay_results_file": "None",
+        "decay_samples_file": "None",
+        "precession_results_file": "None",
+        "precession_samples_file": "None",
+
+    "_comment13": "clipped data files",
+        "clipped_data_file": "None",
+        "data_file": "None",
+
+    "_comment14": "TTV general plot settings",
+        "num_epochs_pre_data": 200,
+        "num_epochs_post_data": 1500,
+        "y_axis_limits": [-20, 20],
+
+        "samples_alpha": 0.03,
+        "samples_linewidth": 1.5,
+        "model_alpha": 0.03,
+        "model_linewidth": 1.5,
+        "data_fmt": ".",
+        "data_markersize": 7,
+        "data_err_linewidth": 1,
+        "data_err_capsize": 3,
+        "data_colors": ["tab:blue", "olive", "k", "tab:green", "k"],
+        "reference_dates": ["2023-01-01", "2025-01-01"],
+
+    "_comment15": "TTV save figure settings",
+        "bbox_inches": "tight",
+        "dpi": 300,
+        "pad_inches": 0.25,
+
+    "_comment16": "TTV rcParams dictionary",
+        "rcParams": {
+          "figure.figsize": [12, 10],
+          "font.family": "serif",
+          "xtick.direction": "in",
+          "ytick.direction": "in",
+          "xtick.labelsize": 15,
+          "ytick.labelsize": 15,
+          "axes.labelsize": 16,
+          "axes.labelpad": 10,
+          "axes.titlesize": 16,
+          "legend.fontsize": 13,
+          "legend.labelspacing": 0.5,
+          "legend.framealpha": 1.0,
+          "legend.borderpad": 0.5,
+          "legend.loc": "upper right"}  },
+
+  "_comment2": "RV plot settings",
+
+  "RV_PLOT": {"title": "None", "show_RV_curve": "True",
+
+    "_comment21": "RV fit results and samples, only change for use outside of model fit functions",
+        "rv_results_file": "None",
+        "rv_samples_file": "None",
+        "data_file": "None",
+
+    "_comment22": "RV general plot settings",
+        "samples_alpha": 0.01,
+        "samples_linewidth": 1.5,
+        "model_alpha": 0.5,
+        "model_linewidth": 1.5,
+
+        "data_fmt": ".",
+        "data_markersize": 8.5,
+        "data_err_linewidth": 1.2,
+        "data_err_capsize": 3,
+        "data_colors": ["tab:orange", "tab:blue", "tab:green", "tab:pink"],
+
+    "_comment23": "RV save figure settings",
+        "bbox_inches": "tight",
+        "dpi": 300,
+        "pad_inches": 0.25,
+
+    "_comment24": "RV rcParams dictionary",
+        "rcParams": {
+          "figure.figsize": [18, 7],
+          "font.family": "serif",
+          "xtick.direction": "out",
+          "ytick.direction": "in",
+          "xtick.labelsize": 12,
+          "ytick.labelsize": 12,
+          "axes.labelsize": 13,
+          "axes.titlesize": 16,
+          "legend.fontsize": 12,
+          "legend.labelspacing": 0.9,
+          "legend.framealpha": 1.0,
+          "legend.borderpad": 0.7,
+          "legend.loc": "lower right"}  }
+  }

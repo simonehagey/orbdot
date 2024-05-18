@@ -1,0 +1,30 @@
+[project]
+name = "orbdot"
+authors = [{name = "Simone R. Hagey", email = "shagey@phas.ubc.ca"}]
+description = "A set of tools for studying secular evolution of exoplanet orbits"
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "MIT License" }
+classifiers = [
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+]
+dynamic = ["version"]
+dependencies = [
+    "astropy>=5.1.1", "corner>=2.2.1",
+    "matplotlib>=3.6.2", "nestle==0.2.0",
+    "numpy>=1.23.4", "scipy>=1.9.3"]
+
+[project.urls]
+"Homepage" = "https://orbdot.readthedocs.io"
+"Source" = "https://github.com/simonehagey/orbdot"
+
+[project.optional-dependencies]
+fit = ["pymultinest"]
+docs = ["sphinx>=1.7.5", "pandoc", "myst-nb", "sphinx-book-theme", "ipython"]
+
+
+[build-system]
+requires = ["setuptools>=62.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
