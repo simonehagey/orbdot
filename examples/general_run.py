@@ -1,33 +1,35 @@
-from orbdot.star_planet import StarPlanet
 
 import numpy as np
+from orbdot.star_planet import StarPlanet
+from orbdot.analysis import Analysis
 
+settings_file = 'settings_files/WASP-12_settings.json'
 
-# hatp22 = StarPlanet('settings_files/HAT-P-22_settings.json')
+sp = StarPlanet(settings_file)
+sp.update_default('e0', 0.0)
+sp.update_default('w0', 270 * np.pi/180)
+
+# rv_fit_c = sp.run_rv_fit(['t0', 'P0', 'K', 'v0', 'jit', 'dvdt'])
+# a = Analysis(sp, rv_fit_c)
+# a.unknown_companion()
+
+# ttv_fit_c = sp.run_ttv_fit(['t0', 'P0'], model='constant', suffix='_test')
+# a = Analysis(sp, ttv_fit_c)
 #
-# # run RV model
-# hatp22.update_prior('v0_Bon', ["uniform", 12500, 12700])
-# hatp22.run_rv_fit(['t0', 'P0', 'v0', 'K'])
+# ttv_fit_d = sp.run_ttv_fit(['t0', 'P0', 'PdE'], model='decay', suffix='_test')
+# a = Analysis(sp, ttv_fit_d)
+# a.unknown_companion(printout=False)
+# a.proper_motion(printout=False)
+# a.model_comparison(ttv_fit_c, printout=False)
+# a.orbital_decay_fit(printout=False)
+# a.orbital_decay_predicted(printout=False)
+# a.visual_binary(2, 0.5, printout=False)
 
-# hatp22_rv = anal.Analysis(hatp22, 'results/HAT-P-22/rv_fits/rv_results.json')
-# print(hatp22_rv.res)
-
-
-planetx = StarPlanet('settings_files/Planet-X_settings.json')
-
-#planetx.run_rv_fit(['t0', 'P0', 'v0', 'K', 'jit'])
-results_c = planetx.run_ttv_constant(['t0', 'P0'], sigma_clip=True, make_plot=True)
-#planetx_analyzer = Analysis(planetx, results_c)
-#print(planetx_analyzer.planet_name)
-
-# [-970 -969 -968 -967 -966 -965 -964 -963  999 1000 1001 1002 1003]
-# [-970 -969 -968 -967 -966 -965 -964 -963  999 1000 1001 1002 1003]
-
-planetx.update_prior('t0', ['gaussian', results_c['params']['t0'][0], 1e-4])
-planetx.update_prior('P0', ['gaussian', results_c['params']['P0'][0], 1e-6])
-
-planetx.run_ttv_decay(['t0', 'P0', 'PdE'], sigma_clip=False)
-planetx.run_ttv_precession(['t0', 'P0', 'wdE', 'e0', 'w0'], sigma_clip=False)
-
-# planetx.run_joint_ttv_rv(['t0', 'P', 'v0', 'K', 'jit'], timing_model='constant')
-# planetx.run_joint_ttv_rv(['t0', 'P', 'v0', 'K', 'jit', 'dPdE'], timing_model='decay')
+ttv_fit_p = sp.run_ttv_fit(['t0', 'P0', 'wdE', 'e0', 'w0'], model='precession', suffix='_test')
+a = Analysis(sp, ttv_fit_p)
+a.unknown_companion(printout=False)
+# a.model_comparison(ttv_fit_c, printout=False)
+# a.model_comparison(ttv_fit_d, printout=False)
+a.apsidal_precession_fit(printout=False)
+a.apsidal_precession_predicted(printout=False)
+a.visual_binary(2, 0.5, printout=False)

@@ -1,58 +1,73 @@
-{"_comment1": "general info",
+{"_comment1": "Settings",
 
-      "main_save_dir": "results/tests/",
+  "_comment2": "Input Files",
+
+      "main_save_dir": "results/",
       "system_info_file": "defaults/system_info.json",
       "plot_settings_file": "defaults/plot_settings.json",
 
-  "_comment2": "settings for model fitting",
+  "_comment3": "Model Fits",
 
-      "RV_fit": {"save_dir": "rv_fits/",
-                 "data_file": "None",
-                 "data_delimiter": "\t",
-                 "sampler": "nestle",
-                 "n_live_points": 1000,
-                 "evidence_tolerance": 0.1},
+       "RV_fit": {
+         "save_dir": "rv_fits/",
+         "data_file": "None",
+         "data_delimiter": " ",
+         "sampler": "nestle",
+         "n_live_points": 1000,
+         "evidence_tolerance": 0.1
+       },
 
-      "TTV_fit": {"save_dir": "ttv_fits/",
-                  "data_file": "None",
-                  "data_delimiter": "\t",
-                  "sampler": "nestle",
-                  "n_live_points": 1000,
-                  "evidence_tolerance": 0.1},
+       "TTV_fit": {
+         "save_dir": "ttv_fits/",
+         "data_file": "None",
+         "data_delimiter": " ",
+         "sampler": "nestle",
+         "n_live_points": 1000,
+         "evidence_tolerance": 0.01
+       },
 
-      "TDV_fit": {"save_dir": "tdv_fits/",
-                  "data_file": "None",
-                  "data_delimiter": "\t",
-                  "sampler": "nestle",
-                  "n_live_points": 1000,
-                  "evidence_tolerance": 0.1},
+      "TDV_fit": {
+         "save_dir": "tdv_fits/",
+         "data_file": "None",
+         "data_delimiter": " ",
+         "sampler": "nestle",
+         "n_live_points": 1000,
+         "evidence_tolerance": 0.01
+       },
 
-      "joint_fit": {"save_dir": "joint_fits/",
-                    "sampler": "nestle",
-                    "n_live_points": 1000,
-                    "evidence_tolerance": 0.1},
+       "joint_fit": {
+         "save_dir": "joint_fits/",
+         "sampler": "nestle",
+         "n_live_points": 1000,
+         "evidence_tolerance": 0.1
+       },
 
-      "prior": {"t0": ["uniform", 2451545.0, 2460421.0],
-                "P0": ["uniform", 0, 10],
-                "e0": ["uniform", 0.0, 0.5],
-                "w0": ["uniform", 0, 6.28319],
-                "i0": ["gaussian", 90, 5],
-                "O0": ["uniform", 0, 6.28319],
+  "_comment4": "Priors",
 
-                "ecosw": ["uniform", -1, 1],
-                "esinw": ["uniform", -1, 1],
-                "sq_ecosw": ["uniform", -1, 1],
-                "sq_esinw": ["uniform", -1, 1],
+       "prior": {
 
-                "PdE": ["uniform", -1e-7, 1e-7],
-                "wdE": ["uniform", 0, 0.1],
-                "edE": ["uniform", 0, 0.1],
-                "idE": ["uniform", 0, 1],
-                "OdE": ["uniform", 0, 0.1],
+         "t0": ["uniform", 2451545.0, 2460421.0],
+         "P0": ["uniform", 0, 10],
+         "e0": ["uniform", 0.0, 0.5],
+         "w0": ["uniform", 0, 6.28319],
+         "i0": ["gaussian", 90, 5],
+         "O0": ["uniform", 0, 6.28319],
 
-                "K": ["uniform", 0, 500],
-                "v0": ["uniform", -100, 100],
-                "jit": ["log" ,-1, 2],
-                "dvdt": ["uniform", -1, 1],
-                "ddvdt": ["uniform", -1, 1]}
+         "ecosw": ["uniform", -1, 1],
+         "esinw": ["uniform", -1, 1],
+         "sq_ecosw": ["uniform", -1, 1],
+         "sq_esinw": ["uniform", -1, 1],
+
+         "PdE": ["uniform", -1e-7, 1e-7],
+         "wdE": ["uniform", 0, 0.1],
+         "edE": ["uniform", 0, 0.1],
+         "idE": ["uniform", 0, 1],
+         "OdE": ["uniform", 0, 0.1],
+
+         "K": ["uniform", 0, 500],
+         "v0": ["uniform", -100, 100],
+         "jit": ["log" ,-1, 2],
+         "dvdt": ["uniform", -1, 1],
+         "ddvdt": ["uniform", -1, 1]
+       }
 }
