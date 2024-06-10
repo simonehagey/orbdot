@@ -6,7 +6,7 @@ Getting Started With OrbDot
 The first step to using OrbDot is to create an instance of the ``StarPlanet`` class to represent your chosen planet and its host star. This class acts as an interface for accessing the core capabilities of the OrbDot package, combining the data, methods, and attributes
 necessary run model fitting algorithms and interpret the results. It inherits the model fitting capabilities inherited from the ``TransitTiming``, ``RadialVelocity``, ``TransitDuration``, and ``JointFit`` classes.
 
-.. automodule:: orbdot.models.ttv_models
+.. automodule:: orbdot.tools.priors
     :members:
 
 Creating a ``StarPlanet`` Instance

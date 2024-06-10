@@ -32,7 +32,7 @@ html_theme_options = {
     'navigation_depth': -1,
     'prev_next_buttons_location': 'both',
     'style_external_links': True,
-    'style_nav_header_background': '#FFA329',
+    'style_nav_header_background': 'white',
 }
 
 napoleon_google_docstring = False
