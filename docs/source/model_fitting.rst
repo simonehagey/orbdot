@@ -31,7 +31,7 @@ quantification.
 
 The NestedSampling Class
 ------------------------
-This module, :class:`NestedSampling`, serves as a comprehensive framework for conducting model fits of secular evolution to
+This module, :class:`~orbdot.nested_sampling.NestedSampling`, serves as a comprehensive framework for conducting model fits of secular evolution to
 different types, such as transit timing, radial velocity analysis, and joint parameter estimation. It provides a set of tools
 for initializing model fits, handling parameters and their priors, and running nested sampling algorithms.
 
@@ -52,8 +52,8 @@ This class streamlines the process of fitting models to exoplanet transit, eclip
 convenient way to define priors, chose free variables, and run sophisticated nested
 sampling algorithms on any related log-likelihood you want to!
 
-The `NestedSampling` class is designed such that running a model fit simply requires a log-likelihood function and
-list of free parameter names, meaning that any classes inheriting `NestedSampling` can be written quickly and concisely.
+The :class:`~orbdot.nested_sampling.NestedSampling` class is designed such that running a model fit simply requires a log-likelihood function and
+list of free parameter names, meaning that any classes inheriting :class:`~orbdot.nested_sampling.NestedSampling` can be written quickly and concisely.
 It is straightforward to fit your own model (see the template class), as long as the free variables are consistent with
 the OrbDot parameter set.
 
@@ -62,8 +62,8 @@ Initiating this class requires both the priors on each parameter and their 'fixe
 - **Fixed Values:**
   - The fixed values are used as the default for any parameters that are not set to vary in a model fit. The built-in
   default values are defined in the `defaults/info_file.json` file, but the user may specify their own in the
-  star-planet system 'info' files given to the `StarPlanet` class. Additionally, these fixed values may be updated at
-  any time, such as after a particular model fit, by calling the `StarPlanet.update_default` method.
+  star-planet system 'info' files given to the :class:`~orbdot.star_planet.StarPlanet` class. Additionally, these fixed values may be updated at
+  any time, such as after a particular model fit, by calling the :meth:`~orbdot.star_planet.StarPlanet.update_default` method.
 
 - **Priors:**
   - The prior is structured as a dictionary with keys for each parameter, with each value being a list specifying the
@@ -74,11 +74,11 @@ Initiating this class requires both the priors on each parameter and their 'fixe
 
   The built-in priors are defined in the `defaults/fit_settings.json` file, but the user should specify their own in
   the 'settings' file that is given to the `StarPlanet` class. Like the fixed values, the priors may be updated at any
-  time by calling the `StarPlanet.update_prior` method.
+  time by calling the :meth:`~orbdot.star_planet.StarPlanet.update_prior` method.
 
 The TransitTiming Class
 -----------------------
-This class extends the capabilities of the :class:NestedSampling class to support transit and eclipse timing applications.
+This class extends the capabilities of the :class:`~orbdot.nested_sampling.NestedSampling` class to support transit and eclipse timing applications.
 
 It facilitates fitting the observations to a constant-period, orbital decay, or apsidal precession timing model.
 

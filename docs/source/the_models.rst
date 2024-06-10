@@ -1,8 +1,8 @@
 .. _models:
 
-******
-Models
-******
+**********
+The Models
+**********
 
 The Model Parameters
 ====================
