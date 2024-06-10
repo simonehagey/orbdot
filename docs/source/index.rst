@@ -94,12 +94,11 @@ Citing OrbDot
 -------------
 Text...
 
-
+.. automodule:: orbdot.models.theory
+    :members:
 
 Contents
 --------
-
-.. automodule:: orbdot.models.theory
 
 .. toctree::
    :hidden:

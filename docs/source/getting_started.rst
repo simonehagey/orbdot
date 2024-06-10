@@ -7,6 +7,7 @@ The first step to using OrbDot is to create an instance of the ``StarPlanet`` cl
 necessary run model fitting algorithms and interpret the results. It inherits the model fitting capabilities inherited from the ``TransitTiming``, ``RadialVelocity``, ``TransitDuration``, and ``JointFit`` classes.
 
 .. autoclass:: orbdot.star_planet
+    :members:
 
 
 Creating a ``StarPlanet`` Instance
