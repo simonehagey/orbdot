@@ -94,8 +94,8 @@ Citing OrbDot
 -------------
 Text...
 
-.. automodule:: orbdot.models.theory
-    :members:
+.. autoclass:: orbdot.star_planet.StarPlanet
+   :members:
 
 Contents
 --------

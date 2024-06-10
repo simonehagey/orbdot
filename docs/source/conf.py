@@ -8,13 +8,8 @@ author = 'Simone R. Hagey'
 version = '0.1.0'
 release = '0.1.0'
 
-import os
-import sys
-
 sys.path.insert(0, os.path.abspath('../..'))
-# sys.path.insert(0, os.path.abspath('../../orbdot/'))
 
-# 'sphinx.ext.coverage', 'numpydoc',
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.napoleon',
               'sphinx_togglebutton', 'sphinxcontrib.bibtex', 'sphinx_copybutton',
               'sphinx.ext.autosummary',
@@ -30,14 +25,14 @@ html_static_path = ['_static']
 html_logo = "_static/orbdot_logo.png"
 
 html_theme_options = {
-    'logo_only': False,
+    'logo_only': True,
     'display_version': True,
     'collapse_navigation': False,
     'sticky_navigation': True,
     'navigation_depth': -1,
     'prev_next_buttons_location': 'both',
     'style_external_links': True,
-    'style_nav_header_background': 'white',
+    'style_nav_header_background': '#FFA329',
 }
 
 napoleon_google_docstring = False
