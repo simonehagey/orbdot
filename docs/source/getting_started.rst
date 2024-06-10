@@ -3,13 +3,13 @@
 Getting Started With OrbDot
 ===========================
 
-The first step to using OrbDot is to create an instance of the ``StarPlanet`` class to represent your chosen planet and its host star. This class acts as an interface for accessing the core capabilities of the OrbDot package, combining the data, methods, and attributes
+The first step to using OrbDot is to create an instance of the :class:`~orbdot.star_planet.StarPlanet` class to represent your chosen planet and its host star. This class acts as an interface for accessing the core capabilities of the OrbDot package, combining the data, methods, and attributes
 necessary run model fitting algorithms and interpret the results. It inherits the model fitting capabilities inherited from the ``TransitTiming``, ``RadialVelocity``, ``TransitDuration``, and ``JointFit`` classes.
 
 Creating a ``StarPlanet`` Instance
 ----------------------------------
 
-To create a :class:`StarPlanet` object, we simply give the pathname for a ``*_settings.json`` file. For illustrative purposes, let's use the Hot Jupiter WASP-12 b as an example:
+To create a :class:`~orbdot.star_planet.StarPlanet` object, we simply give the pathname for a ``*_settings.json`` file. For illustrative purposes, let's use the Hot Jupiter WASP-12 b as an example:
 
 .. code-block:: python
 
