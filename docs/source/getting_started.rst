@@ -6,12 +6,10 @@ Getting Started With OrbDot
 The first step to using OrbDot is to create an instance of the ``StarPlanet`` class to represent your chosen planet and its host star. This class acts as an interface for accessing the core capabilities of the OrbDot package, combining the data, methods, and attributes
 necessary run model fitting algorithms and interpret the results. It inherits the model fitting capabilities inherited from the ``TransitTiming``, ``RadialVelocity``, ``TransitDuration``, and ``JointFit`` classes.
 
-.. automodule:: orbdot.tools.priors
-    :members:
-
 Creating a ``StarPlanet`` Instance
 ----------------------------------
-To create a ``StarPlanet`` object, we simply give the pathname for a ``*_settings.json`` file. For illustrative purposes, let's use the Hot Jupiter WASP-12 b as an example:
+
+To create a :class:`StarPlanet` object, we simply give the pathname for a ``*_settings.json`` file. For illustrative purposes, let's use the Hot Jupiter WASP-12 b as an example:
 
 .. code-block:: python
 
@@ -23,56 +21,58 @@ That was easy! Now we have access to all of the attributes and methods that we n
 
 .. code-block:: python
 
- sp.run_ttv_fit(['t0', 'P0', 'PdE'], model='decay')
+    sp.run_ttv_fit(['t0', 'P0', 'PdE'], model='decay')
 
 we can fit the available transit and/or eclipse timing data to the model for a circular orbit undergoing orbital decay. The most important ``StarPlanet`` attributes are listed in the dropdown table below, and model fitting options are described further in Section X.
 
-|
+.. admonition:: For example
+    :class: dropdown
 
-DROPDOWN
+    .. list-table::
+       :header-rows: 1
 
-.. list-table::
-   :header-rows: 1
+       * - Attribute
+         - Data Type
+         - Description
+       * - ``star_name``
+         - ``str``
+         - The name of the host star.
+       * - ``planet_name``
+         - ``str``
+         - The name of the planet.
+       * - ``sp_system_params``
+         - ``dict``
+         - A dictionary containing the star-planet system parameters (see REF).
+       * - ``ttv_data``
+         - ``dict``
+         - A dictionary containing the transit and eclipse mid-times (see REF).
+       * - ``rv_data``
+         - ``dict``
+         - A dictionary containing the radial velocity measurements (see REF).
+       * - ``tdv_data``
+         - ``dict``
+         - A dictionary containing the transit duration measurements (see REF).
+       * - ``prior``
+         - ``dict``
+         - A dictionary that stores parameters that define the prior distributions, see REF.
+       * - ``fixed``
+         - ``dict``
+         - A ??
+       * - ``plot_settings``
+         - ``dict``
+         - A dictionary ...
+       * - ``main_save_dir``
+         - ``str``
+         - The path name ...
 
-   * - Attribute
-     - Data Type
-     - Description
-   * - ``star_name``
-     - ``str``
-     - The name of the host star.
-   * - ``planet_name``
-     - ``str``
-     - The name of the planet.
-   * - ``sp_system_params``
-     - ``dict``
-     - A dictionary containing the star-planet system parameters (see REF).
-   * - ``ttv_data``
-     - ``dict``
-     - A dictionary containing the transit and eclipse mid-times (see REF).
-   * - ``rv_data``
-     - ``dict``
-     - A dictionary containing the radial velocity measurements (see REF).
-   * - ``tdv_data``
-     - ``dict``
-     - A dictionary containing the transit duration measurements (see REF).
-   * - ``prior``
-     - ``dict``
-     - A dictionary that stores parameters that define the prior distributions, see REF.
-   * - ``fixed``
-     - ``dict``
-     - A ??
-   * - ``plot_settings``
-     - ``dict``
-     - A dictionary ...
-   * - ``main_save_dir``
-     - ``str``
-     - The path name ...
+The StarPlanet Class
+^^^^^^^^^^^^^^^^^^^^
 
+.. autoclass:: orbdot.star_planet.StarPlanet
+   :members:
 
 Input Files
 -----------
-
-.. autofunction:: orbdot.models.theory.precession_rotational_planet
 
 As we saw above, the creation of a StarPlanet object requires a 'settings' file (e.g. ``'settings_files/WASP-12_settings.json'``), which itself points to files holding the data, as well as an 'info' files that contains basic information about the star-planet system and its physical characteristics. In total, the input files are:
 
@@ -81,8 +81,8 @@ As we saw above, the creation of a StarPlanet object requires a 'settings' file 
 3. The data files, e.g. : ``*_mid_times.txt`` and/or  ``*_rvs.txt``
 4. (optional) a file for plot settings, e.g. : ``*_plot_settings.txt``
 
-1. The Settings File
-^^^^^^^^^^^^^^^^^^^^
+The Settings File
+-----------------
 This 'settings_file' provides the directories that contain the data and
 specifies certain settings needed for model fitting algorithms, including the priors.
 
@@ -218,18 +218,18 @@ For more detail on the fit settings, see XX
 For more detail on the priors, see XX
 
 Default Settings
-****************
+^^^^^^^^^^^^^^^^
 
 
 Data Files
-^^^^^^^^^^
+----------
 - automatically handles eclipses, different sources, different RV instruments
 - required data structure
 
 ``*_mid_times.txt``, ``*_rvs.txt``, ``*_durations.txt``
 
 TTV Data
-********
+^^^^^^^^
 Reads timing data file with columns: ``[Epoch, Time (BJD), Error (BJD), Source]``, returns a dictionary containing
 the mid-times, errors, sources, and epoch numbers.
 
@@ -237,31 +237,34 @@ Epochs (orbit number) are integers for transit mid-times, but eclipses are diffe
 a half orbit. For example, the eclipse for orbit no. 100 would have the epoch 100.5. The transits
 and eclipses are separated by using different keys. The keys are:
 
- .. list-table::
-   :header-rows: 1
-   :widths: 20 40
+.. admonition:: For example
+    :class: dropdown
 
-   * - Key
-     - Description
-   * - ``bjd``
-     - transit mid-times
-   * - ``err``
-     - transit mid-time errors
-   * - ``src``
-     - source of transits
-   * - ``epoch``
-     - orbit number of transits
-   * - ``bjd_ecl``
-     - eclipse mid-times
-   * - ``err_ecl``
-     - eclipse mid-time errors
-   * - ``src_ecl``
-     - source of eclipses
-   * - ``epoch_ecl``
-     - orbit number of eclipses
+        .. list-table::
+        :header-rows: 1
+        :widths: 20 40
+
+        * - Key
+         - Description
+        * - ``bjd``
+         - transit mid-times
+        * - ``err``
+         - transit mid-time errors
+        * - ``src``
+         - source of transits
+        * - ``epoch``
+         - orbit number of transits
+        * - ``bjd_ecl``
+         - eclipse mid-times
+        * - ``err_ecl``
+         - eclipse mid-time errors
+        * - ``src_ecl``
+         - source of eclipses
+        * - ``epoch_ecl``
+         - orbit number of eclipses
 
 RV Data
-*******
+^^^^^^^
 Reads RV data file with columns: :code:`[Time (BJD), Velocity (m/s), Err (m/s), Source]`, returns A dictionary
 containing the RV measurements, times, errors, and sources.
 
@@ -271,52 +274,58 @@ the zero velocity and jitter, can easily be fit separately.
 Each value is a list of arrays, where the separate arrays correspond to different RV instruments.
 The keys are:
 
- .. list-table::
-   :header-rows: 1
-   :widths: 20 40
+.. admonition:: For example
+    :class: dropdown
 
-   * - Key
-     - Description
-   * - ``trv``
-     - The measurement times.
-   * - ``rvs``
-     - radial velocity measurements in m/s
-   * - ``err``
-     - measurement errors
-   * - ``src``
-     - source associated with each measurement
-   * - ``num_src``
-     - number of unique sources
-   * - ``src_names``
-     - names of the unique sources
-   * - ``src_tags``
-     - tags assigned to each source
-   * - ``src_order``
-     - order of sources
+        .. list-table::
+        :header-rows: 1
+        :widths: 20 40
+
+        * - Key
+         - Description
+        * - ``trv``
+         - The measurement times.
+        * - ``rvs``
+         - radial velocity measurements in m/s
+        * - ``err``
+         - measurement errors
+        * - ``src``
+         - source associated with each measurement
+        * - ``num_src``
+         - number of unique sources
+        * - ``src_names``
+         - names of the unique sources
+        * - ``src_tags``
+         - tags assigned to each source
+        * - ``src_order``
+         - order of sources
 
 TDV Data
-********
+^^^^^^^^
 Reads transit duration data file with columns: :code:`[Epoch, Duration, Error, Source]`, and returns a dictionary
 containing the transit durations, errors, sources, and epoch numbers. The keys are:
 
- .. list-table::
-   :header-rows: 1
-   :widths: 10 40
+.. admonition:: For example
+    :class: dropdown
 
-   * - Key
-     - Description
-   * - ``dur``
-     - The transit durations in minutes.
-   * - ``err``
-     - Errors on the transit durations in minutes.
-   * - ``src``
-     - Source of transit durations.
-   * - ``epoch``
-     - The epoch/orbit number of the observations,
+        .. list-table::
+        :header-rows: 1
+        :widths: 10 40
+
+        * - Key
+         - Description
+        * - ``dur``
+         - The transit durations in minutes.
+        * - ``err``
+         - Errors on the transit durations in minutes.
+        * - ``src``
+         - Source of transit durations.
+        * - ``epoch``
+         - The epoch/orbit number of the observations,
 
 
 The System Information File
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+---------------------------
 All information specific to the star-planet system is contained in a dictionary stored
 as a .json file.
 
@@ -327,7 +336,7 @@ The default info file is: DROPDOWN
 You don't need all of that stuff, it's just there as an option. ie. all of those parameters can be loaded into the analysis class and used later in any way you want. Only a few of these parameters are actually needed to use OrbDot, with the requirements varying depending on whether you want to use the Analysis class.
 
 Minimum requirements for model fitting
-**************************************
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. list-table::
    :header-rows: 1
@@ -363,7 +372,7 @@ Minimum requirements for model fitting
    The planetary parameters are given as a list so that you can have one info file for a whole planetary system. Then, when you initiate a ``StarPlanet`` object, you can specify the parameter ``planet_num`` to be the index that corresponds to the planet you want to study.
 
 Minimum requirements for the Analysis class
-*******************************************
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The minimum requirements for the ``Analysis`` class is more complex, as it depends on which functionality you plan to use.
 

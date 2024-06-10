@@ -8,7 +8,6 @@ Welcome to OrbDot!
    This documentation is under active development. OrbDot V1 will be available soon!
 
 
-
 Welcome to OrbDot! This Python package is designed for studying the secular (long-term) evolution of exoplanet orbits in an observational context. It facilitates model fitting of (any combination of) transit and eclipse timing data, radial velocities, and transit durations with nested sampling algorithms, enabling users to harness the power of nested sampling with fewer headaches.
 
 In addition to model fitting, OrbDot features a built-in `Analysis` class that automates the numerical interpretation of results, generating reports on model comparison, tidal decay parameters, predicted precession rates, implications for planetary companions, and more.
@@ -28,30 +27,40 @@ Why OrbDot?
 
    - Just populate a settings file with pathnames, prior bounds, and a bit of info about the planetary system. OrbDot will do the rest!
 
- .. code-block:: python
+ .. admonition:: For example
+   :class: dropdown
 
-    from orbdot.star_planet import StarPlanet
+   .. code-block:: python
 
-    wasp12 = StarPlanet('settings_files/WASP-12_settings.json')
+     from orbdot.star_planet import StarPlanet
+
+     wasp12 = StarPlanet('settings_files/WASP-12_settings.json')
+
 
 3. **Nested sampling**, **simplified**.
 
    - There's no need to spend hours learning how to implement nested sampling packages; OrbDot will handle it for you!
    - Running a fit is easy, and you can specify any number of free parameters that belong to the model, in any order.
 
- .. code-block:: python
+ .. admonition:: For example
+   :class: dropdown
 
-   wasp12.run_ttv_fit(['t0', 'P0', 'PdE'], model='decay')
+   .. code-block:: python
+
+      wasp12.run_ttv_fit(['t0', 'P0', 'PdE'], model='decay')
 
 2. **Seamless joint fitting**.
 
    - Fit any combination of data types simultaneously, with no extra work.
 
- .. code-block:: python
+ .. admonition:: For example
+   :class: dropdown
 
-    free_params = ['t0', 'P0', 'K', 'v0', 'jit']
+   .. code-block:: python
 
-    wasp12.run_joint_fit(free_params, model='constant', RV=True, TTV=True)
+      free_params = ['t0', 'P0', 'K', 'v0', 'jit']
+
+      wasp12.run_joint_fit(free_params, model='constant', RV=True, TTV=True)
 
 4. **Flexible model fitting options**.
 
@@ -60,11 +69,14 @@ Why OrbDot?
    - Multiple options for prior distributions available.
    - Update prior distributions and fixed parameter values in-between model fits.
 
- .. code-block:: python
+ .. admonition:: For example
+   :class: dropdown
 
-     wasp12.update_prior('P0', ['gaussian', 1.091455, 0.001])
+   .. code-block:: python
 
-     wasp12.run_rv_fit(['P0', 'ecosw', 'esinw', 'K', 'v0', 'jit'])
+      wasp12.update_prior('P0', ['gaussian', 1.091455, 0.001])
+
+      wasp12.run_rv_fit(['P0', 'ecosw', 'esinw', 'K', 'v0', 'jit'])
 
 5. **Smart data handling**.
 
@@ -94,9 +106,6 @@ Citing OrbDot
 -------------
 Text...
 
-.. autoclass:: orbdot.star_planet.StarPlanet
-   :members:
-
 Contents
 --------
 
@@ -116,6 +125,9 @@ Contents
    :maxdepth: 6
 
    getting_started
+   the_models
+   model_fitting
+   interpreting_your_results
 
 .. toctree::
    :caption: Examples
@@ -126,8 +138,17 @@ Contents
    :maxdepth: 4
 
    api
+
 ------------
 
 :Authors: Simone R. Hagey
 :Version: 1.0 of 2024/06/25
 :Dedication: To Cabbage.
+
+
+Indices and tables
+------------------
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`

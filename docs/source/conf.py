@@ -25,7 +25,7 @@ html_static_path = ['_static']
 html_logo = "_static/orbdot_logo.png"
 
 html_theme_options = {
-    'logo_only': True,
+    'logo_only': False,
     'display_version': True,
     'collapse_navigation': False,
     'sticky_navigation': True,
@@ -42,3 +42,4 @@ napoleon_use_admonition_for_notes = True
 napoleon_use_admonition_for_references = True
 
 bibtex_bibfiles = ["references.bib"]
+autosummary_generate = True
