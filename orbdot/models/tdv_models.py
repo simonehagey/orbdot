@@ -1,4 +1,6 @@
 """
+Transit Duration Models
+=======================
 This module provides functions for predicting exoplanet transit durations.
 """
 

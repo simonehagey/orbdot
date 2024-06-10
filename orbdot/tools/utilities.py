@@ -1,4 +1,6 @@
 """
+Utilities
+=========
 This module provides a collection of general functions that are used throughout the OrbDot package.
 """
 

@@ -1,4 +1,6 @@
 """
+Transit and Eclipse Timing Models
+=================================
 This module provides functions for predicting exoplanet transit and eclipse times.
 """
 

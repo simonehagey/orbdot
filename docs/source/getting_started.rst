@@ -4,7 +4,7 @@ Getting Started
 ===============
 
 The first step to using OrbDot is to create an instance of the :class:`~orbdot.star_planet.StarPlanet` class to represent your chosen planet and its host star. This class acts as an interface for accessing the core capabilities of the OrbDot package, combining the data, methods, and attributes
-necessary run model fitting algorithms and interpret the results. It inherits the model fitting capabilities inherited from the :class:`orbdot.transit_timing.TransitTiming`, :class:`orbdot.radial_velocity.RadialVelocity`, :class:`orbdot.transit_duration.TransitDuration`, and  :class:`orbdot.joint_fit.JointFit` classes.
+necessary run model fitting algorithms and interpret the results. It inherits the model fitting capabilities inherited from the :class:`~orbdot.transit_timing.TransitTiming`, :class:`~orbdot.radial_velocity.RadialVelocity`, :class:`~orbdot.transit_duration.TransitDuration`, and  :class:`~orbdot.joint_fit.JointFit` classes.
 
 Creating a StarPlanet Instance
 ------------------------------
@@ -32,7 +32,7 @@ As we saw above, the creation of a StarPlanet object requires a 'settings' file 
 3. The data files, e.g. : ``*_mid_times.txt`` and/or  ``*_rvs.txt``
 4. (optional) a file for plot settings, e.g. : ``*_plot_settings.txt``
 
-.. hint:: Attributes
+.. admonition:: Attributes
     :class: dropdown
 
     .. list-table::
@@ -239,24 +239,24 @@ and eclipses are separated by using different keys. The keys are:
     :header-rows: 1
     :widths: 20 40
 
-    * - Key
-     - Description
-    * - ``bjd``
-     - transit mid-times
-    * - ``err``
-     - transit mid-time errors
-    * - ``src``
-     - source of transits
-    * - ``epoch``
-     - orbit number of transits
-    * - ``bjd_ecl``
-     - eclipse mid-times
-    * - ``err_ecl``
-     - eclipse mid-time errors
-    * - ``src_ecl``
-     - source of eclipses
-    * - ``epoch_ecl``
-     - orbit number of eclipses
+        * - Key
+         - Description
+        * - ``bjd``
+         - transit mid-times
+        * - ``err``
+         - transit mid-time errors
+        * - ``src``
+         - source of transits
+        * - ``epoch``
+         - orbit number of transits
+        * - ``bjd_ecl``
+         - eclipse mid-times
+        * - ``err_ecl``
+         - eclipse mid-time errors
+        * - ``src_ecl``
+         - source of eclipses
+        * - ``epoch_ecl``
+         - orbit number of eclipses
 
 .. _rv-data:
 
@@ -278,24 +278,24 @@ The keys are:
     :header-rows: 1
     :widths: 20 40
 
-    * - Key
-     - Description
-    * - ``trv``
-     - The measurement times.
-    * - ``rvs``
-     - radial velocity measurements in m/s
-    * - ``err``
-     - measurement errors
-    * - ``src``
-     - source associated with each measurement
-    * - ``num_src``
-     - number of unique sources
-    * - ``src_names``
-     - names of the unique sources
-    * - ``src_tags``
-     - tags assigned to each source
-    * - ``src_order``
-     - order of sources
+        * - Key
+         - Description
+        * - ``trv``
+         - The measurement times.
+        * - ``rvs``
+         - radial velocity measurements in m/s
+        * - ``err``
+         - measurement errors
+        * - ``src``
+         - source associated with each measurement
+        * - ``num_src``
+         - number of unique sources
+        * - ``src_names``
+         - names of the unique sources
+        * - ``src_tags``
+         - tags assigned to each source
+        * - ``src_order``
+         - order of sources
 
 .. _tdv-data:
 
@@ -311,16 +311,16 @@ containing the transit durations, errors, sources, and epoch numbers. The keys a
     :header-rows: 1
     :widths: 10 40
 
-    * - Key
-     - Description
-    * - ``dur``
-     - The transit durations in minutes.
-    * - ``err``
-     - Errors on the transit durations in minutes.
-    * - ``src``
-     - Source of transit durations.
-    * - ``epoch``
-     - The epoch/orbit number of the observations.
+        * - Key
+         - Description
+        * - ``dur``
+         - The transit durations in minutes.
+        * - ``err``
+         - Errors on the transit durations in minutes.
+        * - ``src``
+         - Source of transit durations.
+        * - ``epoch``
+         - The epoch/orbit number of the observations.
 
 .. _info-file:
 
@@ -341,30 +341,30 @@ Minimum requirements for model fitting
 .. list-table::
    :header-rows: 1
 
-   * - Key
-     - Unit
-     - Description
-     - Example
+       * - Key
+         - Unit
+         - Description
+         - Example
 
-   * - ``star_name``
-     - ``str``
-     - The name of the host star.
-     - ``"WASP-12"``
+       * - ``star_name``
+         - ``str``
+         - The name of the host star.
+         - ``"WASP-12"``
 
-   * - ``planets``
-     - ``list``
-     - List of planet letter designations.
-     - ``["b"]``
+       * - ``planets``
+         - ``list``
+         - List of planet letter designations.
+         - ``["b"]``
 
-   * - ``P [days]``
-     - ``list``
-     - List of planets' orbital periods.
-     - ``[1.09142]``
+       * - ``P [days]``
+         - ``list``
+         - List of planets' orbital periods.
+         - ``[1.09142]``
 
-   * - ``t0 [BJD_TDB]``
-     - ``list``
-     - the path from the base directory to the info file
-     - ``[2456305.4555]``
+       * - ``t0 [BJD_TDB]``
+         - ``list``
+         - the path from the base directory to the info file
+         - ``[2456305.4555]``
 
 
 .. note::
@@ -379,15 +379,15 @@ The minimum requirements for the ``Analysis`` class is more complex, as it depen
 .. list-table::
    :header-rows: 1
 
-   * - Key
-     - Unit
-     - Description
-     - Example
+       * - Key
+         - Unit
+         - Description
+         - Example
 
-   * - ``star_name``
-     - ``str``
-     - The name of the host star.
-     - ``"WASP-12"``
+       * - ``star_name``
+         - ``str``
+         - The name of the host star.
+         - ``"WASP-12"``
 
 
 .. admonition:: For example

@@ -1,4 +1,6 @@
 """
+Theory
+======
 This module contains the analytical models needed to investigate the causes of long-term
 variations in the orbital of a star-planet system. The methods include various equations for
 assessing the effects of tidal dissipation, apsidal precession, systemic proper motion, and more.

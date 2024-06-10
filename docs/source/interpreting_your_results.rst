@@ -80,17 +80,17 @@ uses Bayesian evidence, denoted as $\log{\mathrm{Z}}$, as a fundamental metric f
    :align: center
 
    +----------------------------------+---------------------------------------------------+
-   | Condition                        | Evidence for Model 1 (M:math:`_1`)                |
+   | Condition                        | Evidence for Model 1 (Model 1)                    |
    +==================================+===================================================+
-   | :math:`B_{12} \leq 1`            | M:math:`_1` is not supported over M:math:`_2`     |
+   | :math:`B_{12} \leq 1`            | Model 1 is not supported over Model 2             |
    +----------------------------------+---------------------------------------------------+
-   | :math:`1 < B_{12} \leq 3`        | Evidence for M:math:`_1` barely worth mentioning  |
+   | :math:`1 < B_{12} \leq 3`        | Evidence for Model 1 barely worth mentioning      |
    +----------------------------------+---------------------------------------------------+
-   | :math:`3 < B_{12} \leq 20`       | Positive evidence for M:math:`_1`                 |
+   | :math:`3 < B_{12} \leq 20`       | Positive evidence for Model 1                     |
    +----------------------------------+---------------------------------------------------+
-   | :math:`20 < B_{12} \leq 150`     | Strong evidence for M:math:`_1`                   |
+   | :math:`20 < B_{12} \leq 150`     | Strong evidence for Model 1                       |
    +----------------------------------+---------------------------------------------------+
-   | :math:`150 < B_{12}`             | Very strong evidence for M:math:`_1`              |
+   | :math:`150 < B_{12}`             | Very strong evidence for Model 1                  |
    +----------------------------------+---------------------------------------------------+
 
 
@@ -116,6 +116,8 @@ The apsidal precession rate of a planetary orbit can result from several factors
     \dot{\omega}_{\mathrm GR} = \frac{3 \eta G M_s}{ac^2(1-e^2)}
 
  where :math:`G` is the gravitational constant, :math:`M_s` is the host star mass, :math:`a` is the planet's semi-major axis, :math:`c` is the speed of light in a vacuum, :math:`e` is the eccentricity, and :math:`\eta = 2\pi/P` is the mean motion.
+
+.. autofunction:: orbdot.models.theory.precession_gr
 
 **Rotational Flattening**:
 
@@ -143,6 +145,9 @@ The apsidal precession rate of a planetary orbit can result from several factors
 
  The Love number represents how centrally condensed the body is, and is a fixed property of the body. The lower the :math:`k_2`, the more centrally condensed the planetary interior structure, which in turn leads to a slower precession rate. The theoretical upper limit of :math:`k_2` is :math:`3/2`, which corresponds to a uniform density sphere [lissauer2019]_. Note that :math:`k_2` is generally much lower for main-sequence stars [claret_love_num]_ (:math:`\sim 0.03`) than planets [Ragozzine2009]_ (0.1 -- 0.3).
 
+.. autofunction:: orbdot.models.theory.precession_rotational_planet
+.. autofunction:: orbdot.models.theory.precession_rotational_star
+
 **Tidal Bulges**:
 
  Due to the close proximity of HJs to their host stars, significant tidal bulges -- an ellipsoidal distortion -- are raised in both the planet and star. Both pairs of tidal bulges induce apsidal precession, but for Hot Jupiters, the planet's bulge is again expected to dominate [Ragozzine2009]_. The precession rate itself depends on the internal density distribution of the HJ, which affects the extent to which the planet is elongated. This is again parameterized by the planetary Love number :math:`k_{2,p}`. For completeness, we also consider the effect of the star's tidal bulge. [Ragozzine2009]_ formulate the tides-induced precession as:
@@ -163,10 +168,17 @@ The apsidal precession rate of a planetary orbit can result from several factors
     f_2(e)= (1-e^2)^{-5} \left(1 + \frac{3}{2}e^2 + \frac{1}{8}e^4 \right).
     \end{aligned}
 
+.. autofunction:: orbdot.models.theory.precession_tidal_planet
+.. autofunction:: orbdot.models.theory.precession_tidal_star
 
 Proper Motion
 -------------
 
+.. autofunction:: orbdot.models.theory.get_wdot_pm
+.. autofunction:: orbdot.models.theory.get_idot_pm
+.. autofunction:: orbdot.models.theory.get_pdot_pm
+.. autofunction:: orbdot.models.theory.get_tdot_pm
+.. autofunction:: orbdot.models.theory.shklovskii_effect
 
 Planetary Companion
 -------------------

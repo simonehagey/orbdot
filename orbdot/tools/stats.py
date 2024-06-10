@@ -1,4 +1,6 @@
 """
+Stats
+=====
 This module provides a collection of functions for statistical analysis and error propagation.
 """
 

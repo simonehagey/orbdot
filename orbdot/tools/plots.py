@@ -1,4 +1,6 @@
 """
+Plots
+=====
 This module contains the methods that generate the TTV, RV, and corner plots.
 """
 

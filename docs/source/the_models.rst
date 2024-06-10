@@ -7,7 +7,8 @@ The Models
 The Model Parameters
 ====================
 
-.. list-table:: **Orbital Elements**
+**Orbital Elements**
+ .. list-table::
    :header-rows: 2
    :widths: 30 25 25 100
 
@@ -46,9 +47,8 @@ The Model Parameters
 
 .. [*] Not currently implemented.
 
-|
-
-.. list-table:: **Coupled Parameters**
+**Coupled Parameters**
+ .. list-table::
    :header-rows: 2
    :widths: 30 25 20 100
 
@@ -114,9 +114,8 @@ The Model Parameters
 
 .. [*] Not currently implemented.
 
-|
-
-.. list-table:: **Radial Velocity Parameters**
+**Radial Velocity Parameters**
+ .. list-table::
    :header-rows: 2
    :widths: 20 15 25 70
 

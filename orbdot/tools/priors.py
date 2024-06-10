@@ -1,4 +1,6 @@
 """
+Priors
+======
 These functions are designed for the :class:`NestedSampling` class or similar algorithms for which
 sampling from a unit hypercube is required to explore the parameter space.
 """
