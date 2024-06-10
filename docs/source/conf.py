@@ -16,7 +16,9 @@ sys.path.insert(0, os.path.abspath('../..'))
 
 # 'sphinx.ext.coverage', 'numpydoc',
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.napoleon',
-              'sphinx_togglebutton', 'sphinxcontrib.bibtex', 'sphinx_copybutton']
+              'sphinx_togglebutton', 'sphinxcontrib.bibtex', 'sphinx_copybutton',
+              'sphinx.ext.autosummary',
+              ]
 
 templates_path = ['_templates']
 source_suffix = '.rst'

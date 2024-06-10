@@ -125,6 +125,7 @@ Contents
    :caption: API
    :maxdepth: 4
 
+   api
 ------------
 
 :Authors: Simone R. Hagey
