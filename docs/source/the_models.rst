@@ -4,8 +4,8 @@
 The Models
 **********
 
-The Model Parameters
-====================
+Parameters
+==========
 
 **Orbital Elements**
  .. list-table::
@@ -148,6 +148,7 @@ The Model Parameters
      - m :math:`{\mathrm s}^{-2}` :math:`{\mathrm day}^{-1}`
      - A second order radial velocity trend.
 
+------------
 
 Coordinate System
 =================
@@ -171,6 +172,7 @@ and an eclipse occurs when:
 .. math::
     \phi_{\mathrm II} = \frac{3\pi}{2} - \omega_{\mathrm p}
 
+------------
 
 Transit and Eclipse Timing Models
 =================================
@@ -344,6 +346,7 @@ Now, by re-parameterizing the RV model, we have successfully established shared 
 given to the nested sampling algorithm. This effectively captures the interplay between the timing variations and
 radial velocity signals in the models, better constraining the long-term behaviour of the data.
 
+------------
 
 Transit Duration Models
 =======================

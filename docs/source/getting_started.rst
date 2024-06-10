@@ -72,6 +72,8 @@ As we saw above, the creation of a StarPlanet object requires a 'settings' file 
          - ``str``
          - The base path to save the output files
 
+------------
+
 .. _settings-file:
 
 The Settings File
@@ -213,6 +215,7 @@ For more detail on the priors, see XX
 Default Settings
 ^^^^^^^^^^^^^^^^
 
+------------
 
 Data Files
 ----------
@@ -232,12 +235,12 @@ Epochs (orbit number) are integers for transit mid-times, but eclipses are diffe
 a half orbit. For example, the eclipse for orbit no. 100 would have the epoch 100.5. The transits
 and eclipses are separated by using different keys. The keys are:
 
-.. admonition:: For example
+.. admonition:: ``ttv_data`` Keys
     :class: dropdown
 
     .. list-table::
-    :header-rows: 1
-    :widths: 20 40
+       :header-rows: 1
+       :widths: 20 40
 
         * - Key
          - Description
@@ -271,12 +274,12 @@ the zero velocity and jitter, can easily be fit separately.
 Each value is a list of arrays, where the separate arrays correspond to different RV instruments.
 The keys are:
 
-.. admonition:: For example
+.. admonition:: ``rv_data`` Keys
     :class: dropdown
 
     .. list-table::
-    :header-rows: 1
-    :widths: 20 40
+       :header-rows: 1
+       :widths: 20 40
 
         * - Key
          - Description
@@ -304,12 +307,12 @@ TDV Data
 Reads transit duration data file with columns: :code:`[Epoch, Duration, Error, Source]`, and returns a dictionary
 containing the transit durations, errors, sources, and epoch numbers. The keys are:
 
-.. admonition:: For example
+.. admonition:: ``tdv_data`` Keys
     :class: dropdown
 
     .. list-table::
-    :header-rows: 1
-    :widths: 10 40
+       :header-rows: 1
+       :widths: 10 40
 
         * - Key
          - Description
@@ -321,6 +324,8 @@ containing the transit durations, errors, sources, and epoch numbers. The keys a
          - Source of transit durations.
         * - ``epoch``
          - The epoch/orbit number of the observations.
+
+------------
 
 .. _info-file:
 
@@ -341,30 +346,30 @@ Minimum requirements for model fitting
 .. list-table::
    :header-rows: 1
 
-       * - Key
-         - Unit
-         - Description
-         - Example
+   * - Key
+     - Unit
+     - Description
+     - Example
 
-       * - ``star_name``
-         - ``str``
-         - The name of the host star.
-         - ``"WASP-12"``
+   * - ``star_name``
+     - ``str``
+     - The name of the host star.
+     - ``"WASP-12"``
 
-       * - ``planets``
-         - ``list``
-         - List of planet letter designations.
-         - ``["b"]``
+   * - ``planets``
+     - ``list``
+     - List of planet letter designations.
+     - ``["b"]``
 
-       * - ``P [days]``
-         - ``list``
-         - List of planets' orbital periods.
-         - ``[1.09142]``
+   * - ``P [days]``
+     - ``list``
+     - List of planets' orbital periods.
+     - ``[1.09142]``
 
-       * - ``t0 [BJD_TDB]``
-         - ``list``
-         - the path from the base directory to the info file
-         - ``[2456305.4555]``
+   * - ``t0 [BJD_TDB]``
+     - ``list``
+     - the path from the base directory to the info file
+     - ``[2456305.4555]``
 
 
 .. note::
@@ -379,15 +384,15 @@ The minimum requirements for the ``Analysis`` class is more complex, as it depen
 .. list-table::
    :header-rows: 1
 
-       * - Key
-         - Unit
-         - Description
-         - Example
+   * - Key
+     - Unit
+     - Description
+     - Example
 
-       * - ``star_name``
-         - ``str``
-         - The name of the host star.
-         - ``"WASP-12"``
+   * - ``star_name``
+     - ``str``
+     - The name of the host star.
+     - ``"WASP-12"``
 
 
 .. admonition:: For example

@@ -42,7 +42,7 @@ Why OrbDot?
    - There's no need to spend hours learning how to implement nested sampling packages; OrbDot will handle it for you!
    - Running a fit is easy, and you can specify any number of free parameters that belong to the model, in any order.
 
- .. admonition:: For example
+ .. hint::
    :class: dropdown
 
    .. code-block:: python
@@ -53,7 +53,7 @@ Why OrbDot?
 
    - Fit any combination of data types simultaneously, with no extra work.
 
- .. admonition:: For example
+ .. hint::
    :class: dropdown
 
    .. code-block:: python
@@ -69,7 +69,7 @@ Why OrbDot?
    - Multiple options for prior distributions available.
    - Update prior distributions and fixed parameter values in-between model fits.
 
- .. admonition:: For example
+ .. hint::
    :class: dropdown
 
    .. code-block:: python
@@ -110,7 +110,6 @@ Contents
 --------
 
 .. toctree::
-   :hidden:
 
    self
 
@@ -141,14 +140,11 @@ Contents
 
 ------------
 
-:Authors: Simone R. Hagey
-:Version: 1.0 of 2024/06/25
-:Dedication: To Cabbage.
-
-
-Indices and tables
-------------------
-
 * :ref:`genindex`
 * :ref:`modindex`
-* :ref:`search`
+
+------------
+
+:Authors: Simone R. Hagey
+:Version: 1.0 of 2024/06
+:Dedication: To Cabbage.

@@ -4,7 +4,12 @@ Classes
 
 ------------
 
-.. autoclass:: orbdot.star_planet.StarPlanet
+.. autoclass:: orbdot.analysis.Analysis
+   :members:
+
+------------
+
+.. autoclass:: orbdot.joint_fit.JointFit
    :members:
 
 ------------
@@ -14,18 +19,17 @@ Classes
 
 ------------
 
-.. autoclass:: orbdot.joint_fit.JointFit
+.. autoclass:: orbdot.radial_velocity.RadialVelocity
    :members:
 
+------------
+
+.. autoclass:: orbdot.star_planet.StarPlanet
+   :members:
 
 ------------
 
 .. autoclass:: orbdot.transit_timing.TransitTiming
-   :members:
-
-------------
-
-.. autoclass:: orbdot.radial_velocity.RadialVelocity
    :members:
 
 ------------
