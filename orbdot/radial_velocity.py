@@ -1,4 +1,6 @@
 """
+RadialVelocity
+--------------
 This module defines the :class:`RadialVelocity` class, which extends the capabilities of the
 :class:NestedSampling class to facilitate model fitting of radial velocity observations.
 """

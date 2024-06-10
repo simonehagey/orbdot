@@ -3,13 +3,19 @@
 Getting Started
 ===============
 
-The first step to using OrbDot is to create an instance of the :class:`~orbdot.star_planet.StarPlanet` class to represent your chosen planet and its host star. This class acts as an interface for accessing the core capabilities of the OrbDot package, combining the data, methods, and attributes
-necessary run model fitting algorithms and interpret the results. It inherits the model fitting capabilities inherited from the :class:`~orbdot.transit_timing.TransitTiming`, :class:`~orbdot.radial_velocity.RadialVelocity`, :class:`~orbdot.transit_duration.TransitDuration`, and  :class:`~orbdot.joint_fit.JointFit` classes.
+The first step to using OrbDot is to create an instance of the :class:`~orbdot.star_planet.StarPlanet` class to represent your planet and its host star. This class acts as an interface for accessing the core capabilities of the OrbDot package, combining the data, methods, and attributes necessary run model fitting algorithms and interpret the results. It inherits the model fitting capabilities inherited from the :class:`~orbdot.transit_timing.TransitTiming`, :class:`~orbdot.radial_velocity.RadialVelocity`, :class:`~orbdot.transit_duration.TransitDuration`, and  :class:`~orbdot.joint_fit.JointFit` classes.
 
 Creating a StarPlanet Instance
 ------------------------------
 
-To create a :class:`~orbdot.star_planet.StarPlanet` object, we simply give the pathname for a ``*_settings.json`` file. For illustrative purposes, let's use the Hot Jupiter WASP-12 b as an example:
+The creation of a StarPlanet object requires the following files:
+
+1. The 'settings' file, e.g. : ``*_settings.json`` :ref:`settings-file`
+2. The 'system info' file, e.g. : ``*_info.json`` :ref:`info-file`
+3. The data files, e.g. : ``*_mid_times.txt`` and/or  ``*_rvs.txt`` :ref:`data-files`
+4. (optional) a file for plot settings, e.g. : ``*_plot_settings.txt`` (REF)
+
+To create a :class:`~orbdot.star_planet.StarPlanet` object, we simply give the pathname for the ``*_settings.json`` file. For illustrative purposes, let's use the Hot Jupiter WASP-12 b as an example:
 
 .. code-block:: python
 
@@ -17,60 +23,44 @@ To create a :class:`~orbdot.star_planet.StarPlanet` object, we simply give the p
 
     wasp12 = StarPlanet('settings_files/WASP-12_settings.json')
 
-That was easy! Now we have access to all of the attributes and methods that we need to study the orbital evolution of WASP-12 b. For example, by calling:
+That was easy! Now we have access to all of the attributes and methods that we need to study the orbital evolution of WASP-12 b. The most important :class:`~orbdot.star_planet.StarPlanet` attributes are listed below.
 
-.. code-block:: python
+.. list-table::
+   :header-rows: 1
 
-    sp.run_ttv_fit(['t0', 'P0', 'PdE'], model='decay')
-
-we can fit the available transit and/or eclipse timing data to the model for a circular orbit undergoing orbital decay. The most important :class:`~orbdot.star_planet.StarPlanet` attributes are listed in the dropdown table below, and model fitting options are described further in Section X.
-
-As we saw above, the creation of a StarPlanet object requires a 'settings' file (e.g. ``'settings_files/WASP-12_settings.json'``), which itself points to files holding the data, as well as an 'info' files that contains basic information about the star-planet system and its physical characteristics. In total, the input files are:
-
-1. The 'settings' file, e.g. : ``*_settings.json``
-2. The 'system info' file, e.g. : ``*_info.json``
-3. The data files, e.g. : ``*_mid_times.txt`` and/or  ``*_rvs.txt``
-4. (optional) a file for plot settings, e.g. : ``*_plot_settings.txt``
-
-.. admonition:: Attributes
-    :class: dropdown
-
-    .. list-table::
-       :header-rows: 1
-
-       * - Attribute
-         - Data Type
-         - Description
-       * - ``star_name``
-         - ``str``
-         - The name of the host star.
-       * - ``planet_name``
-         - ``str``
-         - The name of the planet.
-       * - ``sp_system_params``
-         - ``dict``
-         - A dictionary holding the system info file.
-       * - ``ttv_data``
-         - ``dict``
-         - The transit and/or eclipse mid-time data.
-       * - ``rv_data``
-         - ``dict``
-         - The radial velocity data.
-       * - ``tdv_data``
-         - ``dict``
-         - The transit duration data.
-       * - ``prior``
-         - ``dict``
-         - The prior distributions.
-       * - ``fixed``
-         - ``dict``
-         - The fixed parameter values.
-       * - ``plot_settings``
-         - ``dict``
-         - Various plot settings
-       * - ``main_save_dir``
-         - ``str``
-         - The base path to save the output files
+   * - Attribute
+     - Data Type
+     - Description
+   * - ``star_name``
+     - ``str``
+     - The name of the host star.
+   * - ``planet_name``
+     - ``str``
+     - The name of the planet.
+   * - ``sp_system_params``
+     - ``dict``
+     - A dictionary holding the system info file.
+   * - ``ttv_data``
+     - ``dict``
+     - The transit and/or eclipse mid-time data.
+   * - ``rv_data``
+     - ``dict``
+     - The radial velocity data.
+   * - ``tdv_data``
+     - ``dict``
+     - The transit duration data.
+   * - ``prior``
+     - ``dict``
+     - The prior distributions.
+   * - ``fixed``
+     - ``dict``
+     - The fixed parameter values.
+   * - ``plot_settings``
+     - ``dict``
+     - Various plot settings
+   * - ``main_save_dir``
+     - ``str``
+     - The base path to save the output files
 
 ------------
 
@@ -85,6 +75,9 @@ This file is the highest level of input, being the only file that the :class:`~o
 
 ,directories containing the data, important parameters for the nested sampling algorithms such as the
 desired sampler (``"nestle"`` or ``"multinest"``), the prior (``"prior"``), the number of live points, and the evidence tolerance.
+
+For more detail on the fit settings, see XX
+For more detail on the priors, see XX
 
 .. code-block::
 
@@ -209,13 +202,12 @@ desired sampler (``"nestle"`` or ``"multinest"``), the prior (``"prior"``), the 
            }
     }
 
-For more detail on the fit settings, see XX
-For more detail on the priors, see XX
-
 Default Settings
 ^^^^^^^^^^^^^^^^
 
 ------------
+
+.. data-files:
 
 Data Files
 ----------

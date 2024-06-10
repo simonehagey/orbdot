@@ -1,4 +1,6 @@
 """
+StarPlanet
+----------
 This module defines the :class:`StarPlanet` class, which contains the data, methods, and attributes
 needed to study long-term variations in the orbits of exoplanets.
 """

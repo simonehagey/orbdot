@@ -1,4 +1,6 @@
 """
+TransitTiming
+-------------
 This module defines the :class:`TransitTiming` class, which extends the capabilities of the
 :class:NestedSampling class to facilitate model fitting of transit and eclipse times.
 """

@@ -1,5 +1,6 @@
 """
-Something here...
+JointFit
+--------
 """
 
 import os

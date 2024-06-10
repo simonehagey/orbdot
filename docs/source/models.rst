@@ -3,19 +3,21 @@
 **********
 The Models
 **********
+This section describes the models...
 
 Parameters
 ==========
 
+To keep the use of this class clean and concise, there is a main set of 'allowed' model parameters. For every model fit, the list of free parameters is compared to this set and the given order is recorded. This means that any number of free parameters can be provided in any order as long as they are part of the physical model(s), as defined by the log-likelihood. It is important for the user to familiarize themselves with the parameter symbols and definitions.
+
+The OrbDot parameter set also includes time derivatives of other orbital elements, such as :math:`\dot{e}` and :math:`\dot{\Omega}`, that are planned for integration in future iterations, but are currently available for user-defined classes (see XXX).
+
+
 **Orbital Elements**
  .. list-table::
-   :header-rows: 2
+   :header-rows: 1
    :widths: 30 25 25 100
 
-   * -
-     -
-     -
-     -
    * - Parameter
      - Symbol
      - Unit
@@ -49,13 +51,9 @@ Parameters
 
 **Coupled Parameters**
  .. list-table::
-   :header-rows: 2
+   :header-rows: 1
    :widths: 30 25 20 100
 
-   * -
-     -
-     -
-     -
    * - Parameter
      - Symbol
      - Unit
@@ -77,16 +75,11 @@ Parameters
      - --c
      - The square root of :math:`e` multiplied by the sine of :math:`\omega_p`.
 
-|
-
-.. list-table:: **Time-Dependent Parameters**
-   :header-rows: 2
+**Time-Dependent Parameters**
+.. list-table::
+   :header-rows: 1
    :widths: 25 15 25 100
 
-   * -
-     -
-     -
-     -
    * - Parameter
      - Symbol
      - Unit
@@ -106,7 +99,7 @@ Parameters
    * - :math:`\frac{di}{dE}`
      - ``idE``
      - deg :math:`E^{-1}`
-     - A constant change of the line-of-sight inclination [*]_.
+     - A constant change of the line-of-sight inclination. [*]_
    * - :math:`\frac{d \Omega}{dE}`
      - ``OdE``
      - rad :math:`E^{-1}`
@@ -119,10 +112,6 @@ Parameters
    :header-rows: 2
    :widths: 20 15 25 70
 
-   * -
-     -
-     -
-     -
    * - Parameter
      - Symbol
      - Unit
@@ -152,11 +141,12 @@ Parameters
 
 Coordinate System
 =================
+In this work, we establish the sky plane to lie within
+the x-z plane, with the y-axis pointing towards the observer along the line of sight (refer to Figure X).
 
 It is critical to be consistent in the definition of the argument of pericenter :math:`\omega` when simultaneously
 fitting transit timing and RV data to an eccentric orbit model. The results can become inaccurate if the pericenter
-angles for the planet and star are measured from different axes. In this work, we establish the sky plane to lie within
-the x-z plane, with the y-axis pointing towards the observer along the line of sight (refer to Figure X).
+angles for the planet and star are measured from different axes.
 
 .. image:: coordinate_system.png
    :width: 40pt
@@ -165,12 +155,12 @@ The argument of pericenter is determined from the positive x-axis, such that a t
 :math:`\phi` is equal to:
 
 .. math::
-    \phi_{\mathrm I}\,=\,\frac{\pi}{2} - \omega_{\mathrm p}
+ \phi_{\mathrm I}\,=\,\frac{\pi}{2} - \omega_{\mathrm p}
 
 and an eclipse occurs when:
 
 .. math::
-    \phi_{\mathrm II} = \frac{3\pi}{2} - \omega_{\mathrm p}
+ \phi_{\mathrm II} = \frac{3\pi}{2} - \omega_{\mathrm p}
 
 ------------
 

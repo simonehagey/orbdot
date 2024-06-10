@@ -1,8 +1,8 @@
 .. _installation:
 
-*****************
-Installing OrbDot
-*****************
+************
+Installation
+************
 
 You can pip install it:
 

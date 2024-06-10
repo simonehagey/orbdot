@@ -1,4 +1,6 @@
 """
+Analysis
+--------
 This module defines the :class:`Analysis` class, which allows the user to perform various analyses
 on the results of any OrbDot fit.
 """

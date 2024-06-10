@@ -1,4 +1,6 @@
 """
+TransitDuration
+---------------
 This module defines the :class:`TransitDuration` class, which extends the capabilities of the
 :class:`NestedSampling` class to facilitate model fitting of transit durations.
 """

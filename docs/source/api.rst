@@ -43,6 +43,7 @@ Models
 ======
 
 ------------
+
 .. automodule:: orbdot.models.theory
    :members:
 
@@ -66,7 +67,7 @@ Models
 Tools
 =====
 
-.. automodule:: orbdot.models.plots
+.. automodule:: orbdot.tools.plots
    :members:
 
 ------------
@@ -81,5 +82,5 @@ Tools
 
 ------------
 
-.. automodule:: orbdot.models.utilities
+.. automodule:: orbdot.tools.utilities
    :members:

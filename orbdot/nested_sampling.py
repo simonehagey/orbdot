@@ -1,4 +1,6 @@
 """
+NestedSampling
+--------------
 This module defines the :class:`NestedSampling` class, which contains all of the methods required
 to run the model fits defined in the :class:`TransitTiming`, :class:`RadialVelocity`,
 :class:`TransitDuration`, and :class:`JointFit` classes.
@@ -29,8 +31,7 @@ class NestedSampling:
     is important for the user to familiarize themselves with the parameter symbols and definitions.
 
     General Orbit Parameters
-    ------------------------
-    The following parameters are defined at time t=t0:
+     The following parameters are defined at time t=t0:
 
         't0' --> reference transit center time [BJD_TDB].
         'P0' --> orbital period in days.
@@ -40,8 +41,7 @@ class NestedSampling:
         'O0' --> longitude of the ascending node in radians.
 
     Coupled Parameters
-    ------------------
-    The user may choose to fit the eccentricity and argument of pericenter (A.O.P) as coupled
+     The user may choose to fit the eccentricity and argument of pericenter (A.O.P) as coupled
     parameters, which is handled automatically if the following free variables are given:
 
         'ecosw' --> the eccentricity multiplied by the cosine of the A.O.P.
@@ -50,7 +50,6 @@ class NestedSampling:
         'sq_esinw' --> the square root of the eccentricity multiplied by the sine of the A.O.P.
 
     Time-Dependent Parameters
-    -------------------------
         'PdE' --> a constant change of the orbital period in days per orbit.
         'wdE' --> a constant change of the argument of pericenter in radians per orbit.
         'edE' --> a constant change of the orbital eccentricity per orbit.
@@ -58,7 +57,6 @@ class NestedSampling:
         'OdE' --> a constant change of the longitude of the ascending node in radians per orbit.
 
     Radial Velocity Parameters
-    --------------------------
         'K'   --> the radial velocity semi-amplitude in m/s.
         'v0'  --> the systemic radial velocity in m/s (instrument specific).
         'jit'   --> a radial velocity jitter term in m/s (instrument specific).

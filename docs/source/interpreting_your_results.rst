@@ -1,30 +1,27 @@
 .. _interpreting-results:
 
-*************************
-Interpreting Your Results
-*************************
+************************
+Interpreting the Results
+************************
 
 The Analysis Class
 ==================
-The :class:`orbdot.analysis.Analysis` class is designed to facilitate and interpret various analyses related to the transit timing and orbital
+The :class:`~orbdot.analysis.Analysis` class is designed to facilitate and interpret various analyses related to the transit timing and orbital
 dynamics of exoplanets. It processes data from a given planetary system and provides functionalities to compute and
 summarize effects such as proper motion, orbital decay, and apsidal precession.
 
-The `Analysis` class provides a comprehensive toolset for analyzing and interpreting the orbital dynamics and
+The :class:`~orbdot.analysis.Analysis`  class provides a comprehensive toolset for analyzing and interpreting the orbital dynamics and
 transit timing variations of exoplanets. By leveraging empirical laws and model fits, it helps researchers understand
 the intricate gravitational interactions within exoplanetary systems and predict future behavior. The class's methods
 are designed to be user-friendly, offering detailed summaries of results and the underlying physics.
 
 For further details and examples, refer to the source code and the referenced paper by Penev et al. (2018).
 
-To use the `Analysis` class, you need an instance of a planet class containing system parameters and observational
+To use the :class:`~orbdot.analysis.Analysis`  class, you need an instance of a planet class containing system parameters and observational
 data. Additionally, you need a dictionary containing the results of the model fit. Here is an example of how to
-initialize the `Analysis` class:
+initialize the :class:`~orbdot.analysis.Analysis` class:
 
 .. code-block:: python
-
-    planet_instance = ...  # Your planet instance
-    results_dic = ...      # Your results dictionary
 
     analysis = Analysis(planet_instance, results_dic)
 
@@ -98,7 +95,7 @@ uses Bayesian evidence, denoted as $\log{\mathrm{Z}}$, as a fundamental metric f
     """
 
     The only star-planet parameters that are necessary to fully
-    utilize the :class:`Analysis` class are:
+    utilize the :class::class:`~orbdot.analysis.Analysis` class are:
 
         --> The star mass 'M_s' in solar masses.
         --> The star radius 'R_s' in solar radii.

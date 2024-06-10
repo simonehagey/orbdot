@@ -4,38 +4,40 @@
 Model Fitting
 **************
 
+OrbDot currently supports model fitting for three evolutionary cases:
+
+1. A stable orbit that is circular or eccentric.
+2. A constant evolution of the orbital period, :math:`\dot{P}`.
+3. A constant evolution of the argument of pericenter, :math:`\dot{\omega}`.
+
+
 Nested Sampling Implementation
 ==============================
 One of the primary benefits of nested sampling is its ability to efficiently explore complex
 and high-dimensional parameter spaces. Unlike traditional Markov Chain Monte Carlo (MCMC) methods, nested sampling
 is less prone to getting stuck in local optima and is more effective at sampling regions of high likelihood within
-the parameter space.
-
-Additionally, nested sampling provides a principled way to compute the Bayesian evidence, which
-quantifies the goodness-of-fit of a model to the data.
-
-This evidence-based approach allows researchers to directly compare the relative strengths of different models and make
-informed decisions about model selection.
-
-Nested sampling is a powerful and sophisticated algorithm that confers several notable advantages to the field of
-computational science. One of the primary benefits of nested sampling is its ability to efficiently explore complex
-and high-dimensional parameter spaces. Unlike traditional Markov Chain Monte Carlo (MCMC) methods, nested sampling
-is less prone to getting stuck in local optima and is more effective at sampling regions of high likelihood within
-the parameter space. Additionally, nested sampling provides a principled way to compute the Bayesian evidence, which
-quantifies the goodness-of-fit of a model to the data. This evidence-based approach allows researchers to directly
-compare the relative strengths of different models and make informed decisions about model selection. Overall,
-nested sampling has become an invaluable tool in the arsenal of scientists and researchers, providing robust and
-efficient solutions for complex problems that involve parameter estimation, model selection, and uncertainty
-quantification.
+the parameter space. Also the Bayesian evidence comes striaght out of it.
 
 
 The NestedSampling Class
 ------------------------
+
+This module defines the :class:`NestedSampling` class, which contains all of the methods required
+to run the model fits defined in the :class:`TransitTiming`, :class:`RadialVelocity`,
+:class:`TransitDuration`, and :class:`JointFit` classes.
+
+To perform the nested sampling methods the user may choose between two packages: Nestle [1]_
+and PyMultiNest [2]_. PyMultiNest is generally faster and more robust, but it can be tricky to
+install, thus it is not a requirement to use this code. The desired sampler is specified in the
+settings file as 'nestle' or 'multinest'.
+
+.. [1] Nestle by Kyle Barbary. http://kbarbary.github.io/nestle
+.. [2] PyMultiNest by Johannes Buchner. http://johannesbuchner.github.io/PyMultiNest/
+
 This module, :class:`~orbdot.nested_sampling.NestedSampling`, serves as a comprehensive framework for conducting model fits of secular evolution to
 different types, such as transit timing, radial velocity analysis, and joint parameter estimation. It provides a set of tools
 for initializing model fits, handling parameters and their priors, and running nested sampling algorithms.
 
-^^^^^^^^^^^^^^^^
 Describe how the priors work with the nested sampling algorithms (unit cube thing) and what the different options
 are for the user.
 
@@ -59,34 +61,6 @@ the OrbDot parameter set.
 
 Initiating this class requires both the priors on each parameter and their 'fixed' values.
 
-- **Fixed Values:**
-  - The fixed values are used as the default for any parameters that are not set to vary in a model fit. The built-in
-  default values are defined in the `defaults/info_file.json` file, but the user may specify their own in the
-  star-planet system 'info' files given to the :class:`~orbdot.star_planet.StarPlanet` class. Additionally, these fixed values may be updated at
-  any time, such as after a particular model fit, by calling the :meth:`~orbdot.star_planet.StarPlanet.update_default` method.
-
-- **Priors:**
-  - The prior is structured as a dictionary with keys for each parameter, with each value being a list specifying the
-  prior type and bounds. The following prior types are currently supported:
-    - Gaussian: `["gaussian", mean, std]`
-    - Log-Uniform: `["log", log10(min), log10(max)]`
-    - Uniform: `["uniform", min, max]`
-
-  The built-in priors are defined in the `defaults/fit_settings.json` file, but the user should specify their own in
-  the 'settings' file that is given to the `StarPlanet` class. Like the fixed values, the priors may be updated at any
-  time by calling the :meth:`~orbdot.star_planet.StarPlanet.update_prior` method.
-
-The TransitTiming Class
------------------------
-This class extends the capabilities of the :class:`~orbdot.nested_sampling.NestedSampling` class to support transit and eclipse timing applications.
-
-It facilitates fitting the observations to a constant-period, orbital decay, or apsidal precession timing model.
-
-The RadialVelocity Class
-------------------------
-
-Writing Your Own Class
-----------------------
 
 Options and Settings
 =====================
@@ -124,9 +98,15 @@ so all you need to do is give the parameters ‘ecosw’ and ‘esinw’ when ru
 
 Fit Settings
 ------------
+Initiating this class requires both the priors on each parameter and their 'fixed' values.
 
 Default Parameter Values
 ------------------------
+- **Fixed Values:**
+  - The fixed values are used as the default for any parameters that are not set to vary in a model fit. The built-in
+  default values are defined in the `defaults/info_file.json` file, but the user may specify their own in the
+  star-planet system 'info' files given to the :class:`~orbdot.star_planet.StarPlanet` class. Additionally, these fixed values may be updated at
+  any time, such as after a particular model fit, by calling the :meth:`~orbdot.star_planet.StarPlanet.update_default` method.
 
 Updating Default Values
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -139,10 +119,23 @@ a parameter from the unit hypercube to a normal scale. Helpful link for explaini
 
 The `"prior"` is defined in the settings file and is structured as a dictionary with keys for each parameter.
 
-<details><summary>example:</summary>
+        This method transforms the current state of the free parameters from the unit hypercube to
+        their true values with the specified prior distributions. The transformed parameters may
+        then be passed to the log-likelihood function by the sampler.
 
-```
-...
+The prior is structured as a dictionary with keys for each parameter, with each value being a list specifying the
+prior type and bounds. The following prior types are currently supported:
+    - Gaussian: `["gaussian", mean, std]`
+    - Log-Uniform: `["log", log10(min), log10(max)]`
+    - Uniform: `["uniform", min, max]`
+
+The built-in priors are defined in the `defaults/fit_settings.json` file, but the user should specify their own in
+the 'settings' file that is given to the `StarPlanet` class. Like the fixed values, the priors may be updated at any
+time by calling the :meth:`~orbdot.star_planet.StarPlanet.update_prior` method.
+
+
+.. code-block:: text
+
   "prior": {"t0":[2456282.5, 0.01],
             "P":[0.94, 0.0001],
             "e":[-8,-1],
@@ -155,8 +148,6 @@ The `"prior"` is defined in the settings file and is structured as a dictionary 
             "jit":[-2,2],
             "dvdt":[-1, 1],
             "ddvdt":[-1, 1]}
-```
-</details>
 
 Each key is a tuple specifying the prior 'bounds' (the meaning of which depend on the type of prior) for transforming
 a parameter from the unit hypercube to a normal scale.:
@@ -213,6 +204,13 @@ the eccentricity $e$ and angular orientation $\omega$ of the orbit, particularly
 
 Output Files
 ============
+This method calculates the confidence intervals using the provided samples and stores them
+in a dictionary. If a parameter was not allowed to vary in the model fit, its default value
+is recorded in the dictionary for completeness.
+
+If the user has chosen to fit 'ecosw' and 'esinw' or 'sq_ecosw' and 'sq_esinw', the
+derived 'e0' and 'w0' are also returned.
+
 For each model fit in our example the following files are saved:
 
 - `*_summary.txt` : A text summary of the best-fit values and sampling statistics.
