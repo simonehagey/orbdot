@@ -6,9 +6,12 @@ Getting Started With OrbDot
 The first step to using OrbDot is to create an instance of the ``StarPlanet`` class to represent your chosen planet and its host star. This class acts as an interface for accessing the core capabilities of the OrbDot package, combining the data, methods, and attributes
 necessary run model fitting algorithms and interpret the results. It inherits the model fitting capabilities inherited from the ``TransitTiming``, ``RadialVelocity``, ``TransitDuration``, and ``JointFit`` classes.
 
-.. autoclass:: orbdot.star_planet
+.. autoclass:: orbdot.star_planet.StarPlanet
     :members:
 
+
+.. automodule:: orbdot.tools.priors
+    :members:
 
 Creating a ``StarPlanet`` Instance
 ----------------------------------
@@ -72,6 +75,9 @@ DROPDOWN
 
 Input Files
 -----------
+
+.. autofunction:: orbdot.models.theory.get_companion_mass_from_linear_rv
+
 As we saw above, the creation of a StarPlanet object requires a 'settings' file (e.g. ``'settings_files/WASP-12_settings.json'``), which itself points to files holding the data, as well as an 'info' files that contains basic information about the star-planet system and its physical characteristics. In total, the input files are:
 
 1. The 'settings' file, e.g. : ``*_settings.json``
