@@ -1,11 +1,8 @@
 
-***
-API
-***
+------------
 
 Classes
 =======
-
 
 StarPlanet
 ----------
@@ -44,13 +41,19 @@ TransitDuration
 .. autoclass:: orbdot.transit_duration.TransitDuration
    :members:
 
-
+------------
 
 Models
 ======
 
+``theory.py``
+-------------
+
 .. automodule:: orbdot.models.theory
    :members:
+
+``ttv_models.py``
+-------------
 
 .. automodule:: orbdot.models.ttv_models
    :members:
@@ -61,6 +64,7 @@ Models
 .. automodule:: orbdot.models.tdv_models
    :members:
 
+------------
 
 Tools
 =====

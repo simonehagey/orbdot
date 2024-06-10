@@ -25,7 +25,7 @@ That was easy! Now we have access to all of the attributes and methods that we n
 
 we can fit the available transit and/or eclipse timing data to the model for a circular orbit undergoing orbital decay. The most important ``StarPlanet`` attributes are listed in the dropdown table below, and model fitting options are described further in Section X.
 
-.. admonition:: For example
+.. topic:: Attributes
     :class: dropdown
 
     .. list-table::
@@ -42,34 +42,32 @@ we can fit the available transit and/or eclipse timing data to the model for a c
          - The name of the planet.
        * - ``sp_system_params``
          - ``dict``
-         - A dictionary containing the star-planet system parameters (see REF).
+         - A dictionary holding the system info file.
        * - ``ttv_data``
          - ``dict``
-         - A dictionary containing the transit and eclipse mid-times (see REF).
+         - The transit and/or eclipse mid-time data.
        * - ``rv_data``
          - ``dict``
-         - A dictionary containing the radial velocity measurements (see REF).
+         - The radial velocity data.
        * - ``tdv_data``
          - ``dict``
-         - A dictionary containing the transit duration measurements (see REF).
+         - The transit duration data.
        * - ``prior``
          - ``dict``
-         - A dictionary that stores parameters that define the prior distributions, see REF.
+         - The prior distributions.
        * - ``fixed``
          - ``dict``
-         - A ??
+         - The fixed parameter values.
        * - ``plot_settings``
          - ``dict``
-         - A dictionary ...
+         - Various plot settings
        * - ``main_save_dir``
          - ``str``
-         - The path name ...
+         - The base path to save the output files
 
 The StarPlanet Class
 ^^^^^^^^^^^^^^^^^^^^
 
-.. autoclass:: orbdot.star_planet.StarPlanet
-   :members:
 
 Input Files
 -----------
@@ -135,7 +133,7 @@ desired sampler (``"nestle"`` or ``"multinest"``), the prior (``"prior"``), the 
      - ``dict``
      -
 
-.. admonition:: For example
+.. seealso:: Example
   :class: dropdown
 
   .. code-block::

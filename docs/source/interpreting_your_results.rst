@@ -6,7 +6,7 @@ Interpreting Your Results
 
 The Analysis Class
 ==================
-The `Analysis` class is designed to facilitate and interpret various analyses related to the transit timing and orbital
+The :class:`orbdot.analysis.Analysis` class is designed to facilitate and interpret various analyses related to the transit timing and orbital
 dynamics of exoplanets. It processes data from a given planetary system and provides functionalities to compute and
 summarize effects such as proper motion, orbital decay, and apsidal precession.
 
@@ -79,21 +79,19 @@ uses Bayesian evidence, denoted as $\log{\mathrm{Z}}$, as a fundamental metric f
    :width: 80%
    :align: center
 
-   +----------------------------------+--------------------------------+
-   | Condition                        | Evidence for Model 1 ($M_1$)   |
-   +==================================+================================+
-   | $B_{12} \leq 1$                  | M_1 is not supported over      |
-   |                                  | M_2                            |
-   +----------------------------------+--------------------------------+
-   | $1 < B_{12} \leq 3$              | Evidence for $M_1$ is barely   |
-   |                                  | worth mentioning               |
-   +----------------------------------+--------------------------------+
-   | $3 < B_{12} \leq 20$             | Positive evidence for $M_1$    |
-   +----------------------------------+--------------------------------+
-   | $20 < B_{12} \leq 150$           | Strong evidence for $M_1$      |
-   +----------------------------------+--------------------------------+
-   | $150 < B_{12}$                   | Very strong evidence for $M_1$ |
-   +----------------------------------+--------------------------------+
+   +----------------------------------+---------------------------------------------------+
+   | Condition                        | Evidence for Model 1 (M:math:`_1`)                |
+   +==================================+===================================================+
+   | :math:`B_{12} \leq 1`            | M:math:`_1` is not supported over M:math:`_2`     |
+   +----------------------------------+---------------------------------------------------+
+   | :math:`1 < B_{12} \leq 3`        | Evidence for M:math:`_1` barely worth mentioning  |
+   +----------------------------------+---------------------------------------------------+
+   | :math:`3 < B_{12} \leq 20`       | Positive evidence for M:math:`_1`                 |
+   +----------------------------------+---------------------------------------------------+
+   | :math:`20 < B_{12} \leq 150`     | Strong evidence for M:math:`_1`                   |
+   +----------------------------------+---------------------------------------------------+
+   | :math:`150 < B_{12}`             | Very strong evidence for M:math:`_1`              |
+   +----------------------------------+---------------------------------------------------+
 
 
 Theoretical Background

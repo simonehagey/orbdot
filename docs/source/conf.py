@@ -12,7 +12,7 @@ sys.path.insert(0, os.path.abspath('../..'))
 
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.napoleon',
               'sphinx_togglebutton', 'sphinxcontrib.bibtex', 'sphinx_copybutton',
-              'sphinx.ext.autosummary',
+              'sphinx.ext.autosummary', 'sphinx.ext.viewcode'
               ]
 
 templates_path = ['_templates']
