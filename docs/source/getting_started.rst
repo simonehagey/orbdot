@@ -3,19 +3,12 @@
 Getting Started
 ===============
 
-The first step to using OrbDot is to create an instance of the :class:`~orbdot.star_planet.StarPlanet` class to represent your planet and its host star. This class acts as an interface for accessing the core capabilities of the OrbDot package, combining the data, methods, and attributes necessary run model fitting algorithms and interpret the results. It inherits the model fitting capabilities inherited from the :class:`~orbdot.transit_timing.TransitTiming`, :class:`~orbdot.radial_velocity.RadialVelocity`, :class:`~orbdot.transit_duration.TransitDuration`, and  :class:`~orbdot.joint_fit.JointFit` classes.
+The first step to using OrbDot is to create an instance of the :class:`~orbdot.star_planet.StarPlanet` class to represent your planet and its host star. This object acts as an interface with the core capabilities of the OrbDot package, combining the data, methods, and attributes necessary run model fitting algorithms and interpret the results. It inherits model fitting capabilities from the :class:`~orbdot.transit_timing.TransitTiming`, :class:`~orbdot.radial_velocity.RadialVelocity`, :class:`~orbdot.transit_duration.TransitDuration`, and  :class:`~orbdot.joint_fit.JointFit` classes.
 
 Creating a StarPlanet Instance
 ------------------------------
 
-The creation of a StarPlanet object requires the following files:
-
-1. The 'settings' file, e.g. : ``*_settings.json`` :ref:`settings-file`
-2. The 'system info' file, e.g. : ``*_info.json`` :ref:`info-file`
-3. The data files, e.g. : ``*_mid_times.txt`` and/or  ``*_rvs.txt`` :ref:`data-files`
-4. (optional) a file for plot settings, e.g. : ``*_plot_settings.txt`` (REF)
-
-To create a :class:`~orbdot.star_planet.StarPlanet` object, we simply give the pathname for the ``*_settings.json`` file. For illustrative purposes, let's use the Hot Jupiter WASP-12 b as an example:
+To create a :class:`~orbdot.star_planet.StarPlanet` instance, we simply give the pathname for the ``*_settings.json`` file. For illustrative purposes, let's use the Hot Jupiter WASP-12 b as an example:
 
 .. code-block:: python
 
@@ -62,42 +55,30 @@ That was easy! Now we have access to all of the attributes and methods that we n
      - ``str``
      - The base path to save the output files
 
+In total, the initialization of a StarPlanet object requires the following:
+
+1. :ref:`settings-file`, default is: ``_settings.json``
+2. :ref:`info-file`, default is: ``*_info.json``
+3. :ref:`data-files`
+4. (optional) a file for plot settings, default is: ``*_plot_settings.txt``
+
 ------------
 
 .. _settings-file:
 
 The Settings File
 -----------------
-This 'settings_file' provides the directories that contain the data and
-specifies certain settings needed for model fitting algorithms, including the priors.
+This file is the highest level of input, being the only file that the :class:`~orbdot.star_planet.StarPlanet` class needs to read.  This ``.json`` file is the top-level input file. It specifies the path names containing the data, the desired nested sampling implementation and settings, the system information file, directories to save the results, and priors. The keys are:
 
-This file is the highest level of input, being the only file that the :class:`~orbdot.star_planet.StarPlanet` class needs to read. It provides pathnames for the system **info** file
-
-,directories containing the data, important parameters for the nested sampling algorithms such as the
-desired sampler (``"nestle"`` or ``"multinest"``), the prior (``"prior"``), the number of live points, and the evidence tolerance.
-
-For more detail on the fit settings, see XX
-For more detail on the priors, see XX
-
-.. code-block::
-
- {"_comment1": "WASP-12 b Settings",
-
-  "_comment2": "Input Files",
-
-      "main_save_dir": "results/",
-       "system_info_file": "info_files/WASP-12_info.json",
-       "plot_settings_file": "settings_files/WASP-12_plot_settings.json",
-
-     ...
-
+. This 'settings_file' provides the directories that contain the data and
+        specifies certain settings needed for model fitting algorithms, including the priors.
 
 .. list-table::
    :header-rows: 1
 
    * - Key
      - Data Type
-     - Value
+     - Description
    * - ``main_save_dir``
      - ``str``
      -
@@ -123,33 +104,37 @@ For more detail on the priors, see XX
      - ``dict``
      -
 
-.. seealso:: Example
+Default Settings
+^^^^^^^^^^^^^^^^
+Not all of the parts of the settings file need to be populated. There is a default settings file (``"defaults/fit_settings.json"``) that gets merged with the user provided one, which keeps everything consistent and conveniently provides reasonable uninformative priors on unconstrained parameters like :math:`e\cos{w}` and :math:`e\sin{w}`. If a key is provided by the user, that value overrides the default one.
+
+.. seealso:: Default Settings File
   :class: dropdown
 
-  .. code-block::
+  .. code-block:: text
 
-    {"_comment1": "WASP-12 b Settings",
+     {"_comment1": "Settings",
 
       "_comment2": "Input Files",
 
           "main_save_dir": "results/",
-          "system_info_file": "info_files/WASP-12_info.json",
-          "plot_settings_file": "settings_files/WASP-12_plot_settings.json",
+          "system_info_file": "defaults/system_info.json",
+          "plot_settings_file": "defaults/plot_settings.json",
 
       "_comment3": "Model Fits",
 
            "RV_fit": {
              "save_dir": "rv_fits/",
-             "data_file": "data/WASP-12/WASP-12b_rvs.txt",
+             "data_file": "None",
              "data_delimiter": " ",
              "sampler": "nestle",
-             "n_live_points": 500,
+             "n_live_points": 1000,
              "evidence_tolerance": 0.1
            },
 
            "TTV_fit": {
              "save_dir": "ttv_fits/",
-             "data_file": "data/WASP-12/WASP-12b_mid_times.txt",
+             "data_file": "None",
              "data_delimiter": " ",
              "sampler": "nestle",
              "n_live_points": 1000,
@@ -158,11 +143,11 @@ For more detail on the priors, see XX
 
           "TDV_fit": {
              "save_dir": "tdv_fits/",
-             "data_file": "data/WASP-12/WASP-12b_durations.txt",
+             "data_file": "None",
              "data_delimiter": " ",
              "sampler": "nestle",
              "n_live_points": 1000,
-             "evidence_tolerance": 0.1
+             "evidence_tolerance": 0.01
            },
 
            "joint_fit": {
@@ -176,161 +161,273 @@ For more detail on the priors, see XX
 
            "prior": {
 
-             "t0": ["gaussian", 2456305.4555, 0.01],
-             "P0": ["gaussian", 1.09142, 0.0001],
-             "e0": ["uniform", 0, 0.1],
-             "w0": ["uniform", 0, 6.283185307179586],
-             "i0": ["gaussian", 83, 2],
-             "O0": ["uniform", 0, 6.283185307179586],
+             "t0": ["uniform", 2451545.0, 2460421.0],
+             "P0": ["uniform", 0, 10],
+             "e0": ["uniform", 0.0, 0.5],
+             "w0": ["uniform", 0, 6.28319],
+             "i0": ["gaussian", 90, 5],
+             "O0": ["uniform", 0, 6.28319],
 
              "ecosw": ["uniform", -1, 1],
              "esinw": ["uniform", -1, 1],
              "sq_ecosw": ["uniform", -1, 1],
              "sq_esinw": ["uniform", -1, 1],
 
-             "PdE": ["uniform", -1e-7, 0],
-             "wdE": ["uniform", 0, 0.01],
+             "PdE": ["uniform", -1e-7, 1e-7],
+             "wdE": ["uniform", 0, 0.1],
              "edE": ["uniform", 0, 0.1],
              "idE": ["uniform", 0, 1],
              "OdE": ["uniform", 0, 0.1],
 
-             "K": ["uniform", 200, 230],
-             "v0": [["uniform", -50000.0, 50000.0], ["uniform", -30, 30]],
-             "jit": ["log", -1, 2],
-             "dvdt": ["uniform", -0.1, 0.1],
-             "ddvdt": ["uniform", -0.01, 0.01]
+             "K": ["uniform", 0, 500],
+             "v0": ["uniform", -100, 100],
+             "jit": ["log" ,-1, 2],
+             "dvdt": ["uniform", -1, 1],
+             "ddvdt": ["uniform", -1, 1]
            }
     }
 
-Default Settings
-^^^^^^^^^^^^^^^^
+``"_comment1": "Input Files"``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The first part of the settings file specifies important path names:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Key
+     - Data Type
+     - Description
+     - Default Value
+   * - ``main_save_dir``
+     - ``str``
+     - Base directory for saving the model fitting outputs.
+     - ``"results/"``
+   * - ``system_info_file``
+     - ``str``
+     - Path to a file containing characteristics of the star-planet system.
+     - ``"defaults/system_info.json"``
+   * - ``plot_settings_file``
+     - ``str``
+     - (optional) Path to a file of custom settings for plots..
+     - ``"defaults/plot_settings.json"``
+
+For example,
+
+.. code-block:: text
+
+     {"_comment1": "WASP-12b Settings",
+
+      "_comment2": "Input Files",
+
+          "main_save_dir": "results/",
+          "system_info_file": "settings_files/WASP-12_settings.json",
+     ...
+
+``"_comment2": "Model Fits"``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The structure of the next section is dependent on what type(s) of data you have. For each data type, the settings file should include a dictionary associated with the appropriate key: ``RV_fit``, ``TTV_fit``, or ``TDV_fit``. Each of these dictionaries have the following keys:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Key
+     - Data Type
+     - Description
+   * - ``save_dir``
+     - ``str``
+     - The name of the directory for the results.
+   * - ``data_file``
+     - ``str``
+     - The path to the relevant data file.
+   * - ``data_delimiter``
+     - ``str``
+     - The delimiter of the data file.
+   * - ``sampler``
+     - ``str``
+     - The desired sampler: ``nestle`` or ``multinest``.
+   * - ``n_live_points``
+     - ``int``
+     - The number of live points for the nested sampling.
+   * - ``evidence_tolerance``
+     - ``float``
+     - The evidence tolerance for the nested sampling.
+
+For example,
+
+.. code-block:: text
+
+     ...
+
+     "_comment3": "Model Fits",
+
+          "TTV_fit": {
+            "save_dir": "ttv_fits/",
+            "data_file": "data/WASP-12/WASP12b_mid_times.txt",
+            "data_delimiter": " ",
+            "sampler": "nestle",
+            "n_live_points": 1000,
+            "evidence_tolerance": 0.1
+          },
+     ...
+
+For more information about the nested sampling options, see Section XXX. Similarly, the key ``"joint_fit"`` is associated with a dictionary that specifies the settings for joint fits of multiple data types. For example,
+
+.. code-block:: text
+
+     ...
+
+          "joint_fit": {
+            "save_dir": "joint_fits/",
+            "sampler": "nestle",
+            "n_live_points": 1000,
+            "evidence_tolerance": 0.1
+         },
+     ...
+
+``"_comment4": "Priors"``
+^^^^^^^^^^^^^^^^^^^^^^^^^
+This key specifies a dictionary with key-value pairs that define the prior distributions of the free parameters. For all parameters, the key is identical to its associated symbol in Table XXX. Each value is a list of three elements, the first being the type of prior ('uniform', 'gaussian', or 'log'), and the subsequent elements defining the distribution.
+
+.. table::
+   :name: tab:priors
+   :width: 50%
+   :align: center
+
+   +---------------+--------------------------------------+
+   | Gaussian      |   ["gaussian", mean, std]            |
+   +---------------+--------------------------------------+
+   | Log-Uniform   |   ["log", log10(min), log10(max)]    |
+   +---------------+--------------------------------------+
+   | Uniform       |   ["uniform", min, max]              |
+   +---------------+--------------------------------------+
+
+For example,
+
+.. code-block:: text
+
+     ...
+
+          "prior": {
+             "t0": ["gaussian", 2456305.4555, 0.01],
+             "P0": ["gaussian", 1.09142, 0.0001],
+             "PdE": ["uniform", -1e-7, 0],
+           }
+     }
 
 ------------
 
-.. data-files:
+.. _data-files:
 
 Data Files
 ----------
-- automatically handles eclipses, different sources, different RV instruments
-- required data structure
-
-``*_mid_times.txt``, ``*_rvs.txt``, ``*_durations.txt``
+When a ``StarPlanet`` instance is created, the data is accessed by the attributes ``ttv_data`` and/or ``rv_data`` and/or ``tdv_data``. Each data type, be it mid-times, radial velocities, or durations, must be given to OrbDot in separate files. In all cases, the column containing the source of the measurements (ie. a name, citation, or instrument) is important, as OrbDot recognizes and splits unique sources for plotting.
 
 .. _ttv-data:
 
 TTV Data
 ^^^^^^^^
-Reads timing data file with columns: ``[Epoch, Time (BJD), Error (BJD), Source]``, returns a dictionary containing
-the mid-times, errors, sources, and epoch numbers.
+Transit and eclipse timing data files are read assuming that the columns are in the order: :code:`[Epoch, Time (BJD), Error (BJD), Source]`. The eclipse mid-times (also known as 'occultations') are differentiated by a half orbit, so that transit and eclipse mid-times may be combined into a single data file and be automatically separated for model fits and plotting. For example, the eclipse directly following transit number 100 has an epoch equal to 100.5.
 
-Epochs (orbit number) are integers for transit mid-times, but eclipses are differentiated by
-a half orbit. For example, the eclipse for orbit no. 100 would have the epoch 100.5. The transits
-and eclipses are separated by using different keys. The keys are:
+The ``StarPlanet`` attribute ``ttv_data`` is a dictionary with the following keys:
 
-.. admonition:: ``ttv_data`` Keys
-    :class: dropdown
+.. list-table::
+   :header-rows: 1
+   :widths: 20 40
 
-    .. list-table::
-       :header-rows: 1
-       :widths: 20 40
-
-        * - Key
-         - Description
-        * - ``bjd``
-         - transit mid-times
-        * - ``err``
-         - transit mid-time errors
-        * - ``src``
-         - source of transits
-        * - ``epoch``
-         - orbit number of transits
-        * - ``bjd_ecl``
-         - eclipse mid-times
-        * - ``err_ecl``
-         - eclipse mid-time errors
-        * - ``src_ecl``
-         - source of eclipses
-        * - ``epoch_ecl``
-         - orbit number of eclipses
+    * - Key
+     - Description
+    * - ``bjd``
+     - transit mid-times
+    * - ``err``
+     - transit mid-time errors
+    * - ``src``
+     - source of transits
+    * - ``epoch``
+     - orbit number of transits
+    * - ``bjd_ecl``
+     - eclipse mid-times
+    * - ``err_ecl``
+     - eclipse mid-time errors
+    * - ``src_ecl``
+     - source of eclipses
+    * - ``epoch_ecl``
+     - orbit number of eclipses
 
 .. _rv-data:
 
 RV Data
 ^^^^^^^
-Reads RV data file with columns: :code:`[Time (BJD), Velocity (m/s), Err (m/s), Source]`, returns A dictionary
-containing the RV measurements, times, errors, and sources.
+Radial velocity data files are read assuming that the columns are in the order: :code:`[Time (BJD), Velocity (m/s), Err (m/s), Source]`. The ``StarPlanet`` attribute ``rv_data`` is a dictionary with the following keys:
 
-The data are split by the instrument/source so that instrument-specific parameters, such as
-the zero velocity and jitter, can easily be fit separately.
+.. list-table::
+   :header-rows: 1
+   :widths: 20 40
 
-Each value is a list of arrays, where the separate arrays correspond to different RV instruments.
-The keys are:
+    * - Key
+     - Description
+    * - ``trv``
+     - The measurement times.
+    * - ``rvs``
+     - radial velocity measurements in m/s
+    * - ``err``
+     - measurement errors
+    * - ``src``
+     - source associated with each measurement
+    * - ``num_src``
+     - number of unique sources
+    * - ``src_names``
+     - names of the unique sources
+    * - ``src_tags``
+     - tags assigned to each source
+    * - ``src_order``
+     - order of sources
 
-.. admonition:: ``rv_data`` Keys
-    :class: dropdown
+It is critical to be consistent in naming the source of the radial velocity measurements, as the model parameters :math:`\gamma` and :math:`\sigma_{\mathrm jitter}` are instrument-dependent. When these variables are included in a list of free parameters, OrbDot will replace them with a new identifier for each unique source, with a tag that depends on what was specified in the data file.
 
-    .. list-table::
-       :header-rows: 1
-       :widths: 20 40
-
-        * - Key
-         - Description
-        * - ``trv``
-         - The measurement times.
-        * - ``rvs``
-         - radial velocity measurements in m/s
-        * - ``err``
-         - measurement errors
-        * - ``src``
-         - source associated with each measurement
-        * - ``num_src``
-         - number of unique sources
-        * - ``src_names``
-         - names of the unique sources
-        * - ``src_tags``
-         - tags assigned to each source
-        * - ``src_order``
-         - order of sources
+For example, if there are measurements from two RV instruments that are identified by the strings ``"Doctor et al. (2012)"`` and ``"Who et al. (2022)"``, the free variable ``"v0"`` is be replaced by ``"v0_Doc"``, and ``"v0_Who"``, and ``"jit"`` is replaced by '``"jit_Doc"``, ``"jit_Who"``.
 
 .. _tdv-data:
 
 TDV Data
 ^^^^^^^^
-Reads transit duration data file with columns: :code:`[Epoch, Duration, Error, Source]`, and returns a dictionary
-containing the transit durations, errors, sources, and epoch numbers. The keys are:
+Transit duration data files are read assuming that the columns are in the order: :code:`[Epoch, Duration (min), Error (min), Source]`. The ``StarPlanet`` attribute ``tdv_data`` is a dictionary with the following keys:
 
-.. admonition:: ``tdv_data`` Keys
-    :class: dropdown
+.. list-table::
+   :header-rows: 1
+   :widths: 10 40
 
-    .. list-table::
-       :header-rows: 1
-       :widths: 10 40
-
-        * - Key
-         - Description
-        * - ``dur``
-         - The transit durations in minutes.
-        * - ``err``
-         - Errors on the transit durations in minutes.
-        * - ``src``
-         - Source of transit durations.
-        * - ``epoch``
-         - The epoch/orbit number of the observations.
+    * - Key
+     - Description
+    * - ``dur``
+     - The transit durations in minutes.
+    * - ``err``
+     - Errors on the transit durations in minutes.
+    * - ``src``
+     - Source of transit durations.
+    * - ``epoch``
+     - The epoch/orbit number of the observations.
 
 ------------
 
 .. _info-file:
 
-The System Information File
----------------------------
+The System Info File
+--------------------
+All information specific to the star-planet system is contained in a dictionary stored as a .json file
+
 All information specific to the star-planet system is contained in a dictionary stored
 as a .json file.
 
 This file contains the physical characteristics of the star-planet system, including:
 
-The default info file is: DROPDOWN
+The parameters in the info file serve one of 3 functions:
+1. they inform the fixed parameter values
+2. they are used in the Analysis class
+3. they are there just for funsies ie. all of those parameters can be loaded into the analysis class and used later in any way you want.
 
-You don't need all of that stuff, it's just there as an option. ie. all of those parameters can be loaded into the analysis class and used later in any way you want. Only a few of these parameters are actually needed to use OrbDot, with the requirements varying depending on whether you want to use the Analysis class.
+Only a few of these parameters are actually needed to use OrbDot, with the requirements varying depending on whether you want to use the Analysis class.
+
+explain planetnum
 
 Minimum requirements for model fitting
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

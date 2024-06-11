@@ -19,7 +19,6 @@ Why OrbDot?
 
 3. **Nested sampling**, **simplified**.
 
-   - Running a fit is easy, and you can specify any number of free parameters that belong to the model, in any order.
    - No need to spend hours learning how to implement nested sampling packages. Just specify any number of free parameters that belong to the model, in any order, and OrbDot will handle it for you!
 
 2. **Seamless joint fitting**.
@@ -54,6 +53,7 @@ Contents
 --------
 
 .. toctree::
+   :hidden:
 
    self
 
@@ -65,7 +65,6 @@ Contents
 
 .. toctree::
    :caption: Using OrbDot
-   :maxdepth: 6
 
    getting_started
    models

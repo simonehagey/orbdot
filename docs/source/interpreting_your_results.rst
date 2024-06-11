@@ -6,26 +6,27 @@ Interpreting the Results
 
 The Analysis Class
 ==================
-The :class:`~orbdot.analysis.Analysis` class is designed to facilitate and interpret various analyses related to the transit timing and orbital
-dynamics of exoplanets. It processes data from a given planetary system and provides functionalities to compute and
-summarize effects such as proper motion, orbital decay, and apsidal precession.
+The :class:`~orbdot.analysis.Analysis` class is designed to facilitate and interpret various analyses related to the model fits. It combines the results, star-planet system info, and data together to compute and summarize effects such as proper motion, orbital decay, and apsidal precession.
 
-The :class:`~orbdot.analysis.Analysis`  class provides a comprehensive toolset for analyzing and interpreting the orbital dynamics and
-transit timing variations of exoplanets. By leveraging empirical laws and model fits, it helps researchers understand
-the intricate gravitational interactions within exoplanetary systems and predict future behavior. The class's methods
-are designed to be user-friendly, offering detailed summaries of results and the underlying physics.
+To use the :class:`~orbdot.analysis.Analysis`  class, you need an instance of a StarPlanet class and a dictionary containing the results of the model fit. the dictionary can either be passed in directly from the model fit in the script, or it can be read from a preexisting file. Either way, however, you still need to hvae a planet instance.
 
-For further details and examples, refer to the source code and the referenced paper by Penev et al. (2018).
-
-To use the :class:`~orbdot.analysis.Analysis`  class, you need an instance of a planet class containing system parameters and observational
-data. Additionally, you need a dictionary containing the results of the model fit. Here is an example of how to
-initialize the :class:`~orbdot.analysis.Analysis` class:
+In the script right after a model fit:
 
 .. code-block:: python
 
     analysis = Analysis(planet_instance, results_dic)
 
+From a pre-existing results file:
 
+.. code-block:: python
+
+    analysis = Analysis(planet_instance, results_dic)
+
+As soon as you make an analysis object a file is made to summarize what you do with it. This file is named after the model and whatever suffix you chose. For example...
+
+Also an analysis directory is made.
+
+The following methods will add to the file and print to the console if the argument ``printout=True``.
 
 Key Methods
 ------------
@@ -34,9 +35,33 @@ Key Methods
 
  Computes and summarizes predicted transit timing variations (TTVs) and transit duration variations (TDVs) due to systemic proper motion, use the `proper_motion` method:
 
+Running this:
+
  .. code-block:: python
 
-    analysis.proper_motion(printout=True)
+    ttv_c = wasp12.run_ttv_fit(['t0', 'P0'], model='constant')
+    a = Analysis(wasp12, ttv_c)
+    proper_motion()
+
+yields the following output in the file
+
+.. code-block:: text
+
+    Systemic Proper Motion Effects
+    -----------------------------------------------------------------
+     * Apparent apsidal precession rate due to proper motion:
+          maximum: dw/dt = 3.46E-08 rad/yr
+          minimum: dw/dt = -2.12E-24 rad/yr
+     * Apparent rate of change of the inclination due to proper motion:
+          maximum: di/dt = -3.48E-08 rad/yr
+          minimum: di/dt = -4.27E-24 rad/yr
+     * Transit duration variation due to proper motion:
+          maximum: dT/dt = -4.71E-01 ms/yr
+          minimum: dT/dt = -5.77E-17 ms/yr
+     * Apparent orbital period drift due to proper motion:
+          maximum: dP/dt = -5.37E-11 ms/yr
+     * Apparent orbital period drift due to the Shklovskii effect:
+          maximum: dP/dt = 1.58E-04 ms/yr
 
 
 2. **Orbital Decay Prediction**:
@@ -45,7 +70,7 @@ Key Methods
 
  .. code-block:: python
 
-    analysis.orbital_decay_predicted(printout=True)
+    analysis.orbital_decay_predicted()
 
 3. **Orbital Decay Model Fit Interpretation**:
 
