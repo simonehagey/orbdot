@@ -76,34 +76,34 @@ The OrbDot parameter set also includes time derivatives of other orbital element
      - The square root of :math:`e` multiplied by the sine of :math:`\omega_p`.
 
 **Time-Dependent Parameters**
-.. list-table::
-   :header-rows: 1
-   :widths: 25 15 25 100
+ .. list-table::
+    :header-rows: 1
+    :widths: 25 15 25 100
 
-   * - Parameter
-     - Symbol
-     - Unit
-     - Description
-   * - :math:`\frac{dP}{dE}`
-     - ``PdE``
-     - days :math:`E^{-1}`
-     - A constant change of the orbital period.
-   * - :math:`\frac{d \omega}{dE}`
-     - ``wdE``
-     - rad :math:`E^{-1}`
-     - A constant change of the argument of pericenter.
-   * - :math:`\frac{de}{dE}`
-     - ``edE``
-     - :math:`E^{-1}`
-     - A constant change of the orbital eccentricity.
-   * - :math:`\frac{di}{dE}`
-     - ``idE``
-     - deg :math:`E^{-1}`
-     - A constant change of the line-of-sight inclination. [*]_
-   * - :math:`\frac{d \Omega}{dE}`
-     - ``OdE``
-     - rad :math:`E^{-1}`
-     - A constant change of the long. of the ascending node.
+    * - Parameter
+      - Symbol
+      - Unit
+      - Description
+    * - :math:`\frac{dP}{dE}`
+      - ``PdE``
+      - days :math:`E^{-1}`
+      - A constant change of the orbital period.
+    * - :math:`\frac{d \omega}{dE}`
+      - ``wdE``
+      - rad :math:`E^{-1}`
+      - A constant change of the argument of pericenter.
+    * - :math:`\frac{de}{dE}`
+      - ``edE``
+      - :math:`E^{-1}`
+      - A constant change of the orbital eccentricity.
+    * - :math:`\frac{di}{dE}`
+      - ``idE``
+      - deg :math:`E^{-1}`
+      - A constant change of the line-of-sight inclination. [*]_
+    * - :math:`\frac{d \Omega}{dE}`
+      - ``OdE``
+      - rad :math:`E^{-1}`
+      - A constant change of the long. of the ascending node.
 
 .. [*] Not currently implemented.
 
@@ -166,6 +166,14 @@ and an eclipse occurs when:
 
 Transit and Eclipse Timing Models
 =================================
+
+OrbDot currently supports model fitting for three evolutionary cases:
+
+1. A stable orbit that is circular or eccentric.
+2. A constant evolution of the orbital period, :math:`\dot{P}`.
+3. A constant evolution of the argument of pericenter, :math:`\dot{\omega}`.
+
+
 Secular variations in the orbits of transiting exoplanets may be detected by measuring deviations in the observed
 transit and eclipse timing from what is expected of a circular, unchanging orbit. These deviations are commonly
 referred to as Transit Timing Variations (TTVs). We examine two such deviations:

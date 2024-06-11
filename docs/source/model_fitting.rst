@@ -4,42 +4,12 @@
 Model Fitting
 **************
 
-OrbDot currently supports model fitting for three evolutionary cases:
-
-1. A stable orbit that is circular or eccentric.
-2. A constant evolution of the orbital period, :math:`\dot{P}`.
-3. A constant evolution of the argument of pericenter, :math:`\dot{\omega}`.
-
-
-Nested Sampling Implementation
-==============================
+Nested Sampling
+===============
 One of the primary benefits of nested sampling is its ability to efficiently explore complex
 and high-dimensional parameter spaces. Unlike traditional Markov Chain Monte Carlo (MCMC) methods, nested sampling
 is less prone to getting stuck in local optima and is more effective at sampling regions of high likelihood within
 the parameter space. Also the Bayesian evidence comes striaght out of it.
-
-
-The NestedSampling Class
-------------------------
-
-This module defines the :class:`NestedSampling` class, which contains all of the methods required
-to run the model fits defined in the :class:`TransitTiming`, :class:`RadialVelocity`,
-:class:`TransitDuration`, and :class:`JointFit` classes.
-
-To perform the nested sampling methods the user may choose between two packages: Nestle [1]_
-and PyMultiNest [2]_. PyMultiNest is generally faster and more robust, but it can be tricky to
-install, thus it is not a requirement to use this code. The desired sampler is specified in the
-settings file as 'nestle' or 'multinest'.
-
-.. [1] Nestle by Kyle Barbary. http://kbarbary.github.io/nestle
-.. [2] PyMultiNest by Johannes Buchner. http://johannesbuchner.github.io/PyMultiNest/
-
-This module, :class:`~orbdot.nested_sampling.NestedSampling`, serves as a comprehensive framework for conducting model fits of secular evolution to
-different types, such as transit timing, radial velocity analysis, and joint parameter estimation. It provides a set of tools
-for initializing model fits, handling parameters and their priors, and running nested sampling algorithms.
-
-Describe how the priors work with the nested sampling algorithms (unit cube thing) and what the different options
-are for the user.
 
 The power of nested sampling lies in its ability to handle complex parameter spaces and accommodate different
 types of priors. Priors are specified by the user based on prior knowledge or domain expertise.
@@ -48,6 +18,40 @@ Nested sampling methods, like the one employed here, sample from the parameter s
 higher likelihoods under the given priors. This approach allows the algorithm to efficiently focus on the most
 probable regions of the parameter space, making it a robust tool for estimating posterior distributions of
 model parameters.
+
+Live Points and the Evidence Tolerance
+--------------------------------------
+
+
+Nestle or PyMultiNest?
+----------------------
+To perform the nested sampling methods the user may choose between two packages: Nestle [1]_
+and PyMultiNest [2]_. PyMultiNest is generally faster and more robust, but it can be tricky to
+install, thus it is not a requirement to use this code. The desired sampler is specified in the
+settings file as 'nestle' or 'multinest'.
+
+The Nestle package is imported within this function so that it does not need to be installed if the user already uses PyMultiNest.
+
+
+.. [1] Nestle by Kyle Barbary. http://kbarbary.github.io/nestle
+.. [2] PyMultiNest by Johannes Buchner. http://johannesbuchner.github.io/PyMultiNest/
+
+The NestedSampling Class
+------------------------
+
+This module defines the :class:`NestedSampling` class, which contains all of the methods required
+to run the model fits defined in the :class:`TransitTiming`, :class:`RadialVelocity`,
+:class:`TransitDuration`, and :class:`JointFit` classes.
+
+Initiating this class requires both the priors on each parameter and their 'fixed' values.
+
+This module, :class:`~orbdot.nested_sampling.NestedSampling`, serves as a comprehensive framework for conducting model fits of secular evolution to
+different types, such as transit timing, radial velocity analysis, and joint parameter estimation. It provides a set of tools
+for initializing model fits, handling parameters and their priors, and running nested sampling algorithms.
+
+Describe how the priors work with the nested sampling algorithms (unit cube thing) and what the different options
+are for the user.
+
 
 
 This class streamlines the process of fitting models to exoplanet transit, eclipse duration, rv data. It offers a
@@ -62,8 +66,8 @@ the OrbDot parameter set.
 Initiating this class requires both the priors on each parameter and their 'fixed' values.
 
 
-Options and Settings
-=====================
+Running Model Fits
+==================
 The best part about OrbDot is that all you have to do to run a model fit is call one of the functions with a
 list of the parameters that you want to vary. That’s it! The settings file used to initialize the planet takes
 care of everything. So you just need to give any set of free parameters that you want, given that they are part
@@ -74,18 +78,11 @@ You just really need to familiarize yourself with the parameters you can fit. Th
 is written you have all the variables available. Currently you can only use xxx ones. But that means if you write
 your own function you can use the nested sampling class as long as you use the allowed set of variables!
 
-- You can also fit ecosw, esinw and get the derived e and w. This is all handled automatically in the backend,
-so all you need to do is give the parameters ‘ecosw’ and ‘esinw’ when rubbing a model fit.
-
 .. list-table::
    :header-rows: 1
 
    * - Method
      - Description
-   * - ``update_default``
-     -
-   * - ``update_prior``
-     -
    * - ``run_ttv_fit``
      -
    * - ``run_rv_fit``
@@ -95,10 +92,6 @@ so all you need to do is give the parameters ‘ecosw’ and ‘esinw’ when ru
    * - ``run_joint_fit``
      -
 
-
-Fit Settings
-------------
-Initiating this class requires both the priors on each parameter and their 'fixed' values.
 
 Default Parameter Values
 ------------------------
@@ -113,7 +106,9 @@ Updating Default Values
 
 Priors
 ------
-The "prior" is defined in the settings file and is structured as a dictionary with keys for each parameter. Each key is
+The "prior" is defined in the settings file (see :ref:`settings-file`) and is structured as a dictionary with keys for each parameter.
+
+Each key is
 a tuple specifying the prior 'bounds' (the meaning of which depend on the type of prior) for transforming
 a parameter from the unit hypercube to a normal scale. Helpful link for explaining the prior.
 
@@ -123,11 +118,11 @@ The `"prior"` is defined in the settings file and is structured as a dictionary 
         their true values with the specified prior distributions. The transformed parameters may
         then be passed to the log-likelihood function by the sampler.
 
-The prior is structured as a dictionary with keys for each parameter, with each value being a list specifying the
-prior type and bounds. The following prior types are currently supported:
-    - Gaussian: `["gaussian", mean, std]`
-    - Log-Uniform: `["log", log10(min), log10(max)]`
-    - Uniform: `["uniform", min, max]`
+Each key is a tuple specifying the prior 'bounds' (the meaning of which depend on the type of prior) for transforming
+a parameter from the unit hypercube to a normal scale.:
+- Gaussian : (mean, std)
+- Uniform : (min, max)
+- Log-Uniform: (log10(min), log10(max))
 
 The built-in priors are defined in the `defaults/fit_settings.json` file, but the user should specify their own in
 the 'settings' file that is given to the `StarPlanet` class. Like the fixed values, the priors may be updated at any
@@ -149,27 +144,13 @@ time by calling the :meth:`~orbdot.star_planet.StarPlanet.update_prior` method.
             "dvdt":[-1, 1],
             "ddvdt":[-1, 1]}
 
-Each key is a tuple specifying the prior 'bounds' (the meaning of which depend on the type of prior) for transforming
-a parameter from the unit hypercube to a normal scale.:
-- Gaussian : (mean, std)
-- Uniform : (min, max)
-- Log-Uniform: (log10(min), log10(max))
 
 Updating Priors
 ^^^^^^^^^^^^^^^
 
 
-
-
-
-Running Model Fits
-==================
-
-TTV Fits
---------
-
 Data Clipping
-^^^^^^^^^^^^^
+-------------
 During the model fitting runs, we employ the sigma clipping method from Hagey et al. (2022) to conservatively remove
 outliers in the transit mid-times. This technique operates by fitting the best-fit constant-period timing model,
 subtracting it from the data, and then removing any data point whose nominal value falls outside of a 3-$\sigma$ range
@@ -182,25 +163,6 @@ This process ensures the removal of outliers to improve the accuracy of the mode
         standard deviations of the mean are removed. This process is repeated until no points fall
         outside of the residuals, or until a maximum number of iterations has been reached.
 
-TTV Plot
-^^^^^^^^
-
-RV Fits
--------
-
-RV Plot
-^^^^^^^
-
-
-TDV Fits
---------
-
-
-Joint Fitting
--------------
-joint model fitting technique,
-in which all data types are utilized to better constrain shared parameters and resolve the inherent degeneracy between
-the eccentricity $e$ and angular orientation $\omega$ of the orbit, particularly in the case of apsidal precession.
 
 Output Files
 ============

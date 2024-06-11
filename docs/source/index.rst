@@ -13,39 +13,39 @@ Welcome to OrbDot! This Python package is designed for studying the secular (lon
 Why OrbDot?
 ------------
 
-1. **It's easy to get started**.
+ 1. **It's easy to get started**.
 
    - Just populate a settings file with path names, prior bounds, and a bit of info about the planetary system. OrbDot will do the rest!
 
-3. **Nested sampling**, **simplified**.
+ 2. **Nested sampling**, **simplified**.
 
    - No need to spend hours learning how to implement nested sampling packages. Just specify any number of free parameters that belong to the model, in any order, and OrbDot will handle it for you!
 
-2. **Seamless joint fitting**.
+ 3. **Seamless joint fitting**.
 
    - Fit any combination of data types simultaneously, with no extra work.
 
-4. **Flexible model fitting options**.
+ 4. **Flexible model fitting options**.
 
    - Customize the evidence tolerance, number of live points, prior distributions, plot settings, and more.
    - Option to fit :math:`e\cos{w}` and :math:`e\sin{w}` or :math:`\sqrt{e}\,\cos{w}` and :math:`\sqrt{e}\,\sin{w}`.
    - Update prior distributions and fixed parameter values in-between model fits.
 
-5. **Smart data handling**.
+ 5. **Smart data handling**.
 
    - Automatically splits up radial velocity data from multiple sources when fitting instrument-dependent free parameters (e.g., :math:`\gamma, \sigma_{\mathrm jitter}`).
    - Recognizes transit vs. eclipse mid-times by a half-decimal epoch number (0.5).
    - Automatically differentiates sources of data when plotting.
 
-6. **Saves all the outputs you need**.
+ 6. **Saves all the outputs you need**.
 
    - Extensive output files include easy-to-read text summaries of the results, corner plots, posterior samples, best-fit model plots, and more!
 
-7. **Built-in functionality for scientific interpretation**.
+ 7. **Built-in functionality for scientific interpretation**.
 
    - With the :class:`~orbdot.analysis.Analysis` class, you can easily generate summaries of various theoretical interpretations of your model fits.
 
-8. **Transparency**.
+ 8. **Transparency**.
 
    - While this package is intended to make complex things simple, it is not designed to be a black box. Between this website, a published case-study (CITE), and well-documented source code, all of the inner workings of OrbDot are discoverable.
 
@@ -74,6 +74,8 @@ Contents
 .. toctree::
    :caption: Examples
    :maxdepth: 4
+
+   example_kepler-1658.rst
 
 .. toctree::
    :caption: API

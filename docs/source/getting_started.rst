@@ -68,10 +68,7 @@ In total, the initialization of a StarPlanet object requires the following:
 
 The Settings File
 -----------------
-This file is the highest level of input, being the only file that the :class:`~orbdot.star_planet.StarPlanet` class needs to read.  This ``.json`` file is the top-level input file. It specifies the path names containing the data, the desired nested sampling implementation and settings, the system information file, directories to save the results, and priors. The keys are:
-
-. This 'settings_file' provides the directories that contain the data and
-        specifies certain settings needed for model fitting algorithms, including the priors.
+This .json file is the primary input required by the :class:`~orbdot.star_planet.StarPlanet` class. It specifies the path names for the data, the desired nested sampling implementation and settings, the system information file, directories for saving results, and priors. The keys are:
 
 .. list-table::
    :header-rows: 1
@@ -108,7 +105,7 @@ Default Settings
 ^^^^^^^^^^^^^^^^
 Not all of the parts of the settings file need to be populated. There is a default settings file (``"defaults/fit_settings.json"``) that gets merged with the user provided one, which keeps everything consistent and conveniently provides reasonable uninformative priors on unconstrained parameters like :math:`e\cos{w}` and :math:`e\sin{w}`. If a key is provided by the user, that value overrides the default one.
 
-.. seealso:: Default Settings File
+.. admonition:: Default Settings File
   :class: dropdown
 
   .. code-block:: text
@@ -187,9 +184,9 @@ Not all of the parts of the settings file need to be populated. There is a defau
            }
     }
 
-``"_comment1": "Input Files"``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-The first part of the settings file specifies important path names:
+Input Files
+^^^^^^^^^^^
+The first part of the settings file specifies important path names with the following keys:
 
 .. list-table::
    :header-rows: 1
@@ -223,9 +220,9 @@ For example,
           "system_info_file": "settings_files/WASP-12_settings.json",
      ...
 
-``"_comment2": "Model Fits"``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-The structure of the next section is dependent on what type(s) of data you have. For each data type, the settings file should include a dictionary associated with the appropriate key: ``RV_fit``, ``TTV_fit``, or ``TDV_fit``. Each of these dictionaries have the following keys:
+Model Fit Settings
+^^^^^^^^^^^^^^^^^^
+The structure of the next section is dependent on what type(s) of data you have. For each data type, the settings file should include a dictionary associated with the appropriate key: ``"RV_fit"``, ``"TTV_fit"``, or ``"TDV_fit"``. Each of these dictionaries have the following keys:
 
 .. list-table::
    :header-rows: 1
@@ -235,7 +232,7 @@ The structure of the next section is dependent on what type(s) of data you have.
      - Description
    * - ``save_dir``
      - ``str``
-     - The name of the directory for the results.
+     - The name of the directory in which to save the results.
    * - ``data_file``
      - ``str``
      - The path to the relevant data file.
@@ -244,7 +241,7 @@ The structure of the next section is dependent on what type(s) of data you have.
      - The delimiter of the data file.
    * - ``sampler``
      - ``str``
-     - The desired sampler: ``nestle`` or ``multinest``.
+     - The desired sampler: ``"nestle"`` or ``"multinest"``.
    * - ``n_live_points``
      - ``int``
      - The number of live points for the nested sampling.
@@ -270,7 +267,9 @@ For example,
           },
      ...
 
-For more information about the nested sampling options, see Section XXX. Similarly, the key ``"joint_fit"`` is associated with a dictionary that specifies the settings for joint fits of multiple data types. For example,
+For more information on the nested sampling options, see Section XXX.
+
+Similar to above, the ``"joint_fit"`` dictionary specifies the settings for joint fits, ie. fitting multiple data types simultaneously. For example,
 
 .. code-block:: text
 
@@ -284,9 +283,11 @@ For more information about the nested sampling options, see Section XXX. Similar
          },
      ...
 
-``"_comment4": "Priors"``
-^^^^^^^^^^^^^^^^^^^^^^^^^
-This key specifies a dictionary with key-value pairs that define the prior distributions of the free parameters. For all parameters, the key is identical to its associated symbol in Table XXX. Each value is a list of three elements, the first being the type of prior ('uniform', 'gaussian', or 'log'), and the subsequent elements defining the distribution.
+Priors
+^^^^^^
+The ``"priors"`` dictionary contains key-value pairs that define the prior distributions of the free parameters. Every value is a list of three elements, the first being the type of prior ('uniform', 'gaussian', or 'log'), with the subsequent elements defining the distribution. For each parameter, the key is identical to its associated symbol in Table XXX.
+
+OrDot currently supports three different prior distributions
 
 .. table::
    :name: tab:priors

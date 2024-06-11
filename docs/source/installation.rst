@@ -28,8 +28,3 @@ and one of:
 - `PyMultiNest <https://github.com/JohannesBuchner/PyMultiNest>`_ by Johannes Buchner, a Python interface
   for `MultiNest <https://github.com/JohannesBuchner/MultiNest>`_.
 
-
-Nestle vs. PyMultiNest
-----------------------
-
-Text...

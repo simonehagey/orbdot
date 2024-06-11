@@ -83,6 +83,14 @@ class Analysis:
         self.file_prefix = self.model + '_'
         self.file_suffix = results['suffix']
 
+        # create a save directory if not found
+        parent_dir = os.path.abspath(os.getcwd()) + '/'
+        try:
+            os.makedirs(os.path.join(parent_dir, self.save_dir))
+
+        except FileExistsError:
+            pass
+
         # construct the output file path
         self.outfile = self.save_dir + self.file_prefix + 'analysis' + self.file_suffix + '.txt'
 
@@ -115,15 +123,6 @@ class Analysis:
         except AttributeError:
             self.rv_data = None
             self.tau = None
-
-        # create a save directory if not found
-        parent_dir = os.path.abspath(os.getcwd()) + '/'
-
-        try:
-            os.makedirs(os.path.join(parent_dir, self.save_dir))
-
-        except FileExistsError:
-            pass
 
         # load model fit results
         self.t0 = self.res['t0'][0]    # BJD_TDB
@@ -515,7 +514,7 @@ class Analysis:
                 str2 = '\t  dP/dE = {:.2E} + {:.2E} - {:.2E} rad/E\n'.format(self.res['PdE'][0],
                                                                               self.res['PdE'][1],
                                                                               self.res['PdE'][2])
-                str3 = '\t  dP/dt = {:.2f} + {:.2f} -Z {:.2f} ms/yr\n'.format(
+                str3 = '\t  dP/dt = {:.2f} + {:.2f} - {:.2f} ms/yr\n'.format(
                     self.res['dPdt (ms/yr)'][0],
                     self.res['dPdt (ms/yr)'][1],
                     self.res['dPdt (ms/yr)'][2])
@@ -526,7 +525,7 @@ class Analysis:
                 # calculate the modified stellar quality factor from the decay rate
                 q_fit = m.quality_factor_from_decay(self.P0, self.PdE, self.M_s, self.M_p, self.R_s)
                 str1 = ' * Modified stellar quality factor:\n'
-                str2 = '\t  Q\' = {:.2E}\n'.format(q_fit)
+                str2 = '\t  Q\' = {:.2E}\n\n'.format(q_fit)
                 f.write(str1 + str2)
                 if printout:
                     print(str1, str2)
@@ -870,7 +869,7 @@ class Analysis:
                     if printout:
                         print(str1, str2)
 
-            except AttributeError:
+            except TypeError:
                 pass
 
             # check if there is an observed orbital decay rate
@@ -909,7 +908,7 @@ class Analysis:
                     if printout:
                         print(str1, str2, str3)
 
-                except AttributeError:
+                except TypeError:
                     pass
 
             # check if there is an observed apsidal precession rate
