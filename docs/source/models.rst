@@ -148,7 +148,7 @@ It is critical to be consistent in the definition of the argument of pericenter 
 fitting transit timing and RV data to an eccentric orbit model. The results can become inaccurate if the pericenter
 angles for the planet and star are measured from different axes.
 
-.. image:: coordinate_system.png
+.. image:: _static/coordinate_system.png
    :width: 40pt
 
 The argument of pericenter is determined from the positive x-axis, such that a transit occurs when the true anomaly
