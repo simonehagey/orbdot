@@ -284,7 +284,7 @@ class TransitTiming(NestedSampling):
         # define parameters that are not in the model
         illegal_params = ['i0', 'O0',
                           'PdE', 'wdE', 'idE', 'edE', 'OdE',
-                          'K', 'v0', 'jit', 'dvdt', 'ddvdt']
+                          'K', 'v0', 'jit', 'dvdt', 'ddvdt', 'K_tide']
 
         # raise an exception if the free parameter(s) are not valid
         utl.raise_not_valid_param_error(free_params, self.legal_params, illegal_params)
@@ -407,7 +407,7 @@ class TransitTiming(NestedSampling):
         # define parameters that are not in the model
         illegal_params = ['i0', 'O0',
                           'wdE', 'idE', 'edE', 'OdE',
-                          'K', 'v0', 'jit', 'dvdt', 'ddvdt']
+                          'K', 'v0', 'jit', 'dvdt', 'ddvdt', 'K_tide']
 
         # raise an exception if the free parameter(s) are not valid
         utl.raise_not_valid_param_error(free_params, self.legal_params, illegal_params)
@@ -530,7 +530,7 @@ class TransitTiming(NestedSampling):
         # define parameters that are not in the model
         illegal_params = ['i0', 'O0',
                           'PdE', 'idE', 'edE', 'OdE',
-                          'K', 'v0', 'jit', 'dvdt', 'ddvdt']
+                          'K', 'v0', 'jit', 'dvdt', 'ddvdt', 'K_tide']
 
         # raise an exception if the free parameter(s) are not valid
         utl.raise_not_valid_param_error(free_params, self.legal_params, illegal_params)

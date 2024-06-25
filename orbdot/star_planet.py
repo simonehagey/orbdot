@@ -36,10 +36,10 @@ class StarPlanet(TransitTiming, RadialVelocity, TransitDuration, JointFit):
         """
         # define the complete set of allowed parameters in the RV and timing models
         self.legal_params = (
-            't0', 'P0', 'e0', 'i0', 'w0', 'O0',         # orbital elements
-            'ecosw', 'esinw', 'sq_ecosw', 'sq_esinw',   # coupled parameters
-            'PdE', 'wdE', 'edE', 'idE', 'OdE',          # time-dependent parameters
-            'K', 'v0', 'jit', 'dvdt', 'ddvdt')          # radial velocity
+            't0', 'P0', 'e0', 'i0', 'w0', 'O0',           # orbital elements
+            'ecosw', 'esinw', 'sq_ecosw', 'sq_esinw',     # coupled parameters
+            'PdE', 'wdE', 'edE', 'idE', 'OdE',            # time-dependent parameters
+            'K', 'v0', 'jit', 'dvdt', 'ddvdt', 'K_tide')  # radial velocity
 
         # load settings file and merge with defaults
         args = utl.merge_dictionaries('fit_settings.json', settings_file)
@@ -58,8 +58,8 @@ class StarPlanet(TransitTiming, RadialVelocity, TransitDuration, JointFit):
         self.main_save_dir = args['main_save_dir'] + self.star_name + '/'
 
         # set plot titles as the star name
-        self.plot_settings['RV_PLOT']['title'] = self.star_name
-        self.plot_settings['TTV_PLOT']['title'] = self.star_name
+        self.plot_settings['RV_PLOT']['title'] = self.planet_name
+        self.plot_settings['TTV_PLOT']['title'] = self.planet_name
 
         print('\nInitializing {} instance...\n'.format(self.planet_name))
 

@@ -75,7 +75,8 @@ Contents
    :caption: Examples
    :maxdepth: 4
 
-   example_kepler-1658.rst
+   example_wasp-12
+   example_rv_trends
 
 .. toctree::
    :caption: API

@@ -29,7 +29,7 @@ def rv_constant(t0, P0, e0, w0, K, v0, dvdt, ddvdt, t):
     dvdt : float
         Linear radial velocity trend in m/s/day.
     ddvdt : float
-        Quadratic radial velocity trend in m/s^2/day.
+        Quadratic radial velocity trend in m/s/day^2.
     t : float
         Time at which to calculate the RV signal [BJD_TDB].
 
@@ -91,7 +91,7 @@ def rv_decay(t0, P0, e0, w0, K, v0, dvdt, ddvdt, PdE, t):
     dvdt : float
         Linear radial velocity trend in m/s/day.
     ddvdt : float
-        Quadratic radial velocity trend in m/s^2/day.
+        Quadratic radial velocity trend in m/s/day^2.
     PdE : float
         Rate of change of the orbital period in days per orbit.
     t : float
@@ -103,6 +103,7 @@ def rv_decay(t0, P0, e0, w0, K, v0, dvdt, ddvdt, PdE, t):
         Total radial velocity signal including long-term trends.
 
     """
+
     # determine the epoch of the most recent transit
     E = (t - t0) / P0
     E = np.array([int(x) for x in E])
@@ -154,7 +155,7 @@ def rv_precession(t0, P0, e0, w0, K, v0, dvdt, ddvdt, wdE, t):
     dvdt : float
         Linear radial velocity trend in m/s/day.
     ddvdt : float
-        Quadratic radial velocity trend in m/s^2/day.
+        Quadratic radial velocity trend in m/s/day^2.
     wdE : float
         Rate of change of the argument of pericenter per orbit.
     t : float

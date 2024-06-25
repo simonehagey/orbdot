@@ -57,11 +57,12 @@ class NestedSampling:
         'OdE' --> a constant change of the longitude of the ascending node in radians per orbit.
 
     Radial Velocity Parameters
-        'K'   --> the radial velocity semi-amplitude in m/s.
-        'v0'  --> the systemic radial velocity in m/s (instrument specific).
-        'jit'   --> a radial velocity jitter term in m/s (instrument specific).
-        'dvdt'  --> a linear radial velocity trend in m/s/day.
-        'ddvdt' --> a second order radial velocity trend in m/s^2/day.
+        'K'  --> the radial velocity semi-amplitude in m/s.
+        'v0' --> the systemic radial velocity in m/s (instrument specific).
+        'jit'    --> a radial velocity jitter term in m/s (instrument specific).
+        'dvdt'   --> a linear radial velocity trend in m/s/day.
+        'ddvdt'  --> a second order radial velocity trend in m/s/day^2.
+        'K_tide' -->
 
     Notes
     -----
@@ -436,6 +437,10 @@ class NestedSampling:
             trans[self.iddv] = pr.get_prior(theta[self.iddv], self.prior['ddvdt'])
         except AttributeError:
             pass
+        try:
+            trans[self.iKt] = pr.get_prior(theta[self.iKt], self.prior['K_tide'])
+        except AttributeError:
+            pass
 
         # radial velocity - instrument specific parameters
         try:
@@ -539,6 +544,10 @@ class NestedSampling:
             pass
         try:
             self.iddv = np.where(self.vary == 'ddvdt')[0][0]
+        except IndexError:
+            pass
+        try:
+            self.iKt = np.where(self.vary == 'K_tide')[0][0]
         except IndexError:
             pass
 
@@ -658,6 +667,10 @@ class NestedSampling:
             ddv = theta[self.iddv]
         except AttributeError:
             ddv = self.fixed['ddvdt']
+        try:
+            kt = theta[self.iKt]
+        except AttributeError:
+            kt = self.fixed['K_tide']
 
         # radial velocity - instrument specific parameters
         try:
@@ -671,7 +684,7 @@ class NestedSampling:
 
         orbital_elements = [tc, pp, ee, ww, ii, om]
         time_dependant = [dp, dw, de, di, do]
-        radial_velocity = [kk, v0, jj, dv, ddv]
+        radial_velocity = [kk, v0, jj, dv, ddv, kt]
 
         return orbital_elements, time_dependant, radial_velocity
 
@@ -737,6 +750,8 @@ class NestedSampling:
 
             dic['e_derived'] = e_res
             dic['w_derived'] = w_res
+            dic['e0'] = e_res
+            dic['w0'] = w_res
         except AttributeError:
             pass
 
@@ -748,6 +763,8 @@ class NestedSampling:
 
             dic['e_derived'] = e_res
             dic['w_derived'] = w_res
+            dic['e0'] = e_res
+            dic['w0'] = w_res
         except AttributeError:
             pass
 
@@ -786,6 +803,10 @@ class NestedSampling:
             stat.confidence_intervals(self.vary, samples, dic, [self.iddv])
         except AttributeError:
             dic['ddvdt'] = [self.fixed['ddvdt']]
+        try:
+            stat.confidence_intervals(self.vary, samples, dic, [self.iKt])
+        except AttributeError:
+            dic['K_tide'] = [self.fixed['K_tide']]
 
         # radial velocity - instrument specific parameters
         try:
@@ -881,13 +902,16 @@ class NestedSampling:
             del self.iK
         except AttributeError:
             pass
-
         try:
             del self.idv
         except AttributeError:
             pass
         try:
             del self.iddv
+        except AttributeError:
+            pass
+        try:
+            del self.iKt
         except AttributeError:
             pass
 

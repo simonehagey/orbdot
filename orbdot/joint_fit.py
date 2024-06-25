@@ -36,15 +36,6 @@ class JointFit(NestedSampling):
         # the evidence tolerance for the nested sampling analysis
         self.joint_tol = joint_settings['evidence_tolerance']
 
-        # create a save directory if not found
-        parent_dir = os.path.abspath(os.getcwd()) + '/'
-
-        try:
-            os.makedirs(os.path.join(parent_dir, joint_settings['save_dir']))
-
-        except FileExistsError:
-            pass
-
         # initiate NestedSampling class
         NestedSampling.__init__(self, fixed_values, prior)
 
@@ -68,7 +59,7 @@ class JointFit(NestedSampling):
         # extract orbital elements and RV model parameters
         orbit, timedp, rvel = self.get_vals(theta)
         tc, pp, ee, ww, ii, om = orbit
-        kk, v0, jj, dv, ddv = rvel
+        kk, v0, jj, dv, ddv, kt = rvel
 
         # check if eccentricity exceeds physical limits
         if ee >= 1.0:
@@ -121,7 +112,7 @@ class JointFit(NestedSampling):
         orbit, timedp, rvel = self.get_vals(theta)
         tc, pp, ee, ww, ii, om = orbit
         dp, dw, de, di, do = timedp
-        kk, v0, jj, dv, ddv = rvel
+        kk, v0, jj, dv, ddv, kt = rvel
 
         # check if eccentricity exceeds physical limits
         if ee >= 1.0:
@@ -173,7 +164,7 @@ class JointFit(NestedSampling):
         orbit, timedp, rvel = self.get_vals(theta)
         tc, pp, ee, ww, ii, om = orbit
         dp, dw, de, di, do = timedp
-        kk, v0, jj, dv, ddv = rvel
+        kk, v0, jj, dv, ddv, kt = rvel
 
         # check if eccentricity exceeds physical limits
         if ee >= 1.0:
@@ -275,20 +266,29 @@ class JointFit(NestedSampling):
             raise Exception('\n\nPlease provide valid paths to the data in the '
                             'settings file before running the joint fit.')
 
+        # create a save directory if not found
+        parent_dir = os.path.abspath(os.getcwd()) + '/'
+
+        try:
+            os.makedirs(os.path.join(parent_dir, self.joint_save_dir))
+
+        except FileExistsError:
+            pass
+
         # define model-dependent variables
         if model == 'constant':
             liklihood = self.rv_ttv_loglike_constant
-            illegal_params = ['i0', 'O0', 'PdE', 'wdE', 'idE', 'edE', 'OdE']
+            illegal_params = ['i0', 'O0', 'PdE', 'wdE', 'idE', 'edE', 'OdE', 'K_tide']
             outfile = 'joint_rv_constant'
 
         elif model == 'decay':
             liklihood = self.rv_ttv_loglike_decay
-            illegal_params = ['i0', 'O0', 'wdE', 'idE', 'edE', 'OdE']
+            illegal_params = ['i0', 'O0', 'wdE', 'idE', 'edE', 'OdE', 'K_tide']
             outfile = 'joint_rv_decay'
 
         elif model == 'precession':
             liklihood = self.rv_ttv_loglike_precession
-            illegal_params = ['i0', 'O0', 'PdE', 'idE', 'edE', 'OdE']
+            illegal_params = ['i0', 'O0', 'PdE', 'idE', 'edE', 'OdE', 'K_tide']
             outfile = 'joint_rv_precession'
 
         else:
@@ -331,11 +331,18 @@ class JointFit(NestedSampling):
         res['params'] = utl.split_rv_instrument_results(free_params, self.rv_data['src_order'],
                                                         self.rv_data['src_tags'], res['params'])
 
+        rf = prefix + '_results' + suffix + '.json'
+        sf = prefix + '_random_samples' + suffix + '.txt'
+
+        res['model'] = 'joint_' + model
+        res['suffix'] = suffix
+        res['results_filename'] = rf
+        res['samples_filename'] = sf
+
         self.save_results(random_samples, samples, res, free_params,
                           self.joint_sampler, suffix, prefix)
 
-        rf = prefix + '_results' + suffix + '.json'
-        sf = prefix + '_random_samples' + suffix + '.txt'
+        # generate TTV ("O-C") and RV plots
         self.plot_settings['TTV_PLOT']['ttv_' + model + '_results_file'+suffix] = rf
         self.plot_settings['TTV_PLOT']['ttv_' + model + '_samples_file'+suffix] = sf
         self.plot_settings['RV_PLOT']['rv_' + model + '_results_file'+suffix] = rf

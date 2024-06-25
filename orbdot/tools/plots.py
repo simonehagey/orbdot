@@ -82,8 +82,20 @@ def make_ttv_plot(plot_settings, outfile, suffix=''):
               .format(suffix))
         return
 
-    # initialize figure
-    if data['epoch_ecl'].size:
+    transits = False
+    eclipses = False
+
+    if data['epoch'].size > 0 and data['epoch_ecl'].size > 0:
+        transits = True
+        eclipses = True
+
+    elif data['epoch'].size > 0:
+        transits = True
+
+    elif data['epoch_ecl'].size > 0:
+        eclipses = True
+
+    if transits and eclipses:
         fig, (ax1, ax2) = plt.subplots(2, 1, sharex=True, sharey=True)
     else:
         fig, ax1 = plt.subplots(1, 1)
@@ -92,21 +104,20 @@ def make_ttv_plot(plot_settings, outfile, suffix=''):
     preE = plot_settings['TTV_PLOT']['num_epochs_pre_data']
     postE = plot_settings['TTV_PLOT']['num_epochs_post_data']
 
-    try:
+    if transits:
         epochs_full = np.arange(min(data['epoch']) - preE, max(data['epoch']) + postE, 1)
 
-    except ValueError:
+    else:
         epochs_full = np.arange(min(data['epoch_ecl']) - preE, max(data['epoch_ecl']) + postE, 1)
 
-    # generate best-fit constant period model (transits) over full epoch range
-    cmod_full = ttv.ttv_constant(res_c['t0'][0], res_c['P0'][0], res_c['e0'][0],
-                                    res_c['w0'][0], epochs_full, primary=True)
+    if transits and eclipses:
+        # generate best-fit constant period model (transits) over full epoch range
+        cmod_full = ttv.ttv_constant(res_c['t0'][0], res_c['P0'][0], res_c['e0'][0],
+                                     res_c['w0'][0], epochs_full, primary=True)
 
-    # plot best-fit constant period model (transits) over full epoch range
-    ax1.plot(epochs_full, np.array(cmod_full - cmod_full) * 1440,
-             color='darkgrey', label='_', linewidth=m_lw, alpha=m_alpha)
-
-    try:
+        # plot best-fit constant period model (transits) over full epoch range
+        ax1.plot(epochs_full, np.array(cmod_full - cmod_full) * 1440,
+                 color='darkgrey', label='_', linewidth=m_lw, alpha=m_alpha)
 
         # generate best-fit constant-period model (eclipses) over full epoch range
         cmod_full_ecl = ttv.ttv_constant(res_c['t0'][0], res_c['P0'][0], res_c['e0'][0],
@@ -116,20 +127,36 @@ def make_ttv_plot(plot_settings, outfile, suffix=''):
         ax2.plot(epochs_full, np.array(cmod_full_ecl - cmod_full_ecl) * 1440,
                  color='darkgrey', label='Constant Period', linewidth=m_lw, alpha=1)
 
-    except UnboundLocalError:
-        pass
+    elif transits and not eclipses:
+        # generate best-fit constant period model (transits) over full epoch range
+        cmod_full = ttv.ttv_constant(res_c['t0'][0], res_c['P0'][0], res_c['e0'][0],
+                                     res_c['w0'][0], epochs_full, primary=True)
+
+        # plot best-fit constant period model (transits) over full epoch range
+        ax1.plot(epochs_full, np.array(cmod_full - cmod_full) * 1440,
+                 color='darkgrey', label='Constant Period', linewidth=m_lw, alpha=m_alpha)
+
+    elif eclipses and not transits:
+        # generate best-fit constant-period model (eclipses) over full epoch range
+        cmod_full_ecl = ttv.ttv_constant(res_c['t0'][0], res_c['P0'][0], res_c['e0'][0],
+                                        res_c['w0'][0], epochs_full, primary=False)
+
+        # plot best-fit constant period model (eclipses) over full epoch range
+        ax1.plot(epochs_full, np.array(cmod_full_ecl - cmod_full_ecl) * 1440,
+                 color='darkgrey', label='Constant Period', linewidth=m_lw, alpha=1)
 
     # plot 300 random samples from constant-period model fit
     for i in range(np.shape(s_orb_c)[0]):
 
-        # generate constant-period model (transits)
-        smod_c = ttv.ttv_constant(s_orb_c[i][0], s_orb_c[i][1], s_orb_c[i][2],
-                                   s_orb_c[i][3], epochs_full, primary=True)
+        if transits and eclipses:
 
-        # plot constant-period model (transits)
-        ax1.plot(epochs_full, np.array(smod_c - cmod_full) * 1440,
-                 color='darkgrey', label='_', linewidth=s_lw, alpha=s_alpha)
-        try:
+            # generate constant-period model (transits)
+            smod_c = ttv.ttv_constant(s_orb_c[i][0], s_orb_c[i][1], s_orb_c[i][2],
+                                       s_orb_c[i][3], epochs_full, primary=True)
+
+            # plot constant-period model (transits)
+            ax1.plot(epochs_full, np.array(smod_c - cmod_full) * 1440,
+                     color='darkgrey', label='_', linewidth=s_lw, alpha=s_alpha)
 
             # generate constant-period model (eclipses)
             smod_c_ecl = ttv.ttv_constant(s_orb_c[i][0], s_orb_c[i][1], s_orb_c[i][2],
@@ -139,8 +166,23 @@ def make_ttv_plot(plot_settings, outfile, suffix=''):
             ax2.plot(epochs_full, np.array(smod_c_ecl - cmod_full_ecl) * 1440,
                      color='darkgrey', label='_', linewidth=s_lw, alpha=s_alpha)
 
-        except UnboundLocalError:
-            pass
+        elif transits and not eclipses:
+            # generate constant-period model (transits)
+            smod_c = ttv.ttv_constant(s_orb_c[i][0], s_orb_c[i][1], s_orb_c[i][2],
+                                      s_orb_c[i][3], epochs_full, primary=True)
+
+            # plot constant-period model (transits)
+            ax1.plot(epochs_full, np.array(smod_c - cmod_full) * 1440,
+                     color='darkgrey', label='_', linewidth=s_lw, alpha=s_alpha)
+
+        elif eclipses and not transits:
+            # generate constant-period model (eclipses)
+            smod_c_ecl = ttv.ttv_constant(s_orb_c[i][0], s_orb_c[i][1], s_orb_c[i][2],
+                                             s_orb_c[i][3], epochs_full, primary=False)
+
+            # plot constant-period model (eclipses)
+            ax1.plot(epochs_full, np.array(smod_c_ecl - cmod_full_ecl) * 1440,
+                     color='darkgrey', label='_', linewidth=s_lw, alpha=s_alpha)
 
     try:
 
@@ -153,14 +195,15 @@ def make_ttv_plot(plot_settings, outfile, suffix=''):
         s_orb_d, s_tdp_d, s_rv_d \
             = read_random_samples(plot_settings['TTV_PLOT']['ttv_decay_samples_file'+suffix])
 
-        # generate best-fit orbital decay model (transits) over full epoch range
-        dmod_full = ttv.ttv_decay(res_d['t0'][0], res_d['P0'][0], res_d['PdE'][0],
+        if transits and eclipses:
+            # generate best-fit orbital decay model (transits) over full epoch range
+            dmod_full = ttv.ttv_decay(res_d['t0'][0], res_d['P0'][0], res_d['PdE'][0],
                                       res_d['e0'][0], res_d['w0'][0], epochs_full, primary=True)
 
-        # plot best-fit orbital decay model (transits) over full epoch range
-        ax1.plot(epochs_full, np.array(dmod_full - cmod_full) * 1440,
-                 color='#9c3535', label='_', linewidth=m_lw, alpha=m_alpha)
-        try:
+            # plot best-fit orbital decay model (transits) over full epoch range
+            ax1.plot(epochs_full, np.array(dmod_full - cmod_full) * 1440,
+                     color='#9c3535', label='_', linewidth=m_lw, alpha=m_alpha)
+
             # generate best-fit orbital decay model (eclipses) over full epoch range
             dmod_full_ecl = ttv.ttv_decay(res_d['t0'][0], res_d['P0'][0], res_d['PdE'][0],
                                               res_d['e0'][0], res_d['w0'][0], epochs_full,
@@ -170,21 +213,40 @@ def make_ttv_plot(plot_settings, outfile, suffix=''):
             ax2.plot(epochs_full, np.array(dmod_full_ecl - cmod_full_ecl) * 1440,
                      color='#9c3535', label='Orbital Decay', linewidth=m_lw, alpha=m_alpha)
 
-        except UnboundLocalError:
-            pass
+        elif transits and not eclipses:
+
+            # generate best-fit orbital decay model (transits) over full epoch range
+            dmod_full = ttv.ttv_decay(res_d['t0'][0], res_d['P0'][0], res_d['PdE'][0],
+                                      res_d['e0'][0], res_d['w0'][0], epochs_full, primary=True)
+
+            # plot best-fit orbital decay model (transits) over full epoch range
+            ax1.plot(epochs_full, np.array(dmod_full - cmod_full) * 1440,
+                     color='#9c3535', label='Orbital Decay', linewidth=m_lw, alpha=m_alpha)
+
+        elif eclipses and not transits:
+            # generate best-fit orbital decay model (eclipses) over full epoch range
+            dmod_full_ecl = ttv.ttv_decay(res_d['t0'][0], res_d['P0'][0], res_d['PdE'][0],
+                                              res_d['e0'][0], res_d['w0'][0], epochs_full,
+                                              primary=False)
+
+            # plot best-fit orbital decay model (eclipses) over full epoch range
+            ax1.plot(epochs_full, np.array(dmod_full_ecl - cmod_full_ecl) * 1440,
+                     color='#9c3535', label='Orbital Decay', linewidth=m_lw, alpha=m_alpha)
+
 
         # plot 300 random samples orbital decay model fit
         for i in range(np.shape(s_orb_d)[0]):
 
-            # generate orbital decay model (transits)
-            smod_d = ttv.ttv_decay(s_orb_d[i][0], s_orb_d[i][1], s_tdp_d[i][0],
-                                        s_orb_d[i][2], s_orb_d[i][3], epochs_full, primary=True)
+            if transits and eclipses:
 
-            # generate orbital decay model (transits)
-            ax1.plot(epochs_full, np.array(smod_d - cmod_full) * 1440,
-                     color='#9c3535', label='_', linewidth=s_lw, alpha=s_alpha)
+                # generate orbital decay model (transits)
+                smod_d = ttv.ttv_decay(s_orb_d[i][0], s_orb_d[i][1], s_tdp_d[i][0],
+                                            s_orb_d[i][2], s_orb_d[i][3], epochs_full, primary=True)
 
-            try:
+                # generate orbital decay model (transits)
+                ax1.plot(epochs_full, np.array(smod_d - cmod_full) * 1440,
+                         color='#9c3535', label='_', linewidth=s_lw, alpha=s_alpha)
+
                 # generate orbital decay model (eclipses)
                 smod_d_ecl = ttv.ttv_decay(s_orb_d[i][0], s_orb_d[i][1], s_tdp_d[i][0],
                                         s_orb_d[i][2], s_orb_d[i][3], epochs_full, primary=False)
@@ -193,8 +255,24 @@ def make_ttv_plot(plot_settings, outfile, suffix=''):
                 ax2.plot(epochs_full, np.array(smod_d_ecl - cmod_full_ecl) * 1440,
                          color='#9c3535', label='_', linewidth=s_lw, alpha=s_alpha)
 
-            except UnboundLocalError:
-                pass
+            elif transits and not eclipses:
+                # generate orbital decay model (transits)
+                smod_d = ttv.ttv_decay(s_orb_d[i][0], s_orb_d[i][1], s_tdp_d[i][0],
+                                       s_orb_d[i][2], s_orb_d[i][3], epochs_full, primary=True)
+
+                # generate orbital decay model (transits)
+                ax1.plot(epochs_full, np.array(smod_d - cmod_full) * 1440,
+                         color='#9c3535', label='_', linewidth=s_lw, alpha=s_alpha)
+
+            elif eclipses and not transits:
+
+                # generate orbital decay model (eclipses)
+                smod_d_ecl = ttv.ttv_decay(s_orb_d[i][0], s_orb_d[i][1], s_tdp_d[i][0],
+                                        s_orb_d[i][2], s_orb_d[i][3], epochs_full, primary=False)
+
+                # generate orbital decay model (eclipses)
+                ax1.plot(epochs_full, np.array(smod_d_ecl - cmod_full_ecl) * 1440,
+                         color='#9c3535', label='_', linewidth=s_lw, alpha=s_alpha)
 
     except KeyError:
         print(' --> No orbital decay fit results detected.')
@@ -210,16 +288,17 @@ def make_ttv_plot(plot_settings, outfile, suffix=''):
         s_orb_p, s_tdp_p, s_rv_p = \
             read_random_samples(plot_settings['TTV_PLOT']['ttv_precession_samples_file'+suffix])
 
-        # generate best-fit apsidal precession model (transits) over full epoch range
-        pmod_full = ttv.ttv_precession(res_p['t0'][0], res_p['P0'][0],
+        if transits and eclipses:
+
+            # generate best-fit apsidal precession model (transits) over full epoch range
+            pmod_full = ttv.ttv_precession(res_p['t0'][0], res_p['P0'][0],
                                            res_p['e0'][0], res_p['w0'][0],
                                            res_p['wdE'][0], epochs_full, primary=True)
 
-        # plot best-fit apsidal precession model (transits) over full epoch range
-        ax1.plot(epochs_full, np.array(pmod_full - cmod_full) * 1440,
-                 color='cadetblue', label='_', linewidth=m_lw, alpha=m_alpha)
+            # plot best-fit apsidal precession model (transits) over full epoch range
+            ax1.plot(epochs_full, np.array(pmod_full - cmod_full) * 1440,
+                     color='cadetblue', label='_', linewidth=m_lw, alpha=m_alpha)
 
-        try:
             # generate best-fit apsidal precession model (eclipses) over full epoch range
             pmod_full_ecl = ttv.ttv_precession(res_p['t0'][0], res_p['P0'][0],
                                                    res_p['e0'][0], res_p['w0'][0],
@@ -230,21 +309,40 @@ def make_ttv_plot(plot_settings, outfile, suffix=''):
                      color='cadetblue', label='Apsidal Precession',
                      linewidth=m_lw, alpha=m_alpha)
 
-        except UnboundLocalError:
-            pass
+        elif transits and not eclipses:
+            # generate best-fit apsidal precession model (transits) over full epoch range
+            pmod_full = ttv.ttv_precession(res_p['t0'][0], res_p['P0'][0],
+                                           res_p['e0'][0], res_p['w0'][0],
+                                           res_p['wdE'][0], epochs_full, primary=True)
+
+            # plot best-fit apsidal precession model (transits) over full epoch range
+            ax1.plot(epochs_full, np.array(pmod_full - cmod_full) * 1440,
+                     color='cadetblue', label='Apsidal Precession', linewidth=m_lw, alpha=m_alpha)
+
+        elif eclipses and not transits:
+            # generate best-fit apsidal precession model (eclipses) over full epoch range
+            pmod_full_ecl = ttv.ttv_precession(res_p['t0'][0], res_p['P0'][0],
+                                                   res_p['e0'][0], res_p['w0'][0],
+                                                   res_p['wdE'][0], epochs_full, primary=False)
+
+            # plot best-fit apsidal precession model (eclipses) over full epoch range
+            ax1.plot(epochs_full, np.array(pmod_full_ecl - cmod_full_ecl) * 1440,
+                     color='cadetblue', label='Apsidal Precession',
+                     linewidth=m_lw, alpha=m_alpha)
 
         # plot 300 random samples apsidal precession model fit
         for i in range(np.shape(s_orb_p)[0]):
 
-            # generate apsidal precession model (transits)
-            smod_p = ttv.ttv_precession(s_orb_p[i][0], s_orb_p[i][1],
+            if transits and eclipses:
+                # generate apsidal precession model (transits)
+                smod_p = ttv.ttv_precession(s_orb_p[i][0], s_orb_p[i][1],
                                             s_orb_p[i][2], s_orb_p[i][3],
                                             s_tdp_p[i][1], epochs_full, primary=True)
 
-            # plot apsidal precession model (transits)
-            ax1.plot(epochs_full, np.array(smod_p - cmod_full) * 1440,
-                     color='cadetblue', label='_', linewidth=s_lw, alpha=s_alpha)
-            try:
+                # plot apsidal precession model (transits)
+                ax1.plot(epochs_full, np.array(smod_p - cmod_full) * 1440,
+                         color='cadetblue', label='_', linewidth=s_lw, alpha=s_alpha)
+
                 # generate apsidal precession model (eclipses)
                 smod_p_ecl = ttv.ttv_precession(s_orb_p[i][0], s_orb_p[i][1], s_orb_p[i][2],
                                                     s_orb_p[i][3], s_tdp_p[i][1], epochs_full,
@@ -254,23 +352,39 @@ def make_ttv_plot(plot_settings, outfile, suffix=''):
                 ax2.plot(epochs_full, np.array(smod_p_ecl - cmod_full_ecl) * 1440,
                          color='cadetblue', label='_', linewidth=s_lw, alpha=s_alpha)
 
-            except UnboundLocalError:
-                pass
+            elif transits and not eclipses:
+                # generate apsidal precession model (transits)
+                smod_p = ttv.ttv_precession(s_orb_p[i][0], s_orb_p[i][1],
+                                            s_orb_p[i][2], s_orb_p[i][3],
+                                            s_tdp_p[i][1], epochs_full, primary=True)
+
+                # plot apsidal precession model (transits)
+                ax1.plot(epochs_full, np.array(smod_p - cmod_full) * 1440,
+                         color='cadetblue', label='_', linewidth=s_lw, alpha=s_alpha)
+
+            elif eclipses and not transits:
+                # generate apsidal precession model (eclipses)
+                smod_p_ecl = ttv.ttv_precession(s_orb_p[i][0], s_orb_p[i][1], s_orb_p[i][2],
+                                                    s_orb_p[i][3], s_tdp_p[i][1], epochs_full,
+                                                    primary=False)
+
+                # plot apsidal precession model (eclipses)
+                ax1.plot(epochs_full, np.array(smod_p_ecl - cmod_full_ecl) * 1440,
+                         color='cadetblue', label='_', linewidth=s_lw, alpha=s_alpha)
 
     except KeyError:
         print(' --> No apsidal precession fit results detected.\n')
 
-    # generate best-fit constant-period model (transits)
-    cmod_obs = ttv.ttv_constant(res_c['t0'][0], res_c['P0'][0],
-                                   res_c['e0'][0], res_c['w0'][0],
-                                   data['epoch'], primary=True)
+    if transits and eclipses:
+        # generate best-fit constant-period model (transits)
+        cmod_obs = ttv.ttv_constant(res_c['t0'][0], res_c['P0'][0],
+                                    res_c['e0'][0], res_c['w0'][0],
+                                    data['epoch'], primary=True)
 
-    # calculate O-C values for transit data
-    oc = data['bjd'] - cmod_obs
+        # calculate O-C values for transit data
+        oc = data['bjd'] - cmod_obs
 
-    try:
         # generate best-fit constant-period model (eclipses)
-
         cmod_obs_ecl = ttv.ttv_constant(res_c['t0'][0], res_c['P0'][0],
                                            res_c['e0'][0], res_c['w0'][0],
                                            data['epoch_ecl'], primary=False)
@@ -278,36 +392,67 @@ def make_ttv_plot(plot_settings, outfile, suffix=''):
         # calculate O-C values for eclipse data
         oc_ecl = data['bjd_ecl'] - cmod_obs_ecl
 
-    except UnboundLocalError:
-        pass
+    elif transits and not eclipses:
+        # generate best-fit constant-period model (transits)
+        cmod_obs = ttv.ttv_constant(res_c['t0'][0], res_c['P0'][0],
+                                    res_c['e0'][0], res_c['w0'][0],
+                                    data['epoch'], primary=True)
+
+        # calculate O-C values for transit data
+        oc = data['bjd'] - cmod_obs
+
+    elif eclipses and not transits:
+        # generate best-fit constant-period model (eclipses)
+        cmod_obs_ecl = ttv.ttv_constant(res_c['t0'][0], res_c['P0'][0],
+                                           res_c['e0'][0], res_c['w0'][0],
+                                           data['epoch_ecl'], primary=False)
+
+        # calculate O-C values for eclipse data
+        oc_ecl = data['bjd_ecl'] - cmod_obs_ecl
 
     # plot data, separating sources into different colours and labels
     sources_unique = np.unique(list(data['src']) + list(data['src_ecl']))
     num_sources = len(sources_unique)
 
-    # iterate through transit data sources
-    for i in range(num_sources):
+    if transits and eclipses:
 
-        # plot transit data
-        indx = np.where(data['src'] == sources_unique[i])[0]
-        ax1.errorbar(np.take(data['epoch'], indx), np.array(np.take(oc, indx)) * 1440,
-                     yerr=np.take(data['err'], indx) * 1440,
-                     label=sources_unique[i], color=data_colors[i], ecolor=data_colors[i],
-                     fmt=dfmt, markersize=dms, elinewidth=delw, capsize=decap)
+        # iterate through transit data sources
+        for i in range(num_sources):
+            # plot transit data
+            indx = np.where(data['src'] == sources_unique[i])[0]
+            ax1.errorbar(np.take(data['epoch'], indx), np.array(np.take(oc, indx)) * 1440,
+                         yerr=np.take(data['err'], indx) * 1440,
+                         label=sources_unique[i], color=data_colors[i], ecolor=data_colors[i],
+                         fmt=dfmt, markersize=dms, elinewidth=delw, capsize=decap)
 
-    try:
         # iterate through eclipse data sources
         for i in range(num_sources):
-
             # plot eclipse data
             indx = np.where(data['src_ecl'] == sources_unique[i])[0]
             ax2.errorbar(np.take(data['epoch_ecl'], indx), np.array(np.take(oc_ecl, indx)) * 1440,
                          yerr=np.take(data['err_ecl'], indx) * 1440,
+                         label='_', color=data_colors[i], ecolor=data_colors[i],
+                         fmt=dfmt, markersize=dms, elinewidth=delw, capsize=decap)
+
+    elif transits and not eclipses:
+        # iterate through transit data sources
+        for i in range(num_sources):
+            # plot transit data
+            indx = np.where(data['src'] == sources_unique[i])[0]
+            ax1.errorbar(np.take(data['epoch'], indx), np.array(np.take(oc, indx)) * 1440,
+                         yerr=np.take(data['err'], indx) * 1440,
                          label=sources_unique[i], color=data_colors[i], ecolor=data_colors[i],
                          fmt=dfmt, markersize=dms, elinewidth=delw, capsize=decap)
 
-    except UnboundLocalError:
-        pass
+    elif eclipses and not transits:
+        # iterate through eclipse data sources
+        for i in range(num_sources):
+            # plot eclipse data
+            indx = np.where(data['src_ecl'] == sources_unique[i])[0]
+            ax1.errorbar(np.take(data['epoch_ecl'], indx), np.array(np.take(oc_ecl, indx)) * 1440,
+                         yerr=np.take(data['err_ecl'], indx) * 1440,
+                         label='_', color=data_colors[i], ecolor=data_colors[i],
+                         fmt=dfmt, markersize=dms, elinewidth=delw, capsize=decap)
 
     # plot data removed in sigma clipping process
     try:
@@ -360,7 +505,6 @@ def make_ttv_plot(plot_settings, outfile, suffix=''):
             pass
 
     # finish plot
-    ax1.set_title('{}'.format(plot_settings['TTV_PLOT']['title'] + ' Transits'))
     plt.xlabel('Epoch')
     ax1.set_ylabel('Timing Deviation (minutes)')
 
@@ -368,7 +512,17 @@ def make_ttv_plot(plot_settings, outfile, suffix=''):
     plt.ylim(plot_settings['TTV_PLOT']['y_axis_limits'][0],
              plot_settings['TTV_PLOT']['y_axis_limits'][1])
 
+    if eclipses and not transits:
+        ax1.set_title('{}'.format(plot_settings['TTV_PLOT']['title'] + ' Eclipses'))
+
+    elif transits:
+        ax1.set_title('{}'.format(plot_settings['TTV_PLOT']['title'] + ' Transits'))
+
     ax1.legend()
+    legend1 = ax1.legend()
+    for line in legend1.get_lines():
+        line.set_linewidth(6)
+        line.set_alpha(1)
 
     try:
         ax2.set_title('{}'.format(plot_settings['TTV_PLOT']['title']) + ' Eclipses')

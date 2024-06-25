@@ -383,7 +383,8 @@ def assign_default_values(system_info, planet_number):
         'v0': 0.0,
         'jit': 0.0,
         'dvdt': system_info['dvdt [m/s/day]'][planet_number],
-        'ddvdt': system_info['ddvdt [m/s^2/day]'][planet_number]
+        'ddvdt': system_info['ddvdt [m/s^2/day]'][planet_number],
+        'K_tide': system_info['K_tide [m/s]']
     }
 
     # for a circular orbit set 'w0'=0

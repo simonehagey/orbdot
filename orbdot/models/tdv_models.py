@@ -15,6 +15,7 @@ R_earth = 6.371e6
 def transit_duration(P, e, w, i, M_s, R_s, R_p):
 
     # unit conversions
+    i *= np.pi / 180  # degrees to radians
     R_s *= R_sun      # solar radii to m
     R_p *= R_earth    # earth radii to m
 

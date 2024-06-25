@@ -85,7 +85,7 @@ class RadialVelocity(NestedSampling):
         # extract orbital elements and RV model parameters
         orbit, timedp, rvel = self.get_vals(theta)
         tc, pp, ee, ww, ii, om = orbit
-        kk, v0, jj, dv, ddv = rvel
+        kk, v0, jj, dv, ddv, kt = rvel
 
         # check if eccentricity exceeds physical limits
         if ee >= 1.0:
@@ -133,7 +133,7 @@ class RadialVelocity(NestedSampling):
         orbit, timedp, rvel = self.get_vals(theta)
         tc, pp, ee, ww, ii, om = orbit
         dp, dw, de, di, do = timedp
-        kk, v0, jj, dv, ddv = rvel
+        kk, v0, jj, dv, ddv, kt = rvel
 
         # check if eccentricity exceeds physical limits
         if ee >= 1.0:
@@ -181,7 +181,7 @@ class RadialVelocity(NestedSampling):
         orbit, timedp, rvel = self.get_vals(theta)
         tc, pp, ee, ww, ii, om = orbit
         dp, dw, de, di, do = timedp
-        kk, v0, jj, dv, ddv = rvel
+        kk, v0, jj, dv, ddv, kt = rvel
 
         # check if eccentricity exceeds physical limits
         if ee >= 1.0:
@@ -300,7 +300,7 @@ class RadialVelocity(NestedSampling):
                             'name in the\nsettings file before running the RV model fit.')
 
         # define parameters that are not in the model
-        illegal_params = ['i0', 'O0', 'PdE', 'wdE', 'idE', 'edE', 'OdE']
+        illegal_params = ['i0', 'O0', 'PdE', 'wdE', 'idE', 'edE', 'OdE', 'K_tide']
 
         # raise an exception if any of the the free parameters are not valid
         utl.raise_not_valid_param_error(free_params, self.legal_params, illegal_params)
@@ -422,7 +422,7 @@ class RadialVelocity(NestedSampling):
                             'name in the\nsettings file before running the RV model fit.')
 
         # define parameters that are not in the model
-        illegal_params = ['i0', 'O0', 'wdE', 'idE', 'edE', 'OdE']
+        illegal_params = ['i0', 'O0', 'wdE', 'idE', 'edE', 'OdE', 'K_tide']
 
         # raise an exception if the free parameter(s) are not valid
         utl.raise_not_valid_param_error(free_params, self.legal_params, illegal_params)
@@ -543,7 +543,7 @@ class RadialVelocity(NestedSampling):
                             'name in the\nsettings file before running the RV model fit.')
 
         # define parameters that are not in the model
-        illegal_params = ['i0', 'O0', 'PdE', 'idE', 'edE', 'OdE']
+        illegal_params = ['i0', 'O0', 'PdE', 'idE', 'edE', 'OdE', 'K_tide']
 
         # raise an exception if the free parameter(s) are not valid
         utl.raise_not_valid_param_error(free_params, self.legal_params, illegal_params)

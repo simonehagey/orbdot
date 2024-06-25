@@ -25,17 +25,164 @@ M_jup = 1.89813e27    # Jupiter mass = 1,898.13 x 10^24 kg
 R_sun = 6.957e8       # Solar radius = 695,700 km
 M_sun = 1.988500e30   # Solar mass = 1,988,500 x 10^30 kg
 
+"""
+STILL TO IMPLEMENT
+"""
+# ToDo: figure this out
+def planet_quality_factor_from_decay(P, e, dPdE, M_s, M_p, R_p):
+    """Calculates the planetary modified tidal quality factor (Q_p') with simplifying assumptions.
+
+    This function uses Equation (9) from Vissapragada et al. (2022) [1]_ to calculate the
+    modified tidal quality factor of a planet from its orbital decay rate. Eccentricity tides? It
+    assumes that the
+    planet is tidally locked and that the decay is dominated by energy dissipation in the planet.
+
+    Parameters
+    ----------
+    P : float
+        Orbital period in days.
+    e : float
+        The eccentricity of the orbit.
+    dPdE : float
+        Orbital decay rate in days per orbit.
+    M_s : float
+        Mass of the host star in solar masses.
+    M_p : float
+        Mass of the planet in earth masses.
+    R_p : float
+        The planet radius in earth radii.
+
+    Returns
+    -------
+    float
+        The modified planetary tidal quality factor Q_p'.
+
+    References
+    ----------
+    .. [1] Vissapragada et al. (2022).
+    """
+    # derive parameters
+    a = semi_major_axis_from_period(P, M_s)
+
+    # unit conversions
+    M_p *= M_earth   # earth masses to kg
+    M_s *= M_sun     # solar masses to kg
+    R_p *= R_earth   # earth radii to m
+    dPdt = dPdE / P  # days/E to days/day
+
+    # calculate the modified planetary quality factor
+    t1 = -3/2 * (M_s / M_p) * (R_p / a) ** 5
+    t2 = 171 * np.pi * e ** 2
+    Q_p = t1 * t2 / dPdt
+
+    # return the quality factor
+    return Q_p
+
+
+# ToDo: figure this out
+def circularization_timescale(P, Q_p, M_s, M_p, R_p):
+    """
+    Calculates the timescale for tidal orbital circularization (τ_e).
+
+    This function uses a rewritten form of Equation (25) from Goldreich and Soter (1966) [1]_. to
+    calculate the timescale for tidal orbital circularization, assuming that it is dominated by
+    dissipation within the planet.
+
+    ie. e / |dedt|
+
+    Parameters
+    ----------
+    P : float
+        The orbital period in days.
+    Q_p : float
+        Planetary tidal quality factor.
+    M_s : float
+        The host star mass in solar masses.
+    M_p : float
+        The planet mass in earth masses.
+    R_p : float
+        The planet radius in earth radii.
+
+    Returns
+    -------
+    float
+        The timescale for tidal orbital circularization in seconds.
+
+    References
+    ----------
+    .. [1] Goldreich & Soter (1966).
+    """
+    # derive parameters
+    a = semi_major_axis_from_period(P, M_s)
+
+    # unit conversions
+    M_p *= M_earth      # earth masses to kg
+    M_s *= M_sun        # solar masses to kg
+    R_p *= R_earth        # earth radii to m
+    P *= 86400         # days to seconds
+
+    # Calculate the timescale for tidal orbital circularization
+    tau_e = (2 * Q_p / (63 * np.pi)) * (M_p / M_s) * (a / R_p) ** 5 * P
+
+    # return the circularization timescale in years
+    return tau_e * (1 / 86400) * 365.25
+
+
+def get_linear_rv_from_companion(tau, M_c, M_s):
+    """Calculates the slope of a radial velocity trend given a lower limit on the companion mass.
+
+    This method computes a minimum mass for an unseen outer companion planet given a linear
+    trend in radial velocity data (i.e., an acceleration). While this approach to determining
+    the minimum companion mass was originally described in Feng et al. (2015) [1]_ (see eq. 1),
+    this method implements the version given by equation (8) in Bouma et al. (2020) [2]_.
+
+    Notes
+    -----
+    As a means of constraining the absolute minimum possible companion mass, this function was
+    derived with the assumption that the companion's orbit has an eccentricity of 0.5, an argument
+    of pericenter that is exactly 90 degrees, and a period that is 1.25x the time span of the
+    observations ('tau').
+
+    In this case, the observed linear trend ('dvdt') in the radial velocity model is effectively
+    a section of the sawtooth-like curve of the companion planet, for which the semi-amplitude
+    can be approximated as half of the baseline multiplied by the acceleration (0.5 * tau * dvdt).
+
+    Parameters
+    ----------
+    tau : float
+        The time span of the observations in years.
+    M_c : float
+        The companion planet mass in earth masses.
+    M_s : float
+        The mass of the host star in solar masses.
+
+    Returns
+    -------
+    float
+        The linear radial velocity trend in m/s/day.
+
+    References
+    ----------
+    .. [1] Feng et al. (2015). https://doi.org/10.1111/j.1365-2966.2007.11697.x.
+    .. [2] Bouma et al. (2020). https://doi.org/10.3847/2041-8213/ab8563.
+
+    """
+    # convert earth masses to jupiter masses
+    M_c *= M_earth / M_jup
+
+    # calculate and return the RV slope in m/s/day
+    return M_c / (5.99 * tau ** (4 / 3) * M_s ** (2 / 3))
 
 """
-ORBITAL DECAY
+
 """
-
-
 def quality_factor_from_decay(P, dPdE, M_s, M_p, R_s):
     """Calculates the modified stellar quality factor given the rate of a planet's orbital decay.
 
     This method returns the modified stellar quality factor (Q') from a given decay rate using the
     constant-phase lag model for tidal evolution as derived in Goldreich and Soter (1966) [1]_.
+
+    Note that it assumes zero stellar and planetary obliquity.
 
     Parameters
     ----------
@@ -110,9 +257,9 @@ def decay_from_quality_factor(P, M_s, M_p, R_s, Q_star):
     a = semi_major_axis_from_period(P, M_s)
 
     # unit conversions
-    M_p *= M_earth  # Earth masses to kg
-    M_s *= M_sun    # Solar masses to kg
-    R_s *= R_sun    # Solar radii to m
+    M_p *= M_earth  # earth masses to kg
+    M_s *= M_sun    # solar masses to kg
+    R_s *= R_sun    # solar radii to m
 
     # calculate the predicted orbital decay rate (days/day)
     pdot = -27 * np.pi / (2 * Q_star) * (M_p / M_s) * (R_s / a) ** 5
@@ -154,9 +301,116 @@ def empirical_quality_factor(P_orb, P_rot_s):
     return Q_star, P_tide
 
 
-"""
-APSIDAL PRECESSION
-"""
+def remaining_lifetime(P, dPdE):
+    """
+    Calculates the remaining lifetime of a planet undergoing orbital decay.
+
+    Parameters
+    ----------
+    P : float
+        Orbital period in days.
+    dPdE : float
+        Orbital decay rate in days per orbit.
+
+    Returns
+    -------
+    float
+        The remaining lifetime in millions of years (Myr).
+    """
+    # convert days/orbit to days/yr
+    dPdt = dPdE / P * 365.25
+
+    # calculate the remaining lifetime
+    tau = P / np.abs(dPdt)
+
+    # return the remaining lifetime in Myr
+    return tau / 1e6
+
+
+def tidal_energy_loss(P, dPdE, M_s, M_p):
+    """Calculates the rate of orbital energy loss due to tidal forces causing orbital decay.
+
+    This function uses Equation (9) from Yee et al. (2020) [1]_ to compute the rate at which the
+    orbital
+    energy of a planetary orbit decreases as the orbit decays due to tidal interactions
+    between the planet and its host star.
+
+    Parameters
+    ----------
+    P : float
+        Orbital period in days.
+    dPdE : float
+        Orbital decay rate in days per orbit.
+    M_s : float
+        Mass of the host star in solar masses.
+    M_p : float
+        Mass of the planet in earth masses.
+
+    Returns
+    -------
+    float
+        The rate of orbital energy loss in Watts (Joules per second).
+
+    References
+    ----------
+    .. [1] Yee et al. (2020). https://doi.org/10.3847/2041-8213/ab5c16.
+    """
+    # unit conversions
+    M_p *= M_earth     # earth masses to kg
+    M_s *= M_sun       # solar masses to kg
+    dPdt = dPdE / P    # days/E to days/day
+    P *= 86400         # days to seconds
+
+    # calculate the time derivative of the orbital energy
+    t1 = (2 * np.pi) ** (2 / 3) * M_p / 3
+    t2 = (G * M_s / P) ** (2 / 3)
+    t3 = (1 / P) * dPdt
+    dEdt = t1 * t2 * t3
+
+    # return the rate of energy loss in Watts
+    return dEdt
+
+
+def tidal_angular_momentum_loss(P, dPdE, M_s, M_p):
+    """Calculates the rate of angular momentum loss due to tidal forces causing orbital decay.
+
+    This function uses Equation (10) from Yee et al. (2020) [1]_ to compute the rate at which
+    angular momentum of a planetary orbit decreases as the orbit decays due to tidal interactions
+    between the planet and its host star.
+
+    Parameters
+    ----------
+    P : float
+        Orbital period in days.
+    dPdE : float
+        Orbital decay rate in days per orbit.
+    M_s : float
+        Host star mass in solar masses.
+    M_p : float
+        Planet mass in earth masses.
+
+    Returns
+    -------
+    float
+        The rate of orbtial angular momentum loss in kg m^2 / s^2.
+
+    References
+    ----------
+    .. [1] Yee et al. (2020). https://doi.org/10.3847/2041-8213/ab5c16.
+    """
+    # unit conversions
+    M_p *= M_earth     # earth masses to kg
+    M_s *= M_sun       # solar masses to kg
+    dPdt = dPdE / P    # days/E to days/day
+    P *= 86400         # days to seconds
+
+    # calculate the time derivative of the orbit angular momentum
+    t1 = M_p / (3 * (2 * np.pi) ** (1 / 3))
+    t2 = (G * M_s / P) ** (2 / 3)
+    dLdt = t1 * t2 * dPdt
+
+    # return the rate of angular momentum loss in kg m^2 / s^2
+    return dLdt
 
 
 def precession_gr(P, e, M_s):
@@ -728,11 +982,6 @@ def get_pdot_from_wdot(P, e, w, dwdE):
     return pdot * (1 / 365.25) * 8.64e+7
 
 
-"""
-PROPER MOTION
-"""
-
-
 def get_wdot_pm(mu, i, beta):
     """Calculates the rate of the apparent apsidal precession due to systemic proper motion.
 
@@ -936,12 +1185,6 @@ def shklovskii_effect(P, mu, D):
     return pdot
 
 
-
-"""
-COMPANION PLANET
-"""
-
-
 def companion_precession(P, M2, a2, M_s):
     """Calculates the rate of apsidal precession driven by a nonresonant planetary companion.
 
@@ -1063,8 +1306,8 @@ def get_companion_mass_from_precession(P, a2, dwdE, M_s):
     # return the companion mass in Earth masses
     return M2 / M_earth
 
-
-def get_companion_from_quadratic_rv(tau, dvdt, ddvdt, t0, M_s):
+# TODO: edit docstring
+def get_companion_from_quadratic_rv(P_min, t_pivot, dvdt, ddvdt, M_s):
     """Constrain properties of the orbit of an outer companion given a quadratic RV trend.
 
     This method calculates the minimum possible orbital period, RV semi-amplitude, and mass of
@@ -1085,7 +1328,7 @@ def get_companion_from_quadratic_rv(tau, dvdt, ddvdt, t0, M_s):
     dvdt : float
         Linear radial velocity trend in m/s/day.
     ddvdt : float
-        Quadratic radial velocity trend in m/s^2/day.
+        Quadratic radial velocity trend in m/s/day^2.
     t0 : float
         The 'pivot' point in days. This is often fixed as the mean time of the RV observations,
         but in the case of OrbDot joint fitting, it is the reference mid-time of the transiting
@@ -1106,20 +1349,15 @@ def get_companion_from_quadratic_rv(tau, dvdt, ddvdt, t0, M_s):
     """
     # unit conversions
     M_s *= M_sun    # solar masses to kg
-    tau *= 365.25   # years to days
 
-    # define the minim possible period as 2x the timespan of the observations
-    P_min = 2 * tau
-
-    # calculate the lower limit of the RV semi-amplitude from the quadratic RV term
-    K_min = ddvdt * P_min ** 2 / (4 * np.pi ** 2)   # m / s^2 / day * day^2
-    K_min *= 86400  # m/s
+    # calculate the lower limit of the RV semi-amplitude from the quadratic RV term in m/s
+    K_min = np.abs(ddvdt) * P_min ** 2 / (4 * np.pi ** 2)
 
     # calculate the lower limit of the mass from K_min
     M_min = K_min * M_s ** (2/3) * ((P_min * 86400) / (2 * np.pi * G)) ** (1/3)
 
     # solve for the time when the outer companion RV signal is at a minimum
-    tau_c = (-dvdt + ddvdt * t0) / ddvdt - P_min/4
+    tau_c = (-dvdt + ddvdt * t_pivot) / ddvdt - P_min/4
 
     return P_min, K_min, M_min/M_earth, tau_c
 
@@ -1168,51 +1406,6 @@ def get_companion_mass_from_linear_rv(tau, dvdt, M_s):
 
     # return the mass in Earth masses
     return M_c * M_jup / M_earth
-
-# def get_linear_rv_from_companion(tau, M_c, M_s):
-#     """Calculates the slope of a radial velocity trend given a lower limit on the companion mass.
-#
-#     This method computes a minimum mass for an unseen outer companion planet given a linear
-#     trend in radial velocity data (i.e., an acceleration). While this approach to determining
-#     the minimum companion mass was originally described in Feng et al. (2015) [1]_ (see eq. 1),
-#     this method implements the version given by equation (8) in Bouma et al. (2020) [2]_.
-#
-#     Notes
-#     -----
-#     As a means of constraining the absolute minimum possible companion mass, this function was
-#     derived with the assumption that the companion's orbit has an eccentricity of 0.5, an argument
-#     of pericenter that is exactly 90 degrees, and a period that is 1.25x the time span of the
-#     observations ('tau').
-#
-#     In this case, the observed linear trend ('dvdt') in the radial velocity model is effectively
-#     a section of the sawtooth-like curve of the companion planet, for which the semi-amplitude
-#     can be approximated as half of the baseline multiplied by the acceleration (0.5 * tau * dvdt).
-#
-#     Parameters
-#     ----------
-#     tau : float
-#         The time span of the observations in years.
-#     M_c : float
-#         The companion planet mass in earth masses.
-#     M_s : float
-#         The mass of the host star in solar masses.
-#
-#     Returns
-#     -------
-#     float
-#         The linear radial velocity trend in m/s/day.
-#
-#     References
-#     ----------
-#     .. [1] Feng et al. (2015). https://doi.org/10.1111/j.1365-2966.2007.11697.x.
-#     .. [2] Bouma et al. (2020). https://doi.org/10.3847/2041-8213/ab8563.
-#
-#     """
-#     # convert earth masses to jupiter masses
-#     M_c *= M_earth / M_jup
-#
-#     # calculate and return the RV slope in m/s/day
-#     return M_c / (5.99 * tau ** (4 / 3) * M_s ** (2 / 3))
 
 
 def get_msini_from_rv_amplitude(P, e, K, M_s):
@@ -1387,11 +1580,6 @@ def get_visual_binary_mass_from_linear_rv(theta, D, dvdt):
     return 5.341e-6 * (D * theta) ** 2 * dvdt * Phi
 
 
-"""
-TOOLS
-"""
-
-
 def rv_semi_amplitude(P, e, i, M_p, M_s):
     """Calculates the semi-amplitude of the radial velocity signal raised by a bound planet.
 
@@ -1476,3 +1664,25 @@ def period_from_semi_major_axis(a, M_s):
 
     # return the orbital period in days
     return P / 86400
+
+def max_ltt(P, i, M_s, M_p):
+
+    # derive parameters
+    a = semi_major_axis_from_period(P, M_s)
+
+    # unit conversions
+    M_p *= M_earth      # earth masses to kg
+    M_s *= M_sun        # solar masses to kg
+    i *= np.pi / 180    # degrees to radians
+
+    return 2 * (M_p / M_s) * a * np.sin(i) / c
+
+# print(max_ltt(7000, 90, 0.97, 1500))
+# # 743, 929
+#
+# M_p = 0.2
+# M_s = 0.87
+# a = 929 * 1.496e+11
+# i = 90 * np.pi/180
+# c = 2.99e8
+# print(2 * (M_p/M_s) * a * np.sin(i) / c)

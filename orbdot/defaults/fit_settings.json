@@ -1,12 +1,12 @@
-{"_comment1": "Settings",
+{"_comment0": "Settings",
 
-  "_comment2": "Input Files",
+  "_comment1": "Input Files",
 
       "main_save_dir": "results/",
       "system_info_file": "defaults/system_info.json",
       "plot_settings_file": "defaults/plot_settings.json",
 
-  "_comment3": "Model Fits",
+  "_comment2": "Model Fits",
 
        "RV_fit": {
          "save_dir": "rv_fits/",
@@ -42,7 +42,7 @@
          "evidence_tolerance": 0.1
        },
 
-  "_comment4": "Priors",
+  "_comment3": "Priors",
 
        "prior": {
 
@@ -68,6 +68,7 @@
          "v0": ["uniform", -100, 100],
          "jit": ["log" ,-1, 2],
          "dvdt": ["uniform", -1, 1],
-         "ddvdt": ["uniform", -1, 1]
+         "ddvdt": ["uniform", -1, 1],
+         "K_tide": ["uniform", 0, 100]
        }
 }

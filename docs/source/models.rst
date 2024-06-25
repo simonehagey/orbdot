@@ -134,7 +134,7 @@ The OrbDot parameter set also includes time derivatives of other orbital element
      - A linear radial velocity trend.
    * - :math:`\ddot{\gamma}`
      - ``ddvdt``
-     - m :math:`{\mathrm s}^{-2}` :math:`{\mathrm day}^{-1}`
+     - m :math:`{\mathrm s}^{-1}` :math:`{\mathrm day}^{-2}`
      - A second order radial velocity trend.
 
 ------------
