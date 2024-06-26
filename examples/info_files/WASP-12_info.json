@@ -1,0 +1,32 @@
+{
+  "_comment1": "WASP-12 System Info",
+
+      "star_name": "WASP-12",
+      "RA": "06h30m32.79s",
+      "DEC": "+29d40m20.16s",
+      "discovery_year": 2008,
+
+  "_comment2": "Star Properties",
+
+      "M_s [M_sun]": 1.38,
+      "R_s [R_sun]": 1.62,
+
+  "_comment3": "Planet Properties",
+
+      "planets": ["b"],
+      "M_p [M_earth]": [467.3223],
+
+  "_comment4": "Model Parameters",
+
+    "__comment4": "Orbital Elements",
+
+       "t0 [BJD_TDB]": [2456305.455522],
+       "P [days]": [1.09141953],
+       "e": [0.0],
+       "w [rad]": [0.0],
+
+    "__comment4_2": "Time-Dependant",
+
+       "PdE [days/E]": [0.0],
+       "wdE [rad/E]": [0.0]
+}

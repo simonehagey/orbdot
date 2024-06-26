@@ -5,6 +5,8 @@ The Models
 **********
 This section describes the models...
 
+.. _model_parameters:
+
 Parameters
 ==========
 
@@ -149,7 +151,6 @@ fitting transit timing and RV data to an eccentric orbit model. The results can 
 angles for the planet and star are measured from different axes.
 
 .. image:: _static/coordinate_system.png
-   :width: 40pt
 
 The argument of pericenter is determined from the positive x-axis, such that a transit occurs when the true anomaly
 :math:`\phi` is equal to:

@@ -1,15 +1,15 @@
-{"_comment1": "HAT-P-22 b Settings",
+{"_comment1": "HAT-P-4 b Settings",
 
   "_comment2": "Input Files",
 
       "main_save_dir": "results/",
-      "system_info_file": "info_files/HAT-P-22_info.json",
+      "system_info_file": "info_files/HAT-P-4_info.json",
 
   "_comment3": "Model Fits",
 
        "RV_fit": {
          "save_dir": "rv_fits/",
-         "data_file": "data/HAT-P-22b_rvs.txt",
+         "data_file": "data/HAT-P-4b_rvs.txt",
          "data_delimiter": " ",
          "sampler": "nestle",
          "n_live_points": 1000,
@@ -20,16 +20,16 @@
 
        "prior": {
 
-         "t0": ["gaussian", 2454930.22077, 0.001],
-         "P0": ["gaussian", 3.2122200, 0.00001],
+         "t0": ["gaussian", 2454245.81521, 0.001],
+         "P0": ["gaussian", 3.0565254, 0.00001],
 
          "ecosw": ["uniform", -0.1, 0.1],
          "esinw": ["uniform", -0.1, 0.1],
 
-         "K": ["uniform", 300, 330],
-         "v0": [["uniform", 12000, 13000], ["uniform", -100, 100]],
+         "K": ["uniform", 50, 100],
+         "v0": [["uniform", -2000.0, -1000.0], ["uniform", -100.0, 100.0]],
          "jit": ["log", -1, 2],
-         "dvdt": ["uniform", -0.1, 0.1],
-         "ddvdt": ["uniform", -0.0001, 0.0001]
+         "dvdt": ["uniform", -1, 1],
+         "ddvdt": ["uniform", -1, 1]
        }
 }
