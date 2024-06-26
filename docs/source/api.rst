@@ -4,7 +4,7 @@ Classes
 
 ------------
 
-.. autoclass:: orbdot.analysis.Analysis
+.. autoclass:: orbdot.analysis.Analyzer
    :members:
 
 ------------
