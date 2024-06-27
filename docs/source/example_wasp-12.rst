@@ -4,7 +4,7 @@
 Orbital Decay of WASP-12 b
 **************************
 
-This example demonstrates an OrbDot reproduction of the results from "The Orbit of WASP-12b Is Decaying" by :cite:year:`yee2020`, in which the authors performed a comprehensive analysis of new and published transit and eclipse mid-times for the Hot Jupiter WASP-12 b. They conclude that the orbit is decaying at a rate of :math:`29.0 \pm 2.0 \, \mathrm{ms \, yr^{-1}}`, which corresponds to a remaining lifetime of :math:`3.25 \, \mathrm{Myr}` and a modified stellar tidal quality factor of :math:`1.75 \times 10^5`.
+This example demonstrates an OrbDot reproduction of the results from "The Orbit of WASP-12b Is Decaying" by :cite:t:`yee2020`, in which the authors performed a comprehensive analysis of new and published transit and eclipse mid-times for the Hot Jupiter WASP-12 b. They conclude that the orbit is decaying at a rate of :math:`29.0 \pm 2.0 \, \mathrm{ms \, yr^{-1}}`, which corresponds to a remaining lifetime of :math:`3.25 \, \mathrm{Myr}` and a modified stellar tidal quality factor of :math:`1.75 \times 10^5`.
 
 Using the authors' compiled table of transit and eclipse mid-times, we will fit the constant-period, orbital decay, and apsidal precession models to the data, compare the Bayesian evidences, and use OrbDot's :class:`~orbdot.analysis.Analyzer` class to reproduce the derived results. The input files and a full script for running this example can be found in the ``examples/`` directory.
 
@@ -16,7 +16,7 @@ Before running the model fits, we need to save the transit and eclipse mid-times
 
 Data
 ----
-The transit mid-times are taken from Table 5 of :cite:t:`yee2020`, and saved in the file: ``examples/data/WASP-12/WASP-12_mid_times.txt``. Note that the eclipse mid-times, listed at the end of the file, are specified by a half-orbit (0.5) in the ``Epoch`` column, which is required for OrbDot to treat them separately from the transit mid-times.
+The transit mid-times are taken from Table 5 of :cite:author:`yee2020`, and saved in the file: ``examples/data/WASP-12/WASP-12_mid_times.txt``. Note that the eclipse mid-times, listed at the end of the file, are specified by a half-orbit (0.5) in the ``Epoch`` column, which is required for OrbDot to treat them separately from the transit mid-times.
 
 The authors clarify that the eclipse mid-times provided in the table have not been corrected for the light-travel time across the extent of the orbit, so we have accounted for that by subtracting :math:`2a/c = 22.9 \, \mathrm{s}`. Additionally, to simplify the appearance of the plots, the ``Source`` column has been modified to reflect only whether the measurement was compiled by the authors (``"Yee et al. 2019 (compiled)"``) or if it is a new observation that they provide (``"Yee et al. 2019"``).
 
@@ -38,7 +38,7 @@ The authors clarify that the eclipse mid-times provided in the table have not be
 
 System Info File
 ----------------
-The WASP-12 :ref:`system info file <info-file>` is saved as: ``examples/info_files/WASP-12_info.json``. The star and planet masses, stellar radius, and orbit ephemeris are the same as the values adopted in :cite:t:`yee2020`, but the unit of the planet's mass has been converted from Jupiter masses to Earth masses to adhere to the OrbDot convention. The sky coordinates and discovery year are not necessary for the analysis, but are useful for additional context.
+The WASP-12 :ref:`system info file <info-file>` is saved as: ``examples/info_files/WASP-12_info.json``. The star and planet masses, stellar radius, and orbit ephemeris are the same as the values adopted in :cite:author:`yee2020`, but the unit of the planet's mass has been converted from Jupiter masses to Earth masses to adhere to the OrbDot convention. The sky coordinates and discovery year are not necessary for the analysis, but are useful for additional context.
 
 .. admonition:: WASP-12 system information file
   :class: dropdown
@@ -188,7 +188,7 @@ For WASP-12 b, we have chosen broad uniform prior distributions for ``"e0"``, ``
 
 Model Fits
 ==========
-In the following sections we will fit the WASP-12 b mid-times to the constant-period, orbital decay, and apsidal precession models, and compare the results to those of :cite:t:`yee2020`. The first step is to import the :class:`~orbdot.star_planet.StarPlanet` and :class:`~orbdot.analysis.Analyzer` classes, and then to create an instance of :class:`~orbdot.star_planet.StarPlanet` that represents WASP-12 b:
+In the following sections we will fit the WASP-12 b mid-times to the constant-period, orbital decay, and apsidal precession models, and compare the results to those of :cite:author:`yee2020`. The first step is to import the :class:`~orbdot.star_planet.StarPlanet` and :class:`~orbdot.analysis.Analyzer` classes, and then to create an instance of :class:`~orbdot.star_planet.StarPlanet` that represents WASP-12 b:
 
 .. code-block:: python
 
@@ -236,7 +236,7 @@ Once the fit is complete, the output files can be found in the directory that wa
         e0 = 0.0
         w0 = 0.0
 
-This shows us that it took 3.43 seconds to run and that the Bayesian evidence (``logZ``) for the model is -204.9. The best-fit parameter values are also shown, with the uncertainties representing the 68% confidence interval on the weighted posterior samples. The following table compares these results with those of :cite:t:`yee2020`, and we see that they agree.
+This shows us that it took 3.43 seconds to run and that the Bayesian evidence (``logZ``) for the model is -204.9. The best-fit parameter values are also shown, with the uncertainties representing the 68% confidence interval on the weighted posterior samples. The following table compares these results with those of :cite:author:`yee2020`, and we see that they agree.
 
 .. list-table::
    :header-rows: 1
@@ -292,7 +292,7 @@ The ``ttv_decay_summary.txt`` file shows us that the fitting routine ran for 6.3
         e0 = 0.0
         w0 = 0.0
 
-The following table compares the orbital decay fit with that of :cite:t:`yee2020`, and we again see that the OrbDot results are in excellent agreement!
+The following table compares the orbital decay fit with that of :cite:author:`yee2020`, and we again see that the OrbDot results are in excellent agreement!
 
 .. list-table::
    :header-rows: 1
@@ -355,7 +355,7 @@ This time the summary file (``ttv_precession_summary.txt``) shows us that the mo
         Fixed Parameters
         ----------------
 
-The table below shows again that the OrbDot result agrees with :cite:t:`yee2020`!
+The table below shows again that the OrbDot result agrees with :cite:author:`yee2020`!
 
 .. list-table::
    :header-rows: 1
@@ -464,7 +464,7 @@ This appends the following summary to the ``analysis/ttv_decay_analysis.txt`` fi
      * Angular momentum loss rate:
           dLdt = -7.23E+27 kg m^2 / s^2
 
-We see that the best-fit orbital decay model yields a stellar tidal quality factor of :math:`1.73 \times 10^5`, a remaining lifetime of :math:`3.24 \, \mathrm{Myr}`, and a decrease in orbital energy and angular momentum equal to :math:`-4.8 \times 10^{23} \, \mathrm{W}` and :math:`-7.2 \times 10^{27} \, \mathrm{kg \, m^2 \, s^{-2}}`, respectively. The following table shows that all of these derived results agree with :cite:t:`yee2020`.
+We see that the best-fit orbital decay model yields a stellar tidal quality factor of :math:`1.73 \times 10^5`, a remaining lifetime of :math:`3.24 \, \mathrm{Myr}`, and a decrease in orbital energy and angular momentum equal to :math:`-4.8 \times 10^{23} \, \mathrm{W}` and :math:`-7.2 \times 10^{27} \, \mathrm{kg \, m^2 \, s^{-2}}`, respectively. The following table shows that all of these derived results agree with :cite:author:`yee2020`.
 
 .. list-table::
    :header-rows: 1
@@ -494,11 +494,11 @@ We see that the best-fit orbital decay model yields a stellar tidal quality fact
 
 Conclusion
 ==========
-In this example, we have learned how to use OrbDot for fitting transit and eclipse timing models by analyzing the WASP-12 b mid-times provided in "The Orbit of WASP-12b is Decaying" by :cite:author:`yee2020`. The full script for this example is saved in the file ``examples/example_wasp-12.py`` and can be run without modifications. We have seen that the results of the OrbDot model fitting are in excellent agreement with the results of :cite:p:`yee2020`, which they provide in Table 6 of the paper.
+In this example, we have learned how to use OrbDot for fitting transit and eclipse timing models by analyzing the WASP-12 b mid-times provided in "The Orbit of WASP-12b is Decaying" by :cite:t:`yee2020`. The full script for this example is saved in the file ``examples/example_wasp-12.py`` and can be run without modifications. We have seen that the results of the OrbDot model fitting are in excellent agreement with the results of :cite:t:`yee2020`, which they provide in Table 6 of the paper.
 
 ------------
 
 References
 ==========
-.. bibliography:: references.bib
-    :style: plain
+.. bibliography::
+   :filter: docname in docnames

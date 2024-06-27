@@ -62,6 +62,7 @@ Contents
 
    installation
    citing-orbdot
+   bibliography
 
 .. toctree::
    :caption: Using OrbDot
