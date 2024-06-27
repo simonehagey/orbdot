@@ -495,10 +495,3 @@ We see that the best-fit orbital decay model yields a stellar tidal quality fact
 Conclusion
 ==========
 In this example, we have learned how to use OrbDot for fitting transit and eclipse timing models by analyzing the WASP-12 b mid-times provided in "The Orbit of WASP-12b is Decaying" by :cite:t:`yee2020`. The full script for this example is saved in the file ``examples/example_wasp-12.py`` and can be run without modifications. We have seen that the results of the OrbDot model fitting are in excellent agreement with the results of :cite:t:`yee2020`, which they provide in Table 6 of the paper.
-
-------------
-
-References
-==========
-.. bibliography::
-   :filter: docname in docnames
