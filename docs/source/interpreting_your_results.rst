@@ -215,20 +215,20 @@ Orbital decay refers to a transfer of angular momentum from the planet to the ho
 
  .. math::
 
-    \dot{P}_{\math decay} = -\frac{27\pi}{2Q_\star^{'}}\left(\frac{M_p}{M_\star}\right)\left(\frac{R_\star}{a}\right)^5
+    \dot{P}_{\mathrm{decay}} = -\frac{27\pi}{2Q_\star^{'}}\left(\frac{M_p}{M_\star}\right)\left(\frac{R_\star}{a}\right)^5
 
  where :math:`M_p` is the planet mass, :math:`M_\star` is the host star mass, :math:`R_\star` is the host star radius, and :math:`a` is the orbit semi major axis.
 
- The method :meth:`~orbdot.models.theory.quality_factor_from_decay` calculates :math:`Q_\star^{'}` from a given :math:`\dot{P}_{\mathrm{decay}}`, and the method :math:`~orbdot.models.theory.decay_from_quality_factor` calculates :math:`\dot{P}_{\mathrm{decay}}` from a given :math:`Q_\star^{'}`.
+ The method :meth:`~orbdot.models.theory.quality_factor_from_decay` calculates :math:`Q_\star^{'}` from a given :math:`\dot{P}_{\mathrm{decay}}`, and the method :meth:`~orbdot.models.theory.decay_from_quality_factor` calculates :math:`\dot{P}_{\mathrm{decay}}` from a given :math:`Q_\star^{'}`.
 
-.. autofunction:: orbdot.models.theory.quality_factor_from_decay
-  :noindex:
+ .. autofunction:: orbdot.models.theory.quality_factor_from_decay
+   :noindex:
 
-.. autofunction:: orbdot.models.theory.decay_from_quality_factor
-  :noindex:
+ .. autofunction:: orbdot.models.theory.decay_from_quality_factor
+   :noindex:
 
 **Empirical Quality Factors**
- The method :meth:`~orbdot.models.theory.empirical_quality_factor` estimates a value for :math:`Q_\star^{'}` with an empirical law derived by :cite:t:`penev_empirical_2018`, given by:
+ The method :meth:`~orbdot.models.theory.empirical_quality_factor` estimates a value for :math:`Q_\star^{'}` with an empirical law derived by :cite:t:`Penev2018`, given by:
 
  .. math::
 
@@ -242,21 +242,21 @@ Orbital decay refers to a transfer of angular momentum from the planet to the ho
 
  where :math:`P_{\mathrm{orb}}` is the orbital period and :math:`P_{\mathrm{rot}}` is the rotational period of the host star.
 
-.. autofunction:: orbdot.models.theory.empirical_quality_factor
-  :noindex:
+ .. autofunction:: orbdot.models.theory.empirical_quality_factor
+   :noindex:
 
 **Decay Timescale**
  The method :meth:`~orbdot.models.theory.remaining_lifetime` computes the timescale over which the orbit is shrinking for any given decay rate :math:`\dot{P}_{\mathrm{decay}}` and initial orbital period :math:`P_0` using the equation:
 
  .. math::
 
-    \tau=\frac{P_0}{|\dot{P}_{\mathrm decay}|}
+    \tau=\frac{P_0}{|\dot{P}_{\mathrm{decay}}|}
 
-.. autofunction:: orbdot.models.theory.remaining_lifetime
-  :noindex:
+ .. autofunction:: orbdot.models.theory.remaining_lifetime
+   :noindex:
 
 **Energy and Angular Momentum Loss**
- As a planet experiences orbital decay, both the orbital energy and angular momentum will decrease over time. The methods :meth:`~orbdot.models.theory.tidal_energy_loss` and :meth:`~orbdot.models.theory.tidal_angular_momentum_loss` calculate these loss rates for any given orbital decay rate, using the following equations from :cite:author:`yee2020`:
+ As a planet experiences orbital decay, both the orbital energy and angular momentum will decrease over time. The methods :meth:`~orbdot.models.theory.tidal_energy_loss` and :meth:`~orbdot.models.theory.tidal_angular_momentum_loss` calculate these loss rates for any given orbital decay rate, using the following equations from :cite:t:`yee2020`:
 
  .. math::
 
@@ -266,11 +266,11 @@ Orbital decay refers to a transfer of angular momentum from the planet to the ho
 
  where :math:`G` is the gravitational constant, :math:`M_{\star}` is the host star mass, :math:`M_{\mathrm{p}}` is the planet mass, :math:`P` is the orbital period, :math:`\frac{d P}{d t}` is the orbital decay rate, and :math:`\frac{d E}{d t}` and :math:`\frac{d L}{d t}` are the energy and momentum loss rates, respectively.
 
-.. autofunction:: orbdot.models.theory.tidal_energy_loss
-  :noindex:
+ .. autofunction:: orbdot.models.theory.tidal_energy_loss
+   :noindex:
 
-.. autofunction:: orbdot.models.theory.tidal_angular_momentum_loss
-  :noindex:
+ .. autofunction:: orbdot.models.theory.tidal_angular_momentum_loss
+   :noindex:
 
 ------------
 
@@ -286,12 +286,12 @@ This can result from several factors, including components due to general relati
 
  .. math::
 
-    \dot{\omega}_{\mathrm GR} = \frac{3 \eta G M_s}{ac^2(1-e^2)}
+    \dot{\omega}_{\mathrm{GR}} = \frac{3 \eta G M_s}{ac^2(1-e^2)}
 
- where :math:`G` is the gravitational constant, :math:`c` is the speed of light in a vacuum, :math:`M_s` is the host star mass, :math:`a` is the planet's semi-major axis, :math:`e` is the eccentricity, and :math:`\eta = 2\pi/P` is the mean motion. The method :meth:`~orbdot.models.theory.precession_gr` calculates the expected precession rate :math:`\dot{\omega}_{\mathrm GR}` for any given system:
+ where :math:`G` is the gravitational constant, :math:`c` is the speed of light in a vacuum, :math:`M_s` is the host star mass, :math:`a` is the planet's semi-major axis, :math:`e` is the eccentricity, and :math:`\eta = 2\pi/P` is the mean motion. The method :meth:`~orbdot.models.theory.precession_gr` calculates the expected precession rate :math:`\dot{\omega}_{\mathrm{GR}}` for any given system:
 
-.. autofunction:: orbdot.models.theory.precession_gr
-  :noindex:
+ .. autofunction:: orbdot.models.theory.precession_gr
+   :noindex:
 
 **Rotational Flattening**
  Another source of apsidal precession is the rotational flattening of host stars and their planets, as the resulting oblate distortion perturbs the gravitational potential.
