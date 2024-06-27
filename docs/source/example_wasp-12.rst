@@ -4,7 +4,7 @@
 Orbital Decay of WASP-12 b
 **************************
 
-This example demonstrates an OrbDot reproduction of the results from "The Orbit of WASP-12b Is Decaying" by Yee et al. (2020), [1]_ in which the authors performed a comprehensive analysis of new and published transit and eclipse mid-times for the Hot Jupiter WASP-12 b. They conclude that the orbit is decaying at a rate of :math:`29.0 \pm 2.0 \, \mathrm{ms \, yr^{-1}`, which corresponds to a remaining lifetime of :math:`3.25 \, \mathrm{Myr}` and a modified stellar tidal quality factor of :math:`1.75 \times 10^5`.
+This example demonstrates an OrbDot reproduction of the results from "The Orbit of WASP-12b Is Decaying" by Yee et al. (2020), [1]_ in which the authors performed a comprehensive analysis of new and published transit and eclipse mid-times for the Hot Jupiter WASP-12 b. They conclude that the orbit is decaying at a rate of :math:`29.0 \pm 2.0 \, \mathrm{ms \, yr^{-1}}`, which corresponds to a remaining lifetime of :math:`3.25 \, \mathrm{Myr}` and a modified stellar tidal quality factor of :math:`1.75 \times 10^5`.
 
 Using the authors' compiled table of transit and eclipse mid-times, we will fit the constant-period, orbital decay, and apsidal precession models to the data, compare the Bayesian evidences, and use OrbDot's :class:`~orbdot.analysis.Analyzer` class to reproduce the derived results. The input files and a full script for running this example can be found in the ``examples/`` directory.
 
@@ -12,11 +12,11 @@ Using the authors' compiled table of transit and eclipse mid-times, we will fit 
 
 Setup
 =====
-Before running the model fits, we need to save the transit and eclipse mid-times to a :ref:`data file <data-files>` and populate the :ref:`star-planet information file <info-file>` and the :ref:`settings file <settings-file>`.
+Before running the model fits, we need to save the transit and eclipse mid-times to a :ref:`data file <data-files>`, populate the star-planet :ref:`info file <info-file>`, and create a :ref:`settings file <settings-file>`.
 
 Data
 ----
-The transit mid-times are taken from Table 5 of Yee et al. (2020) [1]_ and saved in the file: ``examples/data/WASP-12/WASP-12_mid_times.txt``. Note that the eclipse mid-times, listed at the end of the file, are specified by a half-orbit (0.5) in the ``Epoch`` column, which is required for OrbDot to treat them separately from the transit mid-times.
+The transit mid-times are taken from Table 5 of Yee et al. (2020), [1]_ and saved in the file: ``examples/data/WASP-12/WASP-12_mid_times.txt``. Note that the eclipse mid-times, listed at the end of the file, are specified by a half-orbit (0.5) in the ``Epoch`` column, which is required for OrbDot to treat them separately from the transit mid-times.
 
 The authors clarify that the eclipse mid-times provided in the table have not been corrected for the light-travel time across the extent of the orbit, so we have accounted for that by subtracting :math:`2a/c = 22.9 \, \mathrm{s}`. Additionally, to simplify the appearance of the plots, the ``Source`` column has been modified to reflect only whether the measurement was compiled by the authors (``"Yee et al. 2019 (compiled)"``) or if it is a new observation that they provide (``"Yee et al. 2019"``).
 
@@ -80,7 +80,7 @@ The WASP-12 :ref:`system info file <info-file>` is saved as: ``examples/info_fil
 
 Settings File
 -------------
-The :ref:`settings file <settings-file>` is saved as: ``examples/settings_files/WASP-12_settings.json``. There is also a custom plot settings file (``examples/settings_files/WASP-12_plot_settings.json``), but this is not required for running the model fits in general.
+The :ref:`settings file <settings-file>` is saved as: ``examples/settings_files/WASP-12_settings.json``. We have also provided a custom plot settings file (``examples/settings_files/WASP-12_plot_settings.json``), but this is not a requirement.
 
 .. admonition:: WASP-12 b settings file
   :class: dropdown
@@ -138,7 +138,7 @@ The :ref:`settings file <settings-file>` is saved as: ``examples/settings_files/
           }
         }
 
-The first portion of the file defines path names for the remaining input files (``"system_info_file"`` and ``"plot_settings_file"``), as well as the base directory for saving the results (``"main_save_dir"``).
+The first part of the file defines path names for the other input files (``"system_info_file"`` and ``"plot_settings_file"``), as well as the base directory for saving the results (``"main_save_dir"``):
 
 .. code-block:: JSON
 
@@ -169,29 +169,26 @@ In this case, the ``"nestle"`` sampler has been specified with 1000 live points 
 
 The remaining portion of the settings file is for the ``"prior"`` dictionary, which defines the :ref:`prior distributions <priors>` for the model parameters. We need only populate this with the parameters that are to be included in the model fits, which in this case are the reference transit mid-time (``"t0"``), orbital period (``"P0"``), eccentricity (``"e0"``), argument of pericentre (``"w0"``), orbital decay rate (``"PdE"``), and apsidal precession rate (``"wdE"``). If a model parameter is left out of the settings file, the default prior will be used, as specified in the file ``orbdot/defaults/info_file.json``. For more information on the available model parameters see :ref:`model_parameters`.
 
-For WASP-12 b, we have chosen broad uniform prior distributions for ``"e0"``, ``"w0"``, ``"PdE"``, and ``"wdE"``, and for ``"t0"`` and ``"P0"`` the priors are Gaussian distributions centered on the known orbit of WASP-12 b.
+For WASP-12 b, we have chosen broad uniform prior distributions for ``"e0"``, ``"w0"``, ``"PdE"``, and ``"wdE"``, and for ``"t0"`` and ``"P0"`` the priors are Gaussian distributions centered on the known orbit.
 
 .. code-block:: JSON
 
   "_comment4": "Priors",
 
        "prior": {
-
          "t0": ["gaussian", 2456305.4555, 0.01],
          "P0": ["gaussian", 1.09142, 0.0001],
          "e0": ["uniform", 0.0, 0.1],
          "w0": ["uniform", 0.0, 6.2831853072],
-
          "PdE": ["uniform", -1e-7, 0],
          "wdE": ["uniform", 0.0, 0.01]
-
        }
 
 ------------
 
 Model Fits
 ==========
-In the following sections we will fit the WASP-12 b mid-times to the constant-period, orbital decay, and apsidal precession models, and compare the results to those of Yee et al. (2020). [1]_ The first step is to import the :class:`~orbdot.star_planet.StarPlanet` and :class:`~orbdot.analysis.Analyzer` classes, and then to create an instance of :class:`~orbdot.star_planet.StarPlanet` that represents WASP-12 b.
+In the following sections we will fit the WASP-12 b mid-times to the constant-period, orbital decay, and apsidal precession models, and compare the results to those of Yee et al. (2020). [1]_ The first step is to import the :class:`~orbdot.star_planet.StarPlanet` and :class:`~orbdot.analysis.Analyzer` classes, and then to create an instance of :class:`~orbdot.star_planet.StarPlanet` that represents WASP-12 b:
 
 .. code-block:: python
 
@@ -205,7 +202,7 @@ To run the model fitting routines, the :meth:`~orbdot.transit_timing.TransitTimi
 
 Constant-Period Model Fit
 -------------------------
-The following code snippet fits a circular, constant-period timing model to the mid-times:
+The following code snippet fits a constant-period, circular orbit model to the mid-times:
 
 .. code-block:: python
 
@@ -239,7 +236,7 @@ Once the fit is complete, the output files can be found in the directory that wa
         e0 = 0.0
         w0 = 0.0
 
-This shows us that it took 3.43 seconds to run and that the Bayesian evidence (``logZ``) for the model is -204.9. The best-fit parameter values are also shown, with the uncertainties representing the 68% confidence interval on the weighted posterior samples. The following table compares these results with those of Yee et al. (2020), [1]_ and we see that they fall within :math:`1-\sigma`.
+This shows us that it took 3.43 seconds to run and that the Bayesian evidence (``logZ``) for the model is -204.9. The best-fit parameter values are also shown, with the uncertainties representing the 68% confidence interval on the weighted posterior samples. The following table compares these results with those of Yee et al. (2020), [1]_ and we see that they agree.
 
 .. list-table::
    :header-rows: 1
@@ -295,7 +292,7 @@ The ``ttv_decay_summary.txt`` file shows us that the fitting routine ran for 6.3
         e0 = 0.0
         w0 = 0.0
 
-The following table compares the orbital decay fit results with that of Yee et al. (2020), [1]_ and we again see that the OrbDot results are in excellent agreement!
+The following table compares the orbital decay fit with that of Yee et al. (2020), [1]_ and we again see that the OrbDot results are in excellent agreement!
 
 .. list-table::
    :header-rows: 1
@@ -330,7 +327,7 @@ Similarly, the apsidal precession model can be fitted by specifying ``model="pre
     # run the apsidal precession TTV model fit
     fit_p = wasp12.run_ttv_fit(['t0', 'P0', 'e0', 'w0', 'wdE'], model='precession')
 
-This time the summary file ``ttv_precession_summary.txt`` shows us that the model fit took 34.89 seconds to run and that the Bayesian evidence is -116.07. We will compare this with the other models in the next section of this tutorial.
+This time the summary file (``ttv_precession_summary.txt``) shows us that the model fit took 34.89 seconds to run and that the Bayesian evidence is -116.07. We will compare this with the other models in the next section of this tutorial.
 
 .. admonition:: Summary of the apsidal precession model fit:
   :class: dropdown
@@ -358,7 +355,7 @@ This time the summary file ``ttv_precession_summary.txt`` shows us that the mode
         Fixed Parameters
         ----------------
 
-The following table shows that the result of this model fit also agrees with Yee et al. (2020). [1]_
+The table below shows again that the OrbDot result agrees with Yee et al. (2020)! [1]_
 
 .. list-table::
    :header-rows: 1
@@ -388,7 +385,7 @@ The following table shows that the result of this model fit also agrees with Yee
      - :math:`0.000984^{\,+0.000070}_{\,+0.000061}`
      - :math:`0.001072^{\,+0.000080}_{\,-0.000064}`
 
-The following plot displays the timing residuals of WASP-12 b with future projections of all three timing models, shown with 300 random draws from the weighted posterior samples. Each data point represents the difference between an observed time and the time predicted by the best-fit constant-period model. OrbDot automatically detects the previous model fits by matching the ``suffix`` argument of :meth:`~orbdot.transit_timing.TransitTiming.run_ttv_fit`, which we left blank for this example.
+The following plot displays the timing residuals of WASP-12 b with future projections of all three models, shown with 300 random draws from the weighted posterior samples. Each data point is the difference between the observed time and the time predicted by the best-fit constant-period model. OrbDot automatically detects the previous model fits by matching the ``suffix`` argument of :meth:`~orbdot.transit_timing.TransitTiming.run_ttv_fit`, which we left blank for this example.
 
 .. image:: _static/ttv_precession_plot.png
 
@@ -398,7 +395,7 @@ Interpreting the Results
 ========================
 Now that the model fitting is complete, we will use the :class:`~orbdot.analysis.Analyzer` class to help interpret the results. Creating an instance of the :class:`~orbdot.analysis.Analyzer` class requires a :class:`~orbdot.star_planet.StarPlanet` object (ie. ``wasp12``) and the results of a model fit. It is for this reason that we had assigned the output of the model fits to the variables ``fit_c``, ``fit_d``, and ``fit_p``, above.
 
-The following code snippet creates an ``Analyzer`` object with the results of the orbital decay model fit:
+The following code snippet creates an ``Analyzer`` object with the results of the orbital decay fit:
 
 .. code-block:: python
 
@@ -410,9 +407,7 @@ We can now call any relevant :class:`~orbdot.analysis.Analyzer` methods, the res
 
 Model Comparison
 ----------------
-Calling the :meth:`~orbdot.analysis.Analyzer.model_comparison` method compares the orbital decay fit to another by calculating the Baye's factor and evaluating the strength of the evidence with thresholds given by Kass and Raftery (1995). [2]_
-
-The following code snippet calls this method twice, once for the constant-period model fit (``fit_c``), and once for the apsidal precession model fit (``fit_p``):
+Calling the :meth:`~orbdot.analysis.Analyzer.model_comparison` method compares the orbital decay fit to another by calculating the Baye's factor and evaluating the strength of the evidence with thresholds given by Kass and Raftery (1995). [2]_ The following code snippet calls this method twice, once for the constant-period model fit (``fit_c``), and once for the apsidal precession model fit (``fit_p``):
 
 .. code-block:: python
 
@@ -444,7 +439,7 @@ confirming that the evidence for the orbital decay model is decisive.
 
 Orbital Decay Analysis
 ----------------------
-The final step is to call the :meth:`~orbdot.analysis.Analyzer.orbital_decay_fit` method, which runs an automatic interpretation of the orbital decay fit results:
+The final step of this example is to call the :meth:`~orbdot.analysis.Analyzer.orbital_decay_fit` method, which enables further interpretation of the orbital decay model fit:
 
 .. code-block:: python
 
@@ -499,7 +494,7 @@ We see that the best-fit orbital decay model yields a stellar tidal quality fact
 
 Conclusion
 ==========
-In this example we have learned how to utilize OrbDot for fitting transit and eclipse timing models by reproducing the results from "The Orbit of WASP-12b is Decaying" by Yee et al. (2020). [1]_ The full script for this example is saved in the file ``examples/example_wasp-12.py`` and can be run without modifications.
+In this example, we have learned how to use OrbDot for fitting transit and eclipse timing models by analyzing the WASP-12 b mid-times provided in "The Orbit of WASP-12b is Decaying" by Yee et al. (2020). [1]_ The full script for this example is saved in the file ``examples/example_wasp-12.py`` and can be run without modifications. We have seen that the results of the OrbDot model fitting are in excellent agreement with the results of Yee et al. (2020), [1]_ which they provide in Table 6 of the paper.
 
 ------------
 
