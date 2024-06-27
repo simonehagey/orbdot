@@ -501,8 +501,6 @@ Conclusion
 ==========
 In this example we have learned how to utilize OrbDot for fitting transit and eclipse timing models by reproducing the results from "The Orbit of WASP-12b is Decaying" by Yee et al. (2020). [1]_ The full script for this example is saved in the file ``examples/example_wasp-12.py`` and can be run without modifications.
 
-We have now seen that the results of the OrbDot model fitting are in excellent agreement with the results of Yee et al. (2020), [1]_ which they provide in Table 6 in their paper.
-
 ------------
 
 References
