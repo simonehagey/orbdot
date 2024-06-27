@@ -44,3 +44,4 @@ napoleon_use_admonition_for_references = True
 bibtex_bibfiles = ["references.bib"]
 bibtex_reference_style = 'author_year'
 autosummary_generate = True
+

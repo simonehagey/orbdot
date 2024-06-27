@@ -202,7 +202,61 @@ outer companions, general relativity, and more. See here for more information.
 
 Orbital Decay
 -------------
+Orbital decay refers to a transfer of angular momentum from the planet to the host star that results in a shrinking of the orbital period, which we denote :math:`\dot{P}_{\rm decay}`, eventually leading to planetary engulfment. :cite:p:`levrard2009, matsumura2010`
 
+If equilibrium tides dominate the evolution of the HJ system, the rate of orbital decay depends on the efficiency of tidal energy dissipation within the star :cite:p:`levrard2009, matsumura2010, tejada_arevalo_further_2021`, typically parameterized by the dimensionless modified stellar tidal quality factor :math:`Q_\star^{'}`.
+
+the star's "modified tidal quality factor," defined as the quality factor  divided by 2/3 of the Love number k2.
+
+In the "constant phase lag" model of :cite:author:`Goldreich1966`, assuming that the planet's mass stays constant, the decay rate is
+
+:math:`\dot{P}_{\rm decay} = -\frac{27\pi}{2Q_\star^{'}}\left(\frac{M_p}{M_*}\right)\left(\frac{R_*}{a}\right)^5\rm`
+
+.. autofunction:: orbdot.models.theory.quality_factor_from_decay
+.. autofunction:: orbdot.models.theory.decay_from_quality_factor
+
+------------
+
+We estimate a value for :math:`Q_\star^{'}`, and thus :math:`\dot{P}_{\rm decay}` using an empirical model derived by \citet{penev_empirical_2018}, which was derived by studying a population with: :math:`$`M_p>0.1M_{\text{Jup}}`, :math:`P<3.5` days, and :math:`T_{eff,*}<6100\,K`, the parameter space of HJ systems. This derived model is given by:
+
+:math:`Q^{'}_* = \max\left[{\frac{10^6}{(P_{\rm tide}/\text{day}})^{3.1}}\,,\,{10^5}\right]`
+
+where :math:`P_{\rm tide}` is the tidal forcing period of the star-planet system, given by:
+
+:math:`P_{\rm tide} = \frac{1}{2\left({P_{\rm {orb}}}^{-1} -{P_{\rm rot}}^{-1} \right)}`.
+
+\citet{penev_empirical_2018} derived an empirical model for :math:`Q^{'}_\star` given the tidal forcing period of the star-planet system :math:`P_{\mathrm{tide}}` from an analysis of all known exoplanet systems with :math:`M_p>0.1` M:math:`_{\text{Jup}}`, :math:`P<3.5` days, and :math:`T_{eff,\star}<6100\,K`, the parameter space in which the TrES-1 system resides. They found that
+
+:math:`Q^{'}_\star = \max\left[{\frac{10^6}{(P_{\text{tide}}/\text{day})^{3.1}}},{10^5}\right]`
+
+where,
+
+:math:`P_{\text{tide}} = \frac{1}{{2\left(P_{\text{orb}}^{-1} - P_{\text{spin}}^{-1}\right)}}`.
+
+.. autofunction:: orbdot.models.theory.empirical_quality_factor
+
+------------
+
+The timescale over which the orbit is shrinking is:
+
+:math:`\tau=\frac{P}{|\dot{P}|}`
+
+.. autofunction:: orbdot.models.theory.remaining_lifetime
+
+------------
+
+The orbital energy and angular momentum are both decreasing, at rates of
+
+:math:`\frac{d E}{d t}=\frac{(2 \pi)^{2 / 3} M_{\mathrm{p}}}{3}\left(\frac{G M_{\star}}{P}\right)^{2 / 3} \frac{1}{P} \frac{d P}{d t}`
+
+.. autofunction:: orbdot.models.theory.tidal_energy_loss
+
+
+:math:`\frac{d L}{d t}=\frac{M_{\mathrm{p}}}{3(2 \pi)^{1 / 3}}\left(\frac{G M_{\star}}{P}\right)^{2 / 3} \frac{d P}{d t}`
+
+.. autofunction:: orbdot.models.theory.tidal_angular_momentum_loss
+
+------------
 
 Apsidal Precession
 ------------------
@@ -254,7 +308,7 @@ where,
 Tidal Bulges
 ^^^^^^^^^^^^
 
-Due to the close proximity of HJs to their host stars, significant tidal bulges -- an ellipsoidal distortion -- are raised in both the planet and star. Both pairs of tidal bulges induce apsidal precession, but for Hot Jupiters, the planet's bulge is again expected to dominate [Ragozzine2009]_. The precession rate itself depends on the internal density distribution of the HJ, which affects the extent to which the planet is elongated. This is again parameterized by the planetary Love number :math:`k_{2,p}`. For completeness, we also consider the effect of the star's tidal bulge. [Ragozzine2009]_ formulate the tides-induced precession as:
+Due to the close proximity of HJs to their host stars, significant tidal bulges -- an ellipsoidal distortion -- are raised in both the planet and star. Both pairs of tidal bulges induce apsidal precession, but for Hot Jupiters, the planet's bulge is again expected to dominate :cite:p:`Ragozzine2009`. The precession rate itself depends on the internal density distribution of the HJ, which affects the extent to which the planet is elongated. This is again parameterized by the planetary Love number :math:`k_{2,p}`. For completeness, we also consider the effect of the star's tidal bulge. [Ragozzine2009]_ formulate the tides-induced precession as:
 
 .. math::
 
@@ -291,3 +345,5 @@ Planetary Companion
 Resolved Stellar Companion
 --------------------------
 
+.. bibliography:: references.bib
+    :style: plain
