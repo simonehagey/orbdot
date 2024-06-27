@@ -205,7 +205,6 @@ def quality_factor_from_decay(P, dPdE, M_s, M_p, R_s):
     References
     ----------
     .. [1] Goldreich and Soter (1966). https://doi.org/10.1016/0019-1035(66)90051-0.
-
     """
     # derive parameters
     a = semi_major_axis_from_period(P, M_s)
@@ -251,7 +250,6 @@ def decay_from_quality_factor(P, M_s, M_p, R_s, Q_star):
     References
     ----------
     .. [1] Goldreich and Soter (1966). https://doi.org/10.1016/0019-1035(66)90051-0.
-
     """
     # derive parameters
     a = semi_major_axis_from_period(P, M_s)
