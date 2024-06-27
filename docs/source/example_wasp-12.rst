@@ -4,7 +4,7 @@
 Orbital Decay of WASP-12 b
 **************************
 
-This example demonstrates an OrbDot reproduction of the results from "The Orbit of WASP-12b Is Decaying" by Yee et al. (2020), [1]_ in which the authors performed a comprehensive analysis of new and published transit and eclipse mid-times for the Hot Jupiter WASP-12 b. They conclude that the orbit is decaying at a rate of :math:`29.0 \pm 2.0 \, \mathrm{ms \, yr^{-1}}`, which corresponds to a remaining lifetime of :math:`3.25 \, \mathrm{Myr}` and a modified stellar tidal quality factor of :math:`1.75 \times 10^5`.
+This example demonstrates an OrbDot reproduction of the results from "The Orbit of WASP-12b Is Decaying" by :cite:t:`yee2020`, Yee et al. (2020), [1]_ in which the authors performed a comprehensive analysis of new and published transit and eclipse mid-times for the Hot Jupiter WASP-12 b. They conclude that the orbit is decaying at a rate of :math:`29.0 \pm 2.0 \, \mathrm{ms \, yr^{-1}}`, which corresponds to a remaining lifetime of :math:`3.25 \, \mathrm{Myr}` and a modified stellar tidal quality factor of :math:`1.75 \times 10^5`.
 
 Using the authors' compiled table of transit and eclipse mid-times, we will fit the constant-period, orbital decay, and apsidal precession models to the data, compare the Bayesian evidences, and use OrbDot's :class:`~orbdot.analysis.Analyzer` class to reproduce the derived results. The input files and a full script for running this example can be found in the ``examples/`` directory.
 
@@ -407,7 +407,7 @@ We can now call any relevant :class:`~orbdot.analysis.Analyzer` methods, the res
 
 Model Comparison
 ----------------
-Calling the :meth:`~orbdot.analysis.Analyzer.model_comparison` method compares the orbital decay fit to another by calculating the Baye's factor and evaluating the strength of the evidence with thresholds given by Kass and Raftery (1995). [2]_ The following code snippet calls this method twice, once for the constant-period model fit (``fit_c``), and once for the apsidal precession model fit (``fit_p``):
+Calling the :meth:`~orbdot.analysis.Analyzer.model_comparison` method compares the orbital decay fit to another by calculating the Baye's factor and evaluating the strength of the evidence with thresholds given by :cite:t:`kass_and_raftery`. [2]_ The following code snippet calls this method twice, once for the constant-period model fit (``fit_c``), and once for the apsidal precession model fit (``fit_p``):
 
 .. code-block:: python
 
@@ -500,5 +500,8 @@ In this example, we have learned how to use OrbDot for fitting transit and eclip
 
 References
 ==========
+.. bibliography:: references.bib
+    :style: plain
+
 .. [1] Yee et al. (2020). https://doi.org/10.3847/2041-8213/ab5c16.
 .. [2] Kass and Raftery (1995). https://doi.org/10.2307/2291091.
