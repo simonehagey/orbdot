@@ -104,6 +104,7 @@ Default Parameter Values
 Updating Default Values
 ^^^^^^^^^^^^^^^^^^^^^^^
 
+.. _priors:
 Priors
 ------
 The "prior" is defined in the settings file (see :ref:`settings-file`) and is structured as a dictionary with keys for each parameter.
