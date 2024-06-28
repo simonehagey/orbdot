@@ -199,35 +199,31 @@ uses Bayesian evidence, denoted as $\log{\mathrm{Z}}$, as a fundamental metric f
 
 Theoretical Background
 ======================
-The :py:mod:`~orbdot.models.theory` module provides several analytical models that can be used to investigate long-term variations in planetary orbits and their causes, such as :ref:`orbital decay <orbital_decay_theory>`, :ref:`apsidal precession <_apsidal_precession_theory>`, nonresonant :ref:`companion planets <planet_companion_theory>`, bound :ref:`stellar companions <binary_star_theory>`, and :ref:`systemic proper motion <proper_motion_theory>`.
+The :py:mod:`~orbdot.models.theory` module provides several analytical models that can be used to investigate long-term variations in planetary orbits and their causes, such as :ref:`orbital decay <orbital_decay_theory>`, :ref:`apsidal precession <_apsidal_precession_theory>`, nonresonant :ref:`companion planets <planet_companion_theory>`, bound :ref:`stellar companions <binary_star_theory>`, and systemic :ref:`proper motion <proper_motion_theory>`.
+
+The following sections briefly introduce these things...
 
 ------------
 
 .. _orbital_decay_theory:
 Orbital Decay
 -------------
-Orbital decay refers to a transfer of angular momentum from the planet to the host star that results in a shrinking of the orbital period, which we denote :math:`\dot{P}_{\mathrm{decay}}`, eventually leading to planetary engulfment. The following methods enable the computation of several relevant effects that happen because of orbital decay.
+Orbital decay refers to a transfer of angular momentum from the planet to the host star that results in a shrinking of the orbital period, which we denote :math:`\dot{P}_{\mathrm{decay}}`, eventually leading to planetary engulfment.
+
+------------
 
 **Equilibrium Tides**
- Due to the close proximity of HJs to their host stars, significant tidal bulges -- an ellipsoidal distortion -- are raised in both the planet and star. In the case of orbital decay, the planet orbital rate is faster than the star's rotational rate. As a result, the star's tidal bulge lags behind the HJ, creating a net torque that spins up the star at the expense of the planet's orbital angular momentum :cite:p:`levrard2009, ma_orbital_2021`. The tidal forces raised by the misaligned tidal bulges are known as "equilibrium tides" and are believed to be the most significant process governing the future evolution of HJ orbits.
 
- If equilibrium tides dominate the evolution of the HJ system, the rate of orbital decay depends on the efficiency of tidal energy dissipation within the star :cite:p:`Goldreich1966, barker_tidal_2020`, which is typically parameterized by the star's "modified" tidal quality factor :math:`Q_\star^{'}`. In the "constant phase lag" model of :cite:t:`Goldreich1966`, assuming that the planet's mass stays constant, the decay rate is:
+ If equilibrium tides dominate the evolution of the HJ system, the rate of orbital decay depends on the efficiency of tidal energy dissipation within the star :cite:p:`Goldreich1966, barker_tidal_2020`, which is typically parameterized by the star's "modified" tidal quality factor :math:`Q_\star^{'}`. From the "constant phase lag" model of :cite:t:`Goldreich1966`, the decay rate is:
 
  .. math::
 
     \dot{P}_{\mathrm{decay}} = -\frac{27\pi}{2Q_\star^{'}}\left(\frac{M_p}{M_\star}\right)\left(\frac{R_\star}{a}\right)^5
 
- where :math:`M_p` is the planet mass, :math:`M_\star` is the host star mass, :math:`R_\star` is the host star radius, and :math:`a` is the orbit semi major axis.
-
  The method :meth:`~orbdot.models.theory.quality_factor_from_decay` calculates :math:`Q_\star^{'}` from a given :math:`\dot{P}_{\mathrm{decay}}`, and the method :meth:`~orbdot.models.theory.decay_from_quality_factor` calculates :math:`\dot{P}_{\mathrm{decay}}` from a given :math:`Q_\star^{'}`.
 
- .. autofunction:: orbdot.models.theory.quality_factor_from_decay
-   :noindex:
-
- .. autofunction:: orbdot.models.theory.decay_from_quality_factor
-   :noindex:
-
 **Empirical Quality Factors**
+
  The method :meth:`~orbdot.models.theory.empirical_quality_factor` estimates a value for :math:`Q_\star^{'}` with an empirical law derived by :cite:t:`Penev2018`, given by:
 
  .. math::
@@ -242,10 +238,10 @@ Orbital decay refers to a transfer of angular momentum from the planet to the ho
 
  where :math:`P_{\mathrm{orb}}` is the orbital period and :math:`P_{\mathrm{rot}}` is the rotational period of the host star.
 
- .. autofunction:: orbdot.models.theory.empirical_quality_factor
-   :noindex:
+------------
 
 **Decay Timescale**
+
  The method :meth:`~orbdot.models.theory.remaining_lifetime` computes the timescale over which the orbit is shrinking for any given decay rate :math:`\dot{P}_{\mathrm{decay}}` and initial orbital period :math:`P_0` using the equation:
 
  .. math::
@@ -253,9 +249,11 @@ Orbital decay refers to a transfer of angular momentum from the planet to the ho
     \tau=\frac{P_0}{|\dot{P}_{\mathrm{decay}}|}
 
  .. autofunction:: orbdot.models.theory.remaining_lifetime
-   :noindex:
+
+------------
 
 **Energy and Angular Momentum Loss**
+
  As a planet experiences orbital decay, both the orbital energy and angular momentum will decrease over time. The methods :meth:`~orbdot.models.theory.tidal_energy_loss` and :meth:`~orbdot.models.theory.tidal_angular_momentum_loss` calculate these loss rates for any given orbital decay rate, using the following equations from :cite:t:`yee2020`:
 
  .. math::
@@ -264,37 +262,41 @@ Orbital decay refers to a transfer of angular momentum from the planet to the ho
 
     \frac{d L}{d t}=\frac{M_{\mathrm{p}}}{3(2 \pi)^{1 / 3}}\left(\frac{G M_{\star}}{P}\right)^{2 / 3} \frac{d P}{d t}
 
- where :math:`G` is the gravitational constant, :math:`M_{\star}` is the host star mass, :math:`M_{\mathrm{p}}` is the planet mass, :math:`P` is the orbital period, :math:`\frac{d P}{d t}` is the orbital decay rate, and :math:`\frac{d E}{d t}` and :math:`\frac{d L}{d t}` are the energy and momentum loss rates, respectively.
+ where :math:`\frac{d E}{d t}` and :math:`\frac{d L}{d t}` are the loss rates of orbital energy and angular momentum, respectively.
 
  .. autofunction:: orbdot.models.theory.tidal_energy_loss
-   :noindex:
 
  .. autofunction:: orbdot.models.theory.tidal_angular_momentum_loss
-   :noindex:
 
 ------------
 
 .. _apsidal_precession_theory:
 Apsidal Precession
 ------------------
-Apsidal precession is the gradual increase of the argument of pericentre :math:`\omega` of a planet's orbit over time due to deviations from a purely Keplerian potential, meaning the line connecting the pericentre and apocentre of the orbit rotates through :math:`2\pi` in one precession period.
+Apsidal precession is the gradual increase of the argument of pericentre :math:`\omega` of a planet's orbit over time, meaning the line connecting the pericentre and apocentre of the orbit rotates through :math:`2\pi` in one precession period.
 
 This can result from several factors, including components due to general relativistic effects :cite:p:`pal_periastron_2008,jordan_observability_2008`, perturbations from other planets :cite:p:`heyl_using_2007`, and gravitational moments arising from both the host star's rotation and planetary tidal bulges :cite:p:`greenberg_apsidal_1981`. The following sections describe the equations and OrbDot methods that are relevant to these effects.
 
+------------
+
 **General Relativity**
+
  The lowest order of the relativistic contribution to apsidal precession is given by:
 
  .. math::
 
     \dot{\omega}_{\mathrm{GR}} = \frac{3 \eta G M_s}{ac^2(1-e^2)}
 
- where :math:`G` is the gravitational constant, :math:`c` is the speed of light in a vacuum, :math:`M_s` is the host star mass, :math:`a` is the planet's semi-major axis, :math:`e` is the eccentricity, and :math:`\eta = 2\pi/P` is the mean motion. The method :meth:`~orbdot.models.theory.precession_gr` calculates the expected precession rate :math:`\dot{\omega}_{\mathrm{GR}}` for any given system:
+The method :meth:`~orbdot.models.theory.precession_gr` calculates the expected precession rate :math:`\dot{\omega}_{\mathrm{GR}}` for any given system:
 
  .. autofunction:: orbdot.models.theory.precession_gr
-   :noindex:
+
+------------
 
 **Rotational Flattening**
- Another source of apsidal precession is the rotational flattening of host stars and their planets, as the resulting oblate distortion perturbs the gravitational potential.
+ Another source of apsidal precession is the rotational flattening of host stars and their planets, which is an oblate distortion that perturbs the gravitational potential.
+
+
 
 The Love number represents how centrally condensed the body is, and is a fixed property of the body. The lower the :math:`k_2`, the more centrally condensed the planetary interior structure, which in turn leads to a slower precession rate. The theoretical upper limit of :math:`k_2` is :math:`3/2`, which corresponds to a uniform density sphere [lissauer2019]_. Note that :math:`k_2` is generally much lower for main-sequence stars [claret_love_num]_ (:math:`\sim 0.03`) than planets :cite:p:`Ragozzine2009` (0.1 -- 0.3).
 
