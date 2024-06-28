@@ -38,7 +38,7 @@ html_theme_options = {
 napoleon_google_docstring = False
 napoleon_numpy_docstring = True
 napoleon_include_init_with_doc = True
-napoleon_use_admonition_for_notes = True
+napoleon_use_admonition_for_notes = False
 
 bibtex_bibfiles = ["references.bib"]
 bibtex_reference_style = 'author_year'

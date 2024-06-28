@@ -182,19 +182,21 @@ def quality_factor_from_decay(P, dPdE, M_s, M_p, R_s):
     This method returns the modified stellar quality factor (Q') from a given decay rate using the
     constant-phase lag model for tidal evolution as derived in Goldreich and Soter (1966) [1]_.
 
+    Notes
+    -----
     Assuming that equilibrium tides dominate the evolution planet's orbit, the rate of orbital
     decay depends on the efficiency of tidal energy dissipation within the star
     :cite:p:`Goldreich1966, barker_tidal_2020`, which is typically parameterized by the star's
-    "modified" tidal quality factor :math:`Q_\star^{'}`. Given an orbital decay rate
-    :math:`\dot{P}_{\mathrm{decay}}, the "constant phase lag" model of :cite:t:`Goldreich1966`,
-    predicts the host star's modified tidal quality factor to be:
+    "modified" tidal quality factor :math:`Q_\star^{'}`. Given an orbital decay rate :math:`\dot{
+    P}_{\mathrm{decay}}, the "constant phase lag" model of :cite:t:`Goldreich1966`, predicts the
+    host star's modified tidal quality factor to be:
 
     .. math::
 
         Q_\star^{'} = -\frac{27\pi}{2\dot{P}_{\mathrm{decay}}}\left(\frac{M_p}{M_\star}\right)\left(\frac{R_\star}{a}\right)^5
 
-    where :math:`M_p` is the planet mass, :math:`M_\star` is the host star mass, :math:`R_\star` is
-    the host star radius, and :math:`a` is the orbit semi major axis.
+    where :math:`M_p` is the planet mass, :math:`M_\star` is the host star mass, :math:`R_\star`
+    is the host star radius, and :math:`a` is the orbit semi major axis.
 
     Note that it assumes zero stellar and planetary obliquity.
 
@@ -250,9 +252,7 @@ def decay_from_quality_factor(P, M_s, M_p, R_s, Q_star):
     "modified" tidal quality factor :math:`Q_\star^{'}`. Under the "constant phase lag" model of
     :cite:t:`Goldreich1966`, the decay rate is:
 
-    .. math::
-
-        \dot{P}_{\mathrm{decay}} = -\frac{27\pi}{2Q_\star^{'}}\left(\frac{M_p}{M_\star}\right)\left(\frac{R_\star}{a}\right)^5
+    .. math:: \dot{P}_{\mathrm{decay}} = -\frac{27\pi}{2Q_\star^{'}}\left(\frac{M_p}{M_\star}\right)\left(\frac{R_\star}{a}\right)^5
 
     where :math:`M_p` is the planet mass, :math:`M_\star` is the host star mass, :math:`R_\star` is
     the host star radius, and :math:`a` is the orbit semi major axis.
