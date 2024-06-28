@@ -191,9 +191,8 @@ def quality_factor_from_decay(P, dPdE, M_s, M_p, R_s):
     P}_{\mathrm{decay}}, the "constant phase lag" model of :cite:t:`Goldreich1966`, predicts the
     host star's modified tidal quality factor to be:
 
-    .. math::
-
-        Q_\star^{'} = -\frac{27\pi}{2\dot{P}_{\mathrm{decay}}}\left(\frac{M_p}{M_\star}\right)\left(\frac{R_\star}{a}\right)^5
+    :math:`Q_\star^{'} = -\frac{27\pi}{2\dot{P}_{\mathrm{decay}}}\left(\frac{M_p}{
+    M_\star}\right)\left(\frac{R_\star}{a}\right)^5`
 
     where :math:`M_p` is the planet mass, :math:`M_\star` is the host star mass, :math:`R_\star`
     is the host star radius, and :math:`a` is the orbit semi major axis.
@@ -252,7 +251,8 @@ def decay_from_quality_factor(P, M_s, M_p, R_s, Q_star):
     "modified" tidal quality factor :math:`Q_\star^{'}`. Under the "constant phase lag" model of
     :cite:t:`Goldreich1966`, the decay rate is:
 
-    .. math:: \dot{P}_{\mathrm{decay}} = -\frac{27\pi}{2Q_\star^{'}}\left(\frac{M_p}{M_\star}\right)\left(\frac{R_\star}{a}\right)^5
+    :math:`\dot{P}_{\mathrm{decay}} = -\frac{27\pi}{2Q_\star^{'}}\left(\frac{M_p}{
+    M_\star}\right)\left(\frac{R_\star}{a}\right)^5'
 
     where :math:`M_p` is the planet mass, :math:`M_\star` is the host star mass, :math:`R_\star` is
     the host star radius, and :math:`a` is the orbit semi major axis.
