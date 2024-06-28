@@ -214,7 +214,7 @@ Orbital decay refers to a transfer of angular momentum from the planet to the ho
 
 **Equilibrium Tides**
 
- If equilibrium tides dominate the evolution of the HJ system, the rate of orbital decay depends on the efficiency of tidal energy dissipation within the star :cite:p:`Goldreich1966, barker_tidal_2020`, which is typically parameterized by the star's "modified" tidal quality factor :math:`Q_\star^{'}`. From the "constant phase lag" model of :cite:t:`Goldreich1966`, the decay rate is:
+ If equilibrium tides dominate the evolution of the HJ system, the rate of orbital decay depends on the efficiency of tidal energy dissipation within the star :cite:p:`Goldreich1966, barker_tidal_2020`, which is typically parameterized by the star's "modified" tidal quality factor :math:`Q_\star^{'}`. Under the "constant phase lag" model of :cite:t:`Goldreich1966`, the decay rate is:
 
  .. math::
 
@@ -264,10 +264,6 @@ Orbital decay refers to a transfer of angular momentum from the planet to the ho
 
  where :math:`\frac{d E}{d t}` and :math:`\frac{d L}{d t}` are the loss rates of orbital energy and angular momentum, respectively.
 
- .. autofunction:: orbdot.models.theory.tidal_energy_loss
-
- .. autofunction:: orbdot.models.theory.tidal_angular_momentum_loss
-
 ------------
 
 .. _apsidal_precession_theory:
@@ -289,8 +285,6 @@ This can result from several factors, including components due to general relati
 
 The method :meth:`~orbdot.models.theory.precession_gr` calculates the expected precession rate :math:`\dot{\omega}_{\mathrm{GR}}` for any given system:
 
- .. autofunction:: orbdot.models.theory.precession_gr
-
 ------------
 
 **Rotational Flattening**
@@ -298,9 +292,9 @@ The method :meth:`~orbdot.models.theory.precession_gr` calculates the expected p
 
 
 
-The Love number represents how centrally condensed the body is, and is a fixed property of the body. The lower the :math:`k_2`, the more centrally condensed the planetary interior structure, which in turn leads to a slower precession rate. The theoretical upper limit of :math:`k_2` is :math:`3/2`, which corresponds to a uniform density sphere [lissauer2019]_. Note that :math:`k_2` is generally much lower for main-sequence stars [claret_love_num]_ (:math:`\sim 0.03`) than planets :cite:p:`Ragozzine2009` (0.1 -- 0.3).
+ The Love number represents how centrally condensed the body is, and is a fixed property of the body. The lower the :math:`k_2`, the more centrally condensed the planetary interior structure, which in turn leads to a slower precession rate. The theoretical upper limit of :math:`k_2` is :math:`3/2`, which corresponds to a uniform density sphere [lissauer2019]_. Note that :math:`k_2` is generally much lower for main-sequence stars [claret_love_num]_ (:math:`\sim 0.03`) than planets :cite:p:`Ragozzine2009` (0.1 -- 0.3).
 
-OrbDott the :math:`k_2` formulation from [Ragozzine2009]_ equation X, the rotation-induced precession rate is [Ragozzine2009]_:
+ OrbDott the :math:`k_2` formulation from [Ragozzine2009]_ equation X, the rotation-induced precession rate is [Ragozzine2009]_:
 
  .. math::
 
@@ -317,18 +311,6 @@ OrbDott the :math:`k_2` formulation from [Ragozzine2009]_ equation X, the rotati
     g_2(e) = (1-e^2)^{-2}
 
  :math:`\dot{\theta}_p` and :math:`\dot{\theta}_s` represent the rotation speed of the planet and star, respectively.
-
-.. autofunction:: orbdot.models.theory.precession_rotational_planet
-  :noindex:
-
-.. autofunction:: orbdot.models.theory.k2p_from_wdot_rot_p
-  :noindex:
-
-.. autofunction:: orbdot.models.theory.precession_rotational_star
-  :noindex:
-
-.. autofunction:: orbdot.models.theory.k2s_from_wdot_rot_s
-  :noindex:
 
 **Tidal Bulges**
  Due to the close proximity of HJs to their host stars, significant tidal bulges -- an ellipsoidal distortion -- are raised in both the planet and star. Both pairs of tidal bulges induce apsidal precession, but for Hot Jupiters, the planet's bulge is again expected to dominate :cite:p:`Ragozzine2009`. The precession rate itself depends on the internal density distribution of the HJ, which affects the extent to which the planet is elongated. This is again parameterized by the planetary Love number :math:`k_{2,p}`. For completeness, we also consider the effect of the star's tidal bulge. :cite:t:`Ragozzine2009` formulate the tides-induced precession as:
@@ -348,9 +330,6 @@ OrbDott the :math:`k_2` formulation from [Ragozzine2009]_ equation X, the rotati
     \begin{aligned}
     f_2(e)= (1-e^2)^{-5} \left(1 + \frac{3}{2}e^2 + \frac{1}{8}e^4 \right).
     \end{aligned}
-
-.. autofunction:: orbdot.models.theory.precession_tidal_planet
-.. autofunction:: orbdot.models.theory.precession_tidal_star
 
 .. _proper_motion_theory:
 Proper Motion
