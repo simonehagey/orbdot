@@ -202,6 +202,22 @@ def quality_factor_from_decay(P, dPdE, M_s, M_p, R_s):
     float
         The modified stellar quality factor.
 
+    Notes
+    -----
+    Assuming that equilibrium tides dominate the evolution planet's orbit, the rate of orbital
+    decay depends on the efficiency of tidal energy dissipation within the star
+    :cite:p:`Goldreich1966, barker_tidal_2020`, which is typically parameterized by the star's
+    "modified" tidal quality factor :math:`Q_\star^{'}`. Given an orbital decay rate
+    :math:`\dot{P}_{\mathrm{decay}}, the "constant phase lag" model of :cite:t:`Goldreich1966`,
+    predicts the host star's modified tidal quality factor to be:
+
+    .. math::
+
+        Q_\star^{'} = -\frac{27\pi}{2\dot{P}_{\mathrm{decay}}}\left(\frac{M_p}{M_\star}\right)\left(\frac{R_\star}{a}\right)^5
+
+    where :math:`M_p` is the planet mass, :math:`M_\star` is the host star mass, :math:`R_\star` is
+    the host star radius, and :math:`a` is the orbit semi major axis.
+
     References
     ----------
     .. [1] Goldreich and Soter (1966). https://doi.org/10.1016/0019-1035(66)90051-0.
@@ -241,11 +257,25 @@ def decay_from_quality_factor(P, M_s, M_p, R_s, Q_star):
     Q_star : float
         The modified stellar tidal quality factor.
 
-
     Returns
     -------
     float
         Rate of change of the planet's orbital period in days per orbit.
+
+    Notes
+    -----
+    Assuming that equilibrium tides dominate the evolution planet's orbit, the rate of orbital
+    decay depends on the efficiency of tidal energy dissipation within the star
+    :cite:p:`Goldreich1966, barker_tidal_2020`, which is typically parameterized by the star's
+    "modified" tidal quality factor :math:`Q_\star^{'}`. Under the "constant phase lag" model of
+    :cite:t:`Goldreich1966`, the decay rate is:
+
+    .. math::
+
+        \dot{P}_{\mathrm{decay}} = -\frac{27\pi}{2Q_\star^{'}}\left(\frac{M_p}{M_\star}\right)\left(\frac{R_\star}{a}\right)^5
+
+    where :math:`M_p` is the planet mass, :math:`M_\star` is the host star mass, :math:`R_\star` is
+    the host star radius, and :math:`a` is the orbit semi major axis.
 
     References
     ----------
