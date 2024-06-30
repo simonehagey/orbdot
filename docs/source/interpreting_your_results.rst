@@ -4,23 +4,23 @@
 Interpreting the Results
 ************************
 
-The Analysis Class
-==================
-The :class:`~orbdot.analysis.Analysis` class is designed to facilitate and interpret various analyses related to the model fits. It combines the results, star-planet system info, and data together to compute and summarize effects such as proper motion, orbital decay, and apsidal precession.
+The ``Analyzer`` Class
+======================
+The :class:`~orbdot.analysis.Analyzer class is designed to facilitate and interpret various analyses related to the model fits. It combines the results, star-planet system info, and data together to compute and summarize effects such as proper motion, orbital decay, and apsidal precession.
 
-To use the :class:`~orbdot.analysis.Analysis`  class, you need an instance of a StarPlanet class and a dictionary containing the results of the model fit. the dictionary can either be passed in directly from the model fit in the script, or it can be read from a preexisting file. Either way, however, you still need to hvae a planet instance.
+To use the :class:`~orbdot.analysis.Analyzer`  class, you need an instance of a StarPlanet class and a dictionary containing the results of the model fit. the dictionary can either be passed in directly from the model fit in the script, or it can be read from a preexisting file. Either way, however, you still need to hvae a planet instance.
 
 In the script right after a model fit:
 
 .. code-block:: python
 
-    analysis = Analysis(planet_instance, results_dic)
+    Analyzer = Analyzer(planet_instance, results_dic)
 
 From a pre-existing results file:
 
 .. code-block:: python
 
-    analysis = Analysis(planet_instance, results_dic)
+    Analyzer = Analyzer(planet_instance, results_dic)
 
 As soon as you make an analysis object a file is made to summarize what you do with it. This file is named after the model and whatever suffix you chose. For example...
 
@@ -40,7 +40,7 @@ Running this:
  .. code-block:: python
 
     ttv_c = wasp12.run_ttv_fit(['t0', 'P0'], model='constant')
-    a = Analysis(wasp12, ttv_c)
+    a = Analyzer(wasp12, ttv_c)
     proper_motion()
 
 yields the following output in the file
@@ -115,85 +115,150 @@ uses Bayesian evidence, denoted as $\log{\mathrm{Z}}$, as a fundamental metric f
    | :math:`150 < B_{12}`             | Very strong evidence for Model 1                  |
    +----------------------------------+---------------------------------------------------+
 
-.. code-block:: text
 
-    """
+.. _analyzer_attributes:
+Attributes
+----------
 
-    The only star-planet parameters that are necessary to fully
-    utilize the :class::class:`~orbdot.analysis.Analysis` class are:
+.. list-table::
+   :widths: 30 15 80
+   :header-rows: 1
 
-        --> The star mass 'M_s' in solar masses.
-        --> The star radius 'R_s' in solar radii.
-        --> The planet mass 'M_p' in earth masses.
-        --> The planet radius 'R_p' in earth radii.
-
-    System Parameters
-    ------------------
-        - 'RA': Right ascension of the system.
-        - 'DEC': Declination of the system.
-        - 'mu': Proper motion of the system (mas/yr).
-        - 'mu_RA': Proper motion in right ascension (mas/yr).
-        - 'mu_DEC': Proper motion in declination (mas/yr).
-        - 'parallax': Parallax of the system (mas).
-        - 'distance': Distance to the system (pc).
-        - 'v_r': Radial velocity of the system (km/s).
-        - 'gaia_dr3_ID': Gaia DR3 identifier of the system.
-        - 'discovery_year': Year of discovery of the system.
-
-    Stellar Parameters
-    ------------------
-        - 'spectral_type': spectral type of the star.
-        - 'age': age of the star (Gyr).
-        - 'm_v': visual magnitude of the star.
-        - 'Teff': effective temperature of the star (K).
-        - 'M_s': mass of the star (Solar masses).
-        - 'R_s': radius of the star (Solar radii).
-        - 'metallicity': metallicity of the star ([Fe/H]).
-        - 'log_g': suresultsace gravity of the star (log10(cm/s^2)).
-        - 'rho_s': density of the star (g/cm^3).
-        - 'k2_s': dimensionless tidal Love number k2 of the star.
-        - 'vsini': projected rotational velocity of the star (km/s).
-        - 'P_rot_s': rotation period of the star (days).
-        - 'luminosity': luminosity of the star (W).
-
-    Planet Parameters
-    -----------------
-        - 'sm_axis': semi-major axis of the planet's orbit (AU).
-        - 'M_p': mass of the planet (Earth masses).
-        - 'R_p': radius of the planet (Earth radii).
-        - 'rho_p': density of the planet (g/cm^3).
-        - 'P_rot_p': rotation period of the planet (days).
-        - 'k2_p': dimensionless tidal Love number k2 of the planet.
-        - 'T_eq': equilibrium temperature of the planet (K).
-        - 'lambda': obliquity of the planet (degrees).
-        - 'Psi': longitude of the ascending node of the planet (degrees).
-
-    General Orbit Parameters
-    ------------------------
-        - 't0': time of periastron passage (BJD_TDB).
-        - 'P0': orbital period (days).
-        - 'e0': orbital eccentricity.
-        - 'w0': argument of periastron (radians).
-        - 'i0': orbital inclination (degrees).
-        - 'O0': longitude of the ascending node (radians).
-
-    Time-Dependent Parameters
-    -------------------------
-        - 'PdE': derivative of orbital period with respect to eccentric anomaly (days/E).
-        - 'wdE': derivative of argument of periastron with respect to eccentric anomaly (radians/E).
-        - 'edE': derivative of eccentricity with respect to eccentric anomaly (/E).
-        - 'idE': derivative of inclination with respect to eccentric anomaly (degrees/E).
-        - 'OdE': derivative of longitude of the ascending node with respect to eccentric anomaly (radians/E).
-
-    Radial Velocity Parameters
-    --------------------------
-        - 'K': radial velocity semi-amplitude (m/s).
-        - 'v0': zero-point offset in radial velocity (m/s).
-        - 'jit': radial velocity jitter (m/s).
-        - 'dvdt': linear trend in radial velocity (m/s/day).
-        - 'ddvdt': quadratic trend in radial velocity (m/s^2/day).
-
-    """
+   * - Attribute
+     - Type
+     - Description
+   * -
+     -
+     -
+   * - **Data**
+     -
+     -
+   * - ``rv_data``
+     - ``dict``
+     - Dictionary containing the radial velocity data
+   * - ``ttv_data``
+     - ``dict``
+     - Dictionary containing transit and eclipse mid-time data
+   * - ``tdv_data``
+     - ``dict``
+     - Dictionary containing transit duration data
+   * -
+     -
+     -
+   * - **System Info**
+     -
+     -
+   * - ``RA``
+     - ``str``
+     - Right ascension of the system [hexidecimal]
+   * - ``DEC``
+     - ``str``
+     - Declination of the system [hexidecimal]
+   * - ``mu``
+     - ``float``
+     - Proper motion of the system [mas/yr]
+   * - ``mu_RA``
+     - ``float``
+     - Proper motion in right ascension [mas/yr]
+   * - ``mu_DEC``
+     - ``float``
+     - Proper motion in declination [mas/yr]
+   * - ``parallax``
+     - ``float``
+     - Parallax of the system ["]
+   * - ``distance``
+     - ``float``
+     - Distance to the system [pc]
+   * - ``v_r``
+     - ``float``
+     - Systemic radial velocity [km/s]
+   * - ``discovery_year``
+     - ``int``
+     - Year of discovery of the system.
+   * -
+     -
+     -
+   * - **Star Info**
+     -
+     -
+   * - ``star_name``
+     - ``str``
+     - Name of the host star
+   * - ``age``
+     - ``float``
+     - Age of the star [Gyr]
+   * - ``M_s``
+     - ``float``
+     - Mass of the star [Solar masses]
+   * - ``R_s``
+     - ``float``
+     - Radius of the star [Solar radii]
+   * - ``k2_s``
+     - ``float``
+     - Second-order potential Love number of the star
+   * - ``vsini``
+     - ``float``
+     - Projected rotational velocity of the star [km/s]
+   * - ``P_rot_s``
+     - ``float``
+     - Rotation period of the star [days]
+   * -
+     -
+     -
+   * - **Planet Info**
+     -
+     -
+   * - ``planet_name``
+     - ``str``
+     - Name of the planet
+   * - ``M_p``
+     - ``float``
+     - Mass of the planet [Earth masses]
+   * - ``R_p``
+     - ``float``
+     - Radius of the planet [Earth radii]
+   * - ``P_rot_p``
+     - ``float``
+     - Rotation period of the planet [days]
+   * - ``k2_p``
+     - ``float``
+     - Second-order potential Love number of the planet
+   * -
+     -
+     -
+   * - **Model Fit Parameters**
+     -
+     -
+   * - ``t0``
+     - ``float``
+     - The reference transit mid-time [BJD]
+   * - ``P0``
+     - ``float``
+     - The observed orbital period at time ``t0`` [days]
+   * - ``e0``
+     - ``float``
+     - The eccentricity of the orbit at time ``t0``
+   * - ``w0``
+     - ``float``
+     - The argument of pericenter at time ``t0`` [rad]
+   * - ``i0``
+     - ``float``
+     - The line-of-sight inclination at time ``t0`` [deg]
+   * - ``dPdE``
+     - ``float``
+     - A constant change of the orbital period [days/E]
+   * - ``dwdE``
+     - ``float``
+     - A constant change of the argument of pericenter [rad/E]
+   * - ``K``
+     - ``float``
+     - The radial velocity semi-amplitude [m/s]
+   * - ``dvdt``
+     - ``float``
+     - A linear radial velocity trend [m/s/day]
+   * - ``ddvdt``
+     - ``float``
+     - A second order radial velocity trend [m/s/day^2]
 
 ------------
 
@@ -210,7 +275,10 @@ Orbital Decay
 -------------
 Orbital decay refers to a transfer of angular momentum from the planet to the host star that results in a shrinking of the orbital period, eventually leading to planetary engulfment.
 
+Due to the close proximity of HJs to their host stars, significant tidal bulges -- an ellipsoidal distortion -- are raised in both the planet and star. In the case of orbital decay, the planet orbital rate is faster than the star's rotational rate. As a result, the star's tidal bulge lags behind the HJ, creating a net torque that spins up the star at the expense of the planet's orbital angular momentum \citep{levrard_falling_2009, penev_empirical_2018, ma_orbital_2021}. The tidal forces raised by the misaligned tidal bulges are known as `equilibrium tides' and are believed to be the most significant process governing the future evolution of HJ orbits \citep{ma_orbital_2021, barker_tidal_2020}.
+
 .. autosummary::
+   :nosignatures:
 
    orbdot.models.theory.decay_pdot_from_quality_factor
    orbdot.models.theory.decay_quality_factor_from_pdot
@@ -218,35 +286,6 @@ Orbital decay refers to a transfer of angular momentum from the planet to the ho
    orbdot.models.theory.decay_timescale
    orbdot.models.theory.decay_energy_loss
    orbdot.models.theory.decay_angular_momentum_loss
-
-Equilibrium Tides
-^^^^^^^^^^^^^^^^^
-Due to the close proximity of HJs to their host stars, significant tidal bulges -- an ellipsoidal distortion -- are raised in both the planet and star. In the case of orbital decay, the planet orbital rate is faster than the star's rotational rate. As a result, the star's tidal bulge lags behind the HJ, creating a net torque that spins up the star at the expense of the planet's orbital angular momentum \citep{levrard_falling_2009, penev_empirical_2018, ma_orbital_2021}. The tidal forces raised by the misaligned tidal bulges are known as `equilibrium tides' and are believed to be the most significant process governing the future evolution of HJ orbits \citep{ma_orbital_2021, barker_tidal_2020}.
-
-.. autofunction:: orbdot.models.theory.decay_pdot_from_quality_factor
-.. autofunction:: orbdot.models.theory.decay_quality_factor_from_pdot
-
-------------
-
-Empirical Quality Factors
-^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. autofunction:: orbdot.models.theory.decay_empirical_quality_factor
-
-------------
-
-Decay Timescale
-^^^^^^^^^^^^^^^
-
-.. autofunction:: orbdot.models.theory.decay_timescale
-
-------------
-
-Energy and Angular Momentum Loss
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. autofunction:: orbdot.models.theory.decay_energy_loss
-.. autofunction:: orbdot.models.theory.decay_angular_momentum_loss
 
 ------------
 
@@ -257,40 +296,20 @@ Apsidal precession is the gradual increase of the argument of pericentre :math:`
 
 This can result from several factors, including components due to general relativistic effects :cite:p:`pal_periastron_2008,jordan_observability_2008`, perturbations from other planets :cite:p:`heyl_using_2007`, and gravitational moments arising from both the host star's rotation and planetary tidal bulges :cite:p:`greenberg_apsidal_1981`. The following sections describe the equations and OrbDot methods that are relevant to these effects.
 
-------------
+.. autosummary::
+   :nosignatures:
 
-General Relativistic Precession
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. autofunction:: orbdot.models.theory.precession_gr
-
-------------
-
-Rotational Flattening
-^^^^^^^^^^^^^^^^^^^^^
-
-.. autofunction:: orbdot.models.theory.precession_rotational_planet
-.. autofunction:: orbdot.models.theory.precession_rotational_planet_k2
-.. autofunction:: orbdot.models.theory.precession_rotational_star
-.. autofunction:: orbdot.models.theory.precession_rotational_star_k2
-
-------------
-
-Tidal Bulges
-^^^^^^^^^^^^
-
-.. autofunction:: orbdot.models.theory.precession_tidal_planet
-.. autofunction:: orbdot.models.theory.precession_tidal_planet_k2
-.. autofunction:: orbdot.models.theory.precession_tidal_star
-.. autofunction:: orbdot.models.theory.precession_tidal_star_k2
-
-------------
-
-Transit Variations
-^^^^^^^^^^^^^^^^^^
-
-.. autofunction:: orbdot.models.theory.get_tdot_from_wdot
-.. autofunction:: orbdot.models.theory.get_pdot_from_wdot
+   orbdot.models.theory.precession_gr
+   orbdot.models.theory.precession_rotational_planet
+   orbdot.models.theory.precession_rotational_planet_k2
+   orbdot.models.theory.precession_rotational_star
+   orbdot.models.theory.precession_rotational_star_k2
+   orbdot.models.theory.precession_tidal_planet
+   orbdot.models.theory.precession_tidal_planet_k2
+   orbdot.models.theory.precession_tidal_star
+   orbdot.models.theory.precession_tidal_star_k2
+   orbdot.models.theory.get_tdot_from_wdot
+   orbdot.models.theory.get_pdot_from_wdot
 
 ------------
 
@@ -299,11 +318,14 @@ Proper Motion
 -------------
 The apparent secular evolution of exoplanet transit signatures that are induced by the systemic proper motion, which is the movement of the star-planet system with respect to reference frame of the Solar System. This motion in 3D space is partially constrained with measurements of the proper motion on the sky-plane :math:`\mu` and radial velocity :math:`v_r`.
 
-.. autofunction:: orbdot.models.theory.proper_motion_wdot
-.. autofunction:: orbdot.models.theory.proper_motion_idot
-.. autofunction:: orbdot.models.theory.proper_motion_pdot
-.. autofunction:: orbdot.models.theory.proper_motion_tdot
-.. autofunction:: orbdot.models.theory.proper_motion_shklovskii
+.. autosummary::
+   :nosignatures:
+
+        orbdot.models.theory.proper_motion_wdot
+        orbdot.models.theory.proper_motion_idot
+        orbdot.models.theory.proper_motion_pdot
+        orbdot.models.theory.proper_motion_tdot
+        orbdot.models.theory.proper_motion_shklovskii
 
 .. _planet_companion_theory:
 Planetary Companion

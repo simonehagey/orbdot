@@ -1645,7 +1645,7 @@ def companion_precession(P, M2, a2, M_s):
     return dwdE
 
 
-def companion_get_mass_from_precession(P, a2, dwdE, M_s):
+def companion_mass_from_precession(P, a2, dwdE, M_s):
     """Calculates the mass of a nonresonant companion given a precession rate and orbital period.
 
     This method returns the mass of a companion given a precession rate and a constraint on its
@@ -1808,44 +1808,6 @@ def companion_from_linear_rv(tau, dvdt, M_s):
     # return the mass in Earth masses
     return M_c * M_jup / M_earth
 
-
-def get_msini_from_rv_amplitude(P, e, K, M_s):
-    """Calculate the minimum mass of a planet from a given radial velocity amplitude.
-
-    This method computes the minimum mass (M * sin(i)) of an exoplanet based on the observed
-    radial velocity semi-amplitude, orbital period, eccentricity, and the host star's mass.
-
-    Parameters
-    ----------
-    P : float
-        The orbital period in days.
-    e : float
-        The orbit eccentricity.
-    K : float
-        The radial velocity semi-amplitude in meters per second.
-    M_s : float
-        The host star mass in solar masses.
-
-    Returns
-    -------
-    float
-        The mass limit M * sin(i) in Earth masses.
-
-    """
-    # unit conversions
-    M_s *= M_sun    # solar masses to kg
-    P *= 86400      # days to seconds
-
-    # calculate the upper limit on the object's mass
-    t1 = (2 * np.pi * G / P) ** (1/3)
-    t2 = M_s ** (2/3)
-    t3 = (1 - e ** 2) ** (1/2)
-    msini = K * t2 * t3 / t1
-
-    # return the mass limit in earth masses
-    return msini / M_earth
-
-
 def companion_pdot_from_linear_rv(P, dvdt):
     """Calculates the apparent variation of an orbital period due to a line-of-sight acceleration.
 
@@ -1980,8 +1942,46 @@ def get_visual_binary_mass_from_linear_rv(theta, D, dvdt):
     # return the mass of the resolved companion star in solar masses
     return 5.341e-6 * (D * theta) ** 2 * dvdt * Phi
 
+#####################
 
-def rv_semi_amplitude(P, e, i, M_p, M_s):
+def get_mass_from_rv_amplitude(P, e, K, M_s):
+    """Calculate the minimum mass of a planet from a given radial velocity amplitude.
+
+    This method computes the minimum mass (M * sin(i)) of an exoplanet based on the observed
+    radial velocity semi-amplitude, orbital period, eccentricity, and the host star's mass.
+
+    Parameters
+    ----------
+    P : float
+        The orbital period in days.
+    e : float
+        The orbit eccentricity.
+    K : float
+        The radial velocity semi-amplitude in meters per second.
+    M_s : float
+        The host star mass in solar masses.
+
+    Returns
+    -------
+    float
+        The mass limit M * sin(i) in Earth masses.
+
+    """
+    # unit conversions
+    M_s *= M_sun    # solar masses to kg
+    P *= 86400      # days to seconds
+
+    # calculate the upper limit on the object's mass
+    t1 = (2 * np.pi * G / P) ** (1/3)
+    t2 = M_s ** (2/3)
+    t3 = (1 - e ** 2) ** (1/2)
+    msini = K * t2 * t3 / t1
+
+    # return the mass limit in earth masses
+    return msini / M_earth
+
+
+def get_rv_amplitude_from_mass(P, e, i, M_p, M_s):
     """Calculates the semi-amplitude of the radial velocity signal raised by a bound planet.
 
     Parameters
@@ -2016,7 +2016,7 @@ def rv_semi_amplitude(P, e, i, M_p, M_s):
     return t1 * t2 ** (1/3)
 
 
-def semi_major_axis_from_period(P, M_s):
+def get_sm_axis_from_period(P, M_s):
     """Calculates the semi major axis in meters given the orbital period and host star mass.
 
     Parameters
@@ -2040,7 +2040,7 @@ def semi_major_axis_from_period(P, M_s):
     return (G * M_s * P ** 2 / (4 * np.pi ** 2)) ** (1/3)
 
 
-def period_from_semi_major_axis(a, M_s):
+def get_period_from_sm_axis(a, M_s):
     """Calculates the period of a planetary orbit given its semi major axis in astronomical units.
 
     Parameters

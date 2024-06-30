@@ -141,8 +141,6 @@ class Analyzer:
         self.OdE = self.res['OdE'][0]    # rad/epoch
 
         self.K = self.res['K'][0]          # m/s
-        # self.v0 = self.res['v0'][0]        # m/s
-        # self.jit = self.res['jit'][0]      # m/s
         self.dvdt = self.res['dvdt'][0]    # m/s/day
         self.ddvdt = self.res['ddvdt'][0]  # m/s^2/day
 
@@ -352,8 +350,8 @@ class Analyzer:
                     print(str1, str2)
 
                 # calculate the stellar Love number if precession is due to the rotational bulge
-                k2s_rot = m.k2s_from_wdot_rot_s(self.P0, self.e0, self.M_s,
-                                                self.R_s, self.P_rot_s, self.wdE)
+                k2s_rot = m.precession_rotational_star_k2(self.P0, self.e0, self.M_s,
+                                                          self.R_s, self.P_rot_s, self.wdE)
                 str1 = ' * Stellar Love number if precession due to rotational bulge:\n'
                 str2 = '\t  k2_s = {:.2f}\n'.format(k2s_rot)
                 f.write(str1 + str2)
@@ -361,8 +359,8 @@ class Analyzer:
                     print(str1, str2)
 
                 # calculate the planetary Love number if precession is due to the rotational bulge
-                k2p_rot = m.k2p_from_wdot_rot_p(self.P0, self.e0, self.M_s, self.M_p,
-                                                self.R_p, self.P_rot_p, self.wdE)
+                k2p_rot = m.precession_rotational_planet_k2(self.P0, self.e0, self.M_s, self.M_p,
+                                                            self.R_p, self.P_rot_p, self.wdE)
                 str1 = ' * Planetary Love number if precession due to rotational bulge:\n'
                 str2 = '\t  k2_p = {:.2f}\n'.format(k2p_rot)
                 if printout:
@@ -370,8 +368,8 @@ class Analyzer:
                 f.write(str1 + str2)
 
                 # calculate the stellar Love number if precession is due to the tidal bulge
-                k2s_tide = m.k2s_from_wdot_tide_s(self.P0, self.e0, self.M_s,
-                                                  self.M_p, self.R_s, self.wdE)
+                k2s_tide = m.precession_tidal_star_k2(self.P0, self.e0, self.M_s,
+                                                      self.M_p, self.R_s, self.wdE)
                 str1 = ' * Stellar Love number if precession due to tidal bulge:\n'
                 str2 = '\t  k2_s = {:.2f}\n'.format(k2s_tide)
                 f.write(str1 + str2)
@@ -379,8 +377,8 @@ class Analyzer:
                     print(str1, str2)
 
                 # calculate the planetary Love number if precession is due to the tidal bulge
-                k2p_tide = m.k2p_from_wdot_tide_p(self.P0, self.e0, self.M_s,
-                                                  self.M_p, self.R_p, self.wdE)
+                k2p_tide = m.precession_tidal_planet_k2(self.P0, self.e0, self.M_s,
+                                                        self.M_p, self.R_p, self.wdE)
                 str1 = ' * Planetary Love number if precession due to tidal bulge:\n'
                 str2 = '\t  k2_p = {:.5f}\n\n'.format(k2p_tide)
                 f.write(str1 + str2)
@@ -535,7 +533,7 @@ class Analyzer:
                     print(str1, str2, str3)
 
                 # calculate the modified stellar quality factor from the decay rate
-                q_fit = m.quality_factor_from_decay(self.P0, self.PdE, self.M_s, self.M_p, self.R_s)
+                q_fit = m.decay_quality_factor_from_pdot(self.P0, self.PdE, self.M_s, self.M_p, self.R_s)
                 str1 = ' * Modified stellar quality factor:\n'
                 str2 = '\t  Q\' = {:.2E}\n'.format(q_fit)
                 f.write(str1 + str2)
@@ -543,7 +541,7 @@ class Analyzer:
                     print(str1, str2)
 
                 # calculate the remaining lifetime of the planet
-                tau = m.remaining_lifetime(self.P0, self.PdE)
+                tau = m.decay_timescale(self.P0, self.PdE)
                 str1 = ' * Remaining lifetime:\n'
                 str2 = '\t  tau = {:.2E} Myr\n'.format(tau)
                 f.write(str1 + str2)
@@ -551,7 +549,7 @@ class Analyzer:
                     print(str1, str2)
 
                 # calculate the orbital energy loss rate
-                dEdt = m.tidal_energy_loss(self.P0, self.PdE, self.M_s, self.M_p)
+                dEdt = m.decay_energy_loss(self.P0, self.PdE, self.M_s, self.M_p)
                 str1 = ' * Energy loss rate:\n'
                 str2 = '\t  dEdt = {:.2E} W\n'.format(dEdt)
                 f.write(str1 + str2)
@@ -559,7 +557,7 @@ class Analyzer:
                     print(str1, str2)
 
                 # calculate the orbit angular momentum loss rate
-                dLdt = m.tidal_angular_momentum_loss(self.P0, self.PdE, self.M_s, self.M_p)
+                dLdt = m.decay_angular_momentum_loss(self.P0, self.PdE, self.M_s, self.M_p)
                 str1 = ' * Angular momentum loss rate:\n'
                 str2 = '\t  dLdt = {:.2E} kg m^2 / s^2 \n\n'.format(dLdt)
                 f.write(str1 + str2)
@@ -625,7 +623,7 @@ class Analyzer:
                 print(' ' + str1, str2)
 
             # calculate the tidal forcing period and quality factor from the empirical law
-            q_pred, p_tide = m.empirical_quality_factor(self.P0, self.P_rot_s)
+            q_pred, p_tide = m.decay_empirical_quality_factor(self.P0, self.P_rot_s)
             str1 = ' * Tidal forcing period:\n'
             str2 = '\t  P_tide = {:.3f} days\n'.format(p_tide)
             f.write(str1 + str2)
@@ -639,7 +637,7 @@ class Analyzer:
                 print(str1, str2)
 
             # calculate the predicted decay rate
-            pdot_pred = m.decay_from_quality_factor(self.P0, self.M_s, self.M_p, self.R_s, q_pred)
+            pdot_pred = m.decay_pdot_from_quality_factor(self.P0, self.M_s, self.M_p, self.R_s, q_pred)
             str1 = ' * Predicted decay rate:\n'
             str2 = '\t  dP/dE = {:.2E} days/E\n'.format(pdot_pred)
             str3 = '\t  dP/dt = {:.2f} ms/yr\n'.format(pdot_pred * 365.25 * 8.64e+7 / self.P0)
@@ -648,7 +646,7 @@ class Analyzer:
                 print(str1, str2, str3)
 
             # calculate the remaining lifetime of the planet
-            tau = m.remaining_lifetime(self.P0, pdot_pred)
+            tau = m.decay_timescale(self.P0, pdot_pred)
             str1 = ' * Remaining lifetime given predicted decay rate:\n'
             str2 = '\t  tau = {:.2E} Myr\n'.format(tau)
             f.write(str1 + str2)
@@ -656,7 +654,7 @@ class Analyzer:
                 print(str1, str2)
 
             # calculate the orbital energy loss rate
-            dEdt = m.tidal_energy_loss(self.P0, pdot_pred, self.M_s, self.M_p)
+            dEdt = m.decay_energy_loss(self.P0, pdot_pred, self.M_s, self.M_p)
             str1 = ' * Predicted energy loss rate:\n'
             str2 = '\t  dEdt = {:.2E} W\n'.format(dEdt)
             f.write(str1 + str2)
@@ -664,7 +662,7 @@ class Analyzer:
                 print(str1, str2)
 
             # calculate the orbit angular momentum loss rate
-            dLdt = m.tidal_angular_momentum_loss(self.P0, pdot_pred, self.M_s, self.M_p)
+            dLdt = m.decay_angular_momentum_loss(self.P0, pdot_pred, self.M_s, self.M_p)
             str1 = ' * Predicted angular momentum loss rate:\n'
             str2 = '\t  dLdt = {:.2E} kg m^2 / s^2 \n\n'.format(dLdt)
             f.write(str1 + str2)
@@ -703,8 +701,8 @@ class Analyzer:
                 print(' ' + str1, str2)
 
             # calculate the apparent apsidal precession rate due to proper motion
-            wdot_pm_min = m.get_idot_pm(self.mu, 90)
-            wdot_pm_max = m.get_idot_pm(self.mu, 180)
+            wdot_pm_min = m.proper_motion_idot(self.mu, 90)
+            wdot_pm_max = m.proper_motion_idot(self.mu, 180)
             str1 = ' * Apparent apsidal precession rate due to proper motion:\n'
             str2 = '\t  maximum: dw/dt = {:.2E} rad/yr\n'.format(wdot_pm_max)
             str3 = '\t  minimum: dw/dt = {:.2E} rad/yr\n'.format(wdot_pm_min)
@@ -713,8 +711,8 @@ class Analyzer:
                 print(str1, str2, str3)
 
             # calculate the apparent rate of change of the inclination due to proper motion
-            idot_pm_max = m.get_wdot_pm(self.mu, self.i0, 90)
-            idot_pm_min = m.get_wdot_pm(self.mu, self.i0, 180)
+            idot_pm_max = m.proper_motion_wdot(self.mu, self.i0, 90)
+            idot_pm_min = m.proper_motion_wdot(self.mu, self.i0, 180)
             str1 = ' * Apparent rate of change of the inclination due to proper motion:\n'
             str2 = '\t  maximum: di/dt = {:.2E} rad/yr\n'.format(idot_pm_max)
             str3 = '\t  minimum: di/dt = {:.2E} rad/yr\n'.format(idot_pm_min)
@@ -724,10 +722,10 @@ class Analyzer:
 
             # calculate the transit duration variation due to proper motion
             T = transit_duration(self.P0, self.e0, self.w0, self.i0, self.M_s, self.R_s, self.R_p)
-            tdot_max = m.get_tdot_pm(self.P0, self.e0, self.w0, self.i0, T,
-                                     wdot_pm_min, idot_pm_max, self.M_s, self.R_s)
-            tdot_min = m.get_tdot_pm(self.P0, self.e0, self.w0, self.i0, T,
-                                     wdot_pm_max, idot_pm_min, self.M_s, self.R_s)
+            tdot_max = m.proper_motion_tdot(self.P0, self.e0, self.w0, self.i0, T,
+                                            wdot_pm_min, idot_pm_max, self.M_s, self.R_s)
+            tdot_min = m.proper_motion_tdot(self.P0, self.e0, self.w0, self.i0, T,
+                                            wdot_pm_max, idot_pm_min, self.M_s, self.R_s)
 
             str1 = ' * Transit duration variation due to proper motion:\n'
             str2 = '\t  maximum: dT/dt = {:.2E} ms/yr\n'.format(tdot_max)
@@ -737,7 +735,7 @@ class Analyzer:
                 print(str1, str2, str3)
 
             # calculate the apparent orbital period drift due to proper motion
-            pdot_pm = m.get_pdot_pm(self.P0, self.e0, self.w0, self.mu)
+            pdot_pm = m.proper_motion_pdot(self.P0, self.e0, self.w0, self.mu)
             str1 = ' * Apparent orbital period drift due to proper motion:\n'
             str2 = '\t  maximum: dP/dt = {:.2E} ms/yr\n'.format(pdot_pm)
             f.write(str1 + str2)
@@ -745,7 +743,7 @@ class Analyzer:
                 print(str1, str2)
 
             # calculate the apparent orbital period drift due to the Shklovskii effect
-            pdot_shk = m.shklovskii_effect(self.P0, self.mu, self.D)
+            pdot_shk = m.proper_motion_shklovskii(self.P0, self.mu, self.D)
             str1 = ' * Apparent orbital period drift due to the Shklovskii effect:\n'
             str2 = '\t  maximum: dP/dt = {:.2E} ms/yr\n\n'.format(pdot_shk)
             f.write(str1 + str2)
