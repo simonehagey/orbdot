@@ -214,55 +214,25 @@ Orbital decay refers to a transfer of angular momentum from the planet to the ho
 
 **Equilibrium Tides**
 
- If equilibrium tides dominate the evolution of the HJ system, the rate of orbital decay depends on the efficiency of tidal energy dissipation within the star :cite:p:`Goldreich1966, barker_tidal_2020`, which is typically parameterized by the star's "modified" tidal quality factor :math:`Q_\star^{'}`. Under the "constant phase lag" model of :cite:t:`Goldreich1966`, the decay rate is:
+ .. autofunction:: orbdot.models.theory.decay_quality_factor_from_pdot
+ .. autofunction:: orbdot.models.theory.decay_pdot_from_quality_factor
 
- .. math::
+**Empirical Quality Factor**
 
-    \dot{P}_{\mathrm{decay}} = -\frac{27\pi}{2Q_\star^{'}}\left(\frac{M_p}{M_\star}\right)\left(\frac{R_\star}{a}\right)^5
-
- The method :meth:`~orbdot.models.theory.quality_factor_from_decay` calculates :math:`Q_\star^{'}` from a given :math:`\dot{P}_{\mathrm{decay}}`, and the method :meth:`~orbdot.models.theory.decay_from_quality_factor` calculates :math:`\dot{P}_{\mathrm{decay}}` from a given :math:`Q_\star^{'}`.
-
-**Empirical Quality Factors**
-
- The method :meth:`~orbdot.models.theory.empirical_quality_factor` estimates a value for :math:`Q_\star^{'}` with an empirical law derived by :cite:t:`Penev2018`, given by:
-
- .. math::
-
-    Q^{'}_* = \max\left[{\frac{10^6}{(P_{\mathrm{tide}}/\mathrm{day}})^{3.1}}\,,\,{10^5}\right]
-
- where :math:`P_{\mathrm{tide}}` is the tidal forcing period of the star-planet system, given by:
-
- .. math::
-
-    P_{\mathrm{tide}} = \frac{1}{2\left({P_{\mathrm{orb}}}^{-1} -{P_{\mathrm{rot}}}^{-1} \right)}
-
- where :math:`P_{\mathrm{orb}}` is the orbital period and :math:`P_{\mathrm{rot}}` is the rotational period of the host star.
+ .. autofunction:: orbdot.models.theory.decay_empirical_quality_factor
 
 ------------
 
 **Decay Timescale**
 
- The method :meth:`~orbdot.models.theory.remaining_lifetime` computes the timescale over which the orbit is shrinking for any given decay rate :math:`\dot{P}_{\mathrm{decay}}` and initial orbital period :math:`P_0` using the equation:
-
- .. math::
-
-    \tau=\frac{P_0}{|\dot{P}_{\mathrm{decay}}|}
-
- .. autofunction:: orbdot.models.theory.remaining_lifetime
+ .. autofunction:: orbdot.models.theory.decay_timescale
 
 ------------
 
 **Energy and Angular Momentum Loss**
 
- As a planet experiences orbital decay, both the orbital energy and angular momentum will decrease over time. The methods :meth:`~orbdot.models.theory.tidal_energy_loss` and :meth:`~orbdot.models.theory.tidal_angular_momentum_loss` calculate these loss rates for any given orbital decay rate, using the following equations from :cite:t:`yee2020`:
-
- .. math::
-
-    \frac{d E}{d t}=\frac{(2 \pi)^{2 / 3} M_{\mathrm{p}}}{3}\left(\frac{G M_{\star}}{P}\right)^{2 / 3} \frac{1}{P} \frac{d P}{d t}
-
-    \frac{d L}{d t}=\frac{M_{\mathrm{p}}}{3(2 \pi)^{1 / 3}}\left(\frac{G M_{\star}}{P}\right)^{2 / 3} \frac{d P}{d t}
-
- where :math:`\frac{d E}{d t}` and :math:`\frac{d L}{d t}` are the loss rates of orbital energy and angular momentum, respectively.
+ .. autofunction:: orbdot.models.theory.decay_energy_loss
+ .. autofunction:: orbdot.models.theory.decay_angular_momentum_loss
 
 ------------
 
@@ -275,71 +245,44 @@ This can result from several factors, including components due to general relati
 
 ------------
 
+**Transit Variations**
+ .. autofunction:: orbdot.models.theory.get_tdot_from_wdot
+ .. autofunction:: orbdot.models.theory.get_pdot_from_wdot
+
+------------
+
 **General Relativity**
 
- The lowest order of the relativistic contribution to apsidal precession is given by:
-
- .. math::
-
-    \dot{\omega}_{\mathrm{GR}} = \frac{3 \eta G M_s}{ac^2(1-e^2)}
-
-The method :meth:`~orbdot.models.theory.precession_gr` calculates the expected precession rate :math:`\dot{\omega}_{\mathrm{GR}}` for any given system:
+ .. autofunction:: orbdot.models.theory.precession_gr
 
 ------------
 
 **Rotational Flattening**
- Another source of apsidal precession is the rotational flattening of host stars and their planets, which is an oblate distortion that perturbs the gravitational potential.
 
+ .. autofunction:: orbdot.models.theory.precession_rotational_planet
+ .. autofunction:: orbdot.models.theory.precession_rotational_planet_k2
+ .. autofunction:: orbdot.models.theory.precession_rotational_star
+ .. autofunction:: orbdot.models.theory.precession_rotational_star_k2
 
-
- The Love number represents how centrally condensed the body is, and is a fixed property of the body. The lower the :math:`k_2`, the more centrally condensed the planetary interior structure, which in turn leads to a slower precession rate. The theoretical upper limit of :math:`k_2` is :math:`3/2`, which corresponds to a uniform density sphere [lissauer2019]_. Note that :math:`k_2` is generally much lower for main-sequence stars [claret_love_num]_ (:math:`\sim 0.03`) than planets :cite:p:`Ragozzine2009` (0.1 -- 0.3).
-
- OrbDott the :math:`k_2` formulation from [Ragozzine2009]_ equation X, the rotation-induced precession rate is [Ragozzine2009]_:
-
- .. math::
-
-     \dot{\omega}_{\mathrm{rot,p}} = \frac{\eta {R_p}^5\,k_{2p}\,{\dot{\theta}_p}^2}{2 a^2\,G M_p} \,g_2(e)
-
- .. math::
-
-     \dot{\omega}_{\mathrm{rot,s}} = \frac{\eta {R_s}^5\,k_{2s}\,{\dot{\theta}_s}^2}{2 a^2\,G M_s} \,g_2(e)
-
- where,
-
- .. math::
-
-    g_2(e) = (1-e^2)^{-2}
-
- :math:`\dot{\theta}_p` and :math:`\dot{\theta}_s` represent the rotation speed of the planet and star, respectively.
+------------
 
 **Tidal Bulges**
- Due to the close proximity of HJs to their host stars, significant tidal bulges -- an ellipsoidal distortion -- are raised in both the planet and star. Both pairs of tidal bulges induce apsidal precession, but for Hot Jupiters, the planet's bulge is again expected to dominate :cite:p:`Ragozzine2009`. The precession rate itself depends on the internal density distribution of the HJ, which affects the extent to which the planet is elongated. This is again parameterized by the planetary Love number :math:`k_{2,p}`. For completeness, we also consider the effect of the star's tidal bulge. :cite:t:`Ragozzine2009` formulate the tides-induced precession as:
 
- .. math::
-
-    \begin{aligned}
-    \dot{\omega}_{\mathrm{tide}} = \dot{\omega}_{\mathrm{tide,p}} +  \dot{\omega}_{\mathrm{tide,s}} \,\,
-    &= \frac{15}{2}k_{2,p}n\left(\frac{R_p}{a}\right)^5\left(\frac{M_s}{M_p}\right)f_2(e) \\
-    &+ \frac{15}{2}k_{2,s}n\left(\frac{R_s}{a}\right)^5\left(\frac{M_p}{M_s}\right)f_2(e),
-    \end{aligned}
-
- where,
-
- .. math::
-
-    \begin{aligned}
-    f_2(e)= (1-e^2)^{-5} \left(1 + \frac{3}{2}e^2 + \frac{1}{8}e^4 \right).
-    \end{aligned}
+ .. autofunction:: orbdot.models.theory.precession_tidal_planet
+ .. autofunction:: orbdot.models.theory.precession_tidal_planet_k2
+ .. autofunction:: orbdot.models.theory.precession_tidal_star
+ .. autofunction:: orbdot.models.theory.precession_tidal_star_k2
 
 .. _proper_motion_theory:
 Proper Motion
 -------------
+The apparent secular evolution of exoplanet transit signatures that are induced by the systemic proper motion, which is the movement of the star-planet system with respect to reference frame of the Solar System. This motion in 3D space is partially constrained with measurements of the proper motion on the sky-plane :math:`\mu` and radial velocity :math:`v_r`.
 
-.. autofunction:: orbdot.models.theory.get_wdot_pm
-.. autofunction:: orbdot.models.theory.get_idot_pm
-.. autofunction:: orbdot.models.theory.get_pdot_pm
-.. autofunction:: orbdot.models.theory.get_tdot_pm
-.. autofunction:: orbdot.models.theory.shklovskii_effect
+.. autofunction:: orbdot.models.theory.proper_motion_wdot
+.. autofunction:: orbdot.models.theory.proper_motion_idot
+.. autofunction:: orbdot.models.theory.proper_motion_pdot
+.. autofunction:: orbdot.models.theory.proper_motion_tdot
+.. autofunction:: orbdot.models.theory.proper_motion_shklovskii
 
 .. _planet_companion_theory:
 Planetary Companion
