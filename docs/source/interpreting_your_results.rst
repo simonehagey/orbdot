@@ -208,31 +208,45 @@ The following sections briefly introduce these things...
 .. _orbital_decay_theory:
 Orbital Decay
 -------------
-Orbital decay refers to a transfer of angular momentum from the planet to the host star that results in a shrinking of the orbital period, which we denote :math:`\dot{P}_{\mathrm{decay}}`, eventually leading to planetary engulfment.
+Orbital decay refers to a transfer of angular momentum from the planet to the host star that results in a shrinking of the orbital period, eventually leading to planetary engulfment.
+
+.. autosummary::
+
+   orbdot.models.theory.decay_pdot_from_quality_factor
+   orbdot.models.theory.decay_quality_factor_from_pdot
+   orbdot.models.theory.decay_empirical_quality_factor
+   orbdot.models.theory.decay_timescale
+   orbdot.models.theory.decay_energy_loss
+   orbdot.models.theory.decay_angular_momentum_loss
+
+Equilibrium Tides
+^^^^^^^^^^^^^^^^^
+Due to the close proximity of HJs to their host stars, significant tidal bulges -- an ellipsoidal distortion -- are raised in both the planet and star. In the case of orbital decay, the planet orbital rate is faster than the star's rotational rate. As a result, the star's tidal bulge lags behind the HJ, creating a net torque that spins up the star at the expense of the planet's orbital angular momentum \citep{levrard_falling_2009, penev_empirical_2018, ma_orbital_2021}. The tidal forces raised by the misaligned tidal bulges are known as `equilibrium tides' and are believed to be the most significant process governing the future evolution of HJ orbits \citep{ma_orbital_2021, barker_tidal_2020}.
+
+.. autofunction:: orbdot.models.theory.decay_pdot_from_quality_factor
+.. autofunction:: orbdot.models.theory.decay_quality_factor_from_pdot
 
 ------------
 
-**Equilibrium Tides**
+Empirical Quality Factors
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
- .. autofunction:: orbdot.models.theory.decay_quality_factor_from_pdot
- .. autofunction:: orbdot.models.theory.decay_pdot_from_quality_factor
-
-**Empirical Quality Factor**
-
- .. autofunction:: orbdot.models.theory.decay_empirical_quality_factor
+.. autofunction:: orbdot.models.theory.decay_empirical_quality_factor
 
 ------------
 
-**Decay Timescale**
+Decay Timescale
+^^^^^^^^^^^^^^^
 
- .. autofunction:: orbdot.models.theory.decay_timescale
+.. autofunction:: orbdot.models.theory.decay_timescale
 
 ------------
 
-**Energy and Angular Momentum Loss**
+Energy and Angular Momentum Loss
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
- .. autofunction:: orbdot.models.theory.decay_energy_loss
- .. autofunction:: orbdot.models.theory.decay_angular_momentum_loss
+.. autofunction:: orbdot.models.theory.decay_energy_loss
+.. autofunction:: orbdot.models.theory.decay_angular_momentum_loss
 
 ------------
 
@@ -245,33 +259,40 @@ This can result from several factors, including components due to general relati
 
 ------------
 
-**Transit Variations**
- .. autofunction:: orbdot.models.theory.get_tdot_from_wdot
- .. autofunction:: orbdot.models.theory.get_pdot_from_wdot
+General Relativistic Precession
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. autofunction:: orbdot.models.theory.precession_gr
 
 ------------
 
-**General Relativity**
+Rotational Flattening
+^^^^^^^^^^^^^^^^^^^^^
 
- .. autofunction:: orbdot.models.theory.precession_gr
-
-------------
-
-**Rotational Flattening**
-
- .. autofunction:: orbdot.models.theory.precession_rotational_planet
- .. autofunction:: orbdot.models.theory.precession_rotational_planet_k2
- .. autofunction:: orbdot.models.theory.precession_rotational_star
- .. autofunction:: orbdot.models.theory.precession_rotational_star_k2
+.. autofunction:: orbdot.models.theory.precession_rotational_planet
+.. autofunction:: orbdot.models.theory.precession_rotational_planet_k2
+.. autofunction:: orbdot.models.theory.precession_rotational_star
+.. autofunction:: orbdot.models.theory.precession_rotational_star_k2
 
 ------------
 
-**Tidal Bulges**
+Tidal Bulges
+^^^^^^^^^^^^
 
- .. autofunction:: orbdot.models.theory.precession_tidal_planet
- .. autofunction:: orbdot.models.theory.precession_tidal_planet_k2
- .. autofunction:: orbdot.models.theory.precession_tidal_star
- .. autofunction:: orbdot.models.theory.precession_tidal_star_k2
+.. autofunction:: orbdot.models.theory.precession_tidal_planet
+.. autofunction:: orbdot.models.theory.precession_tidal_planet_k2
+.. autofunction:: orbdot.models.theory.precession_tidal_star
+.. autofunction:: orbdot.models.theory.precession_tidal_star_k2
+
+------------
+
+Transit Variations
+^^^^^^^^^^^^^^^^^^
+
+.. autofunction:: orbdot.models.theory.get_tdot_from_wdot
+.. autofunction:: orbdot.models.theory.get_pdot_from_wdot
+
+------------
 
 .. _proper_motion_theory:
 Proper Motion
