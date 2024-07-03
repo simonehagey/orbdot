@@ -17,15 +17,9 @@
 
   "_comment2": "Star Characteristics",
 
-      "spectral_type": null,
       "age [Gyr]": null,
-      "m_v": null,
-      "Teff [K]": null,
       "M_s [M_sun]": null,
       "R_s [R_sun]": null,
-      "metallicity [Fe/H]": null,
-      "log_g [log10(cm/s^2)]": null,
-      "rho_s [g/cm^3]": null,
       "k2_s": null,
       "vsini [km/s]": null,
       "P_rot_s [days]": null,
@@ -33,13 +27,10 @@
   "_comment3": "Planet Characteristics",
 
       "planets": ["b"],
-      "sm_axis [AU]": [null],
       "M_p [M_earth]": [null],
       "R_p [R_earth]": [null],
-      "rho_p [g/cm^3]": [null],
       "P_rot_p [days]": [null],
       "k2_p": [null],
-      "T_eq [K]": [null],
       "lambda [deg]": [null],
       "Psi [deg]": [null],
 

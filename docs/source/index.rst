@@ -70,7 +70,6 @@ Contents
    getting_started
    models
    model_fitting
-   interpreting_your_results
 
 .. toctree::
    :caption: Examples

@@ -267,8 +267,6 @@ For example,
           },
      ...
 
-For more information on the nested sampling options, see Section XXX.
-
 Similar to above, the ``"joint_fit"`` dictionary specifies the settings for joint fits, ie. fitting multiple data types simultaneously. For example,
 
 .. code-block:: text
@@ -285,24 +283,7 @@ Similar to above, the ``"joint_fit"`` dictionary specifies the settings for join
 
 Priors
 ^^^^^^
-The ``"priors"`` dictionary contains key-value pairs that define the prior distributions of the free parameters. Every value is a list of three elements, the first being the type of prior ('uniform', 'gaussian', or 'log'), with the subsequent elements defining the distribution. For each parameter, the key is identical to its associated symbol in Table XXX.
-
-OrDot currently supports three different prior distributions
-
-.. table::
-   :name: tab:priors
-   :width: 50%
-   :align: center
-
-   +---------------+--------------------------------------+
-   | Gaussian      |   ["gaussian", mean, std]            |
-   +---------------+--------------------------------------+
-   | Log-Uniform   |   ["log", log10(min), log10(max)]    |
-   +---------------+--------------------------------------+
-   | Uniform       |   ["uniform", min, max]              |
-   +---------------+--------------------------------------+
-
-For example,
+The ``"priors"`` dictionary contains key-value pairs that define the prior distributions of the free parameters. Every value is a list of three elements, the first being the type of prior ('uniform', 'gaussian', or 'log'), with the subsequent elements defining the distribution. For example,
 
 .. code-block:: text
 
@@ -314,6 +295,8 @@ For example,
              "PdE": ["uniform", -1e-7, 0],
            }
      }
+
+See the XXX section for more information on the priors, and see the methods in the priors module to see how they are transformed from the unit hypercube.
 
 ------------
 
@@ -414,145 +397,18 @@ Transit duration data files are read assuming that the columns are in the order:
 
 The System Info File
 --------------------
-All information specific to the star-planet system is contained in a dictionary stored as a .json file
-
 All information specific to the star-planet system is contained in a dictionary stored
-as a .json file.
+as a .json file. This file contains the physical characteristics of the star-planet system, here's the default:
 
-This file contains the physical characteristics of the star-planet system, including:
+DEFAULT FILE DROPDOWN
 
 The parameters in the info file serve one of 3 functions:
-1. they inform the fixed parameter values
-2. they are used in the Analysis class
-3. they are there just for funsies ie. all of those parameters can be loaded into the analysis class and used later in any way you want.
+ 1. they inform the fixed parameter values
+ 2. they are used in the Analysis class
+ 3. they are there just for funsies ie. all of those parameters can be loaded into the analysis class and used later in any way you want.
 
-Only a few of these parameters are actually needed to use OrbDot, with the requirements varying depending on whether you want to use the Analysis class.
-
-explain planetnum
-
-Minimum requirements for model fitting
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. list-table::
-   :header-rows: 1
-
-   * - Key
-     - Unit
-     - Description
-     - Example
-
-   * - ``star_name``
-     - ``str``
-     - The name of the host star.
-     - ``"WASP-12"``
-
-   * - ``planets``
-     - ``list``
-     - List of planet letter designations.
-     - ``["b"]``
-
-   * - ``P [days]``
-     - ``list``
-     - List of planets' orbital periods.
-     - ``[1.09142]``
-
-   * - ``t0 [BJD_TDB]``
-     - ``list``
-     - the path from the base directory to the info file
-     - ``[2456305.4555]``
-
+See the REF section about the model parameters. The rest of the parameters are for the analysis class, depending on what you want to do with it. TEST WHAT HAPPENS WHEN YOU HAVE NULL VALUE IN INFO FILE BUT CALL THE ANALYSIS CLASS METHOD(S).
 
 .. note::
 
    The planetary parameters are given as a list so that you can have one info file for a whole planetary system. Then, when you initiate a :class:`~orbdot.star_planet.StarPlanet` object, you can specify the parameter ``planet_num`` to be the index that corresponds to the planet you want to study.
-
-Minimum requirements for the Analysis class
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-The minimum requirements for the ``Analysis`` class is more complex, as it depends on which functionality you plan to use.
-
-.. list-table::
-   :header-rows: 1
-
-   * - Key
-     - Unit
-     - Description
-     - Example
-
-   * - ``star_name``
-     - ``str``
-     - The name of the host star.
-     - ``"WASP-12"``
-
-
-.. admonition:: For example
-  :class: dropdown
-
-  .. code-block::
-
-    {
-      "_comment1": "WASP-12 System Info",
-
-          "star_name": "WASP-12",
-          "RA": "06h30m32.79s",
-          "DEC": "+29d40m20.16s",
-          "num_stars": 3,
-          "num_planets": 1,
-          "discovery_year": 2008,
-          "mu [mas/yr]": 7.1348482,
-          "mu_RA [mas/yr]": -1.57989,
-          "mu_DEC [mas/yr]": -6.95773,
-          "parallax [mas]": 2.31224,
-          "distance [pc]": 427.246,
-          "rad_vel [km/s]": 0.0,
-          "gaia_dr2_id": "3435282862461427072",
-
-      "_comment2": "Star Properties",
-
-          "spectral_type": "0.0",
-          "m_v": 11.569,
-          "M_s [M_sun]": 1.38,
-          "R_s [R_sun]": 1.619,
-          "age [Gyr]": 2.0,
-          "Teff [K]": 6250.0,
-          "metallicity [Fe/H]": 0.32,
-          "k2_s": 0.03,
-          "vsini [km/s]": 2.2,
-
-      "_comment3": "Planet Properties",
-
-          "planets": ["b"],
-          "sm_axis [AU]": [0.02312],
-          "M_p [M_earth]": [441.89072999999996],
-          "R_p [R_earth]": [20.4562425],
-          "k2_p": [0.3],
-          "P_rot_p [days]": [1.0914209],
-          "log_g_p [cgs]": [3.015],
-
-      "_comment4": "Model Parameters",
-
-        "__comment4": "Orbital Elements",
-
-           "t0 [BJD_TDB]": [2456305.455521751],
-           "P [days]": [1.091419528540099],
-           "e": [0.02],
-           "w [rad]": [0.0],
-           "i [deg]": [83.3],
-           "O [rad]": [0.0],
-
-        "__comment4_2": "Time-Dependant",
-
-           "PdE [days/E]": [0.0],
-           "wdE [rad/E]": [0.0],
-           "edE [/E]": [0.0],
-           "idE [deg/E]": [0.0],
-           "OdE [rad/E]": [0.0],
-
-        "__comment4_3": "Radial Velocity",
-
-           "K [m/s]": [219.9],
-           "v0 [m/s]": [0.0],
-           "jit [m/s]": [9.1],
-           "dvdt [m/s/day]": [0.0],
-           "ddvdt [m/s^2/day]": [0.0],
-    }

@@ -196,9 +196,40 @@ class Analyzer:
         float
             The results are printed to the console and written to a text file.
 
+        Notes
+        -----
+        To compare two models, this method calculate the Bayes factor, denoted as:
+
+        .. math::
+
+            \log{B_{12}} = \log{\mathrm{Z}}_{1} - \log{\mathrm{Z}}_{2}
+
+        where :math:`\\log{\\mathrm{Z}}` is the Bayesian evidence, defined such that a lower
+        value signifies a superior fit to the observed data. The calculated Baye's factor is then
+        compared to the thresholds established by Kass and Raftery (1995) [1]_, tabulated below.
+
+        .. table::
+          :name: tab:bayesian_evidence
+          :width: 80%
+          :align: center
+
+           +----------------------------------+---------------------------------------------------+
+           | Condition                        | Evidence for Model 1 (Model 1)                    |
+           +==================================+===================================================+
+           | :math:`B_{12} \leq 1`            | Model 1 is not supported over Model 2             |
+           +----------------------------------+---------------------------------------------------+
+           | :math:`1 < B_{12} \leq 3`        | Evidence for Model 1 barely worth mentioning      |
+           +----------------------------------+---------------------------------------------------+
+           | :math:`3 < B_{12} \leq 20`       | Positive evidence for Model 1                     |
+           +----------------------------------+---------------------------------------------------+
+           | :math:`20 < B_{12} \leq 150`     | Strong evidence for Model 1                       |
+           +----------------------------------+---------------------------------------------------+
+           | :math:`150 < B_{12}`             | Very strong evidence for Model 1                  |
+           +----------------------------------+---------------------------------------------------+
+
         References
         ----------
-        .. [1] Kass and Raftery (1995). https://doi.org/10.2307/2291091.
+        .. [1] :cite:t:`KassRaftery1995`. https://doi.org/10.2307/2291091.
 
         """
         print(' --> model_comparison()\n')
@@ -337,17 +368,17 @@ class Analyzer:
                 if printout:
                     print(str1, str2)
                 print(Pdot_fit)
-                # calculate the resulting transit duration variation
-                T = transit_duration(self.P0, self.e0, self.w0, self.i0,
-                                     self.M_s, self.R_s, self.R_p)
-                Tdot_fit = m.get_tdot_from_wdot(self.P0, self.e0, self.w0, self.i0, T,
-                                                self.wdE, self.M_s, self.R_s)
-                print(T, Tdot_fit)
-                str1 = ' * Resulting transit duration variation (assuming di/dt=0):\n'
-                str2 = '\t  dT/dt = {:.2E} ms/yr\n'.format(Tdot_fit)
-                f.write(str1 + str2)
-                if printout:
-                    print(str1, str2)
+                # # calculate the resulting transit duration variation
+                # T = transit_duration(self.P0, self.e0, self.w0, self.i0,
+                #                      self.M_s, self.R_s, self.R_p)
+                # Tdot_fit = m.get_tdot_from_wdot(self.P0, self.e0, self.w0, self.i0, T,
+                #                                 self.wdE, self.M_s, self.R_s)
+                # print(T, Tdot_fit)
+                # str1 = ' * Resulting transit duration variation (assuming di/dt=0):\n'
+                # str2 = '\t  dT/dt = {:.2E} ms/yr\n'.format(Tdot_fit)
+                # f.write(str1 + str2)
+                # if printout:
+                #     print(str1, str2)
 
                 # calculate the stellar Love number if precession is due to the rotational bulge
                 k2s_rot = m.precession_rotational_star_k2(self.P0, self.e0, self.M_s,
@@ -752,57 +783,6 @@ class Analyzer:
 
         return
 
-    # TODO: finish and document
-    def companion_planet(self, M_c, P_c, printout=False):
-        """Characterize the observational effect(s) of a known nonresonant companion planet.
-
-        This method produces a concise summary of...
-
-        Parameters
-        ----------
-        printout : bool
-            An option to print the results to the console, default is False.
-
-        Returns
-        -------
-        None
-            The results are printed to the console and written to a text file.
-
-        """
-        with open(self.outfile, 'a') as f:
-            str1 = 'Blah Blah Blah\n'
-            str2 = '-' * 65 + '\n'
-            f.write(str1 + str2)
-            if printout:
-                print(' ' + str1, str2)
-
-        # calculate the amplitude of the companion's radial velocity signal ('K_c')
-        K_c = m.rv_semi_amplitude(P_c, 0.0, 0.0, M_c, self.M_s)
-
-        baseline = t_max - t_min
-
-        if P_c >= 2 * baseline:
-            ddvdt = K_c / P_c**2 * 4 * np.pi **2
-
-
-        # parameterize the companion's RV signal as a polynomial model ('dvdt', 'ddvdt')
-
-
-        # estimate an apparent period drift due to line-of-sight acceleration by the companion
-
-        m.companion_precession(P, M2, P2, M_s)
-        # calculate the expected rate of apsidal precession due to the perturbing companion
-
-        # print('Precession rate induced by a {} M_earth companion with P = {} days (a = {} au):'
-        #       .format(m2 / M_earth, p2, round(a2 / A_U, 4)))
-        # # print('    dw/dE = %.2E (rad/E)' % (dw/P))
-        # print('    dw/dE = %.2E (rad/E)' % dw)
-        # print('    dw/dt = %.2E (deg/yr)' % ((dw / P) * 365.25 * (180 / np.pi)))
-
-        # calculate the apparent period variation due to that apsidal precession
-
-        return
-
     def visual_binary(self, separation, secondary_mass, printout=False):
         """Characterize the observational effect(s) of a visual binary companion star.
 
@@ -1049,44 +1029,133 @@ class Analyzer:
 
         return
 
-    # TODO: document (and move?)
     def rv_trend_quadratic(self):
+        """Estimate the minimum period of an outer companion given a quadratic fit to RV residuals.
 
-        t_pivot = self.t0
-        a = self.ddvdt
-        b = self.dvdt
-        c = 0
+        This method analyzes the best-fit quadratic radial velocity curve to estimate the minimum
+        orbital period of an outer companion that could cause such acceleration. It assumes that
+        the companion orbit is circular, and is designed to complement the the
+        :meth:`~orbdot.models.theory.companion_from_quadratic_rv` method, which requires the
+        minimum period.
 
-        def quadratic(x, a, b, c):
-            return a * 0.5 * (x - t_pivot) ** 2 + b * (x - t_pivot) + c
+        Parameters
+        ----------
+        None
 
+        Returns
+        -------
+        float
+            The estimated minimum possible orbital period in days.
+
+        Notes
+        -----
+        The full radial velocity signal is expressed as:
+
+        .. math::
+
+            Equation
+
+        where... describe variables.
+
+        Subtracting component from the planet and the systemic velocity :math:`\\gamma`,
+        the residuals are only the long term trend.
+
+        .. math::
+
+            RV_c(t) = 0.5 \\ddot{\\gamma} (t - t_{\mathrm{pivot}})^2 + \\dot{\\gamma} (t - t_{
+            \mathrm{pivot}})
+
+        If :math:`\\ddot{\\gamma}` and dvdt are nonzero, it's quadratic. if :math:`\\ddot{
+        \\gamma} = 0`, the trend is linear and the :meth:`` method should be used.
+
+        This method assumes that the companion orbit is circular, in which case the signal is a
+        nice looking sinusoid. Because we aren't seeing the whole orbit of the companion,
+        it looks quadratic, so the minimum possible orbital period of the companion is loosley
+        constrained by the length of the baseline of RV observations.
+
+        This is designed to complement the the
+        :meth:`~orbdot.models.theory.companion_from_quadratic_rv` method, which follows the
+        derivations from Equations 1, 3, and 4 of Kipping et al. (2011) [1]_. This method
+        requires a minimum orbital period estimate as an agrument.
+
+        In [1]_, the authors describe a process by which they estimate the minimum companion
+        period, which involves fitting a circular orbit signal to the RV residuals and stepping
+        through various possible orbital periods. In order to lend itself to general use,
+        this OrbDot method implements a different approach.
+
+        First the x coordinate (time) of the vertex of the quadratic curve is determined by:
+
+        .. math::
+            t_vertex = -b / (2 * a) + t_pivot
+
+        Then, the minimum companion period is estimated as 4X the span of time between the vertex
+        and its most distant end datum:
+
+        .. math::
+            P_{\\mathrm{min}} =  4 \\times \\mathrm{max}\\left[t_{\\mathrm{vertex}} - t_{\\mathrm{
+            min}}, t_{\\mathrm{max}} - t_{\\mathrm{vertex}}\\right]
+
+        For an example of this in action, see the HAT-P-22 example (REF)
+
+        .. important::
+
+            The pivot point `t_pivot` is typically set to the mean time of the RV observations or the
+            reference mid-time of the transiting planet in joint fitting cases. The minimum orbital
+            period is estimated as four times the distance between the vertex of the quadratic fit
+            and the nearest data point.
+
+        References
+        ----------
+        .. [1] Kipping et al. (2011). https://doi.org/10.1088/0004-6256/142/3/95
+
+        """
+        # define containers for RV residuals
         times = []
         errs = []
         residuals = []
+
+        # loop through each RV data source
         for i in self.rv_data['src_order']:
-
+            # calculate the constant RV model for the current data source
             planet_model = rv.rv_constant(t0=self.t0, P0=self.P0, e0=self.e0, w0=self.w0, K=self.K,
-                                  v0=self.res['v0_' + self.rv_data['src_tags'][i]][0],
-                                  dvdt=0.0, ddvdt=0.0, t=self.rv_data['trv'][i])
+                                          v0=self.res['v0_' + self.rv_data['src_tags'][i]][0],
+                                          dvdt=0.0, ddvdt=0.0, t=self.rv_data['trv'][i])
 
+            # calculate residuals by subtracting the model from the observed data
             residuals.extend(self.rv_data['rvs'][i] - planet_model)
             times.extend(self.rv_data['trv'][i])
             errs.extend(self.rv_data['err'][i])
 
-        x = np.array(times)
-        y = np.array(residuals)
-        y_errs = np.array(errs)
+        # convert to arrays
+        times = np.array(times)
+        residuals = np.array(residuals)
+        errs = np.array(errs)
 
+        # define the quadratic and linear trend coefficients
+        a = self.ddvdt
+        b = self.dvdt
+
+        # define the pivot point for the quadratic fit as t0
+        t_pivot = self.t0
+
+        # define the quadratic function centered on the pivot point
+        def quadratic(tt):
+            return a * 0.5 * (tt - t_pivot) ** 2 + b * (tt - t_pivot)
+
+        # calculate the vertex of the quadratic curve
         x_vertex = -b / (2 * a) + t_pivot
-        y_vertex = quadratic(x_vertex, a, b, c)
+        y_vertex = quadratic(x_vertex)
 
-        if np.abs(x_vertex - min(x)) > np.abs(x_vertex - max(x)):
-            x_ref = min(x)
-        elif np.abs(x_vertex - min(x)) < np.abs(x_vertex - max(x)):
-            x_ref = max(x)
+        # determine the most distant end point to the vertex (either min or max time)
+        if np.abs(x_vertex - min(times)) > np.abs(x_vertex - max(times)):
+            x_ref = min(times)
+        else:
+            x_ref = max(times)
 
+        # calculate the minimum possible companion period
         P_min = np.abs(x_ref - x_vertex) * 4
 
+        # plot settings
         figure_params = {'figure.figsize': [12, 6], 'font.family': 'serif',
                          'xtick.direction': 'in', 'ytick.direction': 'in',
                          'xtick.labelsize': 12, 'ytick.labelsize': 12,
@@ -1096,21 +1165,27 @@ class Analyzer:
 
         plt.rcParams.update(figure_params)
 
-        x_all = np.linspace(min(x), max(x), 1000)
+        # plot the RV residuals
+        plt.errorbar(times - 2450000, residuals, yerr=errs, label='Data', fmt='o', color='blue')
 
-        plt.errorbar(x - 2450000, y, yerr=y_errs, label='Data', fmt='o', color='blue')
-        plt.plot(x_all - 2450000, quadratic(x_all, a, b, c),
-                 label='Quadratic Fit', color='firebrick')
+        # plot the quadratic fit
+        times_all = np.linspace(min(times), max(times), 1000)
+        plt.plot(times_all - 2450000, quadratic(times_all), label='Quadratic Fit', color='firebrick')
+
+        # finish the plot
         plt.scatter(x_vertex - 2450000, y_vertex, color='green', s=60, label='Estimated vertex')
         plt.axhline(y=0, color='dimgrey', linestyle='--', linewidth=2)
         plt.legend()
         plt.xlabel('BJD - 2450000')
         plt.ylabel('Residuals (m/s)')
         plt.title('Radial velocity residuals with quadratic fit')
+
+        # save plot
         plt.savefig(self.save_dir + self.file_prefix + 'rv_trend_quadratic'
                     + self.file_suffix + '.png', bbox_inches='tight', dpi=300, pad_inches=0.25)
         plt.close()
 
+        # return the minimum possible orbital period
         return P_min
 
     # TODO: document (and move?)

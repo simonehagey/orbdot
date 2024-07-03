@@ -343,33 +343,21 @@ class StarPlanet(TransitTiming, RadialVelocity, TransitDuration, JointFit):
             "parallax": self.sys_info["parallax [mas]"],
             "distance": self.sys_info["distance [pc]"],
             "v_radial": self.sys_info["rad_vel [km/s]"],
-            "gaia_dr3_ID": self.sys_info['gaia_dr3_ID'],
             "discovery_year": self.sys_info["discovery_year"],
 
             # star parameters
-            "spectral_type": self.sys_info["spectral_type"],
             "star_age": self.sys_info["age [Gyr]"],
-            "m_v": self.sys_info["m_v"],
-            "Teff": self.sys_info["Teff [K]"],
             "M_s": self.sys_info["M_s [M_sun]"],
             "R_s": self.sys_info["R_s [R_sun]"],
-            "metallicity": self.sys_info["metallicity [Fe/H]"],
-            "log_g": self.sys_info["log_g [log10(cm/s^2)]"],
-            "rho_s": self.sys_info["rho_s [g/cm^3]"],
             "k2_s": self.sys_info["k2_s"],
             "vsini": self.sys_info["vsini [km/s]"],
             "P_rot_s": self.sys_info["P_rot_s [days]"],
 
             # planet parameters
-            "sm_axis": self.sys_info["sm_axis [AU]"][planet_number],
             "M_p": self.sys_info["M_p [M_earth]"][planet_number],
             "R_p": self.sys_info["R_p [R_earth]"][planet_number],
-            "rho_p": self.sys_info["rho_p [g/cm^3]"][planet_number],
             "P_rot_p": self.sys_info["P_rot_p [days]"][planet_number],
             "k2_p": self.sys_info["k2_p"][planet_number],
-            "T_eq": self.sys_info["T_eq [K]"][planet_number],
-            "lambda": self.sys_info["lambda [deg]"][planet_number],
-            "Psi": self.sys_info["Psi [deg]"][planet_number]
 
         }
 

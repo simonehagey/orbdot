@@ -1,9 +1,13 @@
 """
 NestedSampling
---------------
-This module defines the :class:`NestedSampling` class, which contains all of the methods required
-to run the model fits defined in the :class:`TransitTiming`, :class:`RadialVelocity`,
-:class:`TransitDuration`, and :class:`JointFit` classes.
+==============
+The :class:`~orbdot.nested_sampling.NestedSampling` class contains all of the methods required to
+run the model fits defined in the :class:`TransitTiming`, :class:`RadialVelocity`,
+:class:`TransitDuration`, and :class:`JointFit` classes. It is designed such that running a model
+fit simply requires a log-likelihood function and list of free parameter names, meaning that any
+classes inheriting :class:`~orbdot.nested_sampling.NestedSampling` can be written quickly and
+concisely. It is straightforward to fit your own model, as long as the free variables are
+consistent with the OrbDot parameter set.
 """
 
 import os
@@ -19,57 +23,33 @@ from orbdot.tools.plots import corner_plot
 
 class NestedSampling:
     """
-    This module is designed such that running a model fit simply requires a log-likelihood function
-    and list of free parameter names, meaning that any classes inheriting NestedSampling can be
-    written quickly and concisely. It is straightforward to fit your own model (see the template
-    class), as long as the free variables are consistent with the OrbDot parameter set (see below).
-
-    To keep the use of this class clean and concise, there is a main set of 'allowed' model
-    parameters. For every model fit, the list of free parameters is compared to this set and the
-    given order is recorded. This means that any number of free parameters can be provided in any
-    order as long as they are part of the physical model(s), as defined by the log-likelihood. It
-    is important for the user to familiarize themselves with the parameter symbols and definitions.
-
-    General Orbit Parameters
-     The following parameters are defined at time t=t0:
-
-        't0' --> reference transit center time [BJD_TDB].
-        'P0' --> orbital period in days.
-        'e0' --> orbit eccentricity.
-        'w0' --> argument of pericenter of the planet's orbit in radians.
-        'i0' --> line-of-sight inclination of the orbit in degrees.
-        'O0' --> longitude of the ascending node in radians.
-
-    Coupled Parameters
-     The user may choose to fit the eccentricity and argument of pericenter (A.O.P) as coupled
-    parameters, which is handled automatically if the following free variables are given:
-
-        'ecosw' --> the eccentricity multiplied by the cosine of the A.O.P.
-        'esinw' --> the eccentricity multiplied by the sine of the A.O.P.
-        'sq_ecosw' --> the square root of the eccentricity multiplied by the cosine of the A.O.P.
-        'sq_esinw' --> the square root of the eccentricity multiplied by the sine of the A.O.P.
-
-    Time-Dependent Parameters
-        'PdE' --> a constant change of the orbital period in days per orbit.
-        'wdE' --> a constant change of the argument of pericenter in radians per orbit.
-        'edE' --> a constant change of the orbital eccentricity per orbit.
-        'idE' --> a constant change of the line-of-sight inclination in degrees per orbit.
-        'OdE' --> a constant change of the longitude of the ascending node in radians per orbit.
-
-    Radial Velocity Parameters
-        'K'  --> the radial velocity semi-amplitude in m/s.
-        'v0' --> the systemic radial velocity in m/s (instrument specific).
-        'jit'    --> a radial velocity jitter term in m/s (instrument specific).
-        'dvdt'   --> a linear radial velocity trend in m/s/day.
-        'ddvdt'  --> a second order radial velocity trend in m/s/day^2.
-        'K_tide' -->
-
-    Notes
-    -----
+    Sampler
+    -------
     To perform the nested sampling methods the user may choose between two packages: Nestle [1]_
     and PyMultiNest [2]_. PyMultiNest is generally faster and more robust, but it can be tricky to
     install, thus it is not a requirement to use this code. The desired sampler is specified in the
     settings file as 'nestle' or 'multinest'.
+
+    Free Parameters
+    ---------------
+    To keep the use of this class clean and concise, there is a main set of 'allowed' model
+    parameters. For every model fit, the list of free parameters is compared to this set and the
+    given order is recorded. This means that any number of free parameters can be provided in any
+    order as long as they are part of the physical model (see :ref:`model_parameters`).
+
+    Fixed Parameter Values
+    ----------------------
+    The fixed values are used as the default for any parameters that are not set to vary in a
+    model fit. The built-in default values are defined in the the 'defaults/info_file.json'
+    file, but the user may specify their own in the star-planet system 'info' files given to
+    the :class:'StarPlanet' class.
+
+    Priors
+    ------
+    The prior is structured as a dictionary with keys for each parameter, with each value
+    being a list specifying the prior type and bounds. The built-in priors are defined in the
+    'defaults/fit_settings.json' file, but the user should specify their own in the
+    'settings' file that is given to the :class:'StarPlanet' class.
 
     References
     ----------
@@ -79,32 +59,15 @@ class NestedSampling:
     """
     def __init__(self, fixed_values, prior):
         """
-        Initiating this class requires both the priors on each parameter and their 'fixed' values.
+        Initiating this class requires both the priors on each parameter and their fixed values.
 
-        Fixed Values
-        ------------
-        The fixed values are used as the default for any parameters that are not set to vary in a
-        model fit. The built-in default values are defined in the the 'defaults/info_file.json'
-        file, but the user may specify their own in the star-planet system 'info' files given to
-        the :class:'StarPlanet' class.
+        Parameters
+        ----------
+        fixed_values : dict
+            A dictionary that specifies the fixed value for each parameter.
+        prior : dict
+            A dictionary that specifies the prior distributions for each parameter.
 
-        Additionally, these fixed values may be updated at any time, such as after a particular
-        model fit, by calling the :meth:`StarPlanet.update_default` method.
-
-        Priors
-        ------
-        The prior is structured as a dictionary with keys for each parameter, with each value
-        being a list specifying the prior type and bounds. The following prior types are currently
-        supported:
-
-            Gaussian    ->  list : ["gaussian", mean, std]
-            Log-Uniform ->  list : ["log", log10(min), log10(max)]
-            Uniform     ->  list : ["uniform", min, max]
-
-        The built-in priors are defined in the 'defaults/fit_settings.json' file, but the
-        user should specify their own in the 'settings' file that is given to the
-        :class:'StarPlanet' class. Like the fixed values, the priors may be updated at any
-        time by calling the :meth:`StarPlanet.update_prior` method.
         """
         self.fixed = fixed_values
         self.prior = prior
