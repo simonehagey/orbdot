@@ -42,13 +42,13 @@ class StarPlanet(TransitTiming, RadialVelocity, TransitDuration, JointFit):
             'K', 'v0', 'jit', 'dvdt', 'ddvdt', 'K_tide')  # radial velocity
 
         # load settings file and merge with defaults
-        args = utl.merge_dictionaries('fit_settings.json', settings_file)
+        args = utl.merge_dictionaries('default_fit_settings.json', settings_file)
 
         # load system info file and merge with defaults
-        self.sys_info = utl.merge_dictionaries('info_file.json', args['system_info_file'])
+        self.sys_info = utl.merge_dictionaries('default_info_file.json', args['system_info_file'])
 
         # load plot settings file and merge with defaults
-        self.plot_settings = utl.merge_dictionaries('plot_settings.json',
+        self.plot_settings = utl.merge_dictionaries('default_plot_settings.json',
                                                     args['plot_settings_file'])
 
         # define the star and planet names

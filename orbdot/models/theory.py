@@ -2,7 +2,7 @@
 Theory
 ======
 This module contains the analytical models needed to investigate the causes of long-term
-variations in the orbital of a star-planet system. The methods include various equations for
+variations in the orbital of a star-planet system. They include various equations for
 assessing the effects of tidal dissipation, apsidal precession, systemic proper motion, and more.
 """
 
@@ -27,7 +27,7 @@ M_sun = 1.988500e30   # Solar mass = 1,988,500 x 10^30 kg
 
 
 def decay_quality_factor_from_pdot(P, dPdE, M_s, M_p, R_s):
-    """Calculates the modified stellar quality factor given the orbital decay rate.
+    """Calculate the modified stellar quality factor given the orbital decay rate.
 
     This method returns a predicted modified stellar quality factor for any given orbital decay
     rate, assuming that the star-planet system is coplanar and that equilibrium tides dominate
@@ -96,7 +96,7 @@ def decay_quality_factor_from_pdot(P, dPdE, M_s, M_p, R_s):
 
 
 def decay_pdot_from_quality_factor(P, M_s, M_p, R_s, Q_star):
-    """Calculates the orbital decay rate given the host star's modified tidal quality factor.
+    """Calculate the orbital decay rate given the host star's modified tidal quality factor.
 
     This method returns a predicted orbital decay rate for any given "modified" stellar tidal
     quality factor, assuming that the star-planet system is coplanar and that equilibrium
@@ -165,7 +165,7 @@ def decay_pdot_from_quality_factor(P, M_s, M_p, R_s, Q_star):
 
 
 def decay_empirical_quality_factor(P_orb, P_rot_s):
-    """Calculates the modified stellar tidal quality factor from an empirical law.
+    """Calculate the modified stellar tidal quality factor from an empirical law.
 
     This method calculates the tidal forcing period of a star-planet system and uses it to
     estimate the host star's modified tidal quality factor with an empirical law derived
@@ -229,7 +229,7 @@ def decay_empirical_quality_factor(P_orb, P_rot_s):
 
 
 def decay_timescale(P, dPdE):
-    """Calculates the remaining lifetime of a planet on a decaying orbit.
+    """Calculate the remaining lifetime of a planet on a decaying orbit.
 
     Parameters
     ----------
@@ -266,7 +266,7 @@ def decay_timescale(P, dPdE):
 
 
 def decay_energy_loss(P, dPdE, M_s, M_p):
-    """Calculates the rate of orbital energy loss due to tidal forces causing orbital decay.
+    """Calculate the rate of orbital energy loss due to tidal forces causing orbital decay.
 
     This function uses Equation (9) from Yee et al. (2020) [1]_ to compute the rate at which the
     orbital energy of a planetary orbit decreases as the orbit decays due to tidal interactions
@@ -323,7 +323,7 @@ def decay_energy_loss(P, dPdE, M_s, M_p):
 
 
 def decay_angular_momentum_loss(P, dPdE, M_s, M_p):
-    """Calculates the rate of angular momentum loss due to tidal forces causing orbital decay.
+    """Calculate the rate of angular momentum loss due to tidal forces causing orbital decay.
 
     This function uses Equation (10) from Yee et al. (2020) [1]_ to compute the rate at which
     the angular momentum of a planetary orbit decreases as the orbit decays due to tidal
@@ -379,7 +379,7 @@ def decay_angular_momentum_loss(P, dPdE, M_s, M_p):
 
 
 def precession_gr(P, e, M_s):
-    """Calculates the rate of apsidal precession predicted by general relativity.
+    """Calculate the rate of apsidal precession predicted by general relativity.
 
     This method returns the expected apsidal precession rate of the planet's orbit due to general
     relativistic (GR) effects, using Equation (12) from Ragozzine and Wolf (2009) [1]_.
@@ -433,7 +433,7 @@ def precession_gr(P, e, M_s):
 
 
 def precession_rotational_star(P, e, M_s, R_s, k2_s, P_rot_s):
-    """Calculates the rate of apsidal precession driven by stellar rotation.
+    """Calculate the rate of apsidal precession driven by stellar rotation.
 
     This method returns the expected apsidal precession rate of a planet's orbit due to the
     rotational bulge of the host star, calculated using Equations (10) and (11) from Ragozzine
@@ -594,7 +594,7 @@ def precession_rotational_planet(P, e, M_s, M_p, R_p, k2_p, P_rot_p):
 
 
 def precession_rotational_star_k2(P, e, M_s, R_s, P_rot_s, dwdE):
-    """Calculates the Love number given a rate of apsidal precession driven by stellar rotation.
+    """Calculate the Love number given a rate of apsidal precession driven by stellar rotation.
 
     Given an apsidal precession rate for a planetary orbit, this method returns the second-order
     potential Love number of the host star :math:`k_{2,\\star}` under the assumption that the
@@ -650,7 +650,7 @@ def precession_rotational_star_k2(P, e, M_s, R_s, P_rot_s, dwdE):
 
 
 def precession_rotational_planet_k2(P, e, M_s, M_p, R_p, P_rot_p, dwdE):
-    """Calculates the Love number given a rate of apsidal precession driven by planetary rotation.
+    """Calculate the Love number given a rate of apsidal precession driven by planetary rotation.
 
     Given an apsidal precession rate for a planetary orbit, this method returns the second-order
     potential Love number of the planet :math:`k_{2,p}` under the assumption that the precession
@@ -708,7 +708,7 @@ def precession_rotational_planet_k2(P, e, M_s, M_p, R_p, P_rot_p, dwdE):
 
 
 def precession_tidal_star(P, e, M_s, M_p, R_s, k2_s):
-    """Calculates the rate of apsidal precession driven by the star's tidal bulge.
+    """Calculate the rate of apsidal precession driven by the star's tidal bulge.
 
     This method returns the expected apsidal precession rate of the planet's orbit due to the
     star's tidal bulge, calculated using Equations (6) and (7) from Ragozzine and Wolf (2009) [1]_.
@@ -785,7 +785,7 @@ def precession_tidal_star(P, e, M_s, M_p, R_s, k2_s):
 
 
 def precession_tidal_planet(P, e, M_s, M_p, R_p, k2_p):
-    """Calculates the rate of apsidal precession driven by the planet's tidal bulge.
+    """Calculate the rate of apsidal precession driven by the planet's tidal bulge.
 
     This method returns the expected apsidal precession rate of the planet's orbit due to its tidal
     bulge, calculated using Equations (6) and (7) from Ragozzine and Wolf (2009) [1]_.
@@ -862,7 +862,7 @@ def precession_tidal_planet(P, e, M_s, M_p, R_p, k2_p):
 
 
 def precession_tidal_star_k2(P, e, M_s, M_p, R_s, dwdE):
-    """Calculates a host star's Love number given a rate of apsidal precession driven by tides.
+    """Calculate a host star's Love number given a rate of apsidal precession driven by tides.
 
     Given an apsidal precession rate for a planetary orbit, this method returns the second-order
     potential Love number of the host star :math:`k_{2,\\star}` under the assumption that the
@@ -917,7 +917,7 @@ def precession_tidal_star_k2(P, e, M_s, M_p, R_s, dwdE):
 
 
 def precession_tidal_planet_k2(P, e, M_s, M_p, R_p, dwdE):
-    """Calculates a planet's Love number given a rate of apsidal precession driven by tides.
+    """Calculate a planet's Love number given a rate of apsidal precession driven by tides.
 
     Given an apsidal precession rate for a planetary orbit, this method returns the second-order
     potential Love number of the planet :math:`k_{2,p}` under the assumption that the precession
@@ -972,7 +972,7 @@ def precession_tidal_planet_k2(P, e, M_s, M_p, R_p, dwdE):
 
 
 def get_tdot_from_wdot(P, e, w, i, T, dwdE, M_s, R_s):
-    """Calculates the expected transit duration variation (TDV) due to apsidal precession.
+    """Calculate the expected transit duration variation (TDV) due to apsidal precession.
 
     This method determines the expected TDV signal for apsidal precession in general, independent
     of the physical mechanism. It uses Equation (9) from Rafikov (2009) [1]_, assuming there is
@@ -1046,7 +1046,7 @@ def get_tdot_from_wdot(P, e, w, i, T, dwdE, M_s, R_s):
 
 
 def get_pdot_from_wdot(P, e, w, dwdE):
-    """Calculates the apparent time derivative of the orbital period due to apsidal precession.
+    """Calculate the apparent time derivative of the orbital period due to apsidal precession.
 
     This method determines the apparent time derivative of the orbital period due to apsidal
     precession in general, independent of the physical mechanism. It uses Equation (17) from
@@ -1105,7 +1105,7 @@ def get_pdot_from_wdot(P, e, w, dwdE):
 
 
 def proper_motion_wdot(mu, i, beta):
-    """Calculates the rate of the apparent apsidal precession due to systemic proper motion.
+    """Calculate the rate of the apparent apsidal precession due to systemic proper motion.
 
     This method returns the rate of the apparent apsidal precession induced by systemic proper
     motion using Equation (4) from Rafikov (2009) [1]_.
@@ -1154,7 +1154,7 @@ def proper_motion_wdot(mu, i, beta):
 
 
 def proper_motion_idot(mu, beta):
-    """Calculates the apparent rate of change of the inclination due to systemic proper motion.
+    """Calculate the apparent rate of change of the inclination due to systemic proper motion.
 
     This method returns the rate of the variation of the line-of-sight inclination due to
     systemic proper motion using Equation (3) from Rafikov (2009) [1]_.
@@ -1200,7 +1200,7 @@ def proper_motion_idot(mu, beta):
 
 
 def proper_motion_pdot(P, e, w, mu):
-    """Calculates the apparent time derivative of the orbital period due to systemic proper motion.
+    """Calculate the apparent time derivative of the orbital period due to systemic proper motion.
 
     This method returns the apparent time derivative of the orbital period that is expected as a
     result of the systemic proper motion-induced (apparent) apsidal precession. It uses Equation
@@ -1268,7 +1268,7 @@ def proper_motion_pdot(P, e, w, mu):
 
 
 def proper_motion_tdot(P, e, w, i, T, wdot_pm, idot_pm, M_s, R_s):
-    """Calculates the time derivative of the transit duration due to systemic proper motion.
+    """Calculate the time derivative of the transit duration due to systemic proper motion.
 
     This method returns the time derivative of the transit duration due to systemic proper motion
     using Equation (9) from Rafikov (2009) [1]_.
@@ -1346,7 +1346,7 @@ def proper_motion_tdot(P, e, w, i, T, wdot_pm, idot_pm, M_s, R_s):
 
 
 def proper_motion_shklovskii(P, mu, D):
-    """Calculates the apparent time derivative of observed period due to the Shklovskii effect.
+    """Calculate the apparent time derivative of observed period due to the Shklovskii effect.
 
     This method returns the apparent rate of change of the period between transits due to the
     Shklovskii effect, using Equation (21) from Rafikov (2009) [1]_.
@@ -1456,7 +1456,7 @@ def companion_mass_from_rv_trend(tau, dvdt, M_s):
 
 
 def companion_rv_trend_from_mass(tau, M_c, M_s):
-    """Calculates the slope of a radial velocity trend given a lower limit on the companion mass.
+    """Calculate the slope of a radial velocity trend given a lower limit on the companion mass.
 
     This method computes the expected linear radial velocity trend (i.e., acceleration) induced
     by an unseen outer companion planet given its minimum mass. This is calculated using equation
@@ -1600,7 +1600,7 @@ def companion_precession(P, M2, P2, M_s):
 
     .. math::
         \\delta \\varpi = \\frac{m_2}{M_\\star} \\frac{\\alpha}{(\\alpha+1)(\\alpha-1)^2}\\left[
-        \\left(\\alpha^2+1\\right) E\\left(\\frac{2 \\alpha^{1 / 2}}{\\alpha+1}\\right)\\right
+        \\left(\\alpha^2+1\\right) E\\left(\\frac{2 \\alpha^{1 / 2}}{\\alpha+1}\\right)
         \\left.-(\\alpha-1)^2 K\\left(\\frac{2 \\alpha^{1/2}}{\\alpha+1}\\right)\\right]
 
     where :math:`m_2` is the mass of the perturbing planet, :math:`\\alpha = a_1/a_2` is the
@@ -1652,7 +1652,7 @@ def companion_precession(P, M2, P2, M_s):
 
 # ToDo: check scipy implementation thing
 def companion_mass_from_precession(P, P2, dwdE, M_s):
-    """Calculates the mass of a nonresonant companion given a precession rate and orbital period.
+    """Calculate the mass of a nonresonant companion given a precession rate and orbital period.
 
     Given the orbital period of a nonresonant companion planet in the system, this method returns
     the necessary mass for it to be responsible for a measured apsidal precession rate of the
@@ -1936,7 +1936,7 @@ def resolved_binary_mass_from_rv_trend(theta, D, dvdt):
 
 
 def get_semi_major_axis_from_period(P, M_s):
-    """Calculates the semi major axis in meters given the orbital period and host star mass.
+    """Calculate the semi major axis in meters given the orbital period and host star mass.
 
     Parameters
     ----------

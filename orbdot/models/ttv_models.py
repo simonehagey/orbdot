@@ -120,7 +120,7 @@ def ttv_decay(t0, P0, PdE, e0, w0, E, primary=True):
 
     .. math::
 
-        t_{\\mathrm{I}}} = t_0 + PE + \\frac{1}{2}\\,\\frac{dP}{dE}\\,E^2
+        t_{\\mathrm{I}} = t_0 + PE + \\frac{1}{2}\\,\\frac{dP}{dE}\\,E^2
 
     and,
 
