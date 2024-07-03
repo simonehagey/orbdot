@@ -45,9 +45,6 @@ The WASP-12 :ref:`info-file` is saved as: ``examples/info_files/WASP-12_info.jso
 .. admonition:: HAT-P-4 system info file
   :class: dropdown
 
-    .. admonition:: HAT-P-4 system info file
-  :class: dropdown
-
     .. code-block:: JSON
 
         {
@@ -150,6 +147,7 @@ The summary file output is here:
 Next, let's fit the data with a linear trend:
 
 .. code-block:: python
+
     # run an RV model fit of a circular orbit with a linear trend
     fit_line = hatp4.run_rv_fit(['t0', 'P0', 'K', 'v0', 'jit', 'dvdt'], suffix='_linear')
 

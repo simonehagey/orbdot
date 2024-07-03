@@ -2,8 +2,6 @@
 Classes
 =======
 
-------------
-
 .. autoclass:: orbdot.analysis.Analyzer
    :members:
 
@@ -41,8 +39,6 @@ Classes
 
 Models
 ======
-
-------------
 
 .. automodule:: orbdot.models.theory
    :members:

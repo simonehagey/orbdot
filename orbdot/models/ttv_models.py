@@ -15,7 +15,6 @@ OrbDot currently supports model fitting for three evolutionary cases:
 """
 
 import numpy as np
-from orbdot.models.theory import max_ltt
 
 
 def ttv_constant(t0, P0, e0, w0, E, primary=True):

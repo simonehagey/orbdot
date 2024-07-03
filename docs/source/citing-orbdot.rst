@@ -1,4 +1,4 @@
-.. _bibliography:
+.. _citing:
 
 *************
 Citing OrbDot

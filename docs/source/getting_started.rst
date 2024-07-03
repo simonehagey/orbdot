@@ -318,23 +318,23 @@ The ``StarPlanet`` attribute ``ttv_data`` is a dictionary with the following key
    :header-rows: 1
    :widths: 20 40
 
-    * - Key
+   * - Key
      - Description
-    * - ``bjd``
+   * - ``bjd``
      - transit mid-times
-    * - ``err``
+   * - ``err``
      - transit mid-time errors
-    * - ``src``
+   * - ``src``
      - source of transits
-    * - ``epoch``
+   * - ``epoch``
      - orbit number of transits
-    * - ``bjd_ecl``
+   * - ``bjd_ecl``
      - eclipse mid-times
-    * - ``err_ecl``
+   * - ``err_ecl``
      - eclipse mid-time errors
-    * - ``src_ecl``
+   * - ``src_ecl``
      - source of eclipses
-    * - ``epoch_ecl``
+   * - ``epoch_ecl``
      - orbit number of eclipses
 
 .. _rv-data:
@@ -347,24 +347,25 @@ Radial velocity data files are read assuming that the columns are in the order: 
    :header-rows: 1
    :widths: 20 40
 
-    * - Key
+   * - Key
      - Description
-    * - ``trv``
+   * - ``trv``
      - The measurement times.
-    * - ``rvs``
+   * - ``rvs``
      - radial velocity measurements in m/s
-    * - ``err``
+   * - ``err``
      - measurement errors
-    * - ``src``
+   * - ``src``
      - source associated with each measurement
-    * - ``num_src``
+   * - ``num_src``
      - number of unique sources
-    * - ``src_names``
+   * - ``src_names``
      - names of the unique sources
-    * - ``src_tags``
+   * - ``src_tags``
      - tags assigned to each source
-    * - ``src_order``
+   * - ``src_order``
      - order of sources
+
 
 It is critical to be consistent in naming the source of the radial velocity measurements, as the model parameters :math:`\gamma` and :math:`\sigma_{\mathrm jitter}` are instrument-dependent. When these variables are included in a list of free parameters, OrbDot will replace them with a new identifier for each unique source, with a tag that depends on what was specified in the data file.
 
@@ -380,15 +381,15 @@ Transit duration data files are read assuming that the columns are in the order:
    :header-rows: 1
    :widths: 10 40
 
-    * - Key
+   * - Key
      - Description
-    * - ``dur``
+   * - ``dur``
      - The transit durations in minutes.
-    * - ``err``
+   * - ``err``
      - Errors on the transit durations in minutes.
-    * - ``src``
+   * - ``src``
      - Source of transit durations.
-    * - ``epoch``
+   * - ``epoch``
      - The epoch/orbit number of the observations.
 
 ------------

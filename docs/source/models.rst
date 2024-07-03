@@ -6,6 +6,7 @@ The Models
 This section describes the models...
 
 .. _model_parameters:
+
 Model Parameters
 ================
 To keep the use of this class clean and concise, there is a main set of "allowed" model parameters. For every model fit, the list of free parameters is compared to this set and the given order is recorded. This means that any number of free parameters can be provided in any order as long as they are part of the physical model(s), as defined by the log-likelihood. It is important for the user to familiarize themselves with the parameter symbols and definitions.
@@ -142,6 +143,7 @@ The OrbDot parameter set also includes time derivatives of other orbital element
 ------------
 
 .. _coordinate_system:
+
 Coordinate System
 =================
 In this work, we establish the sky plane to lie within
@@ -179,11 +181,13 @@ and an eclipse occurs when:
 ------------
 
 .. _theory_module:
+
 The ``theory`` Module
 =====================
 The :py:mod:`~orbdot.models.theory` module provides several analytical models that can be used to investigate long-term variations in planetary orbits and their causes, which are used in the :class:`~orbdot.analysis.Analyzer`. The key methods of this class are listed below, organized by subjects: :ref:`orbital decay <orbital_decay_theory>`, :ref:`apsidal precession <_apsidal_precession_theory>`, nonresonant :ref:`companion planets <planet_companion_theory>`, bound :ref:`stellar companions <binary_star_theory>`, and systemic :ref:`proper motion <proper_motion_theory>`.
 
 .. _orbital_decay_theory:
+
 Orbital Decay
 -------------
 Orbital decay refers to a transfer of angular momentum from the planet to the host star that results in a shrinking of the orbital period, eventually leading to planetary engulfment.
@@ -203,6 +207,7 @@ Due to the close proximity of HJs to their host stars, significant tidal bulges 
 ------------
 
 .. _apsidal_precession_theory:
+
 Apsidal Precession
 ------------------
 Apsidal precession is the gradual increase of the argument of pericentre :math:`\omega` of a planet's orbit over time, meaning the line connecting the pericentre and apocentre of the orbit rotates through :math:`2\pi` in one precession period.
@@ -227,6 +232,7 @@ This can result from several factors, including components due to general relati
 ------------
 
 .. _proper_motion_theory:
+
 Proper Motion
 -------------
 The apparent secular evolution of exoplanet transit signatures that are induced by the systemic proper motion, which is the movement of the star-planet system with respect to reference frame of the Solar System. This motion in 3D space is partially constrained with measurements of the proper motion on the sky-plane :math:`\mu` and radial velocity :math:`v_r`.
@@ -241,6 +247,7 @@ The apparent secular evolution of exoplanet transit signatures that are induced 
         orbdot.models.theory.proper_motion_shklovskii
 
 .. _planet_companion_theory:
+
 Planetary Companion
 -------------------
 
@@ -256,6 +263,7 @@ Planetary Companion
         orbdot.models.theory.companion_mass_from_precession
 
 .. _binary_star_theory:
+
 Resolved Stellar Companion
 --------------------------
 

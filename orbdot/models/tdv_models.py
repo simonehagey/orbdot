@@ -5,7 +5,7 @@ This module provides functions for predicting exoplanet transit durations.
 """
 
 import numpy as np
-from orbdot.models.theory import semi_major_axis_from_period
+from orbdot.models.theory import get_semi_major_axis_from_period
 
 # TODO: problems with the order of arguments for the transit duration function
 

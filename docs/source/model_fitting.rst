@@ -22,13 +22,14 @@ To run a model fit is to call one of the following methods with a list of the pa
    :nosignatures:
 
    orbdot.joint_fit.JointFit.run_joint_fit
-   orbdot.joint_fit.TransitTiming.run_ttv_fit
-   orbdot.joint_fit.RadialVelocity.run_rv_fit
-   orbdot.joint_fit.TransitDuration.run_tdv_fit
+   orbdot.transit_timing.TransitTiming.run_ttv_fit
+   orbdot.radial_velocity.RadialVelocity.run_rv_fit
+   orbdot.transit_duration.TransitDuration.run_tdv_fit
 
 TTV Models
 ----------
 .. code-block:: python
+
     wasp12.run_ttv_fit(['t0', 'P0', 'e0', 'w0'], model='constant')
     wasp12.run_ttv_fit(['t0', 'P0', 'e0', 'w0', 'PdE'], model='decay')
     wasp12.run_ttv_fit(['t0', 'P0', 'e0', 'w0', 'wdE'], model='precession')
@@ -43,6 +44,7 @@ TTV Models
 RV Models
 ---------
 .. code-block:: python
+
     wasp12.run_rv_fit(['t0', 'P0', 'e0', 'w0', 'K', 'v0', 'dvdt', 'ddvdt', 'jit'], model='constant')
     wasp12.run_rv_fit(['t0', 'P0', 'e0', 'w0', 'PdE', 'K', 'v0', 'dvdt', 'ddvdt', 'jit'], model='decay')
     wasp12.run_rv_fit(['t0', 'P0', 'e0', 'w0', 'wdE', 'K', 'v0', 'dvdt', 'ddvdt', 'jit'], model='precession')
@@ -59,6 +61,7 @@ TDV Models
 Not tested
 
 .. code-block:: python
+
     wasp12.run_tdv_fit(['t0', 'P0', 'e0', 'w0'], model='constant')
     wasp12.run_tdv_fit(['t0', 'P0', 'e0', 'w0', 'PdE'], model='decay')
     wasp12.run_tdv_fit(['t0', 'P0', 'e0', 'w0', 'wdE'], model='precession')
@@ -73,6 +76,7 @@ Not tested
 Joint Fits
 ----------
 .. code-block:: python
+
     wasp12.run_joint_fit(['t0', 'P0', 'e0', 'w0', 'K', 'v0', 'dvdt', 'ddvdt', 'jit'], model='constant', RV=True, TTV=True)
     wasp12.run_joint_fit(['t0', 'P0', 'e0', 'w0', 'PdE', 'K', 'v0', 'dvdt', 'ddvdt', 'jit'], model='decay', RV=True, TTV=True)
     wasp12.run_joint_fit(['t0', 'P0', 'e0', 'w0', 'wdE', 'K', 'v0', 'dvdt', 'ddvdt', 'jit'], model='precession', RV=True, TTV=True)
@@ -96,10 +100,11 @@ Updating Default Values
 Additionally, these fixed values may be updated at any time, such as after a particular model fit, by calling the :meth:`~orbdot.star_planet.StarPlanet.update_default` method. For example:
 
 .. code-block:: python
+
     planet.update_default('P0', 3.14)
 
-
 .. _priors:
+
 Priors
 ------
 The ``"priors"`` dictionary contains key-value pairs that define the prior distributions of the free parameters. Every value is a list of three elements, the first being the type of prior ('uniform', 'gaussian', or 'log'), with the subsequent elements defining the distribution. For each parameter, the key is identical to its associated symbol in Table XXX.
@@ -168,10 +173,11 @@ Updating Priors
 Like the fixed values, the priors may be updated at any time by calling the :meth:`~orbdot.star_planet.StarPlanet.update_prior` method.
 
 .. code-block:: python
+
     planet.update_default('P0', ['gaussian', 3.14, 0.001])
 
 TTV Data "Clipping"
-------------------
+-------------------
 During the model fitting runs, we employ the sigma clipping method from Hagey et al. (2022) to conservatively remove
 outliers in the transit mid-times. This technique operates by fitting the best-fit constant-period timing model,
 subtracting it from the data, and then removing any data point whose nominal value falls outside of a 3-$\sigma$ range
@@ -230,10 +236,11 @@ The ``*_summary.txt`` File
 --------------------------
 
 The ``*_results.json`` File
---------------------------
+---------------------------
 
 
 .. _interpreting-results:
+
 The ``Analyzer`` Class
 ======================
 The :class:`~orbdot.analysis.Analyzer` class is designed to facilitate and interpret various analyses related to the model fits. It combines the results, star-planet system info, and data together to compute and summarize effects such as proper motion, orbital decay, and apsidal precession.
@@ -269,6 +276,7 @@ Model Comparison
  The :meth:`~orbdot.analysis.Analyzer.model_comparison` method compares the Bayesian evidence for the ``Analyzer`` results with that of another model fit. More details are available in the docstring. The following code snippet calls this method after opening a results file saved during a previous model fit.
 
  .. code-block:: python
+
     analyzer.model_comparison(fit_constant)
 
 Orbital Decay Model Fit
@@ -288,6 +296,7 @@ Apsidal Precession Model Fit
 The :meth:`~orbdot.analysis.Analyzer.apsidal_precession_fit` method provides a summary of various interpretations of the results of an apsidal precession model fit by calling the various methods listed, below.
 
 .. code-block:: python
+
     analysis.apsidal_precession_fit(printout=True)
 
 .. autosummary::
@@ -304,6 +313,7 @@ Systemic Proper Motion Analysis
 The :meth:`~orbdot.analysis.Analyzer.proper_motion` method computes and summarizes predicted transit timing variations (TTVs) and transit duration variations (TDVs) due to systemic proper motion.
 
 .. code-block:: python
+
     ttv_c = wasp12.run_ttv_fit(['t0', 'P0'], model='constant')
     a = Analyzer(wasp12, ttv_c)
     proper_motion()
@@ -323,6 +333,7 @@ Orbital Decay Predictions
 Computes and summarizes predicted orbital decay parameters based on an empirical law for the stellar tidal quality factor, use the `orbital_decay_predicted` method:
 
 .. code-block:: python
+
     analysis.orbital_decay_predicted()
 
 .. autosummary::
@@ -344,6 +355,7 @@ Resolved Binary Analysis
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. _analyzer_attributes:
+
 Key Attributes
 --------------
 The following attributes of Analyzer may be helpful for constructing your own scripts and functions for analysis. Note that the model fit parameters are taken from the results that are given to ``Analyzer``, and the rest are filled in with the system info file entries.
