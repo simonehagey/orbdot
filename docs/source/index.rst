@@ -68,8 +68,8 @@ Contents
    :caption: Using OrbDot
 
    getting_started
-   models
    model_fitting
+   models
 
 .. toctree::
    :caption: Examples

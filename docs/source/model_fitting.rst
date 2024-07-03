@@ -3,7 +3,7 @@
 **************
 Model Fitting
 **************
-If you haven't seen the getting started example, go do that first. For brevity, we need to initialize the starplanet object for our planet, let's keep using WASP-12 b as an example:
+If you haven't seen the getting started example, go do that first. For brevity, we need to initialize the :class:`~orbdot.star_planet.StarPlanet` object for our planet, let's keep using WASP-12 b as an example:
 
 .. code-block:: python
 
@@ -12,11 +12,13 @@ If you haven't seen the getting started example, go do that first. For brevity, 
     # initialize the StarPlanet class
     wasp12 = StarPlanet('settings_files/WASP-12_settings.json')
 
-See section REF for a description of the settings file and other files that it points to.
+See section :ref:`settings-file` for a description of the settings file and other files that it points to.
+
+.. _running_model_fits:
 
 Running Model Fits
 ==================
-To run a model fit is to call one of the following methods with a list of the parameters that you want to vary. That’s it! So you just need to give any set of free parameters that you want, given that they are part of the physical model you are fitting. Another awesome thing is that the list of free parameters can be given in any order, so you never have to remember what order they go in!
+To run the model fitting routines one of the following methods must be called on the :class:`~orbdot.star_planet.StarPlanet` object, depending on the type of data to be fit.
 
 .. autosummary::
    :nosignatures:
@@ -26,39 +28,55 @@ To run a model fit is to call one of the following methods with a list of the pa
    orbdot.radial_velocity.RadialVelocity.run_rv_fit
    orbdot.transit_duration.TransitDuration.run_tdv_fit
 
+These method calls require a list of the free parameters and the ``model`` argument, which specifies the evolutionary model to be fit (default is ``"constant"``). The free parameters can be given in any order, but are restricted to being part of the physical model (an error will be raised if they are not). See the :ref:`model_parameters` section for more information on the allowed parameters for each model. The optional ``suffix`` argument enables separate fits of the same model to be differentiated, e.g. ``suffix="_circular"`` or ``suffix="_eccentric"``. This is nicely illustrated in the LINK EXAMPLE.
+
 TTV Models
 ----------
+The transit and eclipse timing model fits are run by calling the :ref:`~orbdot.transit_timing.TransitTiming.run_ttv_fit` method on the :class:`~orbdot.star_planet.StarPlanet` object. The evolutionary model is specified with the ``model`` argument, which must be either ``"constant"``, ``"decay"``, or ``"precession"``, and the free parameters are specified in a list of strings. The following code snippet shows an example call for each of the three models:
+
 .. code-block:: python
 
     wasp12.run_ttv_fit(['t0', 'P0', 'e0', 'w0'], model='constant')
-    wasp12.run_ttv_fit(['t0', 'P0', 'e0', 'w0', 'PdE'], model='decay')
+    wasp12.run_ttv_fit(['t0', 'P0', 'PdE'], model='decay')
     wasp12.run_ttv_fit(['t0', 'P0', 'e0', 'w0', 'wdE'], model='precession')
 
-.. autosummary::
-   :nosignatures:
+TTV Data "Clipping"
+^^^^^^^^^^^^^^^^^^^
+When fitting the transit and eclipse mid-times with the :ref:`~orbdot.transit_timing.TransitTiming.run_ttv_fit` method, there is an option to employ a sigma-clipping routine to remove outlying data points. This method was originally developed in :cite:t:`Hagey2022` to conservatively remove outliers in the transit mid-times for datasets with high variance. This technique operates by fitting the best-fit constant-period timing model, subtracting it from the data, and then removing any data point whose nominal value falls outside of a 3-$\sigma$ range from the mean of the residuals. This process is repeated until no points fall outside of the residuals, or until a maximum number of iterations has been reached.
 
-   orbdot.models.ttv_models.ttv_constant
-   orbdot.models.ttv_models.ttv_decay
-   orbdot.models.ttv_models.ttv_precession
+Giving the argument ``clip=True`` to :ref:`~orbdot.transit_timing.TransitTiming.run_ttv_fit` runs the :meth:`~orbdot.transit_timing.TransitTiming.clip` method run before the model fit. Any subsequent model fits will use the cleaned dataset, so ``clip=True`` only needs to be specified one time. For example,
+
+.. code-block:: python
+
+    wasp12.run_ttv_fit(['t0', 'P0', 'e0', 'w0'], model='constant', clip=True)
+    wasp12.run_ttv_fit(['t0', 'P0', 'PdE'], model='decay')
+    wasp12.run_ttv_fit(['t0', 'P0', 'e0', 'w0', 'wdE'], model='precession')
+
+For more information, see the :meth:`~orbdot.transit_timing.TransitTiming.clip` docstring.
 
 RV Models
 ---------
+The radial velocity model fits are run by calling the :ref:`~orbdot.transit_timing.RadialVelocity.run_rv_fit` method on the :class:`~orbdot.star_planet.StarPlanet` object. The evolutionary model is specified with the ``model`` argument, which must be either ``"constant"``, ``"decay"``, or ``"precession"``, and the free parameters are specified in a list of strings. The following code snippet shows an example call for each of the three models:
+
 .. code-block:: python
 
-    wasp12.run_rv_fit(['t0', 'P0', 'e0', 'w0', 'K', 'v0', 'dvdt', 'ddvdt', 'jit'], model='constant')
-    wasp12.run_rv_fit(['t0', 'P0', 'e0', 'w0', 'PdE', 'K', 'v0', 'dvdt', 'ddvdt', 'jit'], model='decay')
-    wasp12.run_rv_fit(['t0', 'P0', 'e0', 'w0', 'wdE', 'K', 'v0', 'dvdt', 'ddvdt', 'jit'], model='precession')
+    wasp12.run_rv_fit(['t0', 'P0', 'ecosw', 'esinw', 'K', 'v0', 'jit'], model='constant')
+    wasp12.run_rv_fit(['t0', 'P0', 'PdE', 'K', 'v0', 'jit'], model='decay')
+    wasp12.run_rv_fit(['t0', 'P0', 'e0', 'w0', 'wdE', 'K', 'v0', 'jit'], model='precession')
 
-.. autosummary::
-   :nosignatures:
+Joint Fits
+----------
+Running a joint model fit is similar, with the ``model`` argument specifying the evolutionary model and free parameters given as a list of strings. However, in this case the data types that are to be fit must also be specified. For example, to fit the mid-times and radial velocities together, the arguments ``RV=True`` and ``TTV=True`` must be given:
 
-   orbdot.models.rv_models.rv_constant
-   orbdot.models.rv_models.rv_decay
-   orbdot.models.rv_models.rv_precession
+.. code-block:: python
+
+    wasp12.run_joint_fit(['t0', 'P0', 'K', 'v0', 'dvdt', 'ddvdt', 'jit'], model='constant', RV=True, TTV=True)
+    wasp12.run_joint_fit(['t0', 'P0', 'PdE', 'K', 'v0', 'jit'], model='decay', RV=True, TTV=True)
+    wasp12.run_joint_fit(['t0', 'P0', 'e0', 'w0', 'wdE', 'K', 'v0', 'jit'], model='precession', RV=True, TTV=True)
 
 TDV Models
 ----------
-Not tested
+It is critical to note that, at this time, the transit duration fitting feature of OrbDot has not been thoroughly tested and validated. The methods are available to use, however, and are called in the same manner as above. For example,
 
 .. code-block:: python
 
@@ -66,50 +84,75 @@ Not tested
     wasp12.run_tdv_fit(['t0', 'P0', 'e0', 'w0', 'PdE'], model='decay')
     wasp12.run_tdv_fit(['t0', 'P0', 'e0', 'w0', 'wdE'], model='precession')
 
-.. autosummary::
-   :nosignatures:
+This documentation will be updated accordingly when the TDV fitting methods are complete.
 
-   orbdot.models.tdv_models.tdv_constant
-   orbdot.models.tdv_models.tdv_decay
-   orbdot.models.tdv_models.tdv_precession
+------------
 
-Joint Fits
-----------
-.. code-block:: python
+Output Files
+============
+For each model fit in our example the following files are saved:
 
-    wasp12.run_joint_fit(['t0', 'P0', 'e0', 'w0', 'K', 'v0', 'dvdt', 'ddvdt', 'jit'], model='constant', RV=True, TTV=True)
-    wasp12.run_joint_fit(['t0', 'P0', 'e0', 'w0', 'PdE', 'K', 'v0', 'dvdt', 'ddvdt', 'jit'], model='decay', RV=True, TTV=True)
-    wasp12.run_joint_fit(['t0', 'P0', 'e0', 'w0', 'wdE', 'K', 'v0', 'dvdt', 'ddvdt', 'jit'], model='precession', RV=True, TTV=True)
+- `*_summary.txt` : A text summary of the best-fit values and sampling statistics.
+- `*_results.json` : The full set of nested sampling outputs.
+- `*_random_samples.json`: A set of 300 samples for plotting.
+- `*_corner.png` : A corner plot),
+
+The ``*_summary.txt`` File
+--------------------------
+The summary is a good way to get a quick overview of the results of the model fit.
+
+
+The ``*_results.json`` File
+---------------------------
+This method calculates the confidence intervals using the provided samples and stores them
+in a dictionary. If a parameter was not allowed to vary in the model fit, its default value
+is recorded in the dictionary for completeness.
+
+If the user has chosen to fit 'ecosw' and 'esinw' or 'sq_ecosw' and 'sq_esinw', the
+derived 'e0' and 'w0' are also returned.
+
+LIST OF KEYS
+
+------------
+
+.. _fixed_values:
 
 Fixed Parameter Values
-----------------------
-        The fixed values are used as the default for any parameters that are not set to vary in a
-        model fit. The built-in default values are defined in the the 'defaults/info_file.json'
-        file, but the user may specify their own in the star-planet system 'info' files given to
-        the :class:'StarPlanet' class.
+======================
+The "fixed" parameter values are used as a default when a given parameter is not set to vary in a model fit. These values are taken from the star-planet :ref:`system info file <info-file>` that is passed to the :class:`~orbdot.star_planet.StarPlanet` class.
 
-        Additionally, these fixed values may be updated at any time, such as after a particular
-        model fit, by calling the :meth:`StarPlanet.update_default` method.
-
-The fixed values are the parameter values that are not set to vary in a model fit. These are informed by the info file, the star-planet system 'info' files given to the :class:`~orbdot.star_planet.StarPlanet` class. Except for if you try to have an omega without an e, then it has to be 0.
-
-The built-in default values are defined in the `defaults/info_file.json` file, but the user may specify their own in the
-
-Updating Default Values
-^^^^^^^^^^^^^^^^^^^^^^^
-Additionally, these fixed values may be updated at any time, such as after a particular model fit, by calling the :meth:`~orbdot.star_planet.StarPlanet.update_default` method. For example:
+Updating Fixed Values
+---------------------
+These fixed values may be updated at any time by calling the :meth:`StarPlanet.update_default` method. For example,
 
 .. code-block:: python
 
-    planet.update_default('P0', 3.14)
+    wasp12.update_default('P0', 3.14)
+
+This may be particularly useful if you wish to update the default values in-between model fits. For example, the following code snippet fits a constant-period timing model and uses the best-fit orbital period and reference transit times to update the fixed values for a subsequent radial velocity fit:
+
+.. code-block:: python
+
+    # run the constant-period transit/eclipse timing model fit
+    ttv_fit = wasp12.run_ttv_fit(['t0', 'P0'], model='constant')
+
+    # update the default values for 'P0' and 't0'
+    wasp12.update_default('P0', ttv_fit['params']['P0'][0])
+    wasp12.update_default('t0', ttv_fit['params']['t0'][0])
+
+    # run the radial velocity model fit with 'P0' and 't0' fixed
+    wasp12.run_rv_fit(['K', 'v0', 'jit'], model='constant')
+
+------------
 
 .. _priors:
 
 Priors
-------
-The ``"priors"`` dictionary contains key-value pairs that define the prior distributions of the free parameters. Every value is a list of three elements, the first being the type of prior ('uniform', 'gaussian', or 'log'), with the subsequent elements defining the distribution. For each parameter, the key is identical to its associated symbol in Table XXX.
+======
+The way that prior distributions are handled in the nested sampling algorithms is frankly super fucking confusing, as at each step the parameters have to be transformed from the unit hypercube with specialized functions. ie. The nested sampling algorithms require a method that transforms the current state of the free parameters from the unit hypercube to their true values with the specified prior distributions. The transformed parameters may then be passed to the log-likelihood function by the sampler.
 
-OrDot currently supports three different prior distributions
+Because OrbDot is meant to be easy to use, this process is hidden behind the implementation of nested sampling so that the priors can be defined in that makes sense to human beings.
+OrDot currently supports three different prior distributions: gaussian (ie. normal), uniform, and log-uniform. The bounds of these distributions are defined in the ``"priors"`` dictionary is in the settings file. It is the key-value pairs of ``"priors"`` that define the prior distributions of the free parameters. Every value is a list of three elements, the first being the type of prior ('uniform', 'gaussian', or 'log'), and the subsequent elements defining the distribution. For each parameter, the key is identical to its associated symbol defined in the :ref:`model_parameters` section. The following table shows this hopefully in a way that makes sense.
 
 .. table::
    :name: tab:priors
@@ -124,12 +167,10 @@ OrDot currently supports three different prior distributions
    | Uniform       |   ["uniform", min, max]              |
    +---------------+--------------------------------------+
 
-For example,
+The built-in priors are defined in the '``"defaults/fit_settings.json"`` file (see :ref:`settings_file`), but the user should specify their own. For example,
 
 .. code-block:: text
-
      ...
-
           "prior": {
              "t0": ["gaussian", 2456305.4555, 0.01],
              "P0": ["gaussian", 1.09142, 0.0001],
@@ -137,112 +178,40 @@ For example,
            }
      }
 
-        The prior is structured as a dictionary with keys for each parameter, with each value
-        being a list specifying the prior type and bounds. The following prior types are currently
-        supported:
-
-            Gaussian    ->  list : ["gaussian", mean, std]
-            Log-Uniform ->  list : ["log", log10(min), log10(max)]
-            Uniform     ->  list : ["uniform", min, max]
-
-        The built-in priors are defined in the 'defaults/fit_settings.json' file, but the
-        user should specify their own in the 'settings' file that is given to the
-        :class:'StarPlanet' class. Like the fixed values, the priors may be updated at any
-        time by calling the :meth:`StarPlanet.update_prior` method.
-
-The "prior" is defined in the settings file (see :ref:`settings-file`) and is structured as a dictionary with keys for each parameter.
-
-Each key is a tuple specifying the prior 'bounds' (the meaning of which depend on the type of prior) for transforming
-a parameter from the unit hypercube to a normal scale. Helpful link for explaining the prior The `"prior"` is defined in the settings file and is structured as a dictionary with keys for each parameter.
-
-        This method transforms the current state of the free parameters from the unit hypercube to
-        their true values with the specified prior distributions. The transformed parameters may
-        then be passed to the log-likelihood function by the sampler.
-
-Each key is a tuple specifying the prior 'bounds' (the meaning of which depend on the type of prior) for transforming
-a parameter from the unit hypercube to a normal scale.:
-- Gaussian : (mean, std)
-- Uniform : (min, max)
-- Log-Uniform: (log10(min), log10(max))
-
-The built-in priors are defined in the `defaults/fit_settings.json` file, but the user should specify their own in
-the 'settings' file that is given to the `StarPlanet` class.
+If you would like to see how the prior transforms are done, see the priors module documentation (LINK). For more information on how the prior transforms work for nested sampling, see this great documentation from Nestle here: LINK.
 
 Updating Priors
-^^^^^^^^^^^^^^^
+---------------
 Like the fixed values, the priors may be updated at any time by calling the :meth:`~orbdot.star_planet.StarPlanet.update_prior` method.
 
 .. code-block:: python
 
-    planet.update_default('P0', ['gaussian', 3.14, 0.001])
+    planet.update_prior('P0', ['gaussian', 3.14, 0.001])
 
-TTV Data "Clipping"
--------------------
-During the model fitting runs, we employ the sigma clipping method from Hagey et al. (2022) to conservatively remove
-outliers in the transit mid-times. This technique operates by fitting the best-fit constant-period timing model,
-subtracting it from the data, and then removing any data point whose nominal value falls outside of a 3-$\sigma$ range
-from the mean of the residuals. The fitting process is repeated until no data points fall outside the 3-$\sigma$ range.
-This process ensures the removal of outliers to improve the accuracy of the model fitting without skewing the results
-(Hagey et al., 2022). \textcolor{red}{More detail here.}
+This may be particularly useful if you wish to update the priors in-between model fits. For example, the following code snippet fits a constant-period timing model and uses the best-fit orbital period and reference transit results to update the priors for a subsequent radial velocity fit:
 
-        In each iteration, the transit times are fit to a circular orbit model and the best-fit
-        model is subtracted from the data. Any data for which these residuals fall outside of 3
-        standard deviations of the mean are removed. This process is repeated until no points fall
-        outside of the residuals, or until a maximum number of iterations has been reached.
+.. code-block:: python
 
+    # run the constant-period transit/eclipse timing model fit
+    ttv_fit = wasp12.run_ttv_fit(['t0', 'P0'], model='constant')
 
-Output Files
-============
-This method calculates the confidence intervals using the provided samples and stores them
-in a dictionary. If a parameter was not allowed to vary in the model fit, its default value
-is recorded in the dictionary for completeness.
+    # extract the best-fit results, structured as [value, upper_unc, lower_unc]
+    t0_best = ttv_fit['params']['t0']
+    P0_best = ttv_fit['params']['P0']
 
-If the user has chosen to fit 'ecosw' and 'esinw' or 'sq_ecosw' and 'sq_esinw', the
-derived 'e0' and 'w0' are also returned.
+    # update the priors for 'P0' and 't0'
+    wasp12.update_prior('P0', ['gaussian', P0_best[0], P0_best[1]])
+    wasp12.update_prior('t0', ['gaussian', t0_best[0], t0_best[1]])
 
-For each model fit in our example the following files are saved:
+    # run the radial velocity model fit with 'P0' and 't0' as free parameters
+    wasp12.run_rv_fit(['t0', 'P0', 'K', 'v0', 'jit'], model='constant')
 
-- `*_summary.txt` : A text summary of the best-fit values and sampling statistics.
-- `*_results.json` : The full set of nested sampling outputs.
-- `*_random_samples.json`: A set of 300 samples for plotting.
-- `*_corner.png` : A corner plot),
-- `*_traces.png` : A trace plot).
-
-The summary is a good way to get a quick overview of the results of the model fit.
-
-<details><summary>Summary of constant-period model fit:</summary>
-
-.. code-block:: text
-
-    Stats
-    -----
-    Sampler: nestle
-    Free parameters: ['t0' 'P']
-    log(Z) = -189.51807472187025 ± 0.11083889973032876
-    Run time (s): 6.025493383407593
-    Num live points: 1000
-    Evidence tolerance: 0.001
-    Eff. samples per second: 665
-
-    Results
-    -------
-    t0 = 2456282.4927388676 ± 7.117870892771849e-05
-    P = 0.940008751947598 ± 3.7892879371495315e-08
-
-
-</details>
-
-The ``*_summary.txt`` File
---------------------------
-
-The ``*_results.json`` File
----------------------------
-
+------------
 
 .. _interpreting-results:
 
-The ``Analyzer`` Class
-======================
+Interpreting the Results
+========================
 The :class:`~orbdot.analysis.Analyzer` class is designed to facilitate and interpret various analyses related to the model fits. It combines the results, star-planet system info, and data together to compute and summarize effects such as proper motion, orbital decay, and apsidal precession.
 
 To use the :class:`~orbdot.analysis.Analyzer`  class, you need an instance of a StarPlanet class and a dictionary containing the results of the model fit. the dictionary can either be passed in directly from the model fit in the script, or it can be read from a preexisting file. Either way, however, you still need to hvae a planet instance.
@@ -269,7 +238,7 @@ The following methods will add to the file and print to the console if the argum
 
 Key Methods
 ------------
-The following...
+The following... (also add list of info file parameters needed for each method).
 
 Model Comparison
 ^^^^^^^^^^^^^^^^

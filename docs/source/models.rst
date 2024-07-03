@@ -13,7 +13,6 @@ To keep the use of this class clean and concise, there is a main set of "allowed
 
 The OrbDot parameter set also includes time derivatives of other orbital elements, such as :math:`\dot{e}` and :math:`\dot{\Omega}`, that are planned for integration in future iterations but are not currently implemented in any OrbDot models.
 
-
 **Orbital Elements**
  .. list-table::
    :header-rows: 1
@@ -215,7 +214,6 @@ Apsidal precession is the gradual increase of the argument of pericentre :math:`
 This can result from several factors, including components due to general relativistic effects :cite:p:`pal_periastron_2008,jordan_observability_2008`, perturbations from other planets :cite:p:`heyl_using_2007`, and gravitational moments arising from both the host star's rotation and planetary tidal bulges :cite:p:`greenberg_apsidal_1981`. The following sections describe the equations and OrbDot methods that are relevant to these effects.
 
 .. autosummary::
-   :nosignatures:
 
    orbdot.models.theory.precession_gr
    orbdot.models.theory.precession_rotational_planet
@@ -238,7 +236,6 @@ Proper Motion
 The apparent secular evolution of exoplanet transit signatures that are induced by the systemic proper motion, which is the movement of the star-planet system with respect to reference frame of the Solar System. This motion in 3D space is partially constrained with measurements of the proper motion on the sky-plane :math:`\mu` and radial velocity :math:`v_r`.
 
 .. autosummary::
-   :nosignatures:
 
         orbdot.models.theory.proper_motion_wdot
         orbdot.models.theory.proper_motion_idot
@@ -252,7 +249,6 @@ Planetary Companion
 -------------------
 
 .. autosummary::
-   :nosignatures:
 
         orbdot.models.theory.companion_doppler_pdot_from_rv_trend
         orbdot.models.theory.companion_doppler_rv_trend_from_pdot
@@ -268,7 +264,6 @@ Resolved Stellar Companion
 --------------------------
 
 .. autosummary::
-   :nosignatures:
 
         orbdot.models.theory.resolved_binary_mass_from_rv_trend
         orbdot.models.theory.resolved_binary_rv_trend_from_mass
