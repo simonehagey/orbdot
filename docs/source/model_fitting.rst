@@ -75,7 +75,9 @@ Running a joint model fit is similar, with the ``model`` argument specifying the
 
 TDV Model Fits
 --------------
-It is important to note that, at this time, the transit duration fitting feature of OrbDot has not been thoroughly tested and validated. The methods are available to use, however, and are called in the same manner as above. For example,
+.. attention::
+
+    The transit duration fitting features of OrbDot have not been thoroughly tested and validated at this time. The methods are available to use, but the results should be treated with caution until this notice is removed.
 
 .. code-block:: python
 
@@ -89,24 +91,94 @@ This documentation will be updated accordingly when the TDV fitting methods are 
 
 Output Files
 ============
-For each model fit in our example the following files are saved:
+After every model fit the following files are saved:
 
-- `*_summary.txt` : A text summary of the best-fit values and sampling statistics.
-- `*_results.json` : The full set of nested sampling outputs.
-- `*_random_samples.json`: A set of 300 samples for plotting.
-- `*_corner.png` : A corner plot.
+ 1. A convenient, easy-to-read summary of the best-fit values and sampling statistics: ``"*_summary.txt"``
+ 2. The full set of nested sampling outputs: ``"*_results.json"``
+ 3. A plot of the best-fit model and data: ``"*_plot.png"``
+ 4. A corner plot: ``"*_corner.png"``
+ 5. The full set of weighted posterior samples: ``"*_weighted_samples.txt"``
+ 6. A set of 300 samples for plotting: ``"*_random_samples.txt"``
 
-The ``*_summary.txt`` File
---------------------------
-The summary provides a quick overview of the results of the model fit.
+The following sections describe the contents of the first two files, the rest being more self-explanatory.
 
-The ``*_results.json`` File
----------------------------
-This method calculates the confidence intervals using the provided samples and stores them in a dictionary. If a parameter was not allowed to vary in the model fit, its default value is recorded in the dictionary for completeness.
+The ``"*_summary.txt"`` file
+----------------------------
+The summary file provides a quick overview of the results of the model fit and various fit statistics. For example, the following output is from a fit of the orbital decay timing model to WASP-12 b transit and eclipse mid-times (see the :ref:`WASP-12 b example for more <example-wasp-12>`):
 
-If the user has chosen to fit 'ecosw' and 'esinw' or 'sq_ecosw' and 'sq_esinw', the derived 'e0' and 'w0' are also returned.
+.. code-block:: text
 
-LIST OF KEYS
+    Stats
+    -----
+    Sampler: nestle
+    Free parameters: ['t0' 'P0' 'PdE']
+    log(Z) = -104.4 ± 0.14
+    Run time (s): 6.36
+    Num live points: 1000
+    Evidence tolerance: 0.01
+    Eff. samples per second: 729
+
+    Results
+    -------
+    t0 = 2456305.455808902 + 3.09208407998085e-05 - 3.068055957555771e-05
+    P0 = 1.0914201079360208 + 4.216883864316401e-08 - 4.308769985250649e-08
+    PdE = -1.0060233896628563e-09 + 6.983453717986182e-11 - 6.779901591341499e-11
+    dPdt (ms/yr) = -29.088417457932348 + 2.019213659783878 - 1.9603580775466223
+
+    Fixed Parameters
+    ----------------
+    e0 = 0.0
+    w0 = 0.0
+
+
+The ``"*_results.json"`` file
+-----------------------------
+The results file contains all the information necessary to reproduce the model fit settings and results. This file is not typically opened directly, as it is not designed for easy reading. Instead, the ``"*_summary.txt"`` file serves to quickly convey the results, while the ``"*_results.json"`` file ensures no information is lost.
+
+The following table lists the keys of the ``*_results.json`` file dictionary:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Key
+     - Data Type
+     - Description
+   * - ``"stats"``
+     - ``dict``
+     - A dictionary containing various model fit statistics and settings.
+   * - ``"params"``
+     - ``dict``
+     - A dictionary containing the best-fit parameters and their 68% confidence intervals.
+   * - ``"prior"``
+     - ``dict``
+     - The dictionary of prior distributions from the :ref:`settings file <settings_file>`.
+   * - ``"model"``
+     - ``str``
+     - The model that was fit (e.g. ``"ttv_constant"``, ``"joint_precession"``, etc.)
+   * - ``"suffix"``
+     - ``str``
+     - The file suffix that was given to the model fitting run.
+   * - ``"results_filename"``
+     - ``str``
+     - The path to this file (ie. ``"*_results.json"``, saved here for the plotting methods).
+   * - ``"samples_filename"``
+     - ``str``
+     - The path to the ``"*_random_samples.txt"`` file (saved here for the plotting methods).
+
+The ``"params"`` key is particularly useful, as it contains a dictionary with key-value pairs representing the best-fit parameter values and their 68% confidence intervals. Each value is a list of three elements: the best-fit value, the upper uncertainty, and the lower uncertainty. For example, the following code snippet shows how to access these parameters after a model fit has been done:
+
+.. code-block:: python
+
+    # run the constant-period timing model fit
+    ttv_fit = wasp12.run_ttv_fit(['t0', 'P0'], model='constant')
+
+    # extract the best-fit parameter values and their uncertainties
+    t0_best, t0_upper_err, t0_lower_err = ttv_fit['params']['t0']
+    p_best, p_upper_err, p_lower_err = ttv_fit['params']['P0']
+
+If a parameter was not allowed to vary in the model fit, its fixed value is recorded instead, for completeness. If the user has chosen to fit ``"ecosw"`` and ``"esinw"`` or ``"sq_ecosw"`` and ``"sq_esinw"``, the derived eccentricity and argument of pericenter are also returned.
+
+All possible OrbDot parameters (see :ref:`model_parameters`) are included in this results file for completeness, even if they are not part of the model that was fit (in which case they are the default fixed values). While this might seem confusing, it ensures that no information is overlooked. The ``*_summary.txt`` file is more concise and typically more useful for quick reference.
 
 ------------
 

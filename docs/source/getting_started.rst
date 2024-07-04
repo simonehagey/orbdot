@@ -55,10 +55,10 @@ Now, you have access to all the attributes and methods needed to study the orbit
 
 The initialization of a StarPlanet object requires the following input files:
 
- 1. :ref:`settings-file`, default is: ``_settings.json``
- 2. :ref:`info-file`, default is: ``*_info.json``
+ 1. :ref:`settings-file`, default is: ``"_settings.json"``
+ 2. :ref:`info-file`, default is: ``"*_info.json"``
  3. The :ref:`data-files`
- 4. (optional) a file for plot settings, default is: ``*_plot_settings.txt``
+ 4. (optional) a file for plot settings, default is: ``"*_plot_settings.txt"``
 
 ------------
 

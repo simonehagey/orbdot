@@ -340,7 +340,7 @@ class JointFit(NestedSampling):
         res['samples_filename'] = sf
 
         self.save_results(random_samples, samples, res, free_params,
-                          self.joint_sampler, suffix, prefix)
+                          self.joint_sampler, suffix, prefix, illegal_params)
 
         # generate TTV ("O-C") and RV plots
         self.plot_settings['TTV_PLOT']['ttv_' + model + '_results_file'+suffix] = rf

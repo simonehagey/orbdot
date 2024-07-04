@@ -1,18 +1,16 @@
 .. _models:
 
-**********
-The Models
-**********
-This section describes the models...
+******
+Theory
+******
+This section describes the models that can be fit, and also all the equations for theoretical calculations of various effects.
 
+Section XX goes over the coordinate system, section XX reviews the transit and eclipse timing models, section XX discusses radial velocity models, and section XX details the theoretical calculations for long-term orbital variations and their causes.
 .. _coordinate_system:
 
 Coordinate System
 =================
-The OrbDot models are written in a coordinate system in which the sky plane lies on the x-z plane and the y-axis points toward the observer along the line of sight.
-
-It is critical to be consistent in the definition of the argument of pericenter :math:`\omega` when simultaneously
-fitting transit and eclipse mid-times and radial velocities. In the OrbDot coordinate system, the argument of pericenter is determined from the positive x-axis, such that a transit occurs when the true anomaly :math:`\phi` is equal to:
+It is critical to be consistent in the definition of the argument of pericenter :math:`\omega` when simultaneously fitting transit and eclipse mid-times and radial velocities. In the OrbDot coordinate system, the argument of pericenter is determined from the positive x-axis, such that a transit occurs when the true anomaly :math:`\phi` is equal to:
 
 .. math::
  \phi_{\mathrm I}\,=\,\frac{\pi}{2} - \omega_{\mathrm p}
@@ -21,6 +19,8 @@ and an eclipse occurs when:
 
 .. math::
  \phi_{\mathrm II} = \frac{3\pi}{2} - \omega_{\mathrm p}
+
+The OrbDot models are written in a coordinate system in which the sky plane lies on the x-z plane and the y-axis points toward the observer along the line of sight.
 
 .. image:: _static/coordinate_system.png
 
@@ -53,7 +53,7 @@ It is important for the user to familiarize themselves with the parameter symbol
      - The observed (sidereal) orbital period.
    * - :math:`e`
      - ``e0``
-     - --
+     -
      - The eccentricity of the orbit.
    * - :math:`\omega_p`
      - ``w0``
@@ -79,19 +79,19 @@ It is important for the user to familiarize themselves with the parameter symbol
      - Description
    * - :math:`e\,\cos{\,\omega_p}`
      - ``ecosw``
-     - --
+     -
      - The eccentricity :math:`e` multiplied by the cosine of :math:`\omega_p`.
    * - :math:`e\,\sin{\,\omega_p}`
      - ``esinw``
-     - --
+     -
      - the eccentricity :math:`e` multiplied by the sine of :math:`\omega_p`.
    * - :math:`\sqrt{e}\,\cos{\,\omega_p}`
      - ``sq_ecosw``
-     - --
+     -
      - The square root of :math:`e` multiplied by the cosine of :math:`\omega_p`.
    * - :math:`\sqrt{e}\,\sin{\,\omega_p}`
      - ``sq_esinw``
-     - --c
+     -
      - The square root of :math:`e` multiplied by the sine of :math:`\omega_p`.
 
 **Time-Dependent Parameters**
@@ -164,9 +164,7 @@ It is important for the user to familiarize themselves with the parameter symbol
 
 Transit and Eclipse Timing Models
 =================================
-Secular variations in the orbits of transiting exoplanets may be detected by measuring deviations
-in the observed transit and eclipse timing from what is expected of a circular, unchanging orbit.
-These deviations are commonly referred to as Transit Timing Variations (TTVs).
+Secular variations in the orbits of transiting exoplanets may be detected by measuring deviations in the observed transit and eclipse timing from what is expected of a circular, unchanging orbit. These deviations are commonly referred to as Transit Timing Variations (TTVs).
 
 OrbDot currently supports model fitting for three evolutionary cases:
 
@@ -393,25 +391,31 @@ Proper motion is the movement of a star through space with respect to reference 
 
 .. _planet_companion_theory:
 
-Planetary Companion
--------------------
+Companion Planets
+-----------------
+Blurb...
 
-.. autosummary::
+Long-Term Radial Velocity Trends
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-        orbdot.models.theory.companion_doppler_pdot_from_rv_trend
-        orbdot.models.theory.companion_doppler_rv_trend_from_pdot
-        orbdot.models.theory.companion_from_quadratic_rv
-        orbdot.models.theory.companion_mass_from_rv_trend
-        orbdot.models.theory.companion_rv_trend_from_mass
-        orbdot.models.theory.companion_precession
-        orbdot.models.theory.companion_mass_from_precession
+.. autofunction:: orbdot.models.theory.companion_rv_trend_from_mass
+.. autofunction:: orbdot.models.theory.companion_mass_from_rv_trend
+.. autofunction:: orbdot.models.theory.companion_from_quadratic_rv
+.. autofunction:: orbdot.models.theory.companion_doppler_pdot_from_rv_trend
+.. autofunction:: orbdot.models.theory.companion_doppler_rv_trend_from_pdot
+
+Companion-Induced Precession
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. autofunction:: orbdot.models.theory.companion_precession
+.. autofunction:: orbdot.models.theory.companion_mass_from_precession
 
 .. _binary_star_theory:
 
-Resolved Stellar Companion
---------------------------
+Resolved Stellar Binary
+-----------------------
+Blurb...
 
-.. autosummary::
+.. autofunction:: orbdot.models.theory.resolved_binary_mass_from_rv_trend
+.. autofunction:: orbdot.models.theory.resolved_binary_rv_trend_from_mass
 
-        orbdot.models.theory.resolved_binary_mass_from_rv_trend
-        orbdot.models.theory.resolved_binary_rv_trend_from_mass

@@ -351,7 +351,7 @@ class RadialVelocity(NestedSampling):
         res['samples_filename'] = sf
 
         self.save_results(random_samples, samples, res, free_params,
-                          self.rv_sampler, suffix, prefix)
+                          self.rv_sampler, suffix, prefix, illegal_params)
 
         # generate radial velocity plot
         self.plot_settings['RV_PLOT']['rv_constant_results_file'+suffix] = rf
@@ -472,7 +472,7 @@ class RadialVelocity(NestedSampling):
         res['samples_filename'] = sf
 
         self.save_results(random_samples, samples, res, free_params,
-                          self.rv_sampler, suffix, prefix)
+                          self.rv_sampler, suffix, prefix, illegal_params)
 
         # generate radial velocity plot
         self.plot_settings['RV_PLOT']['rv_decay_results_file'+suffix] = rf
@@ -593,7 +593,7 @@ class RadialVelocity(NestedSampling):
         res['samples_filename'] = sf
 
         self.save_results(random_samples, samples, res, free_params,
-                          self.rv_sampler, suffix, prefix)
+                          self.rv_sampler, suffix, prefix, illegal_params)
 
         # generate radial velocity plot
         self.plot_settings['RV_PLOT']['rv_precession_results_file'+suffix] = rf

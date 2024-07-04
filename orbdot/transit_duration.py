@@ -283,7 +283,7 @@ class TransitDuration(NestedSampling):
         res['samples_filename'] = sf
 
         self.save_results(random_samples, samples, res, free_params,
-                          self.tdv_sampler, suffix, prefix)
+                          self.tdv_sampler, suffix, prefix, illegal_params)
 
         # generate a TDV plot
         # self.plot_settings['TDV_PLOT']['tdv_constant_results_file'+suffix] = rf
@@ -368,7 +368,7 @@ class TransitDuration(NestedSampling):
                                                               self.tdv_tol, prefix + suffix)
 
         self.save_results(random_samples, samples, res, free_params,
-                          self.tdv_sampler, suffix, prefix)
+                          self.tdv_sampler, suffix, prefix, illegal_params)
 
         rf = prefix + '_results' + suffix + '.json'
         sf = prefix + '_random_samples' + suffix + '.txt'
@@ -464,7 +464,7 @@ class TransitDuration(NestedSampling):
             raise ValueError('Unrecognized sampler, specify \'nestle\' or \'multinest\'')
 
         self.save_results(random_samples, samples, res, free_params,
-                          self.tdv_sampler, suffix, prefix)
+                          self.tdv_sampler, suffix, prefix, illegal_params)
 
         rf = prefix + '_results' + suffix + '.json'
         sf = prefix + '_random_samples' + suffix + '.txt'

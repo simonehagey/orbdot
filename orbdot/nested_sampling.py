@@ -112,12 +112,12 @@ class NestedSampling:
         self.vary = free_params
 
         # for a circular orbit, set 'w0'=0
-        if 'e0' not in self.vary and self.fixed['e0'] == 0. and self.fixed['w0'] != 0.:
+        if 'e0' not in self.vary and self.fixed['e0'] == 0.0 and self.fixed['w0'] != 0.0:
 
             print('\nNOTE: the default value of \'w0\' was set to zero, as this it is a '
                   'circular orbit. The previous value was {} rad.\n'.format(self.fixed['w0']))
 
-            self.fixed['w0'] = 0.
+            self.fixed['w0'] = 0.0
 
         print('Number of live points: ', n_points)
         print('Evidence tolerance: ', tol)
@@ -226,11 +226,12 @@ class NestedSampling:
         self.vary = free_params
 
         # for a circular orbit, set 'w0'=0
-        if 'e0' not in self.vary and self.fixed['e0'] == 0.:
+        if 'e0' not in self.vary and self.fixed['e0'] == 0.0 and self.fixed['w0'] != 0.0:
+
             print('\nNOTE: the default value of \'w0\' was set to zero, as this it is a '
                   'circular orbit. The previous value was {} rad.\n'.format(self.fixed['w0']))
 
-            self.fixed['w0'] = 0.
+            self.fixed['w0'] = 0.0
 
         print('Number of live points: ', n_points)
         print('Evidence tolerance: ', tol)
@@ -933,7 +934,7 @@ class NestedSampling:
         print('log(Z) = {} ± {}'.format(round(dic['stats']['logZ'], 2), round(dic['stats']['logZ_err'], 2)))
         print('{} run time (s): {} \n'.format(sampler, round(dic['stats']['run_time'], 2)))
 
-    def save_summary(self, dic, filename, sampler):
+    def save_summary(self, dic, filename, sampler, not_model_params):
         """Saves a summary of the nested sampling results.
 
         This method summarizes the results of the model fit in an easy-to-read .txt file.
@@ -946,6 +947,8 @@ class NestedSampling:
             File path where the output files will be saved.
         sampler : str
             Name of the sampler used.
+        not_model_params : list or tuple
+            A list of OrbDot parameters that do not belong to the model.
 
         Returns
         -------
@@ -991,8 +994,9 @@ class NestedSampling:
             f.write('----------------\n')
 
             for key in self.fixed:
-                if key not in np.array([s.split('_')[0] for s in self.vary]):
-                    f.write('{} = {}\n'.format(key, self.fixed[key]))
+                if key not in not_model_params:
+                    if key not in np.array([s.split('_')[0] for s in self.vary]):
+                        f.write('{} = {}\n'.format(key, self.fixed[key]))
 
             f.write('\n')
         f.close()
@@ -1097,7 +1101,7 @@ class NestedSampling:
                 writer.writerow(row)
 
     def save_results(self, random_samples, weighted_samples, res_dic, free_params, sampler_type,
-                     suffix, prefix):
+                     suffix, prefix, not_model_params):
         """Save the results of the sampling analysis.
 
         Parameters
@@ -1116,6 +1120,8 @@ class NestedSampling:
             A string to append to the end of the output filenames.
         prefix : str
             A string to prepend to the beginning of the output filenames.
+        not_model_params : list or tuple
+            A list of OrbDot parameters that do not belong to the model.
 
         Returns
         -------
@@ -1160,4 +1166,5 @@ class NestedSampling:
             json.dump(res_dic, fp, indent=1)
 
         # save a text summary of the results
-        self.save_summary(res_dic, prefix + '_summary' + suffix + '.txt', sampler_type)
+        self.save_summary(res_dic, prefix + '_summary' + suffix + '.txt',
+                          sampler_type, not_model_params)

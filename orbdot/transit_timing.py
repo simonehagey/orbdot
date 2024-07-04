@@ -337,7 +337,7 @@ class TransitTiming(NestedSampling):
             res['samples_filename'] = sf
 
             self.save_results(random_samples, samples, res, free_params,
-                              self.ttv_sampler, suffix, prefix)
+                              self.ttv_sampler, suffix, prefix, illegal_params)
 
             # generate a TTV ("O-C") plot
             self.plot_settings['TTV_PLOT']['ttv_constant_results_file'+suffix] = rf
@@ -460,7 +460,7 @@ class TransitTiming(NestedSampling):
             res['samples_filename'] = sf
 
             self.save_results(random_samples, samples, res, free_params,
-                              self.ttv_sampler, suffix, prefix)
+                              self.ttv_sampler, suffix, prefix, illegal_params)
 
             # generate a TTV ("O-C") plot
             self.plot_settings['TTV_PLOT']['ttv_decay_results_file'+suffix] = rf
@@ -583,7 +583,7 @@ class TransitTiming(NestedSampling):
             res['samples_filename'] = sf
 
             self.save_results(random_samples, samples, res, free_params,
-                              self.ttv_sampler, suffix, prefix)
+                              self.ttv_sampler, suffix, prefix, illegal_params)
 
             # generate a TTV ("O-C") plot
             self.plot_settings['TTV_PLOT']['ttv_precession_results_file'+suffix] = rf
