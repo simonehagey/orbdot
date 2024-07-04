@@ -203,17 +203,17 @@ The :meth:`~orbdot.models.ttv_models.ttv_constant` method implements this model:
 
 Orbital Decay
 -------------
-For a planet on a decaying circular orbit with a constant orbital period, we expect the mid-times of the transits (:math:`t_{\\mathrm{I}}`) and eclipses (:math:`t_{\\mathrm{II}}`) to be:
+For a planet on a decaying circular orbit with a constant orbital period, we expect the mid-times of the transits (:math:`t_{\mathrm{I}}`) and eclipses (:math:`t_{\mathrm{II}}`) to be:
 
-.. math:: t_{\\mathrm{I}} = t_0 + PE + \\frac{1}{2}\\,\\frac{dP}{dE}\\,E^2
+.. math:: t_{\mathrm{I}} = t_0 + PE + \frac{1}{2}\,\frac{dP}{dE}\,E^2
 
 and,
 
-.. math:: t_{\\mathrm{II}} = t_0 + PE + \\frac{P}{2} + \\frac{1}{2}\\,\\frac{dP}{dE}\\,E^2
+.. math:: t_{\mathrm{II}} = t_0 + PE + \frac{P}{2} + \frac{1}{2}\,\frac{dP}{dE}\,E^2
 
 where :math:`t_0` is the reference transit time, :math:`P` is the orbital period, :math:`dP/dE` is the rate of change of the period in units of days per epoch, and :math:`E` is the epoch, which represents the number of orbits that have passed since time :math:`t_0`.
 
-If the orbit is eccentric, an offset of :math:`\\frac{P_a\\,e}{\\pi}\\,\\cos{\\,\\omega_p}` is added to the eclipse times.
+If the orbit is eccentric, an offset of :math:`\frac{P_a\,e}{\pi}\,\cos{\,\omega_p}` is added to the eclipse times.
 
 The :meth:`~orbdot.models.ttv_models.ttv_decay` method implements this model:
 
@@ -221,6 +221,35 @@ The :meth:`~orbdot.models.ttv_models.ttv_decay` method implements this model:
 
 Apsidal Precession
 ------------------
+For a planet on an elliptical orbit undergoing apsidal precession, we expect the
+mid-times of the transits (:math:`t_{\mathrm{I}}`) and eclipses (:math:`t_{\mathrm{II}}`)
+to be :cite:p:`Gimenez1995, Patra2017`:
+
+.. math:: t_{\mathrm{I}} = t_0 + P_s E - \frac{e P_a}{\pi}\cos{\omega_p}
+
+and,
+
+.. math:: t_{\mathrm{II}} = t_0 + P_s E+ \frac{P_a}{2} + \frac{eP_a}{\pi}\cos{\omega_p}
+
+where :math:`t_0` is the reference transit time, :math:`e` is the orbit eccentricity,
+:math:`\omega_p` is the argument of pericentre, and :math:`E` is the epoch, which represents
+the number of orbits that have passed since time :math:`t_0`. We assume that :math:`\omega_p`
+evolves at a constant rate, denoted as :math:`d\omega/dE`, such that any given epoch
+:math:`\omega_p` is given by
+
+.. math:: \omega_{p}\left(E\right) = \omega_0 + \frac{d\omega}{dE}\,E
+
+where :math:`\omega_0` is the value of :math:`\omega_p` at time :math:`t_0`.
+
+In the equations above :math:`P_a` represents the anomalistic orbital period -- ie. the elapsed
+time between subsequent pericentre passages, which characterizes the osculating orbit -- and
+:math:`P_s` is the sidereal period. The latter represents the observed orbital period of the
+system, and is related to the anomalistic period by:
+
+.. math:: P_s = P_a\left(1-\frac{d\omega/{dE}}{2\pi}\right)
+
+The :meth:`~orbdot.models.ttv_models.ttv_precession` method implements this model:
+
 .. autofunction:: orbdot.models.ttv_models.ttv_precession
 
 ------------
@@ -294,7 +323,12 @@ Apsidal Precession
 
 ------------
 
-.. automodule:: orbdot.models.tdv_models
+Transit Duration Models
+=======================
+
+.. attention::
+
+   Under active development and testing.
 
 ------------
 
@@ -306,21 +340,18 @@ The :py:mod:`~orbdot.models.theory` module provides several analytical models th
 
 .. _orbital_decay_theory:
 
-Orbital Decay
--------------
+Equilibrium Tides
+-----------------
 Orbital decay refers to a transfer of angular momentum from the planet to the host star that results in a shrinking of the orbital period, eventually leading to planetary engulfment.
 
 Due to the close proximity of HJs to their host stars, significant tidal bulges -- an ellipsoidal distortion -- are raised in both the planet and star. In the case of orbital decay, the planet orbital rate is faster than the star's rotational rate. As a result, the star's tidal bulge lags behind the HJ, creating a net torque that spins up the star at the expense of the planet's orbital angular momentum \citep{levrard_falling_2009, penev_empirical_2018, ma_orbital_2021}. The tidal forces raised by the misaligned tidal bulges are known as `equilibrium tides' and are believed to be the most significant process governing the future evolution of HJ orbits \citep{ma_orbital_2021, barker_tidal_2020}.
 
-.. autosummary::
-   :nosignatures:
-
-   orbdot.models.theory.decay_pdot_from_quality_factor
-   orbdot.models.theory.decay_quality_factor_from_pdot
-   orbdot.models.theory.decay_empirical_quality_factor
-   orbdot.models.theory.decay_timescale
-   orbdot.models.theory.decay_energy_loss
-   orbdot.models.theory.decay_angular_momentum_loss
+.. autofunction:: orbdot.models.theory.decay_pdot_from_quality_factor
+.. autofunction:: orbdot.models.theory.decay_quality_factor_from_pdot
+.. autofunction:: orbdot.models.theory.decay_empirical_quality_factor
+.. autofunction:: orbdot.models.theory.decay_timescale
+.. autofunction:: orbdot.models.theory.decay_energy_loss
+.. autofunction:: orbdot.models.theory.decay_angular_momentum_loss
 
 ------------
 
@@ -328,23 +359,32 @@ Due to the close proximity of HJs to their host stars, significant tidal bulges 
 
 Apsidal Precession
 ------------------
-Apsidal precession is the gradual increase of the argument of pericentre :math:`\omega` of a planet's orbit over time, meaning the line connecting the pericentre and apocentre of the orbit rotates through :math:`2\pi` in one precession period.
+Apsidal precession is the gradual increase of the argument of pericenter :math:`\omega` of a planet's orbit over time, meaning the line connecting the pericenter and apocenter of the orbit rotates through :math:`2\pi` in one precession period.
 
 This can result from several factors, including components due to general relativistic effects :cite:p:`pal_periastron_2008,jordan_observability_2008`, perturbations from other planets :cite:p:`heyl_using_2007`, and gravitational moments arising from both the host star's rotation and planetary tidal bulges :cite:p:`greenberg_apsidal_1981`. The following sections describe the equations and OrbDot methods that are relevant to these effects.
 
-.. autosummary::
+General Relativity
+^^^^^^^^^^^^^^^^^^
+.. autofunction:: orbdot.models.theory.precession_gr
 
-   orbdot.models.theory.precession_gr
-   orbdot.models.theory.precession_rotational_planet
-   orbdot.models.theory.precession_rotational_planet_k2
-   orbdot.models.theory.precession_rotational_star
-   orbdot.models.theory.precession_rotational_star_k2
-   orbdot.models.theory.precession_tidal_planet
-   orbdot.models.theory.precession_tidal_planet_k2
-   orbdot.models.theory.precession_tidal_star
-   orbdot.models.theory.precession_tidal_star_k2
-   orbdot.models.theory.get_tdot_from_wdot
-   orbdot.models.theory.get_pdot_from_wdot
+Rotation
+^^^^^^^^
+.. autofunction:: orbdot.models.theory.precession_rotational_planet
+.. autofunction:: orbdot.models.theory.precession_rotational_planet_k2
+.. autofunction:: orbdot.models.theory.precession_rotational_star
+.. autofunction:: orbdot.models.theory.precession_rotational_star_k2
+
+Tides
+^^^^^
+.. autofunction:: orbdot.models.theory.precession_tidal_planet
+.. autofunction:: orbdot.models.theory.precession_tidal_planet_k2
+.. autofunction:: orbdot.models.theory.precession_tidal_star
+.. autofunction:: orbdot.models.theory.precession_tidal_star_k2
+
+Transit Variations
+^^^^^^^^^^^^^^^^^^
+.. autofunction:: orbdot.models.theory.get_pdot_from_wdot
+.. autofunction:: orbdot.models.theory.get_tdot_from_wdot
 
 ------------
 
@@ -354,13 +394,25 @@ Proper Motion
 -------------
 The apparent secular evolution of exoplanet transit signatures that are induced by the systemic proper motion, which is the movement of the star-planet system with respect to reference frame of the Solar System. This motion in 3D space is partially constrained with measurements of the proper motion on the sky-plane :math:`\mu` and radial velocity :math:`v_r`.
 
-.. autosummary::
+:math:`\dot{i}_\mu`
 
-        orbdot.models.theory.proper_motion_wdot
-        orbdot.models.theory.proper_motion_idot
-        orbdot.models.theory.proper_motion_pdot
-        orbdot.models.theory.proper_motion_tdot
-        orbdot.models.theory.proper_motion_shklovskii
+.. autofunction:: orbdot.models.theory.proper_motion_idot
+
+:math:`\dot{\omega}_\mu`
+
+.. autofunction:: orbdot.models.theory.proper_motion_wdot
+
+:math:`\dot{P}_\mu`
+
+.. autofunction:: orbdot.models.theory.proper_motion_pdot
+
+:math:`\dot{T}_\mu`
+
+.. autofunction:: orbdot.models.theory.proper_motion_tdot
+
+:math:`\dot{P}_\mathrm{Shk}`
+
+.. autofunction:: orbdot.models.theory.proper_motion_shklovskii
 
 .. _planet_companion_theory:
 

@@ -83,24 +83,6 @@ def ttv_decay(t0, P0, PdE, e0, w0, E, primary=True):
 
     Notes
     -----
-    For a planet on a decaying circular orbit with a constant orbital period, we expect the
-    mid-times of the transits (:math:`t_{\\mathrm{I}}`) and eclipses (:math:`t_{\\mathrm{II}}`)
-    to be:
-
-    .. math::
-
-        t_{\\mathrm{I}} = t_0 + PE + \\frac{1}{2}\\,\\frac{dP}{dE}\\,E^2
-
-    and,
-
-    .. math::
-
-        t_{\\mathrm{II}} = t_0 + PE + \\frac{P}{2} + \\frac{1}{2}\\,\\frac{dP}{dE}\\,E^2
-
-    where :math:`t_0` is the reference transit time, :math:`P` is the orbital period,
-    :math:`dP/dE` is the rate of change of the period in units of days per epoch, and :math:`E` is
-    the epoch, which represents the number of orbits that have passed since time :math:`t_0`.
-
     If the orbit is eccentric, an offset of :math:`\\frac{P_a\\,e}{\\pi}\\,\\cos{\\,\\omega_p}`
     is added to the eclipse times.
 
@@ -142,48 +124,9 @@ def ttv_precession(t0, P0, e0, w0, wdE, E, primary=True):
     float
         The predicted transit or secondary eclipse time(s) [BJD_TDB].
 
-    Notes
-    -----
-    For a planet on an elliptical orbit undergoing apsidal precession, we expect the
-    mid-times of the transits (:math:`t_{\\mathrm{I}}`) and eclipses (:math:`t_{\\mathrm{II}}`)
-    to be [2]_:
-
-    .. math::
-
-        t_{\\mathrm{I}} = t_0 + P_s E - \\frac{e P_a}{\\pi}\\cos{\\omega_p}
-
-    and,
-
-    .. math::
-
-        t_{\\mathrm{II}} = t_0 + P_s E+ \\frac{P_a}{2} + \\frac{eP_a}{\\pi}\\cos{\\omega_p}
-
-    where
-
-    where :math:`t_0` is the reference transit time, :math:`e` is the orbit eccentricity,
-    :math:`\\omega_p` is the argument of pericentre, and :math:`E` is the epoch, which represents
-    the number of orbits that have passed since time :math:`t_0`. We assume that :math:`\\omega_p`
-    evolves at a constant rate, denoted as :math:`d\\omega/dE`, such that any given epoch
-    :math:`\omega_p` is given by
-
-    .. math::
-
-        \\omega_{p}\\left(E\\right) = \\omega_0 + \\frac{d\\omega}{dE}\\,E
-
-    where :math:`\\omega_0` is the value of :math:`\\omega_p` at time :math:`t_0`.
-
-    In the equations above :math:`P_a` represents the anomalistic orbital period -- ie. the elapsed
-    time between subsequent pericentre passages, which characterizes the osculating orbit -- and
-    :math:`P_s` is the sidereal period. The latter represents the observed orbital period of the
-    system, and is related to the anomalistic period by:
-
-    .. math::
-
-        P_s = P_a\\left(1-\\frac{d\\omega/{dE}}{2\\pi}\\right)
-
     References
     ----------
-    .. [1]  :cite:t:`gimenez_bastero_1995`. https://doi.org/10.1007/BF00626903
+    .. [1]  :cite:t:`Gimenez1995`. https://doi.org/10.1007/BF00626903
     .. [2] :cite:t:`Patra2017`. https://doi.org/10.3847/1538-3881/aa6d75
 
     """

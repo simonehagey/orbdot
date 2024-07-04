@@ -255,17 +255,6 @@ The following code snippet calls :meth:`~orbdot.analysis.Analyzer.model_comparis
     # compare the orbital decay and apsidal precession models
     analyzer.model_comparison(precession_fit)
 
-.. admonition:: Example :meth:`~orbdot.analysis.Analyzer.model_comparison` Output
-  :class: dropdown
-
-  .. code-block:: text
-
-    Model Comparison
-    -----------------------------------------------------------------
-     * Decisive evidence for Model 1 vs. Model 2  (B = 1.17e+05)
-          Model 1: 'ttv_decay', logZ = -104.40
-          Model 2: 'ttv_precession', logZ = -116.07
-
 2. Orbital Decay Model Fit
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 The :meth:`~orbdot.analysis.Analyzer.orbital_decay_fit` method produces a summary of various values derived from interpreting the results of an orbital decay model fit in the context of the theory of equilibrium tides.
@@ -399,6 +388,8 @@ It calls the following methods from the theory module, depending on the type of 
    orbdot.models.theory.get_linear_rv_from_visual_binary
    orbdot.models.theory.get_pdot_from_linear_rv
    orbdot.models.theory.get_visual_binary_mass_from_linear_rv
+
+------------
 
 .. _analyzer_attributes:
 
