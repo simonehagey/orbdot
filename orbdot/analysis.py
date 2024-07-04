@@ -783,7 +783,7 @@ class Analyzer:
 
         return
 
-    def visual_binary(self, separation, secondary_mass, printout=False):
+    def resolved_binary(self, separation, secondary_mass, printout=False):
         """Characterize the observational effect(s) of a visual binary companion star.
 
         Parameters
@@ -1188,7 +1188,7 @@ class Analyzer:
         # return the minimum possible orbital period
         return P_min
 
-    # TODO: document (and move?)
+    # TODO: document
     def rv_trend_linear(self):
 
         t_pivot = self.t0

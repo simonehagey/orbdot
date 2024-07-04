@@ -5,6 +5,32 @@ The Models
 **********
 This section describes the models...
 
+.. _coordinate_system:
+
+Coordinate System
+=================
+In this work, we establish the sky plane to lie within
+the x-z plane, with the y-axis pointing towards the observer along the line of sight (refer to Figure X).
+
+It is critical to be consistent in the definition of the argument of pericenter :math:`\omega` when simultaneously
+fitting transit timing and RV data to an eccentric orbit model. The results can become inaccurate if the pericenter
+angles for the planet and star are measured from different axes.
+
+.. image:: _static/coordinate_system.png
+
+The argument of pericenter is determined from the positive x-axis, such that a transit occurs when the true anomaly
+:math:`\phi` is equal to:
+
+.. math::
+ \phi_{\mathrm I}\,=\,\frac{\pi}{2} - \omega_{\mathrm p}
+
+and an eclipse occurs when:
+
+.. math::
+ \phi_{\mathrm II} = \frac{3\pi}{2} - \omega_{\mathrm p}
+
+------------
+
 .. _model_parameters:
 
 Model Parameters
@@ -138,32 +164,6 @@ The OrbDot parameter set also includes time derivatives of other orbital element
      - The amplitude of a tidal radial velocity signal from the star. [*]_
 
 .. [*] Not currently implemented in the OrbDot models.
-
-------------
-
-.. _coordinate_system:
-
-Coordinate System
-=================
-In this work, we establish the sky plane to lie within
-the x-z plane, with the y-axis pointing towards the observer along the line of sight (refer to Figure X).
-
-It is critical to be consistent in the definition of the argument of pericenter :math:`\omega` when simultaneously
-fitting transit timing and RV data to an eccentric orbit model. The results can become inaccurate if the pericenter
-angles for the planet and star are measured from different axes.
-
-.. image:: _static/coordinate_system.png
-
-The argument of pericenter is determined from the positive x-axis, such that a transit occurs when the true anomaly
-:math:`\phi` is equal to:
-
-.. math::
- \phi_{\mathrm I}\,=\,\frac{\pi}{2} - \omega_{\mathrm p}
-
-and an eclipse occurs when:
-
-.. math::
- \phi_{\mathrm II} = \frac{3\pi}{2} - \omega_{\mathrm p}
 
 ------------
 

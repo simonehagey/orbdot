@@ -43,37 +43,6 @@ def ttv_constant(t0, P0, e0, w0, E, primary=True):
     float or array-like
         The predicted transit or secondary eclipse time(s) [BJD_TDB].
 
-    Notes
-    -----
-    For a planet on a circular orbit with a constant orbital period, we expect a linear
-    increase in the center times of both transits :math:`t_{\\mathrm{I}}` and eclipses :math:`t_{
-    \\mathrm{II}}`:
-
-    .. math::
-
-        t_{\\mathrm{I}} = t_0 + PE
-
-    and,
-
-    .. math::
-
-        t_{\\mathrm{II}} = t_0 + PE + \\frac{P}{2}
-
-    where :math:`t_0` is the reference transit time, :math:`P` is the orbital period,
-    and  :math:`E` is the epoch, which represents the number of orbits that have passed since
-    time :math:`t_0`.
-
-    If the orbit is eccentric, we add must add an offset to the eclipse times to account for
-    the variable speed of the planet:
-
-    .. math::
-
-        t_{\\mathrm{I}} = t_0 + PE
-
-    .. math::
-
-        t_{\\mathrm{II}} = t_0 + PE + \\frac{P}{2} + \\frac{P_a\\,e}{\\pi}\\,\\cos{\\,\\omega_p}
-
     """
     if primary:
         return t0 + P0 * E

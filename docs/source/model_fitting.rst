@@ -210,45 +210,71 @@ This may be particularly useful if you wish to update the priors between model f
 
 Interpreting the Results
 ========================
-The :class:`~orbdot.analysis.Analyzer` class is designed to facilitate and interpret various analyses related to the model fits. It combines the results, star-planet system information, and data to compute and summarize effects such as proper motion, orbital decay, and apsidal precession.
+The :class:`~orbdot.analysis.Analyzer` class is designed to facilitate the analysis of any OrbDot model fitting results. For a given model fit, this class combines the best-fit parameter values, the star-planet system characteristics, and the data to compute and summarize analyses of various physical models, such as equilibrium tides, apsidal precession, systemic proper motion, and companion objects.
 
-To use the :class:`~orbdot.analysis.Analyzer` class, you need an instance of a :class:`~orbdot.star_planet.StarPlanet` class and a dictionary containing the results of the model fit. The dictionary can either be passed in directly from the model fit in the script, or it can be read from a preexisting file.
-
-In the script right after a model fit:
+To initialize the :class:`~orbdot.analysis.Analyzer` class, you need an instance of the :class:`~orbdot.star_planet.StarPlanet` class and the results of a model fit. The model fit results may either be passed directly to the :class:`~orbdot.analysis.Analyzer` class after a model fit, for example:
 
 .. code-block:: python
 
-    Analyzer = Analyzer(planet_instance, results_dic)
+    # run the orbital decay TTV model fit
+    decay_fit = wasp12.run_ttv_fit(['t0', 'P0', 'PdE'], model='decay')
 
-From a pre-existing results file:
+    # initialize the Analyzer class
+    analyzer = Analyzer(wasp12, decay_fit)
+
+or they may be retrieved from a preexisting file:
 
 .. code-block:: python
 
-    Analyzer = Analyzer(planet_instance, results_dic)
+    import json
 
+    # load the orbital decay fit results
+    with open('results/WASP-12/ttv_fits/ttv_decay_results.json') as jf:
+        decay_fit = json.load(jf)
 
-As soon as you make an analysis object a file is made to summarize what you do with it. This file is named after the model and whatever suffix you chose. For example...
+    # initialize the Analyzer class
+    analyzer = Analyzer(wasp12, decay_fit)
 
-Also an analysis directory is made.
+As soon as you create an :class:`~orbdot.analysis.Analyzer` object, a file is created to write the results of whatever methods you call. The directory ``analysis/`` is created, and an output file is named after the model and any suffix you choose. For example, the above code block produces the file ``results/WASP-12/ttv_fits/ttv_decay_analysis.txt``.
 
-The following methods will add to the file and print to the console if the argument ``printout=True``.
+``Analyzer`` Methods
+--------------------
+The following are key :class:`~orbdot.analysis.Analyzer` methods and their descriptions. The output of these methods will all be added to the ``*_analysis.txt`` file but can be printed to the console if the argument ``printout=True``.
 
+1. Model Comparison
+^^^^^^^^^^^^^^^^^^^
+The :meth:`~orbdot.analysis.Analyzer.model_comparison` method compares the Bayesian evidence of the results given to the :class:`~orbdot.analysis.Analyzer` class with the results of a different model fit. For more details on how the model comparison is done, see the :meth:`~orbdot.analysis.Analyzer.model_comparison` docstring.
 
-Key Methods
-------------
-The following... (also add list of info file parameters needed for each method).
-
-Model Comparison
-^^^^^^^^^^^^^^^^
- The :meth:`~orbdot.analysis.Analyzer.model_comparison` method compares the Bayesian evidence for the ``Analyzer`` results with that of another model fit. More details are available in the docstring. The following code snippet calls this method after opening a results file saved during a previous model fit.
+The following code snippet calls :meth:`~orbdot.analysis.Analyzer.model_comparison` method after opening a results file saved during a previous model fit.
 
  .. code-block:: python
 
-    analyzer.model_comparison(fit_constant)
+    # run the apsidal precession TTV model fit
+    precession_fit = wasp12.run_ttv_fit(['t0', 'P0', 'e0', 'w0', 'wdE'], model='precession')
 
-Orbital Decay Model Fit
-^^^^^^^^^^^^^^^^^^^^^^^
-The :meth:`~orbdot.analysis.Analyzer.orbital_decay_fit` method provides a summary of derived values that interpret of the results of an orbital decay model fit by calling the various methods listed, below.
+    # compare the orbital decay and apsidal precession models
+    analyzer.model_comparison(precession_fit)
+
+.. admonition:: Example :meth:`~orbdot.analysis.Analyzer.model_comparison` Output
+  :class: dropdown
+
+  .. code-block:: text
+
+    Model Comparison
+    -----------------------------------------------------------------
+     * Decisive evidence for Model 1 vs. Model 2  (B = 1.17e+05)
+          Model 1: 'ttv_decay', logZ = -104.40
+          Model 2: 'ttv_precession', logZ = -116.07
+
+2. Orbital Decay Model Fit
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+The :meth:`~orbdot.analysis.Analyzer.orbital_decay_fit` method produces a summary of various values derived from interpreting the results of an orbital decay model fit in the context of the theory of equilibrium tides.
+
+ .. code-block:: python
+
+    analyzer.orbital_decay_fit()
+
+It calls the following methods from the theory module:
 
 .. autosummary::
    :nosignatures:
@@ -258,13 +284,15 @@ The :meth:`~orbdot.analysis.Analyzer.orbital_decay_fit` method provides a summar
    orbdot.models.theory.decay_energy_loss
    orbdot.models.theory.decay_angular_momentum_loss
 
-Apsidal Precession Model Fit
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-The :meth:`~orbdot.analysis.Analyzer.apsidal_precession_fit` method provides a summary of various interpretations of the results of an apsidal precession model fit by calling the various methods listed, below.
+3. Apsidal Precession Model Fit
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The :meth:`~orbdot.analysis.Analyzer.apsidal_precession_fit` method produces a summary of various derived values from interpreting the results of an apsidal precession model fit.
 
 .. code-block:: python
 
-    analysis.apsidal_precession_fit(printout=True)
+    analyzer.apsidal_precession_fit()
+
+It calls the following methods from the theory module:
 
 .. autosummary::
    :nosignatures:
@@ -275,15 +303,16 @@ The :meth:`~orbdot.analysis.Analyzer.apsidal_precession_fit` method provides a s
    orbdot.models.theory.precession_tidal_star_k2
    orbdot.models.theory.precession_tidal_planet_k2
 
-Systemic Proper Motion Analysis
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+4. Systemic Proper Motion Analysis
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 The :meth:`~orbdot.analysis.Analyzer.proper_motion` method computes and summarizes predicted transit timing variations (TTVs) and transit duration variations (TDVs) due to systemic proper motion.
 
 .. code-block:: python
 
-    ttv_c = wasp12.run_ttv_fit(['t0', 'P0'], model='constant')
-    a = Analyzer(wasp12, ttv_c)
-    proper_motion()
+    analyzer.proper_motion()
+
+It calls the following methods from the theory module:
 
 .. autosummary::
    :nosignatures:
@@ -294,14 +323,16 @@ The :meth:`~orbdot.analysis.Analyzer.proper_motion` method computes and summariz
    orbdot.models.theory.proper_motion_pdot
    orbdot.models.theory.proper_motion_shklovskii
 
-Orbital Decay Predictions
-^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Computes and summarizes predicted orbital decay parameters based on an empirical law for the stellar tidal quality factor, use the `orbital_decay_predicted` method:
+5. Orbital Decay Predictions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The :meth:`~orbdot.analysis.Analyzer.orbital_decay_predicted` method computes and summarizes orbital decay parameters predicted by theory, based on an empirical law for the stellar tidal quality factor.
 
 .. code-block:: python
 
-    analysis.orbital_decay_predicted()
+    analyzer.orbital_decay_predicted()
+
+It calls the following methods from the theory module:
 
 .. autosummary::
    :nosignatures:
@@ -312,20 +343,68 @@ Computes and summarizes predicted orbital decay parameters based on an empirical
    orbdot.models.theory.decay_energy_loss
    orbdot.models.theory.decay_angular_momentum_loss
 
-Apsidal Precession Predictions
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Companion Planet Analysis
-^^^^^^^^^^^^^^^^^^^^^^^^^
+6. Apsidal Precession Predictions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The :meth:`~orbdot.analysis.Analyzer.apsidal_precession_predicted` method produces a summary of the expected rates of apsidal precession due to general relativistic effects, tides, and rotation.
 
-Resolved Binary Analysis
-^^^^^^^^^^^^^^^^^^^^^^^^
+.. code-block:: python
+
+    analyzer.apsidal_precession_predicted()
+
+It calls the following methods from the theory module:
+
+.. autosummary::
+   :nosignatures:
+
+   orbdot.models.theory.precession_gr
+   orbdot.models.theory.precession_rotational_star
+   orbdot.models.theory.precession_rotational_planet
+   orbdot.models.theory.precession_tidal_star
+   orbdot.models.theory.precession_tidal_planet
+
+
+7. Companion Planet Analysis
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The :meth:`~orbdot.analysis.Analyzer.unknown_companion` method produces a summary of constraints on a possible undetected, non-resonant companion planet given parameters derived from the given model fit.
+
+.. code-block:: python
+
+    analyzer.unknown_companion()
+
+It calls the following methods from the theory module, depending on the type of model fit that was done:
+
+.. autosummary::
+   :nosignatures:
+
+   orbdot.models.theory.get_companion_from_quadratic_rv
+   orbdot.models.theory.get_companion_mass_from_linear_rv
+   orbdot.models.theory.get_pdot_from_linear_rv
+   orbdot.models.theory.get_linear_rv_from_pdot
+   orbdot.models.theory.get_companion_mass_from_precession
+
+8. Resolved Binary Analysis
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The :meth:`~orbdot.analysis.Analyzer.resolved_binary` method produces a summary of the expected observational effect(s) of a resolved companion star, i.e., one for which the angular separation is known.
+
+.. code-block:: python
+
+    analyzer.resolved_binary()
+
+It calls the following methods from the theory module, depending on the type of model fit that was done:
+
+.. autosummary::
+   :nosignatures:
+
+   orbdot.models.theory.get_linear_rv_from_visual_binary
+   orbdot.models.theory.get_pdot_from_linear_rv
+   orbdot.models.theory.get_visual_binary_mass_from_linear_rv
 
 .. _analyzer_attributes:
 
-Key Attributes
---------------
-The following attributes of Analyzer may be helpful for constructing your own scripts and functions for analysis. Note that the model fit parameters are taken from the results that are given to ``Analyzer``, and the rest are filled in with the system info file entries.
+``Analyzer`` Attributes
+-----------------------
+The following attributes of :class:`~orbdot.analysis.Analyzer` may be helpful for constructing your own scripts and functions for analysis. Note that the model fit parameters are taken from the results given to :class:`~orbdot.analysis.Analyzer`, and the rest are filled in with the system info file entries.
 
 .. list-table::
    :widths: 30 15 80
