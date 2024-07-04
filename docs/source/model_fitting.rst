@@ -3,7 +3,7 @@
 **************
 Model Fitting
 **************
-If you haven't seen the getting started example, go do that first. For brevity, we need to initialize the :class:`~orbdot.star_planet.StarPlanet` object for our planet, let's keep using WASP-12 b as an example:
+If you haven't seen the :ref:`getting-started` page, it is the best place to start. For brevity, we need to initialize the :class:`~orbdot.star_planet.StarPlanet` class for the exoplanet-of-study. Continuing to use WASP-12 b as an example:
 
 .. code-block:: python
 
@@ -12,13 +12,13 @@ If you haven't seen the getting started example, go do that first. For brevity, 
     # initialize the StarPlanet class
     wasp12 = StarPlanet('settings_files/WASP-12_settings.json')
 
-See section :ref:`settings-file` for a description of the settings file and other files that it points to.
+See the :ref:`settings-file` section for a description of the settings file and other files it references.
 
 .. _running_model_fits:
 
 Running Model Fits
 ==================
-To run the model fitting routines one of the following methods must be called on the :class:`~orbdot.star_planet.StarPlanet` object, depending on the type of data to be fit.
+To run the model fitting routines, one of the following methods must be called on the :class:`~orbdot.star_planet.StarPlanet` object, depending on the type of data to be fit.
 
 .. autosummary::
    :nosignatures:
@@ -28,11 +28,11 @@ To run the model fitting routines one of the following methods must be called on
    orbdot.radial_velocity.RadialVelocity.run_rv_fit
    orbdot.transit_duration.TransitDuration.run_tdv_fit
 
-These method calls require a list of the free parameters and the ``model`` argument, which specifies the evolutionary model to be fit (default is ``"constant"``). The free parameters can be given in any order, but are restricted to being part of the physical model (an error will be raised if they are not). See the :ref:`model_parameters` section for more information on the allowed parameters for each model. The optional ``suffix`` argument enables separate fits of the same model to be differentiated, e.g. ``suffix="_circular"`` or ``suffix="_eccentric"``. This is nicely illustrated in the LINK EXAMPLE.
+These method calls require a list of the free parameters and the ``model`` argument, which specifies the evolutionary model to be fit (the default is ``"constant"``). The free parameters can be given in any order but must be part of the physical model (an error will be raised if they are not). See the :ref:`model_parameters` section for more information on the allowed parameters for each model. The optional ``suffix`` argument enables separate fits of the same model to be differentiated, e.g., ``suffix="_circular"`` or ``suffix="_eccentric"``. This is nicely illustrated in the example (LINK).
 
-TTV Models
-----------
-The transit and eclipse timing model fits are run by calling the :ref:`~orbdot.transit_timing.TransitTiming.run_ttv_fit` method on the :class:`~orbdot.star_planet.StarPlanet` object. The evolutionary model is specified with the ``model`` argument, which must be either ``"constant"``, ``"decay"``, or ``"precession"``, and the free parameters are specified in a list of strings. The following code snippet shows an example call for each of the three models:
+TTV Model Fits
+--------------
+The transit and eclipse timing model fits are run by calling the :ref:`~orbdot.transit_timing.TransitTiming.run_ttv_fit` method on the :class:`~orbdot.star_planet.StarPlanet` object. The evolutionary model, specified with the ``model`` argument, must be either ``"constant"``, ``"decay"``, or ``"precession"``, and the free parameters are specified in a list of strings. The following code snippet shows an example call for each of the three models:
 
 .. code-block:: python
 
@@ -40,22 +40,21 @@ The transit and eclipse timing model fits are run by calling the :ref:`~orbdot.t
     wasp12.run_ttv_fit(['t0', 'P0', 'PdE'], model='decay')
     wasp12.run_ttv_fit(['t0', 'P0', 'e0', 'w0', 'wdE'], model='precession')
 
-TTV Data "Clipping"
-^^^^^^^^^^^^^^^^^^^
-When fitting the transit and eclipse mid-times with the :ref:`~orbdot.transit_timing.TransitTiming.run_ttv_fit` method, there is an option to employ a sigma-clipping routine to remove outlying data points. This method was originally developed in :cite:t:`Hagey2022` to conservatively remove outliers in the transit mid-times for datasets with high variance. This technique operates by fitting the best-fit constant-period timing model, subtracting it from the data, and then removing any data point whose nominal value falls outside of a 3-$\sigma$ range from the mean of the residuals. This process is repeated until no points fall outside of the residuals, or until a maximum number of iterations has been reached.
+**TTV Data "Clipping"**
+ When fitting the transit and eclipse mid-times with the :ref:`~orbdot.transit_timing.TransitTiming.run_ttv_fit` method, there is an option to employ a sigma-clipping routine to remove outlying data points. This method was originally developed in :cite:t:`Hagey2022` to conservatively remove outliers in the transit mid-times for datasets with high variance. This technique operates by fitting the best-fit constant-period timing model, subtracting it from the data, and then removing any data point whose nominal value falls outside a :math:`3-\sigma` range from the mean of the residuals. This process is repeated until no points fall outside the residuals, or until a maximum number of iterations has been reached.
 
-Giving the argument ``clip=True`` to :ref:`~orbdot.transit_timing.TransitTiming.run_ttv_fit` runs the :meth:`~orbdot.transit_timing.TransitTiming.clip` method run before the model fit. Any subsequent model fits will use the cleaned dataset, so ``clip=True`` only needs to be specified one time. For example,
+ Giving the argument ``clip=True`` to :ref:`~orbdot.transit_timing.TransitTiming.run_ttv_fit` runs the :meth:`~orbdot.transit_timing.TransitTiming.clip` method before the model fit. Any subsequent model fits will use the cleaned dataset, so ``clip=True`` only needs to be specified once. For example,
 
-.. code-block:: python
+ .. code-block:: python
 
     wasp12.run_ttv_fit(['t0', 'P0', 'e0', 'w0'], model='constant', clip=True)
     wasp12.run_ttv_fit(['t0', 'P0', 'PdE'], model='decay')
     wasp12.run_ttv_fit(['t0', 'P0', 'e0', 'w0', 'wdE'], model='precession')
 
-For more information, see the :meth:`~orbdot.transit_timing.TransitTiming.clip` docstring.
+ For more information, see the :meth:`~orbdot.transit_timing.TransitTiming.clip` docstring.
 
-RV Models
----------
+RV Model Fits
+-------------
 The radial velocity model fits are run by calling the :ref:`~orbdot.transit_timing.RadialVelocity.run_rv_fit` method on the :class:`~orbdot.star_planet.StarPlanet` object. The evolutionary model is specified with the ``model`` argument, which must be either ``"constant"``, ``"decay"``, or ``"precession"``, and the free parameters are specified in a list of strings. The following code snippet shows an example call for each of the three models:
 
 .. code-block:: python
@@ -66,7 +65,7 @@ The radial velocity model fits are run by calling the :ref:`~orbdot.transit_timi
 
 Joint Fits
 ----------
-Running a joint model fit is similar, with the ``model`` argument specifying the evolutionary model and free parameters given as a list of strings. However, in this case the data types that are to be fit must also be specified. For example, to fit the mid-times and radial velocities together, the arguments ``RV=True`` and ``TTV=True`` must be given:
+Running a joint model fit is similar, with the ``model`` argument specifying the evolutionary model and free parameters given as a list of strings. However, in this case, the data types to be fit must also be specified. For example, to fit the mid-times and radial velocities together, the arguments ``RV=True`` and ``TTV=True`` must be given:
 
 .. code-block:: python
 
@@ -74,9 +73,9 @@ Running a joint model fit is similar, with the ``model`` argument specifying the
     wasp12.run_joint_fit(['t0', 'P0', 'PdE', 'K', 'v0', 'jit'], model='decay', RV=True, TTV=True)
     wasp12.run_joint_fit(['t0', 'P0', 'e0', 'w0', 'wdE', 'K', 'v0', 'jit'], model='precession', RV=True, TTV=True)
 
-TDV Models
-----------
-It is critical to note that, at this time, the transit duration fitting feature of OrbDot has not been thoroughly tested and validated. The methods are available to use, however, and are called in the same manner as above. For example,
+TDV Model Fits
+--------------
+It is important to note that, at this time, the transit duration fitting feature of OrbDot has not been thoroughly tested and validated. The methods are available to use, however, and are called in the same manner as above. For example,
 
 .. code-block:: python
 
@@ -95,21 +94,17 @@ For each model fit in our example the following files are saved:
 - `*_summary.txt` : A text summary of the best-fit values and sampling statistics.
 - `*_results.json` : The full set of nested sampling outputs.
 - `*_random_samples.json`: A set of 300 samples for plotting.
-- `*_corner.png` : A corner plot),
+- `*_corner.png` : A corner plot.
 
 The ``*_summary.txt`` File
 --------------------------
-The summary is a good way to get a quick overview of the results of the model fit.
-
+The summary provides a quick overview of the results of the model fit.
 
 The ``*_results.json`` File
 ---------------------------
-This method calculates the confidence intervals using the provided samples and stores them
-in a dictionary. If a parameter was not allowed to vary in the model fit, its default value
-is recorded in the dictionary for completeness.
+This method calculates the confidence intervals using the provided samples and stores them in a dictionary. If a parameter was not allowed to vary in the model fit, its default value is recorded in the dictionary for completeness.
 
-If the user has chosen to fit 'ecosw' and 'esinw' or 'sq_ecosw' and 'sq_esinw', the
-derived 'e0' and 'w0' are also returned.
+If the user has chosen to fit 'ecosw' and 'esinw' or 'sq_ecosw' and 'sq_esinw', the derived 'e0' and 'w0' are also returned.
 
 LIST OF KEYS
 
@@ -123,13 +118,13 @@ The "fixed" parameter values are used as a default when a given parameter is not
 
 Updating Fixed Values
 ---------------------
-These fixed values may be updated at any time by calling the :meth:`StarPlanet.update_default` method. For example,
+The fixed values may be updated at any time by calling the :meth:`orbdot.star_planet.StarPlanet.update_default` method. For example,
 
 .. code-block:: python
 
     wasp12.update_default('P0', 3.14)
 
-This may be particularly useful if you wish to update the default values in-between model fits. For example, the following code snippet fits a constant-period timing model and uses the best-fit orbital period and reference transit times to update the fixed values for a subsequent radial velocity fit:
+This may be particularly useful if you wish to update the default values between model fits. For example, the following code snippet fits a constant-period timing model and uses the best-fit orbital period and reference transit times to update the fixed values for a subsequent radial velocity fit:
 
 .. code-block:: python
 
@@ -149,27 +144,32 @@ This may be particularly useful if you wish to update the default values in-betw
 
 Priors
 ======
-The way that prior distributions are handled in the nested sampling algorithms is frankly super fucking confusing, as at each step the parameters have to be transformed from the unit hypercube with specialized functions. ie. The nested sampling algorithms require a method that transforms the current state of the free parameters from the unit hypercube to their true values with the specified prior distributions. The transformed parameters may then be passed to the log-likelihood function by the sampler.
+The way that prior distributions are handled in the nested sampling algorithms is complex, requiring methods that transform the current state of the free parameters from the unit hypercube to their true values before they are passed to the log-likelihood function.
 
-Because OrbDot is meant to be easy to use, this process is hidden behind the implementation of nested sampling so that the priors can be defined in that makes sense to human beings.
-OrDot currently supports three different prior distributions: gaussian (ie. normal), uniform, and log-uniform. The bounds of these distributions are defined in the ``"priors"`` dictionary is in the settings file. It is the key-value pairs of ``"priors"`` that define the prior distributions of the free parameters. Every value is a list of three elements, the first being the type of prior ('uniform', 'gaussian', or 'log'), and the subsequent elements defining the distribution. For each parameter, the key is identical to its associated symbol defined in the :ref:`model_parameters` section. The following table shows this hopefully in a way that makes sense.
+Because OrbDot is designed to be user-friendly, this process is hidden behind the implementation of :class:`~orbdot.nested_sampling.NestedSampling` so that the priors can be defined in a way that makes sense to users. OrbDot currently supports three different prior distributions: Gaussian (normal), uniform, and log-uniform.
 
-.. table::
-   :name: tab:priors
-   :width: 50%
-   :align: center
+The bounds of these distributions are defined in the ``"priors"`` dictionary in the settings file, in which every value is a list of three elements: the first being the type of prior ('uniform', 'gaussian', or 'log'), and the subsequent elements defining the distribution, shown in the table below. For each parameter, the key is identical to its associated symbol defined in the :ref:`model_parameters` section.
 
-   +---------------+--------------------------------------+
-   | Gaussian      |   ["gaussian", mean, std]            |
-   +---------------+--------------------------------------+
-   | Log-Uniform   |   ["log", log10(min), log10(max)]    |
-   +---------------+--------------------------------------+
-   | Uniform       |   ["uniform", min, max]              |
-   +---------------+--------------------------------------+
+.. list-table::
+   :header-rows: 1
 
-The built-in priors are defined in the '``"defaults/fit_settings.json"`` file (see :ref:`settings_file`), but the user should specify their own. For example,
+   * - Prior Type
+     - Format
+     - Example
+   * - Gaussian
+     - ``["gaussian", mean, std]``
+     - ``["gaussian", 2456305.5, 0.1]``
+   * - Uniform
+     - ``["uniform", min, max]``
+     - ``["uniform", -100, 100]``
+   * - Log-Uniform
+     - ``["uniform", min, max]``
+     - ``["uniform", -2, 1]``
 
-.. code-block:: text
+The built-in priors are defined in the '``"defaults/default_fit_settings.json"`` file (see :ref:`settings_file`), but the user should specify their own. For example,
+
+.. code-block:: JSON
+
      ...
           "prior": {
              "t0": ["gaussian", 2456305.4555, 0.01],
@@ -177,8 +177,6 @@ The built-in priors are defined in the '``"defaults/fit_settings.json"`` file (s
              "PdE": ["uniform", -1e-7, 0],
            }
      }
-
-If you would like to see how the prior transforms are done, see the priors module documentation (LINK). For more information on how the prior transforms work for nested sampling, see this great documentation from Nestle here: LINK.
 
 Updating Priors
 ---------------
@@ -188,7 +186,7 @@ Like the fixed values, the priors may be updated at any time by calling the :met
 
     planet.update_prior('P0', ['gaussian', 3.14, 0.001])
 
-This may be particularly useful if you wish to update the priors in-between model fits. For example, the following code snippet fits a constant-period timing model and uses the best-fit orbital period and reference transit results to update the priors for a subsequent radial velocity fit:
+This may be particularly useful if you wish to update the priors between model fits. For example, the following code snippet fits a constant-period timing model and uses the best-fit orbital period and reference transit results to update the priors for a subsequent radial velocity fit:
 
 .. code-block:: python
 
@@ -212,9 +210,9 @@ This may be particularly useful if you wish to update the priors in-between mode
 
 Interpreting the Results
 ========================
-The :class:`~orbdot.analysis.Analyzer` class is designed to facilitate and interpret various analyses related to the model fits. It combines the results, star-planet system info, and data together to compute and summarize effects such as proper motion, orbital decay, and apsidal precession.
+The :class:`~orbdot.analysis.Analyzer` class is designed to facilitate and interpret various analyses related to the model fits. It combines the results, star-planet system information, and data to compute and summarize effects such as proper motion, orbital decay, and apsidal precession.
 
-To use the :class:`~orbdot.analysis.Analyzer`  class, you need an instance of a StarPlanet class and a dictionary containing the results of the model fit. the dictionary can either be passed in directly from the model fit in the script, or it can be read from a preexisting file. Either way, however, you still need to hvae a planet instance.
+To use the :class:`~orbdot.analysis.Analyzer` class, you need an instance of a :class:`~orbdot.star_planet.StarPlanet` class and a dictionary containing the results of the model fit. The dictionary can either be passed in directly from the model fit in the script, or it can be read from a preexisting file.
 
 In the script right after a model fit:
 

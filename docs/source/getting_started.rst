@@ -2,11 +2,11 @@
 
 Getting Started
 ===============
-The first step to using OrbDot is to create an instance of the :class:`~orbdot.star_planet.StarPlanet` class to represent your planet and its host star. This object acts as an interface with the core capabilities of the OrbDot package, combining the data, methods, and attributes necessary run model fitting algorithms and interpret the results. It inherits model fitting capabilities from the :class:`~orbdot.transit_timing.TransitTiming`, :class:`~orbdot.radial_velocity.RadialVelocity`, :class:`~orbdot.transit_duration.TransitDuration`, and  :class:`~orbdot.joint_fit.JointFit` classes.
+The first step to using OrbDot is to create an instance of the :class:`~orbdot.star_planet.StarPlanet` class, representing an exoplanet and its host star. This serves as an interface for the core capabilities of the OrbDot package, combining the data, methods, and attributes necessary to run model fitting algorithms and interpret the results. It inherits the model fitting capabilities from the :class:`~orbdot.transit_timing.TransitTiming`, :class:`~orbdot.radial_velocity.RadialVelocity`, :class:`~orbdot.transit_duration.TransitDuration`, and  :class:`~orbdot.joint_fit.JointFit` classes.
 
 Creating a StarPlanet Instance
 ------------------------------
-To create a :class:`~orbdot.star_planet.StarPlanet` instance, we simply give the pathname for the ``*_settings.json`` file. For illustrative purposes, let's use the Hot Jupiter WASP-12 b as an example:
+To create a :class:`~orbdot.star_planet.StarPlanet` instance, provide the path to a settings file as an argument. For example, to use the Hot Jupiter WASP-12 b:
 
 .. code-block:: python
 
@@ -14,7 +14,7 @@ To create a :class:`~orbdot.star_planet.StarPlanet` instance, we simply give the
 
     wasp12 = StarPlanet('settings_files/WASP-12_settings.json')
 
-That was easy! Now we have access to all of the attributes and methods that we need to study the orbital evolution of WASP-12 b. The most important :class:`~orbdot.star_planet.StarPlanet` attributes are listed below.
+Now, you have access to all the attributes and methods needed to study the orbital evolution of WASP-12 b. The most important :class:`~orbdot.star_planet.StarPlanet` attributes are listed below:
 
 .. list-table::
    :header-rows: 1
@@ -43,17 +43,17 @@ That was easy! Now we have access to all of the attributes and methods that we n
    * - ``fixed``
      - ``dict``
      - The fixed parameter values.
-   * - ``plot_settings``
-     - ``dict``
-     - Various plot settings
    * - ``sp_system_params``
      - ``dict``
      - A dictionary holding the system info file.
    * - ``main_save_dir``
      - ``str``
      - The base path to save the output files
+   * - ``plot_settings``
+     - ``dict``
+     - Various plot settings
 
-In total, the initialization of a StarPlanet object requires the following:
+The initialization of a StarPlanet object requires the following input files:
 
  1. :ref:`settings-file`, default is: ``_settings.json``
  2. :ref:`info-file`, default is: ``*_info.json``
@@ -66,9 +66,9 @@ In total, the initialization of a StarPlanet object requires the following:
 
 The Settings File
 -----------------
-This ``.json`` file is the primary input required by the :class:`~orbdot.star_planet.StarPlanet` class. It specifies the path names for the data, the desired nested sampling implementation and settings, the system information file, directories for saving results, and priors.
+This ``.json`` file is the primary input required by the :class:`~orbdot.star_planet.StarPlanet` class. It provides the path names for the data and system information files, directories for saving results, and the desired nested sampling settings and priors.
 
-The first part of the settings file specifies important path names with the following keys:
+The first section of the settings file specifies important path names with the following keys:
 
 .. list-table::
    :header-rows: 1
@@ -92,7 +92,7 @@ The first part of the settings file specifies important path names with the foll
 
 For example,
 
-.. code-block:: text
+.. code-block:: JSON
 
      {"_comment1": "WASP-12b Settings",
 
@@ -102,7 +102,7 @@ For example,
           "system_info_file": "settings_files/WASP-12_settings.json",
      ...
 
-The structure of the next section is dependent on what type(s) of data you have. For each data type, the settings file should include a dictionary associated with the appropriate key: ``"RV_fit"``, ``"TTV_fit"``, or ``"TDV_fit"``. Each of these dictionaries have the following keys:
+The structure of the next section depends on the type(s) of data you have. For each data type, the settings file should include a dictionary associated with the appropriate key: ``"RV_fit"``, ``"TTV_fit"``, or ``"TDV_fit"``. Each of these dictionaries has the following keys:
 
 .. list-table::
    :header-rows: 1
@@ -131,7 +131,8 @@ The structure of the next section is dependent on what type(s) of data you have.
 
 For example,
 
-.. code-block:: text
+.. code-block:: JSON
+
      ...
 
      "_comment3": "Model Fits",
@@ -146,41 +147,38 @@ For example,
           },
      ...
 
-If you plan to fit multiple data types simultaneously, the ``"joint_fit"`` dictionary specifies the appropriate settings. For example,
+If you want to fit multiple data types simultaneously, the ``"joint_fit"`` dictionary specifies the appropriate settings. For example,
 
-.. code-block:: text
+.. code-block:: JSON
 
      ...
-
           "joint_fit": {
             "save_dir": "joint_fits/",
             "sampler": "nestle",
             "n_live_points": 1000,
             "evidence_tolerance": 0.1
          },
-
      ...
 
-Finally, ``"priors"`` key contains a dictionary for which the key-value pairs define the prior distributions for relevant model parameters. For more information on structure and options for priors, see the :ref:`priors` section. In short, every value is a list of three elements, the first being the type of prior (``"uniform"``, ``"gaussian"``, or ``"log"``), with the subsequent elements defining the distribution. For example,
+Finally, the ``"priors"`` key corresponds to a dictionary with key-value pairs that define the prior distributions. For more information on the structure and options for priors, see the :ref:`priors` section. Each value is a list of three elements: the type of prior (``"uniform"``, ``"gaussian"``, or ``"log"``), with the subsequent elements defining the distribution. For example,
 
-.. code-block:: text
+.. code-block:: JSON
+
      ...
-
           "prior": {
              "t0": ["gaussian", 2456305.4555, 0.01],
              "P0": ["gaussian", 1.09142, 0.0001],
-             "PdE": ["uniform", -1e-7, 0],
            }
      }
 
 Default Settings
 ^^^^^^^^^^^^^^^^
-Not all of the parts of the settings file need to be populated. There is a default settings file (``"defaults/fit_settings.json"``) that gets merged with the user provided one, which keeps everything consistent and conveniently provides reasonable uninformative priors on unconstrained parameters like :math:`e\cos{w}` and :math:`e\sin{w}`. If a key is provided by the user, that value overrides the default one.
+Not all fields in the settings file need to be populated. A default settings file (``"defaults/default_fit_settings.json"``) is merged with the user-provided one, maintaining consistency and providing reasonable uninformative priors on unconstrained parameters like :math:`e\cos{w}` and :math:`e\sin{w}`. If a key is provided by the user, that value overrides the default one.
 
 .. admonition:: Default Settings File
   :class: dropdown
 
-  .. code-block:: text
+  .. code-block:: JSON
 
      {"_comment1": "Settings",
 
@@ -262,15 +260,13 @@ Not all of the parts of the settings file need to be populated. There is a defau
 
 Data Files
 ----------
-When a ``StarPlanet`` instance is created, the data is accessed by the attributes ``ttv_data`` and/or ``rv_data`` and/or ``tdv_data``. Each data type, be it mid-times, radial velocities, or durations, must be given to OrbDot in separate files. In all cases, the column containing the source of the measurements (ie. a name, citation, or instrument) is important, as OrbDot recognizes and splits unique sources for plotting.
-
-.. _ttv-data:
+Once a :class:`~orbdot.star_planet.StarPlanet` instance is created, the data is accessed through the attributes ``ttv_data``, ``rv_data`` and/or ``tdv_data``. Each data type must be given to OrbDot in separate files. In all cases, the column containing the source of the measurements (e.g., a name, citation, or instrument) is important, as OrbDot recognizes and splits unique sources for plotting.
 
 TTV Data
 ^^^^^^^^
-Transit and eclipse timing data files are read assuming that the columns are in the order: :code:`[Epoch, Time (BJD), Error (BJD), Source]`. The eclipse mid-times (also known as 'occultations') are differentiated by a half orbit, so that transit and eclipse mid-times may be combined into a single data file and be automatically separated for model fits and plotting. For example, the eclipse directly following transit number 100 has an epoch equal to 100.5.
+Transit and eclipse timing data files are read assuming that the columns are in the order: :code:`[Epoch, Time (BJD), Error (BJD), Source]`. The eclipse mid-times (also known as "occultations") are differentiated by a half orbit, so that transit and eclipse mid-times may be combined into a single data file and automatically separated for model fits and plotting. For example, the eclipse directly following transit number 100 has an epoch equal to 100.5.
 
-The ``StarPlanet`` attribute ``ttv_data`` is a dictionary with the following keys:
+The :class:`~orbdot.star_planet.StarPlanet` attribute ``ttv_data`` is a dictionary with the following keys:
 
 .. list-table::
    :header-rows: 1
@@ -295,11 +291,9 @@ The ``StarPlanet`` attribute ``ttv_data`` is a dictionary with the following key
    * - ``"epoch_ecl"``
      - orbit number of eclipses
 
-.. _rv-data:
-
 RV Data
 ^^^^^^^
-Radial velocity data files are read assuming that the columns are in the order: :code:`[Time (BJD), Velocity (m/s), Err (m/s), Source]`. The ``StarPlanet`` attribute ``rv_data`` is a dictionary with the following keys:
+Radial velocity data files are read assuming that the columns are in the order: :code:`[Time (BJD), Velocity (m/s), Error (m/s), Source]`. The :class:`~orbdot.star_planet.StarPlanet` attribute ``rv_data`` is a dictionary with the following keys:
 
 .. list-table::
    :header-rows: 1
@@ -324,16 +318,13 @@ Radial velocity data files are read assuming that the columns are in the order: 
    * - ``"src_order"``
      - order of sources
 
+It is critical to be consistent in naming the source of the radial velocity measurements, as the model parameters :math:`\gamma` and :math:`\sigma_{\mathrm{jit}}` are instrument-dependent. When these variables are included in a list of free parameters, OrbDot will replace them with a new identifier for each unique source, with a tag that corresponds to what was specified in the data file.
 
-It is critical to be consistent in naming the source of the radial velocity measurements, as the model parameters :math:`\gamma` and :math:`\sigma_{\mathrm jitter}` are instrument-dependent. When these variables are included in a list of free parameters, OrbDot will replace them with a new identifier for each unique source, with a tag that depends on what was specified in the data file.
-
-For example, if there are measurements from two RV instruments that are identified by the strings ``"Doctor et al. (2012)"`` and ``"Who et al. (2022)"``, the free variable ``"v0"`` is be replaced by ``"v0_Doc"``, and ``"v0_Who"``, and ``"jit"`` is replaced by '``"jit_Doc"``, ``"jit_Who"``.
-
-.. _tdv-data:
+For example, if there are measurements from two RV instruments identified by the strings ``"Doctor et al. (2012)"`` and ``"Who et al. (2022)"``, the free parameter ``"v0"`` will be replaced by ``"v0_Doc"`` and ``"v0_Who"``, and ``"jit"`` will be replaced by ``"jit_Doc"`` and ``"jit_Who"``.
 
 TDV Data
 ^^^^^^^^
-Transit duration data files are read assuming that the columns are in the order: :code:`[Epoch, Duration (min), Error (min), Source]`. The ``StarPlanet`` attribute ``tdv_data`` is a dictionary with the following keys:
+Transit duration data files are read assuming that the columns are in the order: :code:`[Epoch, Duration (min), Error (min), Source]`. The :class:`~orbdot.star_planet.StarPlanet` attribute ``tdv_data`` is a dictionary with the following keys:
 
 .. list-table::
    :header-rows: 1
@@ -358,18 +349,18 @@ The System Info File
 --------------------
 The system information ``.json`` file holds important characteristics of the star-planet system. The individual entries serve one of three functions:
 
- 1. To inform the fixed parameter values when model fitting (see :ref:`model_parameters`).
- 2. For use in the :class:`~orbdot.analysis.Analyzer` class (see :ref:``).
- 3. Unused parameters that are made available to the :class:`~orbdot.analysis.Analyzer` for the user's convenience.
+ 1. To specify the fixed parameter values for model fitting (see :ref:`model_parameters`).
+ 2. For use in the :class:`~orbdot.analysis.Analyzer` class.
+ 3. To provide unused parameters that are made available to the :class:`~orbdot.analysis.Analyzer` for the user's convenience.
 
-The examples :ref:`example-wasp-12` and :ref:`example-rv-trends` may help familiarize oneself with the function of this input file.
+The examples :ref:`example-wasp-12` and :ref:`example-rv-trends` may help you familiarize yourself with the function of this input file.
 
 Note:
- The planet characteristics are given as a list (see below) so that the user may have a single info file for a system with multiple planets. When creating a :class:`~orbdot.star_planet.StarPlanet` object, the argument ``planet_num`` indicates the index that corresponds to the planet you want to study, with the default being 0.
+ The planet characteristics are given as a list so that the user may have a single info file for a system with multiple planets. When creating a :class:`~orbdot.star_planet.StarPlanet` object, the argument ``planet_num`` indicates the index that corresponds to the planet you want to study, with the default being ``0``.
 
 Default Info File
 ^^^^^^^^^^^^^^^^^
-The ``defaults/info_file.json`` file contains null entries that are automatically overridden by the values provided by the user.
+The ``defaults/default_info_file.json`` file, shown in the dropdown below, contains null entries that are automatically overridden by the values provided by the user.
 
 .. admonition:: Default Info File
   :class: dropdown
