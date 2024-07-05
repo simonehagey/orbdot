@@ -1,8 +1,8 @@
 .. _example-rv-trends:
 
-********************************
-Long-Term Radial Velocity Trends
-********************************
+******************************
+HAT-P-4 and HAT-P-22 RV Trends
+******************************
 This example demonstrates an OrbDot reproduction of the results of analyses of the Hot Jupiters HAT-P-4 b and HAT-P-22 b from "GAPS Survey" by Bonomo et al. (2017) [1]_ and "Friends of Hot Jupiters" by Knutson et al. (2014). [2]_
 
 We will examine two planets: HAT-P-4 b and HAT-P-22 b. The former has a linear trend, the latter has a quadratic trend. In both studies, the authors performed an analysis of radial velocity data to and found evidence of...

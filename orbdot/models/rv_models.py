@@ -9,51 +9,6 @@ currently supports model fitting for three evolutionary cases:
     3. A constant evolution of the argument of pericenter, :math:`\\dot{\\omega}` (apsidal
     precession).
 
-The following section provides model-independent background information, with details of the
-implementation provided in the docstrings of the individual methods.
-
-Background
-----------
-Many exoplanet host stars exhibit noticeable periodic radial velocity (RV) variations as they
-"wobble" around the center of mass of the star-planet system. The amplitude of this effect
-can be expressed as [1]_:
-
-.. math::
-    K=\\left(\\frac{2 \\pi G}{P}\\right)^{1/3} \\frac{M_p \\sin i}{\\left(M_{
-    \\star}+M_p\\right)^{2/3}} \\frac{1}{\\left(1-e^2\\right)^{1/2}}
-
-where :math:`M_p` is the planet mass, :math:`M_{\\star}` is the star mass, :math:`i` is
-the line-of-sight inclination of the orbit, and :math:`G` is the universal gravitational
-constant.
-
-At any given time, the periodic signal depends on the planet's position in its orbit,
-defined by the true anomaly :math:`\\phi`, and the systemic velocity along the line-of-sight,
-denoted as :math:`\\gamma`. When RV observations from multiple instruments are combined,
-it is standard practice to fit :math:`\\gamma` individually for each source to account for
-instrumental variations. Additionally, we consider first and second-order acceleration terms,
-:math:`\\dot{\\gamma}` and :math:`\\ddot{\\gamma}` respectively, to accommodate potential
-perturbations from an outer, non-resonant companion planet with an orbital period longer than
-the observational baseline. The total observed radial velocity signal is:
-
-.. math::
-    v_r = K[\\cos{(\\phi\\left(t\\right)+\\omega_p)}+e\\cos{\\omega_p}] + \\gamma_j + \\dot{
-    \\gamma} \\left(t-t_0\\right) + \\ddot{\\gamma}\\left(t-t_0\\right)^2
-
-where :math:`\\omega_\\star` is the argument of pericenter of the star's orbit, defined as
-:math:`\\omega_\\star = \\omega_p + \\pi`, and :math:`t_0` is a transit mid-time. OrbDot
-requires the reference time to that of a transit so that the phase at any time :math:`t` can be
-determined by the knowledge that when :math:`t=t_0` the true anomaly is :math:`\\phi_0 =
-\\frac{\\pi}{2} - \\omega_p`.
-
-To avoid underestimating the uncertainties of the parameters in the RV model fit,
-OrbDot implements an instrument-dependent 'jitter' parameter instrument into the log
-likelihood (when ``jit`` is given as a free parameter), to account for systematic noise.
-These terms are added in quadrature with the individual measurement errors:
-
-.. math:: \\sigma = \\sqrt{\\sigma_i^2 + \\sigma_j^2}
-
-where :math:`\\sigma_j` is the individual measurement error and :math:`\\sigma_j` is the
-instrument-specific jitter term.
 """
 
 import numpy as np
@@ -85,70 +40,73 @@ def rv_constant(t0, P0, e0, w0, K, v0, dvdt, ddvdt, t):
     t : float
         Time at which to calculate the RV signal [BJD_TDB].
 
-    Notes
-    -----
-    The following steps outline the implementation of this method:
-
-     1. Calculate the true, eccentric, and mean anomalies at the transit mid-time.
-
-        At the transit mid-time :math:`t_0`, the planet's true anomaly must be:
-
-        .. :math:: \\phi_0 = \\frac{\\pi}{2} - \\omega_p
-
-        Where :math:`\\omega_p` is the argument of pericenter of the planet's orbit. The true
-        anomaly is then used to determine the eccentric anomaly at transit :math:`\\mathrm{
-        E}` (not to be confused with the epoch number :math:`E`), which are related by:
-
-        .. math::
-            \\tan \\left(\\frac{\\phi_0}{2}\\right) = \\sqrt{\\frac{1+e}{1-e}} \\tan \\left(
-            \\frac{\\mathrm{E}_0}{2}\\right)
-
-        With Kepler's equation, the eccentric anomaly may be used to determine the mean anomaly
-        at transit, :math:`\\mathrm{M}_0`:
-
-        .. :math:: \\mathrm{M}_0 = \\mathrm{E}_0 - e \\sin\\mathrm{E}_0
-
-     2. Determine the time of pericenter passage.
-
-        The mean anomaly at transit is related to time by:
-
-        .. math:: \\mathrm{M}_0 = \\eta \\left(t_0 - t_p\\right)
-
-        where :math:`\\eta = 2 \\pi/P` is the mean motion of the planet's orbit and :math:`t_p`
-        is the time marking the passage of pericenter. Thus we can compute the time of pericenter
-        passage :math:`t_p`, which will allow us to determine the location of the planet in its
-        orbit at any time.
-
-     3. Calculate the true anomaly of the planet at the given time.
-
-        To find the true anomaly at time :math:`t`, :math:`\\phi\\left(t\\right)`, we must first
-        calculate the mean anomaly from :math:`t_p`:
-
-        .. math:: \\mathrm{M} = \\eta \\left(t - t_p\\right)
-
-        The eccentric anomaly is then found by solving Kepler's equation numerically:
-
-        .. math:: \\mathrm{M} = \\mathrm{E} - e \\sin \\mathrm{E}
-
-        and, finally, the true anomaly at time :math:`t` is calculated with:
-
-        .. math::
-            \\tan \\left(\\frac{\\phi}{2}\\right) = \\sqrt{\\frac{1+e}{1-e}} \\tan \\left(\\frac{
-            \\mathrm{E}}{2}\\right)
-
-     4. Return the total RV signal, including long-term trends.
-
-        As described in the module documentation, the total radial velocity signal at time
-        :math:'t' is:
-
-        .. math::
-            v_r = K[\\cos{(\\phi\\left(t\\right)+\\omega_p)}+e\\cos{\\omega_p}] + \\gamma_j +
-            \\dot{\\gamma} \\left(t-t_0\\right) + \\ddot{\\gamma} \\left(t-t_0\\right)^2
-
     Returns
     -------
     float
         Total radial velocity signal including long-term trends.
+
+    Notes
+    -----
+    The following steps outline the implementation of this method:
+
+    1. **Calculate the true anomaly, eccentric anomaly, and mean anomaly at the transit mid-time**.
+
+     At the reference transit mid-time :math:`t_0`, the true anomaly is:
+
+     .. :math::
+            \\phi_0 = \\frac{\\pi}{2} - \\omega_p
+
+     where :math:`\\omega_p` is the argument of pericenter of the planet's orbit. The eccentric
+     anomaly at transit :math:`\\mathrm{E}_0` may then be determined by:
+
+     .. math::
+            \\tan \\left(\\frac{\\phi_0}{2}\\right) = \\sqrt{\\frac{1+e}{1-e}} \\tan \\left(
+            \\frac{\\mathrm{E}_0}{2}\\right)
+
+     The mean anomaly is then determined by solving Kepler's equation numerically:
+
+     .. :math::
+            \\mathrm{M}_0 = \\mathrm{E}_0 - e \\sin\\mathrm{E}_0
+
+    2. **Determine the time of pericenter passage**.
+
+     The time of pericenter passage is calculated from the transit mid-time and the corresponding
+     mean anomaly with the following equation:
+
+     .. math::
+            \\mathrm{M}_0 = \\eta \\left(t_0 - t_p\\right)
+
+     where :math:`\\eta = 2 \\pi/P` is the mean motion of the planet's orbit and :math:`t_p` is
+     the time marking the passage of pericenter.
+
+    3. **Calculate the true anomaly of the planet at the given time**.
+
+     The time of pericenter passage :math:`t_p` allows for the mean anomaly to be determined at
+     any time :math:`t`:
+
+     .. math::
+            \\mathrm{M} = \\eta \\left(t - t_p\\right)
+
+     The eccentric anomaly is then found by numerically solving Kepler's equation:
+
+     .. math:: \\mathrm{M} = \\mathrm{E} - e \\sin \\mathrm{E}
+
+     Finally, the true anomaly at time :math:`t` is determined by:
+
+     .. math::
+            \\tan \\left(\\frac{\\phi}{2}\\right) = \\sqrt{\\frac{1+e}{1-e}} \\tan \\left(\\frac{
+            \\mathrm{E}}{2}\\right)
+
+    4. **Return the total RV signal, including long-term trends**.
+
+     The total radial velocity signal at time :math:'t' is:
+
+     .. math::
+            v_r = K[\\cos{(\\phi\\left(t\\right)+\\omega_p)}+e\\cos{\\omega_p}] + \\gamma_j +
+            \\dot{\\gamma} \\left(t-t_0\\right) + \\ddot{\\gamma} \\left(t-t_0\\right)^2
+
+     where :math:`\\dot{\\gamma}` and :math:`\\ddot{\\gamma}` are first and second-order
+     acceleration terms, respectively.
 
     """
     # determine the epoch of the most recent transit
@@ -226,6 +184,94 @@ def rv_decay(t0, P0, e0, w0, K, v0, dvdt, ddvdt, PdE, t):
         7. calculate the RV signal due to the planet
         8. return the total RV signal including long-term trends
 
+    The following steps outline the implementation of this method:
+
+    1. **Determine the epoch of the most recent transit**.
+
+     The epoch number :math:`E` of the most recent transit can be calculated by rounding the
+     following equation to an integer value:
+
+     .. math::
+            E = \\frac{(t - t_0)}{P_a}
+
+    2. **Calculate the orbital period at the given time**.
+
+     For a decay orbit, the orbital period is dependant on time:
+
+     .. math::
+            P_s = P_a\\left(1-\\frac{d\\omega/{dE}}{2\\pi}\\right)
+
+    4. **Calculate the true anomaly, eccentric anomaly, and mean anomaly at the transit mid-time**.
+
+     At the reference transit mid-time :math:`t_0`, the true anomaly is:
+
+     .. :math::
+            \\phi_0 = \\frac{\\pi}{2} - \\omega_p
+
+     where :math:`\\omega_p` is the argument of pericenter of the planet's orbit. The eccentric
+     anomaly at transit :math:`\\mathrm{E}_0` may then be determined by:
+
+     .. math::
+            \\tan \\left(\\frac{\\phi_0}{2}\\right) = \\sqrt{\\frac{1+e}{1-e}} \\tan \\left(
+            \\frac{\\mathrm{E}_0}{2}\\right)
+
+     The mean anomaly is then determined by solving Kepler's equation numerically:
+
+     .. :math::
+            \\mathrm{M}_0 = \\mathrm{E}_0 - e \\sin\\mathrm{E}_0
+
+    5. **Calculate the most recent transit center time**.
+
+     Because the orbit is shrinking, the relative time of pericenter passage will evolve and
+     must be calculated relative to the most recent transit mid-time:
+
+     .. math::
+            t_{\\mathrm{I}} = t_0 + PE + \\frac{1}{2}\,\\frac{dP}{dE}\\,E^2
+
+     where :math:`P` is the sidereal (observed) period, :math:`\\frac{dP}{dE}` is the period
+     derivative in days per epoch.
+
+    6. **Determine the time of pericenter passage**.
+
+     The time of pericenter passage is calculated from the transit mid-time and the corresponding
+     mean anomaly with the following equation:
+
+     .. math::
+            \\mathrm{M}_0 = \\eta \\left(t_{\\mathrm{I}} - t_p\\right)
+
+     where :math:`\\eta = 2 \\pi/P` is the mean motion of the planet's orbit and :math:`t_p` is
+     the time marking the passage of pericenter.
+
+    7. **Calculate the true anomaly of the planet at the given time**.
+
+     The time of pericenter passage :math:`t_p` allows for the mean anomaly to be determined at
+     any time :math:`t`:
+
+     .. math::
+            \\mathrm{M} = \\eta \\left(t - t_p\\right)
+
+     The eccentric anomaly is then found by numerically solving Kepler's equation:
+
+     .. math::
+            \\mathrm{M} = \\mathrm{E} - e \\sin \\mathrm{E}
+
+     Finally, the true anomaly at time :math:`t` is determined by:
+
+     .. math::
+            \\tan \\left(\\frac{\\phi}{2}\\right) = \\sqrt{\\frac{1+e}{1-e}} \\tan \\left(\\frac{
+            \\mathrm{E}}{2}\\right)
+
+    8. **Return the total RV signal, including long-term trends**.
+
+     The total radial velocity signal at time :math:'t' is:
+
+     .. math::
+            v_r = K[\\cos{(\\phi\\left(t\\right)+\\omega_p)}+e\\cos{\\omega_p}] + \\gamma_j +
+            \\dot{\\gamma} \\left(t-t_0\\right) + \\ddot{\\gamma} \\left(t-t_0\\right)^2
+
+     where :math:`\\dot{\\gamma}` and :math:`\\ddot{\\gamma}` are first and second-order
+     acceleration terms, respectively.
+
     """
     # determine the epoch of the most recent transit
     E = (t - t0) / P0
@@ -291,40 +337,98 @@ def rv_precession(t0, P0, e0, w0, K, v0, dvdt, ddvdt, wdE, t):
 
     Notes
     -----
-    **Apsidal Precession**
-        1. determine the epoch of the most recent transit
+    The following steps outline the implementation of this method:
 
-            The epoch number :math:`E` of the most recent transit to the current time can be
-            calculated by:
+    1. **Determine the epoch of the most recent transit**.
 
-            .. math:: E = \\frac{(t - t_0)}{P_a}
+     The epoch number :math:`E` of the most recent transit can be calculated by rounding the
+     following equation to an integer value:
 
-        2. calculate the anomalistic period
+     .. math::
+            E = \\frac{(t - t_0)}{P_a}
 
-            For a precessing orbit, there is a distinction between the sidereal (observed)
-            orbital period :math:`P_s` and the anomalistic (true) orbital period :math:`P_a`.
-            These are related by:
+    2. **Calculate the anomalistic period**.
 
-            .. math:: P_s = P_a\\left(1-\\frac{d\\omega/{dE}}{2\\pi}\\right)
+     For a precessing orbit, there is a distinction between the sidereal (observed) orbital
+     period :math:`P_s` and the anomalistic (true) orbital period :math:`P_a`. They are related by:
 
-        3. calculate the planet's A.O.P at the given time
+     .. math::
+            P_s = P_a\\left(1-\\frac{d\\omega/{dE}}{2\\pi}\\right)
 
-            For a precessing orbit, :math:`\\omega_p` is a function of time:
+    3. **Calculate the argument of pericenter at the given time**.
 
-            .. math:: \\omega_p\\left(E\\right) = \\omega_0 + \\frac{d\\omega}{dE}\\,E.
+     For a precessing orbit, :math:`\\omega_p` is a function of time:
 
-        4. calculate true, eccentric, and mean anomalies during transit
+     .. math::
+            \\omega_p\\left(E\\right) = \\omega_0 + \\frac{d\\omega}{dE}\\,E.
 
-        5. calculate the most recent transit center time
+    4. **Calculate the true anomaly, eccentric anomaly, and mean anomaly at the transit mid-time**.
 
-        .. math:: t_{\\mathrm{I}} = t_0 + P_s E - \\frac{e P_a}{\\pi}\\cos{\\omega_p}
+     At the reference transit mid-time :math:`t_0`, the true anomaly is:
 
-        6. calculate the time of pericenter passage
+     .. :math::
+            \\phi_0 = \\frac{\\pi}{2} - \\omega_p
 
-        7. calculate the true anomaly of the planet at the given time
+     where :math:`\\omega_p` is the argument of pericenter of the planet's orbit. The eccentric
+     anomaly at transit :math:`\\mathrm{E}_0` may then be determined by:
 
-        8. return total RV signal including long-term trends
+     .. math::
+            \\tan \\left(\\frac{\\phi_0}{2}\\right) = \\sqrt{\\frac{1+e}{1-e}} \\tan \\left(
+            \\frac{\\mathrm{E}_0}{2}\\right)
 
+     The mean anomaly is then determined by solving Kepler's equation numerically:
+
+     .. :math::
+            \\mathrm{M}_0 = \\mathrm{E}_0 - e \\sin\\mathrm{E}_0
+
+    5. **Calculate the most recent transit center time**.
+
+     Because the argument of pericenter is evolving, the relative time of pericenter passage will
+     also change over time and must be calculated relative to the most recent transit mid-time:
+
+     .. math::
+            t_{\\mathrm{I}} = t_0 + P_s E - \\frac{e P_a}{\\pi}\\cos{\\omega_p}
+
+    6. **Determine the time of pericenter passage**.
+
+     The time of pericenter passage is calculated from the transit mid-time and the corresponding
+     mean anomaly with the following equation:
+
+     .. math::
+            \\mathrm{M}_0 = \\eta \\left(t_{\\mathrm{I}} - t_p\\right)
+
+     where :math:`\\eta = 2 \\pi/P` is the mean motion of the planet's orbit and :math:`t_p` is
+     the time marking the passage of pericenter.
+
+    7. **Calculate the true anomaly of the planet at the given time**.
+
+     The time of pericenter passage :math:`t_p` allows for the mean anomaly to be determined at
+     any time :math:`t`:
+
+     .. math::
+            \\mathrm{M} = \\eta \\left(t - t_p\\right)
+
+     The eccentric anomaly is then found by numerically solving Kepler's equation:
+
+     .. math::
+            \\mathrm{M} = \\mathrm{E} - e \\sin \\mathrm{E}
+
+     Finally, the true anomaly at time :math:`t` is determined by:
+
+     .. math::
+            \\tan \\left(\\frac{\\phi}{2}\\right) = \\sqrt{\\frac{1+e}{1-e}} \\tan \\left(\\frac{
+            \\mathrm{E}}{2}\\right)
+
+    8. **Return the total RV signal, including long-term trends**.
+
+     The total radial velocity signal at time :math:'t' is:
+
+     .. math::
+            v_r = K[\\cos{(\\phi\\left(t\\right)+\\omega_p)}+e\\cos{\\omega_p}] + \\gamma_j +
+            \\dot{\\gamma} \\left(t-t_0\\right) + \\ddot{\\gamma} \\left(t-t_0\\right)^2
+
+     where :math:`\\dot{\\gamma}` and :math:`\\ddot{\\gamma}` are first and second-order
+     acceleration terms, respectively.
 
     """
     # determine the epoch of the most recent transit

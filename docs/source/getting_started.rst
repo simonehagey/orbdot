@@ -48,17 +48,17 @@ Now, you have access to all the attributes and methods needed to study the orbit
      - A dictionary holding the system info file.
    * - ``main_save_dir``
      - ``str``
-     - The base path to save the output files
+     - The base path to save the output files.
    * - ``plot_settings``
      - ``dict``
-     - Various plot settings
+     - Various plot settings.
 
 The initialization of a StarPlanet object requires the following input files:
 
- 1. :ref:`settings-file`, default is: ``"_settings.json"``
- 2. :ref:`info-file`, default is: ``"*_info.json"``
+ 1. :ref:`settings-file`, default is: ``"orbdot/defaults/default_fit_settings.json"``
+ 2. :ref:`info-file`, default is: ``"orbdot/defaults/default_info_file.json"``
  3. The :ref:`data-files`
- 4. (optional) a file for plot settings, default is: ``"*_plot_settings.txt"``
+ 4. (optional) a file for plot settings, default is: ``"orbdot/defaults/default_plot_settings.json"``
 
 ------------
 
@@ -84,11 +84,11 @@ The first section of the settings file specifies important path names with the f
    * - ``"system_info_file"``
      - ``str``
      - Path to the :ref:`system info file <info-file>`.
-     - ``"defaults/system_info.json"``
+     - ``"orbdot/defaults/default_info_file.json"``
    * - ``"plot_settings_file"``
      - ``str``
      - The path to a file with custom plot settings (optional).
-     - ``"defaults/plot_settings.json"``
+     - ``"orbdot/defaults/default_plot_settings.json"``
 
 For example,
 
@@ -173,7 +173,7 @@ Finally, the ``"priors"`` key corresponds to a dictionary with key-value pairs t
 
 Default Settings
 ^^^^^^^^^^^^^^^^
-Not all fields in the settings file need to be populated. A default settings file (``"defaults/default_fit_settings.json"``) is merged with the user-provided one, maintaining consistency and providing reasonable uninformative priors on unconstrained parameters like :math:`e\cos{w}` and :math:`e\sin{w}`. If a key is provided by the user, that value overrides the default one.
+Not all fields in the settings file need to be populated. A default settings file (``"orbdot/defaults/default_fit_settings.json"``) is merged with the user-provided one, maintaining consistency and providing reasonable uninformative priors on unconstrained parameters like :math:`e\cos{\omega}` and :math:`e\sin{\omega}`. If a key is provided by the user, that value overrides the default one.
 
 .. admonition:: Default Settings File
   :class: dropdown
@@ -349,18 +349,15 @@ The System Info File
 --------------------
 The system information ``.json`` file holds important characteristics of the star-planet system. The individual entries serve one of three functions:
 
- 1. To specify the fixed parameter values for model fitting (see :ref:`model_parameters`).
- 2. For use in the :class:`~orbdot.analysis.Analyzer` class.
- 3. To provide unused parameters that are made available to the :class:`~orbdot.analysis.Analyzer` for the user's convenience.
+ 1. To specify the fixed parameter values for model fitting (see :ref:`fixed_values`).
+ 2. For use in the :class:`~orbdot.analysis.Analyzer` class methods.
+ 3. Extra parameters that are made available to the :class:`~orbdot.analysis.Analyzer` for the user's convenience.
 
 The examples :ref:`example-wasp-12` and :ref:`example-rv-trends` may help you familiarize yourself with the function of this input file.
 
-Note:
- The planet characteristics are given as a list so that the user may have a single info file for a system with multiple planets. When creating a :class:`~orbdot.star_planet.StarPlanet` object, the argument ``planet_num`` indicates the index that corresponds to the planet you want to study, with the default being ``0``.
-
 Default Info File
 ^^^^^^^^^^^^^^^^^
-The ``defaults/default_info_file.json`` file, shown in the dropdown below, contains null entries that are automatically overridden by the values provided by the user.
+The ``"orbdot/defaults/default_info_file.json"`` file, shown in the dropdown below, contains null entries that are automatically overridden by any keys that are in the user's info file.
 
 .. admonition:: Default Info File
   :class: dropdown
@@ -428,3 +425,6 @@ The ``defaults/default_info_file.json`` file, shown in the dropdown below, conta
           "ddvdt [m/s^2/day]": [0.0],
           "K_tide [m/s]": 0.0
     }
+
+Note:
+ The planet characteristics are given as a list so that the user may have a single info file for a system with multiple planets. When creating a :class:`~orbdot.star_planet.StarPlanet` object, the argument ``planet_num`` indicates the index that corresponds to the planet you want to study, with the default being ``0``.
