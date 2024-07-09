@@ -18,26 +18,26 @@ Why OrbDot?
 
 2. **Nested sampling**, **simplified**.
 
- - With OrbDot, there's no need to spend hours learning how to implement nested sampling packages. Simply specify the model you want to fit and provide a list of free parameters, in any order
+ - With OrbDot, there's no need to spend hours learning how to implement nested sampling packages. Simply specify the model you want to fit and provide a list of free parameters, in any order.
 
 3. **Seamless joint fitting**.
 
- - Fit any combination of data types simultaneously, with no extra work
+ - Fit any combination of data types simultaneously, with no extra work.
 
 4. **Flexible model fitting options**.
 
- - Customize the evidence tolerance, number of live points, prior distributions, and more
- - Update prior distributions and fixed parameter values in-between model fits
+ - Customize the evidence tolerance, number of live points, prior distributions, and more.
+ - Update prior distributions and fixed parameter values in-between model fits.
 
 5. **Smart data handling**.
 
- - Automatically splits radial velocity data from different sources when fitting instrument-dependent parameters
- - Recognizes transit vs. eclipse mid-times by a half-decimal epoch number (0.5)
- - Automatically differentiates sources of data when plotting
+ - Automatically splits radial velocity data from different sources when fitting instrument-dependent parameters.
+ - Recognizes transit vs. eclipse mid-times by a half-decimal epoch number (0.5).
+ - Automatically differentiates sources of data when plotting.
 
 6. **Saves all the outputs you need**.
 
- - Extensive output files include easy-to-read text summaries of the results, corner plots, weighted samples, best-fit model plots, and more!
+ - Comprehensive output files include easy-to-read text summaries of the results, corner plots, weighted samples, best-fit model plots, and more!
 
 7. **Built-in functionality for scientific interpretation**.
 

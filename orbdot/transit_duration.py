@@ -91,7 +91,7 @@ class TransitDuration(NestedSampling):
             return -1e10  # return a very low likelihood if eccentricity is invalid
 
         # calculate log-likelihood with transit duration data
-        mod = tdv.tdv_constant(pp, ee, ww, ii, self.tdv_data['epoch'], self.M_s, self.R_s, self.R_p)
+        mod = tdv.tdv_constant(pp, ee, ww, ii, self.tdv_data['epoch'], self.M_s, self.R_s)
         ll = stat.calc_chi2(self.tdv_data['dur'], mod, self.tdv_data['err'])
 
         return ll

@@ -1,6 +1,6 @@
 """
 Analysis
---------
+========
 This module defines the :class:`Analysis` class, which allows the user to perform various analyses
 on the results of any OrbDot fit.
 """
@@ -367,18 +367,6 @@ class Analyzer:
                 f.write(str1 + str2)
                 if printout:
                     print(str1, str2)
-                print(Pdot_fit)
-                # # calculate the resulting transit duration variation
-                # T = transit_duration(self.P0, self.e0, self.w0, self.i0,
-                #                      self.M_s, self.R_s, self.R_p)
-                # Tdot_fit = m.get_tdot_from_wdot(self.P0, self.e0, self.w0, self.i0, T,
-                #                                 self.wdE, self.M_s, self.R_s)
-                # print(T, Tdot_fit)
-                # str1 = ' * Resulting transit duration variation (assuming di/dt=0):\n'
-                # str2 = '\t  dT/dt = {:.2E} ms/yr\n'.format(Tdot_fit)
-                # f.write(str1 + str2)
-                # if printout:
-                #     print(str1, str2)
 
                 # calculate the stellar Love number if precession is due to the rotational bulge
                 k2s_rot = m.precession_rotational_star_k2(self.P0, self.e0, self.M_s,
@@ -595,24 +583,6 @@ class Analyzer:
                 if printout:
                     print(str1, str2)
 
-                # # calculate the modified planetary tidal quality factor
-                # Q_p = m.planet_quality_factor_from_decay(self.P0, self.e0, self.PdE,
-                #                                        self.M_s, self.M_p, self.R_p)
-                # str1 = ' * Modified planetary quality factor:\n'
-                # str2 = '\t  Q\'_p = {:.2E}\n\n'.format(Q_p)
-                # f.write(str1 + str2)
-                # if printout:
-                #     print(str1, str2)
-                #
-                # # calculate the circularization timescale
-                # tau_e = m.circularization_timescale(self.P0, Q_p, self.M_s, self.M_p, self.R_p)
-                # print(f"Timescale for tidal orbital circularization τ_e: {tau_e} seconds")
-                # str1 = ' * Timescale for tidal orbital circularization:\n'
-                # str2 = '\t  tau_c = {:.2E} years\n\n'.format(Q_p)
-                # f.write(str1 + str2)
-                # if printout:
-                #     print(str1, str2)
-
         except IndexError:
             # handle when the results for an orbital decay model fit are not available
             print('\nERROR: results for an orbital decay model fit are not '
@@ -752,7 +722,7 @@ class Analyzer:
                 print(str1, str2, str3)
 
             # calculate the transit duration variation due to proper motion
-            T = transit_duration(self.P0, self.e0, self.w0, self.i0, self.M_s, self.R_s, self.R_p)
+            T = transit_duration(self.P0, self.e0, self.w0, self.i0, self.M_s, self.R_s)
             tdot_max = m.proper_motion_tdot(self.P0, self.e0, self.w0, self.i0, T,
                                             wdot_pm_min, idot_pm_max, self.M_s, self.R_s)
             tdot_min = m.proper_motion_tdot(self.P0, self.e0, self.w0, self.i0, T,
@@ -783,7 +753,7 @@ class Analyzer:
 
         return
 
-    def resolved_binary(self, separation, secondary_mass, printout=False):
+    def resolved_binary(self, separation, secondary_mass=None, printout=False):
         """Characterize the observational effect(s) of a visual binary companion star.
 
         Parameters
@@ -813,6 +783,8 @@ class Analyzer:
             if printout:
                 print(' ' + str1, str2)
 
+        if secondary_mass != None:
+
             # write the properties of the secondary star
             str1 = ' * Properties of the secondary star:\n'
             str2 = '\t  mass: M_B = {:.2f} solar masses\n'.format(secondary_mass)
@@ -822,7 +794,7 @@ class Analyzer:
                 print(str1, str2, str3)
 
             # calculate the slope of the linear RV trend from the stellar companion
-            dvdt = m.get_linear_rv_from_visual_binary(separation, self.D, secondary_mass)
+            dvdt = m.resolved_binary_rv_trend_from_mass(separation, self.D, secondary_mass)
             str1 = ' * Slope of the linear RV trend from the stellar companion:\n'
             str2 = '\t  dv/dt = {:.2E} m/s/day\n'.format(dvdt)
             f.write(str1 + str2)
@@ -830,20 +802,67 @@ class Analyzer:
                 print(str1, str2)
 
             # calculate the apparent orbital period derivative from the line-of-sight acceleration
-            Pdot = m.get_pdot_from_linear_rv(self.P0, dvdt)
+            Pdot = m.companion_doppler_pdot_from_rv_trend(self.P0, dvdt)
             str1 = ' * Apparent orbital period derivative from the line-of-sight acceleration:\n'
             str2 = '\t  dP/dt = {:.2E} ms/yr\n'.format(Pdot)
             f.write(str1 + str2)
             if printout:
                 print(str1, str2)
 
+        elif secondary_mass == None:
+
             # check if the best-fit RV slope is non-zero
             if self.dvdt != 0.0:
 
                 # calculate the minimum secondary mass given the best-fit RV slope
-                M_min = m.get_visual_binary_mass_from_linear_rv(separation, self.D, self.dvdt)
-                str1 = ' * Minimum secondary mass given the best-fit RV slope of {} m/s/day:\n'
+                M_min = m.resolved_binary_mass_from_rv_trend(separation, self.D, self.dvdt)
+                str1 = ' * Minimum mass of the resolved binary given the best-fit RV slope ' \
+                       'of {} m/s/day:\n'
                 str2 = '\t  M_B = {:.2E} solar masses\n'.format(M_min)
+                f.write(str1 + str2)
+                if printout:
+                    print(str1, str2)
+
+                # get the apparent orbital period derivative from the linear RV trend
+                Pdot = m.companion_doppler_pdot_from_rv_trend(self.P0, self.dvdt)
+                str1 = ' * Apparent orbital period derivative induced by the line-of-sight ' \
+                       'acceleration:\n'
+                str2 = '\t  dP/dt = {:.2E} ms/yr\n\n'.format(Pdot)
+                f.write(str1 + str2)
+                if printout:
+                    print(str1, str2)
+
+            # check if the period derivative is nonzero
+            if self.PdE != 0.0:
+
+                str1 = ' * Best-fit orbital decay rate:\n'
+                str2 = '\t  dP/dE = {:.2E} + {:.2E} - {:.2E} rad/E\n'.format(self.res['PdE'][0],
+                                                                             self.res['PdE'][1],
+                                                                             self.res['PdE'][2])
+                str3 = '\t  dP/dt = {:.2f} + {:.2f} - {:.2f} ms/yr\n'.format(
+                    self.res['dPdt (ms/yr)'][0],
+                    self.res['dPdt (ms/yr)'][1],
+                    self.res['dPdt (ms/yr)'][2])
+                f.write(str1 + str2 + str3)
+                if printout:
+                    print(str1, str2, str3)
+
+                # convert the decay rate to an RV slope
+                conv = (365.25 * 24. * 3600. * 1e3) / self.P0
+                Pdot_obs = self.PdE * conv
+                dvdt_pred = m.companion_doppler_rv_trend_from_pdot(self.P0, Pdot_obs)
+                str1 = ' * RV slope (acceleration) that would account for ' \
+                       'the best-fit decay rate:\n'
+                str2 = '\t  dv/dt = {:.2E} m/s/day\n'.format(dvdt_pred)
+                f.write(str1 + str2)
+                if printout:
+                    print(str1, str2)
+
+                # get the minimum mass of the companion planet that can account for the trend
+                M_min = m.resolved_binary_mass_from_rv_trend(separation, self.D, dvdt_pred)
+                str1 = ' * Minimum mass of the resolved binary that could cause ' \
+                       'the necessary acceleration:\n'
+                str2 = '\t  M_c > {:.2f} M_sun\n'.format(M_min)
                 f.write(str1 + str2)
                 if printout:
                     print(str1, str2)
@@ -896,7 +915,7 @@ class Analyzer:
                         print(str1, str2, str3)
 
                     # get constraints on the companion planet from quadratic RV terms
-                    P_min, K_min, M_min, tau_c = m.get_companion_from_quadratic_rv(
+                    P_min, K_min, M_min, tau_c = m.companion_from_quadratic_rv(
                         self.rv_trend_quadratic(), self.t0, self.dvdt, self.ddvdt, self.M_s)
 
                     str1 = ' * Constraints on the orbit of an ' \
@@ -917,7 +936,7 @@ class Analyzer:
                         print(str1, str2)
 
                     # get the minimum mass of the companion planet from the linear RV trend
-                    M_min = m.get_companion_mass_from_linear_rv(self.tau, self.dvdt, self.M_s)
+                    M_min = m.companion_mass_from_rv_trend(self.tau, self.dvdt, self.M_s)
                     self.rv_trend_linear()
                     str1 = ' * Constraint on the mass of an outer companion from the RV slope:\n'
                     str2 = '\t  M_c > {:.2f} M_earth\n'.format(M_min)
@@ -927,7 +946,7 @@ class Analyzer:
                         print(str1, str2, str3)
 
                     # get the apparent orbital period derivative from the linear RV trend
-                    Pdot = m.get_pdot_from_linear_rv(self.P0, self.dvdt)
+                    Pdot = m.companion_doppler_pdot_from_rv_trend(self.P0, self.dvdt)
                     str1 = ' * Apparent orbital period derivative induced by the line-of-sight ' \
                            'acceleration:\n'
                     str2 = '\t  dP/dt = {:.2E} ms/yr\n\n'.format(Pdot)
@@ -955,7 +974,7 @@ class Analyzer:
                 # convert the decay rate to an RV slope
                 conv = (365.25 * 24. * 3600. * 1e3) / self.P0
                 Pdot_obs = self.PdE * conv
-                dvdt_pred = m.get_linear_rv_from_pdot(self.P0, Pdot_obs)
+                dvdt_pred = m.companion_doppler_rv_trend_from_pdot(self.P0, Pdot_obs)
                 str1 = ' * RV slope (acceleration) that would account for ' \
                        'the best-fit decay rate:\n'
                 str2 = '\t  dv/dt = {:.2E} m/s/day\n'.format(dvdt_pred)
@@ -965,7 +984,7 @@ class Analyzer:
 
                 try:
                     # get the minimum mass of the companion planet that can account for the trend
-                    M_min = m.get_companion_mass_from_linear_rv(self.tau, dvdt_pred, self.M_s)
+                    M_min = m.companion_mass_from_rv_trend(self.tau, dvdt_pred, self.M_s)
                     str1 = ' * Minimum mass of an outer planet that could cause ' \
                            'the necessary acceleration:\n'
                     str2 = '\t  M_c > {:.2f} M_earth\n'.format(M_min)
@@ -997,7 +1016,7 @@ class Analyzer:
                 separations = np.arange(a2_min, a2_max, 0.001)
                 masses = []
                 for a2 in separations:
-                    masses.append(m.get_companion_mass_from_precession(self.P0, a2,
+                    masses.append(m.companion_mass_from_precession(self.P0, a2,
                                                                        self.wdE, self.M_s))
 
                 masses = np.array(masses)
@@ -1012,7 +1031,7 @@ class Analyzer:
 
                 for i, a in enumerate(au_print):
 
-                    M = m.get_companion_mass_from_precession(self.P0, a, self.wdE, self.M_s)
+                    M = m.companion_mass_from_precession(self.P0, a, self.wdE, self.M_s)
                     str1 = '\t  - a2 = {:.4f} au: ' \
                            'M_comp = {:.4f} M_earth = {:.4f} M_jup = {:.4f} M_sun\n'\
                         .format(a, M, M * 0.00314558, M * 3.0027e-6)
@@ -1029,6 +1048,7 @@ class Analyzer:
 
         return
 
+    # TODO: finish documenting
     def rv_trend_quadratic(self):
         """Estimate the minimum period of an outer companion given a quadratic fit to RV residuals.
 
@@ -1038,35 +1058,31 @@ class Analyzer:
         :meth:`~orbdot.models.theory.companion_from_quadratic_rv` method, which requires the
         minimum period.
 
-        Parameters
-        ----------
-        None
-
         Returns
         -------
         float
-            The estimated minimum possible orbital period in days.
+            The estimated minimum possible orbital period of the outer companion in days.
 
         Notes
         -----
         The full radial velocity signal is expressed as:
 
         .. math::
+            v_r = K[\\cos{(\\phi\\left(t\\right)+\\omega_p)}+e\\cos{\\omega_p}] + \\gamma_j +
+            \\dot{\\gamma} \\left(t-t_0\\right) + \\ddot{\\gamma} \\left(t-t_0\\right)^2
 
-            Equation
+        where :math:`\\dot{\\gamma}` and :math:`\\ddot{\\gamma}` are first and second-order
+        acceleration terms, respectively.
 
-        where... describe variables.
-
-        Subtracting component from the planet and the systemic velocity :math:`\\gamma`,
-        the residuals are only the long term trend.
+        After subtracting the contribution from the planet and the systemic velocity
+        :math:`\\gamma`, the residuals are only the long term trend.
 
         .. math::
-
-            RV_c(t) = 0.5 \\ddot{\\gamma} (t - t_{\mathrm{pivot}})^2 + \\dot{\\gamma} (t - t_{
-            \mathrm{pivot}})
+            RV_c(t) = 0.5 \\ddot{\\gamma} (t - t_{\\mathrm{pivot}})^2 + \\dot{\\gamma} (t - t_{
+            \\mathrm{pivot}})
 
         If :math:`\\ddot{\\gamma}` and dvdt are nonzero, it's quadratic. if :math:`\\ddot{
-        \\gamma} = 0`, the trend is linear and the :meth:`` method should be used.
+        \\gamma} = 0`, the trend is linear and this method is not appropriate.
 
         This method assumes that the companion orbit is circular, in which case the signal is a
         nice looking sinusoid. Because we aren't seeing the whole orbit of the companion,
@@ -1076,7 +1092,7 @@ class Analyzer:
         This is designed to complement the the
         :meth:`~orbdot.models.theory.companion_from_quadratic_rv` method, which follows the
         derivations from Equations 1, 3, and 4 of Kipping et al. (2011) [1]_. This method
-        requires a minimum orbital period estimate as an agrument.
+        requires a minimum orbital period estimate as an argument.
 
         In [1]_, the authors describe a process by which they estimate the minimum companion
         period, which involves fitting a circular orbit signal to the RV residuals and stepping
@@ -1086,7 +1102,7 @@ class Analyzer:
         First the x coordinate (time) of the vertex of the quadratic curve is determined by:
 
         .. math::
-            t_vertex = -b / (2 * a) + t_pivot
+            t_{\\mathrm{vertex}} = -b / (2 * a) + t_{\\mathrm{pivot}}
 
         Then, the minimum companion period is estimated as 4X the span of time between the vertex
         and its most distant end datum:
@@ -1095,18 +1111,18 @@ class Analyzer:
             P_{\\mathrm{min}} =  4 \\times \\mathrm{max}\\left[t_{\\mathrm{vertex}} - t_{\\mathrm{
             min}}, t_{\\mathrm{max}} - t_{\\mathrm{vertex}}\\right]
 
-        For an example of this in action, see the HAT-P-22 example (REF)
+        For an example of this in action, see the HAT-P-22 example in :ref:`example-rv-trends`
 
         .. important::
 
-            The pivot point `t_pivot` is typically set to the mean time of the RV observations or the
-            reference mid-time of the transiting planet in joint fitting cases. The minimum orbital
-            period is estimated as four times the distance between the vertex of the quadratic fit
-            and the nearest data point.
+            The pivot point :math:`t_{\\mathrm{pivot}}` is typically set to the mean time of the
+            RV observations or the reference mid-time of the transiting planet in joint fitting
+            cases. The minimum orbital period is estimated as four times the distance between the
+            vertex of the quadratic fit and the nearest data point.
 
         References
         ----------
-        .. [1] Kipping et al. (2011). https://doi.org/10.1088/0004-6256/142/3/95
+        .. [1] :cite:t:`Kipping2011`. https://doi.org/10.1088/0004-6256/142/3/95
 
         """
         # define containers for RV residuals
@@ -1190,7 +1206,15 @@ class Analyzer:
 
     # TODO: document
     def rv_trend_linear(self):
+        """Plot the RV residuals given a best-fit linear trend.
 
+        This method analyzes the best-fit linear radial velocity curve to plot it.
+
+        Returns
+        -------
+        None
+
+        """
         t_pivot = self.t0
         b = self.dvdt
         c = 0

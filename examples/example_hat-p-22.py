@@ -20,22 +20,10 @@ fit_line = hatp22.run_rv_fit(['t0', 'P0', 'K', 'v0', 'jit', 'dvdt'], suffix='_li
 fit_curve = hatp22.run_rv_fit(['t0', 'P0', 'K', 'v0', 'jit', 'dvdt', 'ddvdt'], suffix='_quadratic')
 
 """
-Final Model Fit
-"""
-# # update priors to better constrain the quadratic trend fit
-# for p in ['t0', 'P0', 'K', 'v0_Bon', 'v0_Knu']:
-#     new_mean = fit_curve['params'][p][0]
-#     new_std = 3 * max([fit_curve['params'][p][1], fit_curve['params'][p][2]])
-#     hatp22.update_prior(p, ['gaussian', new_mean, new_std])
-#
-# # run a final model fit
-# fit_final = hatp22.run_rv_fit(['t0', 'P0', 'K', 'v0', 'jit', 'dvdt', 'ddvdt'], suffix='_final')
-fit_final = fit_curve
-"""
 Interpretation
 """
 # create an 'Analyzer' instance for the final fit results
-analyzer = Analyzer(hatp22, fit_final)
+analyzer = Analyzer(hatp22, fit_curve)
 
 # compare the Bayesian evidence for the various model fits
 analyzer.model_comparison(fit_circ)

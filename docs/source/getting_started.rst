@@ -160,7 +160,7 @@ If you want to fit multiple data types simultaneously, the ``"joint_fit"`` dicti
          },
      ...
 
-Finally, the ``"priors"`` key corresponds to a dictionary with key-value pairs that define the prior distributions. For more information on the structure and options for priors, see the :ref:`priors` section. Each value is a list of three elements: the type of prior (``"uniform"``, ``"gaussian"``, or ``"log"``), with the subsequent elements defining the distribution. For example,
+Finally, the ``"priors"`` key corresponds to a dictionary with key-value pairs that define the prior distributions. For more information on the structure and options for priors, see the :ref:`priors` section. Each value is a list of three elements, the first being prior type (``"uniform"``, ``"gaussian"``, or ``"log"``), and the subsequent elements defining the distribution. For example,
 
 .. code-block:: JSON
 

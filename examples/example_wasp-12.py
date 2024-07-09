@@ -24,6 +24,7 @@ from orbdot.analysis import Analyzer
 
 wasp12 = StarPlanet('settings_files/WASP-12_settings.json')
 
+
 """
 Model Fitting
 """

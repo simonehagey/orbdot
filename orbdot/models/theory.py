@@ -1,15 +1,13 @@
 """
 Theory
 ======
-This module contains the analytical models needed to investigate the causes of long-term
-variations in the orbital of a star-planet system. They include various equations for
-assessing the effects of tidal dissipation, apsidal precession, systemic proper motion, and more.
+This module defines analytical models for investigating the source of long-term variations of
+exoplanet orbits. These include equations for assessing the effects of tidal dissipation,
+apsidal precession, systemic proper motion, and more.
 """
-
 
 import numpy as np
 import scipy.special as sci
-
 
 # define constants
 c = 2.99792458e8    # m/s
@@ -18,12 +16,12 @@ G = 6.6743e-11      # m^3 / kg / s^2
 # define unit conversions
 AU = 1.495978707e11   # 1 AU = 1.496 x 10^11 m
 parsec = 3.0857e16    # 1 pc = 3.0857 x 10^16 m
-R_earth = 6.371e6     # Earth radius = 6,371.000 km
-M_earth = 5.9722e24   # Earth mass = 5.9722 x 10^24 kg
-R_jup = 6.9911e7      # Jupiter radius = 69911 km
-M_jup = 1.89813e27    # Jupiter mass = 1,898.13 x 10^24 kg
-R_sun = 6.957e8       # Solar radius = 695,700 km
-M_sun = 1.988500e30   # Solar mass = 1,988,500 x 10^30 kg
+R_earth = 6.371e6     # earth radius = 6,371.000 km
+M_earth = 5.9722e24   # earth mass = 5.9722 x 10^24 kg
+R_jup = 6.9911e7      # jupiter radius = 69911 km
+M_jup = 1.89813e27    # jupiter mass = 1,898.13 x 10^24 kg
+R_sun = 6.957e8       # solar radius = 695,700 km
+M_sun = 1.9885e30     # solar mass = 1,988,500 x 10^30 kg
 
 
 def decay_quality_factor_from_pdot(P, dPdE, M_s, M_p, R_s):
@@ -1509,10 +1507,12 @@ def companion_rv_trend_from_mass(tau, M_c, M_s):
     # calculate and return the RV slope in m/s/day
     return M_c / (5.99 * tau ** (4 / 3) * M_s ** (2 / 3))
 
-# from an outer, non-resonant companion planet with an orbital period longer than
-#     the observational baseline.
+
 def companion_from_quadratic_rv(P_min, t_pivot, dvdt, ddvdt, M_s):
     """Constrain properties of the orbit of an outer companion given a quadratic RV trend.
+
+# from an outer, non-resonant companion planet with an orbital period longer than
+#     the observational baseline.
 
     Given first and second order acceleration terms that describe a quadratic radial velocity
     trend, this method follows the formulation from Kipping et al. (2011) [1]_ (see Equations 1,
@@ -1563,7 +1563,6 @@ def companion_from_quadratic_rv(P_min, t_pivot, dvdt, ddvdt, M_s):
     return P_min, K_min, M_min/M_earth, tau_c
 
 
-#  ToDo: check scipy implementation thing
 def companion_precession(P, M2, P2, M_s):
     """
     Calculates the rate of apsidal precession driven by a nonresonant planetary companion.
@@ -1601,10 +1600,10 @@ def companion_precession(P, M2, P2, M_s):
     .. math::
         \\delta \\varpi = \\frac{m_2}{M_\\star} \\frac{\\alpha}{(\\alpha+1)(\\alpha-1)^2}\\left[
         \\left(\\alpha^2+1\\right) E\\left(\\frac{2 \\alpha^{1 / 2}}{\\alpha+1}\\right)
-        \\left.-(\\alpha-1)^2 K\\left(\\frac{2 \\alpha^{1/2}}{\\alpha+1}\\right)\\right]
+        -(\\alpha-1)^2 K\\left(\\frac{2 \\alpha^{1/2}}{\\alpha+1}\\right)\\right]
 
     where :math:`m_2` is the mass of the perturbing planet, :math:`\\alpha = a_1/a_2` is the
-    semimajor axis ratio, and :math:`\\mathcal{K}` and :math:`\\mathcal{E }` are the complete
+    semi-major axis ratio, and :math:`\\mathcal{K}` and :math:`\\mathcal{E}` are the complete
     elliptic integrals of the first and second kind, respectively.
 
     .. important::
@@ -1650,7 +1649,6 @@ def companion_precession(P, M2, P2, M_s):
     return dwdE
 
 
-# ToDo: check scipy implementation thing
 def companion_mass_from_precession(P, P2, dwdE, M_s):
     """Calculate the mass of a nonresonant companion given a precession rate and orbital period.
 
@@ -1731,7 +1729,7 @@ def companion_doppler_pdot_from_rv_trend(P, dvdt):
     """Calculate the apparent variation of an orbital period due to a line-of-sight acceleration.
 
     This method returns the time derivative of the observed orbital period due to the Doppler
-    effect induced by an acceleration along the line-of-sight (i.e., a linear RV trend). It uses
+    effect induced by an acceleration along the line-of-sight (i.e. a linear RV trend). It uses
     equation (6) from Bouma et al. (2020) [1]_, which is derived in convenient units.
 
     Parameters
@@ -1744,15 +1742,15 @@ def companion_doppler_pdot_from_rv_trend(P, dvdt):
     Returns
     -------
     float
-        The apparent time derivative of the orbital period in milliseconds per year (ms/yr).
+        The apparent time derivative of the orbital period in milliseconds per year.
 
     Notes
     -----
-    For a transiting exoplanet, when radial velocity data show a linear trend (i.e., acceleration),
-    and assuming this trend is a real effect and not due to apparent causes like proper motion,
-    the Doppler effect will cause the observed period between transits to vary. This change in the
-    transit period is produced by the line-of-sight acceleration of the system. Equation (6) from
-    Bouma et al. (2020) [1]_ expresses the expected period derivative in very convenient units:
+    When radial velocity data of a transiting exoplanet's host star show a linear trend (i.e.,
+    acceleration), and assuming this trend is a real effect, the Doppler effect can cause the
+    observed period between transits to vary. This change in the transit period is produced by
+    the line-of-sight acceleration of the system. Equation (6) from Bouma et al. (2020) [1]_
+    expresses the expected period derivative in very convenient units:
 
     .. math::
         \\dot{P}_{\\mathrm{RV}} = 105.3 \\mathrm{\\,ms\\,yr^{-1}}\\left(\\frac{P}{\\mathrm{
@@ -1762,10 +1760,9 @@ def companion_doppler_pdot_from_rv_trend(P, dvdt):
 
     .. math:: \\dot{P}_{\\mathrm{RV}} = \\frac{\\dot{v}_r P}{c}
 
-    and where :math:`\\dot{P}_{\\mathrm{RV}}` is the time derivative of the orbital period due to
-    the radial velocity trend, :math:`\\dot{v}_r` is the linear radial velocity trend (
-    acceleration), :math:`P` is the orbital period of the transiting planet, and :math:`c` is the
-    speed of light in a vacuum.
+    where :math:`\\dot{P}_{\\mathrm{RV}}` is the time derivative of the observed orbital period,
+    :math:`\\dot{v}_r` is the linear radial velocity trend, :math:`P` is the orbital period of
+    the transiting planet, and :math:`c` is the speed of light in a vacuum.
 
     References
     ----------
@@ -1797,9 +1794,9 @@ def companion_doppler_rv_trend_from_pdot(P, dPdt):
     Notes
     -----
     For a transiting exoplanet, if a variation in the observed period between transits is measured,
-    this could be due to a line-of-sight acceleration of the system caused by a Doppler effect.
-    Equation (6) from Bouma et al. (2020) [1]_ can be used to determine the corresponding radial
-    velocity trend from the period derivative:
+    it may be due to the Doppler effect induced by a line-of-sight acceleration. Assuming this
+    trend is a real effect, Equation (6) from Bouma et al. (2020) [1]_ can be used to determine
+    the corresponding radial velocity trend from the period derivative:
 
     .. math::
         \\dot{\\gamma} = \\frac{\\dot{P}_{\\mathrm{RV}}}{105.3 \\mathrm{\\,ms\\,yr^{-1}}}
@@ -1809,9 +1806,9 @@ def companion_doppler_rv_trend_from_pdot(P, dPdt):
 
     .. math:: \\dot{\\gamma} = \\frac{\\dot{P}_{\\mathrm{RV}} c}{P}
 
-    where math:`\\dot{\\gamma}` is the linear radial velocity trend (acceleration), :math:`\\dot{
-    P}_{\\mathrm{RV}}` is the time derivative of the orbital period, :math:`P` is the orbital
-    period of the transiting planet, and :math:`c` is the speed of light in a vacuum.
+    where math:`\\dot{\\gamma}` is the linear radial velocity trend, :math:`\\dot{P}_{\\mathrm{
+    RV}}` is the time derivative of the observed orbital period, :math:`P` is the orbital period of
+    the transiting planet, and :math:`c` is the speed of light in a vacuum.
 
     References
     ----------

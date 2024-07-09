@@ -32,19 +32,3 @@ analyzer.model_comparison(fit_curve)
 
 # investigate RV trend as evidence of a nonresonant companion planet
 analyzer.unknown_companion()
-
-
-"""
-Final Model Fit
-"""
-# # update priors to better constrain the linear trend fit
-# params = ['t0', 'P0', 'K', 'v0_Bon', 'v0_Knu']
-#
-# for p in params:
-#     new_mean = fit_line['params'][p][0]
-#     new_std = 3 * max([fit_line['params'][p][1], fit_line['params'][p][2]])
-#     hatp4.update_prior(p, ['gaussian', new_mean, new_std])
-
-# run a final model fit
-# fit_final = hatp4.run_rv_fit(['t0', 'P0', 'K', 'v0', 'jit', 'dvdt'], suffix='_final')
-# fit_final = fit_line
