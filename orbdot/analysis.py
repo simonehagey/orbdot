@@ -1,8 +1,8 @@
 """
-Analysis
+Analyzer
 ========
-This module defines the :class:`Analysis` class, which allows the user to perform various analyses
-on the results of any OrbDot fit.
+This module defines the ``Analyzer`` class, which allows the user to perform various analyses
+with the results of any OrbDot fit.
 """
 
 import os
@@ -15,10 +15,10 @@ from orbdot.models.tdv_models import transit_duration
 
 class Analyzer:
     """
-    A class to perform and interpret various analyses related to the transit timing and orbital
-    dynamics of exoplanets. This class processes data from a given planetary system and provides
-    functionalities to compute and summarize effects such as proper motion, orbital decay, and
-    apsidal precession.
+    This class enables various analyses related to the long-term variations of exoplanet orbits.
+    It combines model fit results, star-planet system characteristics, and the data to compute and
+    summarize analyses of various physical models, such as equilibrium tides, apsidal precession,
+    systemic proper motion, and companion objects.
 
     Attributes
     ----------
@@ -53,16 +53,14 @@ class Analyzer:
 
     """
     def __init__(self, planet_instance, results_dic):
-        """
-        Initialize an Analysis object.
+        """Initialize an ``Analyzer`` object.
 
         Parameters
         ----------
         planet_instance : object
-            An instance of a planet class containing system parameters and observational data.
+            An instance of a ``~orbdot.star_planet.StarPlanet`` class.
         results_dic : dict
-            A dictionary containing the results of the model fit including parameters, statistics,
-            model name, and file suffix.
+            A dictionary containing the results of an OrbDot model fit.
 
         Returns
         -------

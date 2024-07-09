@@ -212,15 +212,15 @@ class TransitTiming(NestedSampling):
         """
         if model == 'constant':
             res = self.run_ttv_constant(free_params, suffix=suffix, make_plot=make_plot,
-                                  clip=clip, clip_method=clip_method)
+                                        clip=clip, clip_method=clip_method)
 
         elif model == 'decay':
             res = self.run_ttv_decay(free_params, suffix=suffix, make_plot=make_plot,
-                               clip=clip, clip_method=clip_method)
+                                     clip=clip, clip_method=clip_method)
 
         elif model == 'precession':
             res = self.run_ttv_precession(free_params, suffix=suffix, make_plot=make_plot,
-                                    clip=clip, clip_method=clip_method)
+                                          clip=clip, clip_method=clip_method)
 
         else:
             raise ValueError('The string \'{}\' does not represent a valid TTV model. Options '
@@ -241,10 +241,10 @@ class TransitTiming(NestedSampling):
             The list of free parameters for the timing model fit. The parameter names should be
             given as strings and may be in any order. The allowed parameters are:
 
-                't0' --> reference transit center time [BJD_TDB]
-                'P0' --> orbital period in days
-                'e0' --> orbit eccentricity
-                'w0' --> argument of pericenter of the planet's orbit in radians
+                * ``t0`` --> reference transit center time [BJD_TDB]
+                * ``P0`` --> orbital period in days
+                * ``e0`` --> orbit eccentricity
+                * ``w0`` --> argument of pericenter of the planet's orbit in radians
 
         suffix : str, optional
             An option to append a string to the end of the output files to differentiate fits.
@@ -263,13 +263,14 @@ class TransitTiming(NestedSampling):
         res: dict
             A dictionary containing the results of the fit for access within a script.
 
-        Output Files
-        ------------
-            'ttv_constant_summary.txt'  --> quick visual summary of the results
-            'ttv_constant_results.json' --> complete set of results in a dictionary format
-            'ttv_constant_corner.png'   --> a corner plot for diagnostics
-            'ttv_constant_weighted_samples.txt' --> the weighted posterior samples
-            'ttv_constant_random_samples.json'  --> 300 random samples for plotting
+        Notes
+        -----
+        The following output files are generated:
+         1. ``ttv_constant_summary.txt``: a quick visual summary of the results
+         2. ``ttv_constant_results.json``: complete set of results in a dictionary format
+         3. ``ttv_constant_corner.png``: a corner plot for diagnostics
+         4. ``ttv_constant_weighted_samples.txt``: the weighted posterior samples
+         5. ``ttv_constant_random_samples.json``: 300 random samples for plotting
 
         """
         free_params = np.array(free_params, dtype='<U16')
