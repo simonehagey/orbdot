@@ -1,31 +1,22 @@
 """
 Transit and Eclipse Timing Models
 =================================
-Secular variations in the orbits of transiting exoplanets may be detected by measuring deviations
-in the observed transit and eclipse timing from what is expected of a circular, unchanging orbit.
-These deviations are commonly referred to as Transit Timing Variations (TTVs).
-
-OrbDot currently supports model fitting for three evolutionary cases:
-
-    1. An unchanging orbit that is circular or eccentric.
-    2. A constant evolution of the orbital period, :math:`\\dot{P}` (orbital decay).
-    3. A constant evolution of the argument of pericenter, :math:`\\dot{\\omega}` (apsidal
-    precession).
-
+This module provides functions for modelling exoplanet transit and eclipse mid-times.
 """
 
 import numpy as np
 
 
 def ttv_constant(t0, P0, e0, w0, E, primary=True):
-    """Transit and eclipse timing for a planetary orbit with a constant period.
+    """Constant-period model for transit and eclipse mid-times.
 
-    Calculates the primary and secondary eclipse times for a single planet on an unchanging orbit.
+    This method calculates the expected transit and eclipse mid-times for a single planet on an
+    unchanging orbit.
 
     Parameters
     ----------
     t0 : float
-        Reference transit time [BJD_TDB].
+        Reference transit time in :math:`\\mathrm{BJD}_\\mathrm{TDB}`.
     P0 : float
         Orbital period in days.
     e0 : float
@@ -36,12 +27,12 @@ def ttv_constant(t0, P0, e0, w0, E, primary=True):
         An array-like object containing the epochs at which to calculate the transit timing.
     primary : bool, optional
         If True, returns the transit time for the primary eclipse. If False, returns the
-        transit time for the secondary eclipse.
+        transit time for the secondary eclipse. Default is True.
 
     Returns
     -------
     float or array-like
-        The predicted transit or secondary eclipse time(s) [BJD_TDB].
+        The predicted transit or eclipse time(s) in :math:`\\mathrm{BJD}_\\mathrm{TDB}`.
 
     """
     if primary:
@@ -52,16 +43,16 @@ def ttv_constant(t0, P0, e0, w0, E, primary=True):
 
 
 def ttv_decay(t0, P0, PdE, e0, w0, E, primary=True):
-    """Transit and eclipse timing for a planetary orbit with a decaying period.
+    """Orbital decay model for transit and eclipse mid-times.
 
-    Calculates the primary and secondary eclipse times for a single planet on an orbit with a
-    constant change in the orbital period. Though the main application of this model is for
-    orbital decay, a positive period derivative is allowed.
+    This method calculates the expected transit and eclipse mid-times for a single planet on an
+    orbit with a constant change in the orbital period. Though the main application of this model
+    is for orbital decay, a positive period derivative is allowed.
 
     Parameters
     ----------
     t0 : float
-        Reference transit time [BJD_TDB].
+        Reference transit time in :math:`\\mathrm{BJD}_\\mathrm{TDB}`.
     P0 : float
         Orbital period in days.
     PdE : float
@@ -73,17 +64,17 @@ def ttv_decay(t0, P0, PdE, e0, w0, E, primary=True):
     E : array-like
         An array-like object containing the epochs at which to calculate the transit timing.
     primary : bool, optional
-        If True, returns the transit time for the primary eclipse. If False, returns
-        the transit time for the secondary eclipse.
+        If True, returns the transit time for the primary eclipse. If False, returns the
+        transit time for the secondary eclipse. Default is True.
 
     Returns
     -------
     float or array-like
-        The predicted transit or secondary eclipse time(s) [BJD_TDB].
+        The predicted transit or eclipse time(s) in :math:`\\mathrm{BJD}_\\mathrm{TDB}`.
 
     Notes
     -----
-    If the orbit is eccentric, an offset of :math:`\\frac{P_a\\,e}{\\pi}\\,\\cos{\\,\\omega_p}`
+    If the orbit is eccentric, an offset of :math:`2\\frac{P}{\\pi} e\\,\\cos{\\,\\omega}`
     is added to the eclipse times.
 
     """
@@ -95,16 +86,17 @@ def ttv_decay(t0, P0, PdE, e0, w0, E, primary=True):
 
 
 def ttv_precession(t0, P0, e0, w0, wdE, E, primary=True):
-    """Transit and eclipse timing for an eccentric, precessing planetary orbit.
+    """Apsidal precession model for transit and eclipse mid-times.
 
-    Calculates the primary and secondary eclipse times for an elliptical orbit undergoing apsidal
-    precession with a numerical approximation for low eccentricities (e << 0.1), which is adapted
-    from equation (15) in Giminez and Bastero (1995) [1]_ by Patra et al. (2017) [2]_.
+    This method calculates the expected transit and eclipse mid-times for an elliptical orbit
+    undergoing apsidal precession with a numerical approximation for low eccentricities (e <<
+    0.1), which is adapted from equation (15) in Giminez and Bastero (1995) [1]_ by Patra et al.
+    (2017) [2]_.
 
     Parameters
     ----------
     t0 : float
-        Reference transit time [BJD_TDB].
+        Reference transit time in :math:`\\mathrm{BJD}_\\mathrm{TDB}`.
     P0 : float
         The sidereal period in days.
     e0 : float
@@ -116,13 +108,13 @@ def ttv_precession(t0, P0, e0, w0, wdE, E, primary=True):
     E : array-like
         An array-like object containing the epochs at which to calculate the transit timing.
     primary : bool, optional
-        If True, returns the transit time for the primary eclipse. If False, returns
-        the transit time for the secondary eclipse.
+        If True, returns the transit time for the primary eclipse. If False, returns the
+        transit time for the secondary eclipse. Default is True.
 
     Returns
     -------
     float
-        The predicted transit or secondary eclipse time(s) [BJD_TDB].
+        The predicted transit or eclipse time(s) in :math:`\\mathrm{BJD}_\\mathrm{TDB}`.
 
     References
     ----------

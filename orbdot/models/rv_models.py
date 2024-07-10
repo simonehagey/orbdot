@@ -1,14 +1,7 @@
 """
 Radial Velocity Models
 ======================
-This module provides functions for modelling exoplanet radial velocity observations. OrbDot
-currently supports model fitting for three evolutionary cases:
-
-    1. An unchanging orbit that is circular or eccentric.
-    2. A constant evolution of the orbital period, :math:`\\dot{P}` (orbital decay).
-    3. A constant evolution of the argument of pericenter, :math:`\\dot{\\omega}` (apsidal
-    precession).
-
+This module provides functions for modelling exoplanet radial velocity observations.
 """
 
 import numpy as np

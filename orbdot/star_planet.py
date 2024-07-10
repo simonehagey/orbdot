@@ -1,7 +1,7 @@
 """
 StarPlanet
 ----------
-This module defines the :class:`StarPlanet` class, which contains the data, methods, and attributes
+This module defines the ``StarPlanet`` class, which contains the data, methods, and attributes
 needed to study long-term variations in the orbits of exoplanets.
 """
 
@@ -15,21 +15,17 @@ from orbdot.transit_duration import TransitDuration
 
 class StarPlanet(TransitTiming, RadialVelocity, TransitDuration, JointFit):
     """
-    Initializing a StarPlanet instance creates an object that represents the star-planet system
-    and contains the provided data, physical system characteristics, and methods needed for
-    model fitting and comparison.
+    Initializing this class creates an object that represents the star-planet system, containing
+    the provided data, physical system characteristics, and methods needed for model fitting and
+    comparison.
     """
     def __init__(self, settings_file, planet_num=0):
-        """Initializes the StarPlanet class.
-
-        All information specific to the star-planet system is contained in a dictionary stored
-        as a .json file. This 'settings_file' provides the directories that contain the data and
-        specifies certain settings needed for model fitting algorithms, including the priors.
+        """Initialize the StarPlanet class.
 
         Parameters
         ----------
         settings_file : str
-            Name of the JSON file containing the required settings.
+            Path to the settings file.
         planet_num : int, optional
             Planet number in case of multi-planet systems (default is 0).
 

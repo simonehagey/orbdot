@@ -1,7 +1,7 @@
 """
 Transit Duration Models
 =======================
-This module provides functions for predicting exoplanet transit durations.
+This module provides functions for modelling exoplanet transit durations.
 """
 
 import numpy as np

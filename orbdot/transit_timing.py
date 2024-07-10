@@ -241,10 +241,10 @@ class TransitTiming(NestedSampling):
             The list of free parameters for the timing model fit. The parameter names should be
             given as strings and may be in any order. The allowed parameters are:
 
-                * ``t0`` --> reference transit center time [BJD_TDB]
-                * ``P0`` --> orbital period in days
-                * ``e0`` --> orbit eccentricity
-                * ``w0`` --> argument of pericenter of the planet's orbit in radians
+                * ``"t0"`` --> reference transit center time [BJD_TDB]
+                * ``"P0"`` --> orbital period in days
+                * ``"e0"`` --> orbit eccentricity
+                * ``"w0"`` --> argument of pericenter of the planet's orbit in radians
 
         suffix : str, optional
             An option to append a string to the end of the output files to differentiate fits.
@@ -266,11 +266,11 @@ class TransitTiming(NestedSampling):
         Notes
         -----
         The following output files are generated:
-         1. ``ttv_constant_summary.txt``: a quick visual summary of the results
-         2. ``ttv_constant_results.json``: complete set of results in a dictionary format
-         3. ``ttv_constant_corner.png``: a corner plot for diagnostics
-         4. ``ttv_constant_weighted_samples.txt``: the weighted posterior samples
-         5. ``ttv_constant_random_samples.json``: 300 random samples for plotting
+         1. ``"ttv_constant_summary.txt"``: a quick visual summary of the results
+         2. ``"ttv_constant_results.json"``: complete set of results in a dictionary format
+         3. ``"ttv_constant_corner.png"``: a corner plot for diagnostics
+         4. ``"ttv_constant_weighted_samples.txt"``: the weighted posterior samples
+         5. ``"ttv_constant_random_samples.json"``: 300 random samples for plotting
 
         """
         free_params = np.array(free_params, dtype='<U16')
