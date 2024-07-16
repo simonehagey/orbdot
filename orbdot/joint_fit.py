@@ -1,6 +1,8 @@
 """
 JointFit
---------
+========
+This module defines the ``JointFit`` class, which extends the capabilities of the
+``NestedSampling`` class to facilitate the simultaneous model fitting of multiple data types.
 """
 
 import os
@@ -277,17 +279,17 @@ class JointFit(NestedSampling):
 
         # define model-dependent variables
         if model == 'constant':
-            liklihood = self.rv_ttv_loglike_constant
+            likelihood = self.rv_ttv_loglike_constant
             illegal_params = ['i0', 'O0', 'PdE', 'wdE', 'idE', 'edE', 'OdE', 'K_tide']
             outfile = 'joint_rv_constant'
 
         elif model == 'decay':
-            liklihood = self.rv_ttv_loglike_decay
+            likelihood = self.rv_ttv_loglike_decay
             illegal_params = ['i0', 'O0', 'wdE', 'idE', 'edE', 'OdE', 'K_tide']
             outfile = 'joint_rv_decay'
 
         elif model == 'precession':
-            liklihood = self.rv_ttv_loglike_precession
+            likelihood = self.rv_ttv_loglike_precession
             illegal_params = ['i0', 'O0', 'PdE', 'idE', 'edE', 'OdE', 'K_tide']
             outfile = 'joint_rv_precession'
 
@@ -314,12 +316,12 @@ class JointFit(NestedSampling):
 
         # if selected, run Nestle sampling algorithm
         if self.joint_sampler == 'nestle':
-            res, samples, random_samples = self.run_nestle(liklihood, free_params, 'multi',
+            res, samples, random_samples = self.run_nestle(likelihood, free_params, 'multi',
                                                            self.joint_n_points, self.joint_tol)
 
         # if selected, run MultiNest sampling algorithm
         elif self.joint_sampler == 'multinest':
-            res, samples, random_samples = self.run_multinest(liklihood, free_params,
+            res, samples, random_samples = self.run_multinest(likelihood, free_params,
                                                               self.joint_n_points, self.joint_tol,
                                                               self.joint_save_dir + outfile + suffix)
 

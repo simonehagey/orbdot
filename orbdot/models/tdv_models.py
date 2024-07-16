@@ -1,23 +1,18 @@
 """
 Transit Duration Models
 =======================
-This module provides functions for modelling exoplanet transit durations.
+This module defines functions for modelling exoplanet transit durations.
 """
 
 import numpy as np
-from orbdot.models.theory import get_semi_major_axis_from_period
-
-# define constants
-G = 6.6743e-11      # m^3 / kg / s^2
-R_sun = 6.957e8     # solar radius = 695,700 km
-M_sun = 1.9885e30   # solar mass = 1,988,500 x 10^30 kg
+from orbdot.models.theory import G, M_sun, R_sun, get_semi_major_axis_from_period
 
 
-def tdv_constant(P0, e0, w0, i0, E, M_s, R_s):
-    """Transit duration for a planetary orbit with a constant period.
+def transit_duration(P0, e0, w0, i0, M_s, R_s):
+    """Calculates the transit duration.
 
-    Calculates the expected transit duration for a single planet on an unchanging orbit. Uses the
-    expression for the transit duration given by equation (15) in Kipping (2010) [1]_.
+    This method returns the expected transit duration for a single planet on an unchanging
+    orbit using equation (15) from Kipping (2010) [1]_.
 
     Parameters
     ----------
@@ -26,11 +21,9 @@ def tdv_constant(P0, e0, w0, i0, E, M_s, R_s):
     e0 : float
         Eccentricity of the orbit.
     w0 : float
-        Argument of pericenter in radians.
+        Argument of pericenter of the planet's orbit in radians.
     i0 : float
-        Line-of-sight inclination of the orbit in degrees
-    E : array-like
-        An array-like object containing the epochs at which to calculate the transit duration.
+        Line-of-sight inclination of the orbit in degrees.
     M_s : float
         Host star mass in solar masses.
     R_s : float
@@ -38,8 +31,69 @@ def tdv_constant(P0, e0, w0, i0, E, M_s, R_s):
 
     Returns
     -------
-    float or array-like
-        The predicted transit duration in seconds.
+    float
+        The predicted transit duration in minutes.
+
+    References
+    ----------
+    .. [1] :cite:t:`Kipping2010`. https://doi.org/10.1111/j.1365-2966.2010.16894.x
+
+    """
+    # unit conversions
+    i0 *= np.pi/180
+    R_s *= R_sun      # solar radii to m
+
+    # calculate the semi major axis in units of stellar radii
+    a = get_semi_major_axis_from_period(P0, M_s)
+    a_r = a / R_s
+
+    # define the true anomaly at at mid-transit
+    f_c = (np.pi / 2 - w0) % (2 * np.pi)
+
+    # calculate the planet-star separation at mid-transit
+    rho_c = (1 - e0 ** 2) / (1 + e0 * np.sin(f_c))
+
+    # calculate the impact parameter
+    b = rho_c * a_r * np.cos(i0)
+
+    # convert the orbital period from days to seconds
+    P0 *= 86400
+
+    # compute terms of the transit duration equation
+    t1 = (P0 / np.pi) * rho_c ** 2 / np.sqrt(1 - e0 ** 2)
+    t2 = np.sqrt(1 - b**2) / (rho_c * a_r * np.sin(i0))
+
+    # return the transit duration in minutes
+    return t1 * np.arcsin(t2) / 60
+
+
+def tdv_constant(P0, e0, w0, i0, E, M_s, R_s):
+    """Constant-period model for transit durations.
+
+    This method returns the expected transit duration(s) for a single planet on an unchanging
+    orbit using the ``transit_duration`` method.
+
+    Parameters
+    ----------
+    P0 : float
+        Orbital period in days.
+    e0 : float
+        Eccentricity of the orbit.
+    w0 : float
+        Argument of pericenter of the planet's orbit in radians.
+    i0 : float
+        Line-of-sight inclination of the orbit in degrees.
+    E : array-like
+        The epoch(s) at which to calculate the transit duration.
+    M_s : float
+        Host star mass in solar masses.
+    R_s : float
+        Host star radius in solar radii.
+
+    Returns
+    -------
+    array-like
+        The predicted transit duration in minutes.
 
     References
     ----------
@@ -54,17 +108,12 @@ def tdv_constant(P0, e0, w0, i0, E, M_s, R_s):
 
 
 def tdv_decay(P0, e0, w0, i0, PdE, E, M_s, R_s):
-    """Transit duration for a planetary orbit with a decaying period.
+    """Orbital decay model for transit durations.
 
-    Calculates the expected transit duration at the given epoch(s) for a single planet on an orbit
-    with a constant change in the orbital period. Uses the expression for the transit duration
-    variatoins
-    given by equation (xxx) in Kipping (2010) [1]_.
-
-    Notes
-    -----
-    Though the main application of this model is for orbital decay, a positive period derivative
-    is allowed.
+    This method calculates the expected transit duration at the given epoch(s) for a single
+    planet on an orbit with a constant change in the period, using equation (58) from Kipping (
+    2010) [1]_. Though the main application of this model is for orbital decay, a positive period
+    derivative is allowed.
 
     Parameters
     ----------
@@ -73,13 +122,13 @@ def tdv_decay(P0, e0, w0, i0, PdE, E, M_s, R_s):
     e0 : float
         Eccentricity of the orbit.
     w0 : float
-        Argument of pericenter in radians.
+        Argument of pericenter of the planet's orbit in radians.
     i0 : float
-        Line-of-sight inclination of the orbit in degrees
+        Line-of-sight inclination of the orbit in degrees.
     PdE : float
         Rate of change of the orbital period in days per orbit.
     E : array-like
-        An array-like object containing the epochs at which to calculate the transit duration.
+        The epoch(s) at which to calculate the transit duration.
     M_s : float
         Host star mass in solar masses.
     R_s : float
@@ -87,17 +136,8 @@ def tdv_decay(P0, e0, w0, i0, PdE, E, M_s, R_s):
 
     Returns
     -------
-    float or array-like
-        The predicted transit duration in seconds.
-
-    Notes
-    -----
-
-    .. math::
-        \\frac{\\partial T}{\\partial a} = \\frac{P}{\\pi} \\frac{\\varrho_{\\mathrm{c}}^2}{a
-        \\sqrt{1-e^2}}\\left(\\frac{3}{2} \\arcsin \\left(\\frac{\\sqrt{1-b^2}}{a_R \\varrho_{
-        \\mathrm{c}} \\sin i}\\right)\\right \\left.-\\frac{1}{\\sqrt{1-b^2} \\sqrt{a_R^2
-        \\varrho_{\\mathrm{ c}}^2-1}}\\right) .
+    array-like
+        The predicted transit duration in minutes.
 
     References
     ----------
@@ -150,11 +190,11 @@ def tdv_decay(P0, e0, w0, i0, PdE, E, M_s, R_s):
 
 
 def tdv_precession(P0, e0, w0, i0, wdE, E, M_s, R_s):
-    """Transit duration for an eccentric, precessing planetary orbit.
+    """Apsidal precession model for transit durations.
 
-    Calculates the expected transit duration at the given epoch(s) for an elliptical orbit
-    undergoing apsidal precession. Uses the expression for the transit duration varitation given by
-    equation (xxx) in Kipping (2010) [1]_.
+    This method calculates the expected transit duration at the given epoch(s) for a single
+    planet on an elliptical orbit undergoing apsidal precession, using equation (54) from Kipping
+    (2010) [1]_.
 
     Parameters
     ----------
@@ -163,13 +203,13 @@ def tdv_precession(P0, e0, w0, i0, wdE, E, M_s, R_s):
     e0 : float
         Eccentricity of the orbit.
     w0 : float
-        Argument of pericenter in radians.
+        Argument of pericenter of the planet's orbit in radians.
     i0 : float
-        Line-of-sight inclination of the orbit in degrees
+        Line-of-sight inclination of the orbit in degrees.
     wdE : float
         Apsidal precession rate in radians per epoch.
     E : array-like
-        An array-like object containing the epochs at which to calculate the transit duration.
+        The epoch(s) at which to calculate the transit duration.
     M_s : float
         Host star mass in solar masses.
     R_s : float
@@ -177,17 +217,8 @@ def tdv_precession(P0, e0, w0, i0, wdE, E, M_s, R_s):
 
     Returns
     -------
-    float
-        The predicted transit duration in seconds.
-
-    Notes
-    -----
-
-    .. math::
-        \\frac{\\partial T}{\\partial \\omega} =  \\frac{P}{\\pi} \\frac{e \\varrho_{\\mathrm{
-        c}}^3 \\cos\\omega}{\\left(1-e^2\\right)^{3 / 2}}\\left(\\frac{1}{\\sqrt{1-b^2} \\sqrt{
-        a_R^2 \\varrho_{ \\mathrm{c}}^2-1}}\\right \\left -2 \\arcsin \\left(\\frac{\\sqrt{
-        1-b^2}}{a_R \\varrho_{\\mathrm{c}} \\sin i}\\right)\\right)
+    array-like
+        The predicted transit duration in minutes.
 
     References
     ----------
@@ -236,70 +267,3 @@ def tdv_precession(P0, e0, w0, i0, wdE, E, M_s, R_s):
 
     # return the transit duration in minutes
     return T0 + dTdE * E / 60
-
-
-def transit_duration(P, e, w, i, M_s, R_s):
-    """Transit duration for a planetary orbit with a constant period.
-
-    Calculates the expected transit duration for a single planet on an unchanging orbit. Uses the
-    expression for the transit duration given by equation (15) in Kipping (2010) [1]_.
-
-    Parameters
-    ----------
-    P : float
-        Orbital period in days.
-    e : float
-        Eccentricity of the orbit.
-    w : float
-        Argument of pericenter in radians.
-    i : float
-        Line-of-sight inclination of the orbit in degrees
-    M_s : float
-        Host star mass in solar masses.
-    R_s : float
-        Host star radius in solar radii.
-
-    Returns
-    -------
-    float or array-like
-        The predicted transit duration in seconds.
-
-    Notes
-    -----
-
-    .. math:
-        T = \\frac{P}{\\pi} \\frac{\\varrho_{\\mathrm{c}}^2}{\\sqrt{1-e^2}} \\arcsin \\left(
-        \\frac{\\sqrt{ 1-a_R^2 \\varrho_{\\mathrm{c}}^2 \\cos ^2 i}}{a_R \\varrho_{\\mathrm{c}}
-        \\sin i}\\right),
-
-    References
-    ----------
-    .. [1] :cite:t:`Kipping2010`. https://doi.org/10.1111/j.1365-2966.2010.16894.x
-
-    """
-    # unit conversions
-    i *= np.pi/180
-    R_s *= R_sun      # solar radii to m
-
-    # calculate the semi major axis in units of stellar radii
-    a = get_semi_major_axis_from_period(P, M_s)
-    a_r = a / R_s
-
-    # define the true anomaly at at mid-transit
-    f_c = (np.pi / 2 - w) % (2 * np.pi)
-
-    # calculate the planet-star separation at mid-transit
-    rho_c = (1 - e ** 2) / (1 + e * np.sin(f_c))
-
-    # calculate the impact parameter
-    b = rho_c * a_r * np.cos(i)
-
-    # convert the orbital period from days to seconds
-    P *= 86400
-
-    # compute terms of the transit duration equation
-    t1 = (P / np.pi) * rho_c ** 2 / np.sqrt(1 - e ** 2)
-    t2 = np.sqrt(1 - b**2) / (rho_c * a_r * np.sin(i))
-
-    # return the transit duration in minutes
-    return t1 * np.arcsin(t2) / 60

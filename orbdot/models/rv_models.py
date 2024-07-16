@@ -1,7 +1,7 @@
 """
 Radial Velocity Models
 ======================
-This module provides functions for modelling exoplanet radial velocity observations.
+This module defines functions for modelling exoplanet radial velocity observations.
 """
 
 import numpy as np
@@ -10,79 +10,80 @@ TWOPI = 2 * np.pi
 
 
 def rv_constant(t0, P0, e0, w0, K, v0, dvdt, ddvdt, t):
-    """Calculates the RV signal for a star with a planet on an unchanging orbit.
+    """Constant-period model for radial velocities.
+
+    This method calculates the expected radial velocity signal of a star that hosts a planet
+    on an unchanging orbit.
 
     Parameters
     ----------
     t0 : float
-        Reference transit time [BJD_TDB].
+        Reference transit mid-time in :math:`\\mathrm{BJD}_\\mathrm{TDB}`.
     P0 : float
-        The sidereal period in days.
+        The orbital period in days.
     e0 : float
         Eccentricity of the orbit.
     w0 : float
-        Argument of pericenter of the planet's orbit at t0 in radians.
+        Argument of pericenter of the planet's orbit in radians.
     K : float
         The radial velocity semi-amplitude in m/s.
     v0 : float
-        Systemic radial velocity in m/s (instrument specific).
+        The systemic radial velocity in m/s.
     dvdt : float
         Linear radial velocity trend in m/s/day.
     ddvdt : float
         Quadratic radial velocity trend in m/s/day^2.
     t : float
-        Time at which to calculate the RV signal [BJD_TDB].
+        Measurement time(s) in :math:`\\mathrm{BJD}_\\mathrm{TDB}`.
 
     Returns
     -------
-    float
-        Total radial velocity signal including long-term trends.
+    float or array-like
+        The expected radial velocity signal at the given time(s), including long-term trends.
 
     Notes
     -----
     The following steps outline the implementation of this method:
 
-    1. **Calculate the true anomaly, eccentric anomaly, and mean anomaly at the transit mid-time**.
+    1. Calculate the true anomaly, eccentric anomaly, and mean anomaly at the reference mid-time.
 
-     At the reference transit mid-time :math:`t_0`, the true anomaly is:
+     At time :math:`t_0`, the true anomaly is:
 
-     .. :math::
-            \\phi_0 = \\frac{\\pi}{2} - \\omega_p
+     .. math::
+        \\phi_0 = \\frac{\\pi}{2} - \\omega_p
 
      where :math:`\\omega_p` is the argument of pericenter of the planet's orbit. The eccentric
-     anomaly at transit :math:`\\mathrm{E}_0` may then be determined by:
+     anomaly may then be determined by:
 
      .. math::
             \\tan \\left(\\frac{\\phi_0}{2}\\right) = \\sqrt{\\frac{1+e}{1-e}} \\tan \\left(
             \\frac{\\mathrm{E}_0}{2}\\right)
 
-     The mean anomaly is then determined by solving Kepler's equation numerically:
+     The mean anomaly can only be calculated by solving Kepler's equation numerically:
 
-     .. :math::
+     .. math::
             \\mathrm{M}_0 = \\mathrm{E}_0 - e \\sin\\mathrm{E}_0
 
-    2. **Determine the time of pericenter passage**.
+    2. Determine the time of pericenter passage.
 
-     The time of pericenter passage is calculated from the transit mid-time and the corresponding
-     mean anomaly with the following equation:
+     The time of pericenter passage :math:`t_p` is related to the mean anomaly by:
 
      .. math::
             \\mathrm{M}_0 = \\eta \\left(t_0 - t_p\\right)
 
-     where :math:`\\eta = 2 \\pi/P` is the mean motion of the planet's orbit and :math:`t_p` is
-     the time marking the passage of pericenter.
+     where :math:`\\eta = 2 \\pi/P` is the mean motion.
 
-    3. **Calculate the true anomaly of the planet at the given time**.
+    3. Calculate the true anomaly of the planet at the given time.
 
-     The time of pericenter passage :math:`t_p` allows for the mean anomaly to be determined at
-     any time :math:`t`:
+     With the time of pericenter passage :math:`t_p`, the mean anomaly can be calculated at any
+     time :math:`t`:
 
      .. math::
             \\mathrm{M} = \\eta \\left(t - t_p\\right)
 
-     The eccentric anomaly is then found by numerically solving Kepler's equation:
+     Then, the eccentric anomaly is:
 
-     .. math:: \\mathrm{M} = \\mathrm{E} - e \\sin \\mathrm{E}
+     .. math:: \\mathrm{E} = \\mathrm{M} + e \\sin \\mathrm{E}
 
      Finally, the true anomaly at time :math:`t` is determined by:
 
@@ -90,7 +91,7 @@ def rv_constant(t0, P0, e0, w0, K, v0, dvdt, ddvdt, t):
             \\tan \\left(\\frac{\\phi}{2}\\right) = \\sqrt{\\frac{1+e}{1-e}} \\tan \\left(\\frac{
             \\mathrm{E}}{2}\\right)
 
-    4. **Return the total RV signal, including long-term trends**.
+    4. Return the total RV signal, including long-term trends.
 
      The total radial velocity signal at time :math:'t' is:
 
@@ -131,26 +132,30 @@ def rv_constant(t0, P0, e0, w0, K, v0, dvdt, ddvdt, t):
 
 
 def rv_decay(t0, P0, e0, w0, K, v0, dvdt, ddvdt, PdE, t):
-    """Calculates the RV signal for a star with a planet on a decaying orbit.
+    """Orbital decay model for radial velocities.
 
-    Notes
-    -----
-    This function assumes that the change in the RV semi-amplitude 'K' is negligible.
+    This method calculates the expected radial velocity signal of a star that hosts a planet
+    on an orbit with a constant change in the period. Though the main application of this model
+    is for orbital decay, a positive period derivative is allowed.
+
+    Note
+    ----
+    This function assumes that the change in the RV semi-amplitude :math:`K` is negligible.
 
     Parameters
     ----------
     t0 : float
-        Reference transit time [BJD_TDB].
+        Reference transit mid-time in :math:`\\mathrm{BJD}_\\mathrm{TDB}`.
     P0 : float
-        The sidereal period in days.
+        The orbital period in days.
     e0 : float
         Eccentricity of the orbit.
     w0 : float
-        Argument of pericenter of the planet's orbit at t0 in radians.
+        Argument of pericenter of the planet's orbit in radians.
     K : float
         The radial velocity semi-amplitude in m/s.
     v0 : float
-        Systemic radial velocity in m/s (instrument specific).
+        The systemic radial velocity in m/s.
     dvdt : float
         Linear radial velocity trend in m/s/day.
     ddvdt : float
@@ -158,95 +163,82 @@ def rv_decay(t0, P0, e0, w0, K, v0, dvdt, ddvdt, PdE, t):
     PdE : float
         Rate of change of the orbital period in days per orbit.
     t : float
-        Time at which to calculate the RV signal [BJD_TDB].
+        Measurement time(s) in :math:`\\mathrm{BJD}_\\mathrm{TDB}`.
 
     Returns
     -------
-    float
-        Total radial velocity signal including long-term trends.
+    float or array-like
+        The expected radial velocity signal at the given time(s), including long-term trends.
 
     Notes
     -----
-    **Orbital Decay**
-        1. determine the epoch of the most recent transit
-        2. calculate the orbital period at time t
-        3. calculate true, eccentric, and mean anomalies during transit
-        4. calculate the most recent transit center time
-        5. calculate the time of pericenter passage
-        6. calculate the true anomaly of the planet at the given time
-        7. calculate the RV signal due to the planet
-        8. return the total RV signal including long-term trends
-
     The following steps outline the implementation of this method:
 
-    1. **Determine the epoch of the most recent transit**.
+    1. Determine the epoch of the most recent transit.
 
-     The epoch number :math:`E` of the most recent transit can be calculated by rounding the
-     following equation to an integer value:
-
-     .. math::
-            E = \\frac{(t - t_0)}{P_a}
-
-    2. **Calculate the orbital period at the given time**.
-
-     For a decay orbit, the orbital period is dependant on time:
+     The epoch :math:`E` of the most recent transit can be calculated by rounding the
+     result of the following function to an integer value:
 
      .. math::
-            P_s = P_a\\left(1-\\frac{d\\omega/{dE}}{2\\pi}\\right)
+            E = \\frac{(t - t_0)}{P_0}
 
-    4. **Calculate the true anomaly, eccentric anomaly, and mean anomaly at the transit mid-time**.
+    2. Calculate the orbital period at the given time.
 
-     At the reference transit mid-time :math:`t_0`, the true anomaly is:
+     For a decaying orbit, the orbital period is dependant on time:
 
-     .. :math::
-            \\phi_0 = \\frac{\\pi}{2} - \\omega_p
+     .. math::
+            P_a = P_0 + \\frac{dP}{dE}]\\,E
+
+    3. Calculate the true anomaly, eccentric anomaly, and mean anomaly at the reference mid-time.
+
+     At time :math:`t_0`, the true anomaly is:
+
+     .. math::
+        \\phi_0 = \\frac{\\pi}{2} - \\omega_p
 
      where :math:`\\omega_p` is the argument of pericenter of the planet's orbit. The eccentric
-     anomaly at transit :math:`\\mathrm{E}_0` may then be determined by:
+     anomaly may then be determined by:
 
      .. math::
             \\tan \\left(\\frac{\\phi_0}{2}\\right) = \\sqrt{\\frac{1+e}{1-e}} \\tan \\left(
             \\frac{\\mathrm{E}_0}{2}\\right)
 
-     The mean anomaly is then determined by solving Kepler's equation numerically:
+     The mean anomaly can only be calculated by solving Kepler's equation numerically:
 
-     .. :math::
+     .. math::
             \\mathrm{M}_0 = \\mathrm{E}_0 - e \\sin\\mathrm{E}_0
 
-    5. **Calculate the most recent transit center time**.
+    4. Calculate the most recent transit mid-time.
 
-     Because the orbit is shrinking, the relative time of pericenter passage will evolve and
+     As the orbit is shrinking, the relative time of pericenter passage will evolve and
      must be calculated relative to the most recent transit mid-time:
 
      .. math::
             t_{\\mathrm{I}} = t_0 + PE + \\frac{1}{2}\,\\frac{dP}{dE}\\,E^2
 
-     where :math:`P` is the sidereal (observed) period, :math:`\\frac{dP}{dE}` is the period
-     derivative in days per epoch.
+     where :math:`P` is the sidereal (observed) period and :math:`\\frac{dP}{dE}` is the orbital
+     decay rate in days per epoch.
 
-    6. **Determine the time of pericenter passage**.
+    5. Determine the most recent time of pericenter passage.
 
-     The time of pericenter passage is calculated from the transit mid-time and the corresponding
-     mean anomaly with the following equation:
+     The time of pericenter passage :math:`t_p` is related to the mean anomaly by:
 
      .. math::
             \\mathrm{M}_0 = \\eta \\left(t_{\\mathrm{I}} - t_p\\right)
 
-     where :math:`\\eta = 2 \\pi/P` is the mean motion of the planet's orbit and :math:`t_p` is
-     the time marking the passage of pericenter.
+     where :math:`\\eta = 2 \\pi/P` is the mean motion.
 
-    7. **Calculate the true anomaly of the planet at the given time**.
+    6. Calculate the true anomaly of the planet at the given time.
 
-     The time of pericenter passage :math:`t_p` allows for the mean anomaly to be determined at
-     any time :math:`t`:
+     With the time of pericenter passage :math:`t_p`, the mean anomaly can be calculated at any
+     time :math:`t`:
 
      .. math::
             \\mathrm{M} = \\eta \\left(t - t_p\\right)
 
-     The eccentric anomaly is then found by numerically solving Kepler's equation:
+     Then, the eccentric anomaly is:
 
-     .. math::
-            \\mathrm{M} = \\mathrm{E} - e \\sin \\mathrm{E}
+     .. math:: \\mathrm{E} = \\mathrm{M} + e \\sin \\mathrm{E}
 
      Finally, the true anomaly at time :math:`t` is determined by:
 
@@ -254,7 +246,7 @@ def rv_decay(t0, P0, e0, w0, K, v0, dvdt, ddvdt, PdE, t):
             \\tan \\left(\\frac{\\phi}{2}\\right) = \\sqrt{\\frac{1+e}{1-e}} \\tan \\left(\\frac{
             \\mathrm{E}}{2}\\right)
 
-    8. **Return the total RV signal, including long-term trends**.
+    7. Return the total RV signal, including long-term trends.
 
      The total radial velocity signal at time :math:'t' is:
 
@@ -298,35 +290,38 @@ def rv_decay(t0, P0, e0, w0, K, v0, dvdt, ddvdt, PdE, t):
 
 
 def rv_precession(t0, P0, e0, w0, K, v0, dvdt, ddvdt, wdE, t):
-    """Calculates the RV signal for a star with a planet undergoing apsidal precession.
+    """Apsidal precession model for radial velocities.
+
+    This method calculates the expected radial velocity signal of a star that hosts a planet
+    on an elliptical orbit undergoing apsidal precession.
 
     Parameters
     ----------
     t0 : float
-        Reference transit time [BJD_TDB].
+        Reference transit mid-time in :math:`\\mathrm{BJD}_\\mathrm{TDB}`.
     P0 : float
-        The sidereal period in days.
+        The orbital period in days.
     e0 : float
         Eccentricity of the orbit.
     w0 : float
-        Argument of pericenter of the planet's orbit at t0 in radians.
+        Argument of pericenter of the planet's orbit in radians.
     K : float
         The radial velocity semi-amplitude in m/s.
     v0 : float
-        Systemic radial velocity in m/s (instrument specific).
+        The systemic radial velocity in m/s.
     dvdt : float
         Linear radial velocity trend in m/s/day.
     ddvdt : float
         Quadratic radial velocity trend in m/s/day^2.
     wdE : float
-        Rate of change of the argument of pericenter per orbit.
+        Rate of change of the argument of pericenter in radians per orbit.
     t : float
-        Time at which to calculate the RV signal [BJD_TDB].
+        Measurement time(s) in :math:`\\mathrm{BJD}_\\mathrm{TDB}`.
 
     Returns
     -------
-    float
-        Total radial velocity signal including long-term trends.
+    float or array-like
+        The expected radial velocity signal at the given time(s), including long-term trends.
 
     Notes
     -----
@@ -338,73 +333,70 @@ def rv_precession(t0, P0, e0, w0, K, v0, dvdt, ddvdt, wdE, t):
      following equation to an integer value:
 
      .. math::
-            E = \\frac{(t - t_0)}{P_a}
+            E = \\frac{(t - t_0)}{P_0}
 
-    2. **Calculate the anomalistic period**.
+    2. Calculate the anomalistic period.
 
      For a precessing orbit, there is a distinction between the sidereal (observed) orbital
-     period :math:`P_s` and the anomalistic (true) orbital period :math:`P_a`. They are related by:
+     period :math:`P_s` and the anomalistic orbital period :math:`P_a`. They are related by:
 
      .. math::
             P_s = P_a\\left(1-\\frac{d\\omega/{dE}}{2\\pi}\\right)
 
-    3. **Calculate the argument of pericenter at the given time**.
+    3. Calculate the argument of pericenter at the given time.
 
      For a precessing orbit, :math:`\\omega_p` is a function of time:
 
      .. math::
             \\omega_p\\left(E\\right) = \\omega_0 + \\frac{d\\omega}{dE}\\,E.
 
-    4. **Calculate the true anomaly, eccentric anomaly, and mean anomaly at the transit mid-time**.
+    4. Calculate the true anomaly, eccentric anomaly, and mean anomaly at the reference mid-time.
 
-     At the reference transit mid-time :math:`t_0`, the true anomaly is:
+     At time :math:`t_0`, the true anomaly is:
 
-     .. :math::
-            \\phi_0 = \\frac{\\pi}{2} - \\omega_p
+     .. math::
+        \\phi_0 = \\frac{\\pi}{2} - \\omega_p
 
      where :math:`\\omega_p` is the argument of pericenter of the planet's orbit. The eccentric
-     anomaly at transit :math:`\\mathrm{E}_0` may then be determined by:
+     anomaly may then be determined by:
 
      .. math::
             \\tan \\left(\\frac{\\phi_0}{2}\\right) = \\sqrt{\\frac{1+e}{1-e}} \\tan \\left(
             \\frac{\\mathrm{E}_0}{2}\\right)
 
-     The mean anomaly is then determined by solving Kepler's equation numerically:
+     The mean anomaly can only be calculated by solving Kepler's equation numerically:
 
-     .. :math::
+     .. math::
             \\mathrm{M}_0 = \\mathrm{E}_0 - e \\sin\\mathrm{E}_0
 
-    5. **Calculate the most recent transit center time**.
+    5. Calculate the most recent transit mid-time.
 
-     Because the argument of pericenter is evolving, the relative time of pericenter passage will
-     also change over time and must be calculated relative to the most recent transit mid-time:
+     As the orbit precesses, the relative time of pericenter passage will evolve and
+     must be calculated relative to the most recent transit mid-time:
 
      .. math::
             t_{\\mathrm{I}} = t_0 + P_s E - \\frac{e P_a}{\\pi}\\cos{\\omega_p}
 
-    6. **Determine the time of pericenter passage**.
+    6. Determine the most recent time of pericenter passage.
 
-     The time of pericenter passage is calculated from the transit mid-time and the corresponding
-     mean anomaly with the following equation:
+     The time of pericenter passage :math:`t_p` is related to the mean anomaly by:
 
      .. math::
             \\mathrm{M}_0 = \\eta \\left(t_{\\mathrm{I}} - t_p\\right)
 
-     where :math:`\\eta = 2 \\pi/P` is the mean motion of the planet's orbit and :math:`t_p` is
-     the time marking the passage of pericenter.
+     where :math:`\\eta = 2 \\pi/P` is the mean motion.
 
-    7. **Calculate the true anomaly of the planet at the given time**.
+    7. Calculate the true anomaly of the planet at the given time.
 
-     The time of pericenter passage :math:`t_p` allows for the mean anomaly to be determined at
-     any time :math:`t`:
+     With the time of pericenter passage :math:`t_p`, the mean anomaly can be calculated at any
+     time :math:`t`:
 
      .. math::
             \\mathrm{M} = \\eta \\left(t - t_p\\right)
 
-     The eccentric anomaly is then found by numerically solving Kepler's equation:
+     Then, the eccentric anomaly is:
 
-     .. math::
-            \\mathrm{M} = \\mathrm{E} - e \\sin \\mathrm{E}
+     .. math:: \\mathrm{E} = \\mathrm{M} + e \\sin \\mathrm{E}
 
      Finally, the true anomaly at time :math:`t` is determined by:
 
@@ -412,7 +404,7 @@ def rv_precession(t0, P0, e0, w0, K, v0, dvdt, ddvdt, wdE, t):
             \\tan \\left(\\frac{\\phi}{2}\\right) = \\sqrt{\\frac{1+e}{1-e}} \\tan \\left(\\frac{
             \\mathrm{E}}{2}\\right)
 
-    8. **Return the total RV signal, including long-term trends**.
+    8. Return the total RV signal, including long-term trends.
 
      The total radial velocity signal at time :math:'t' is:
 
@@ -461,9 +453,6 @@ def rv_precession(t0, P0, e0, w0, K, v0, dvdt, ddvdt, wdE, t):
 def true_anomaly(t, t_peri, nu, e):
     """Calculates the true anomaly at any given time.
 
-    Calculates the true anomaly of an orbiting object given the eccentricity of the orbit,
-    the mean motion, and time of pericenter passage.
-
     Parameters
     ----------
     t : array-like
@@ -477,8 +466,8 @@ def true_anomaly(t, t_peri, nu, e):
 
     Returns
     -------
-    float or array-like
-        True anomalies in radians.
+    array-like
+        The true anomaly value(s) in radians.
 
     """
     # calculate the mean anomaly
@@ -492,7 +481,7 @@ def true_anomaly(t, t_peri, nu, e):
 
 
 def solve_keplers_equation(M, e, tol=1e-8):
-    """Iterative solver for Kepler's equation.
+    """An iterative solver of Kepler's equation.
 
     Parameters
     ----------
@@ -505,7 +494,7 @@ def solve_keplers_equation(M, e, tol=1e-8):
 
     Returns
     -------
-    float or array-like
+    array-like
         Eccentric anomalies in radians.
 
     """

@@ -1,6 +1,6 @@
 """
 StarPlanet
-----------
+==========
 This module defines the ``StarPlanet`` class, which contains the data, methods, and attributes
 needed to study long-term variations in the orbits of exoplanets.
 """
@@ -19,6 +19,7 @@ class StarPlanet(TransitTiming, RadialVelocity, TransitDuration, JointFit):
     the provided data, physical system characteristics, and methods needed for model fitting and
     comparison.
     """
+
     def __init__(self, settings_file, planet_num=0):
         """Initialize the StarPlanet class.
 
@@ -51,9 +52,10 @@ class StarPlanet(TransitTiming, RadialVelocity, TransitDuration, JointFit):
         self.star_name = self.sys_info['star_name']
         self.planet_name = self.sys_info['star_name'] + self.sys_info['planets'][planet_num]
 
+        # define the main directory for saving the results
         self.main_save_dir = args['main_save_dir'] + self.star_name + '/'
 
-        # set plot titles as the star name
+        # update the plot settings with the planet name
         self.plot_settings['RV_PLOT']['title'] = self.planet_name
         self.plot_settings['TTV_PLOT']['title'] = self.planet_name
 
@@ -62,7 +64,7 @@ class StarPlanet(TransitTiming, RadialVelocity, TransitDuration, JointFit):
         # save characteristics of the star-planet system as a dictionary
         self.sp_system_params = self.get_star_planet_system_params(planet_num)
 
-        # specify default values for model parameters (retrieved from the 'system_info_file')
+        # specify default values for model parameters (retrieved from the ``system_info_file``)
         default_values = utl.assign_default_values(self.sys_info, planet_num)
 
         # print the default parameter values for convenience
@@ -70,7 +72,6 @@ class StarPlanet(TransitTiming, RadialVelocity, TransitDuration, JointFit):
 
         # initialize the TransitTiming class
         if args['TTV_fit']['data_file'] != 'None':
-
             # define save directory and load data
             args['TTV_fit']['save_dir'] = self.main_save_dir + args['TTV_fit']['save_dir']
 
@@ -116,7 +117,6 @@ class StarPlanet(TransitTiming, RadialVelocity, TransitDuration, JointFit):
 
         # initialize the TransitDuration class
         if args['TDV_fit']['data_file'] != 'None':
-
             # define save directory and load data
             args['TDV_fit']['save_dir'] = self.main_save_dir + args['TDV_fit']['save_dir']
 
@@ -134,188 +134,14 @@ class StarPlanet(TransitTiming, RadialVelocity, TransitDuration, JointFit):
 
         JointFit.__init__(self, args['joint_fit'], args['prior'], default_values)
 
-    def update_default(self, parameter, new_value):
-        """Updates the default (fixed) value for the specified parameter.
-
-        The fixed value will be used in the model fits if a parameter is not set to vary.
-
-        Parameters
-        ----------
-        parameter : str
-            The name of the parameter, must be in `self.legal_params`
-        new_value : float
-            The new parameter value
-
-        Raises
-        ------
-        ValueError
-            If the parameter name is incorrect and/or the specified format for multi-instrument
-            parameters is invalid.
-
-        Returns
-        -------
-        None
-            The default (fixed) value for the specified parameter is updated.
-
-        """
-        multi_source = ['v0', 'jit']
-        multi_types = ['RV zero velocity', 'RV jitter']
-
-        # this is more complex for multi-instrument parameters
-
-        if parameter.split('_')[0] in multi_source:
-
-            for i, p in enumerate(multi_source):
-
-                if parameter.split('_')[0] == p:
-
-                    if len(parameter.split('_')) == 1:
-
-                        raise ValueError('To update the fixed value for {} please specify the '
-                                         'instrument by entering the \n parameter as \'{}_tag\', '
-                                         'where \'tag\' is one of {} for RV source(s) {}'
-                                         .format(multi_types[i], p,
-                                         self.rv_data['src_tags'], self.rv_data['src_names']))
-
-                    try:
-
-                        ind = np.where(np.array(self.rv_data['src_tags'])
-                                       == parameter.split('_')[1])[0][0]
-
-                        self.fixed[p][ind] = new_value
-
-                        # print updated parameter
-                        print("* Default value for \'{}\' updated to: {}\n"
-                              .format(parameter, self.fixed[p][ind]))
-
-                    except IndexError:
-
-                        raise ValueError('Error in updating fixed value for {}, must be specified '
-                                         'with the format \'{}_tag\', \n where \'tag\' is one of {}'
-                                         ' for RV source(s) {}.'.format(multi_types[i], p,
-                                         self.rv_data['src_tags'], self.rv_data['src_names']))
-
-        else:
-
-            if parameter not in self.legal_params:  # check if parameter name is incorrect
-
-                raise ValueError('\'{}\' is not a variable in the models, allowed parameters are: '
-                                 '{}.\n For more information, see ReadMe file or documentation in '
-                                 'the NestedSampling class file.'
-                                 .format(parameter, self.legal_params))
-
-            else:
-                self.fixed[parameter] = new_value  # update fixed value
-
-                # print updated parameter
-                print("* Default value for \'{}\' updated to: {}\n"
-                      .format(parameter, self.fixed[parameter]))
-
-                return
-
-    def update_prior(self, parameter, new_prior):
-        """Updates the prior for the specified parameter.
-
-        This method allows the user to update the prior distribution for a particular parameter.
-
-        Parameters
-        ----------
-        parameter : str
-            The name of the parameter, must be in `self.legal_params`.
-        new_prior : list
-            A set of values specifying the prior distribution, where the first element is the
-            type of prior ('uniform', 'gaussian', or 'log'), and subsequent elements define the
-            distribution. The list must be given in one of the following forms:
-
-                Gaussian    ->  list : ["gaussian", mean, std]
-                Log-Uniform ->  list : ["log", log10(min), log10(max)]
-                Uniform     ->  list : ["uniform", min, max]
-
-        Raises
-        ------
-        ValueError
-            If the given prior is not in the correct format.
-            If the source tag is missing for multi-instrument parameters.
-            If the specified parameter is not found in the legal parameters list.
-
-        Returns
-        -------
-        None
-            The list defining the prior distribution for the specified parameter is updated.
-
-        """
-        multi_source = ['v0', 'jit']
-        multi_types = ['RV systemic velocity', 'RV jitter']
-
-        if len(new_prior) < 3:
-
-            raise ValueError('The prior on {} cannot be updated to {}, as it is not in '
-                             'the correct format.\nThe allowed formats are:\n'
-                             '   Gaussian    ->  list : ["gaussian", mean, std]\n'
-                             '   Log-Uniform ->  list : ["log", log10(min), log10(max)]\n'
-                             '   Uniform     ->  list : ["uniform", min, max]\n\n'
-                             .format(parameter, new_prior))
-
-        # this is more complex for multi-instrument parameters
-        if parameter.split('_')[0] in multi_source:
-
-            for i, p in enumerate(multi_source):
-
-                if parameter.split('_')[0] == p:
-
-                    if len(parameter.split('_')) == 1:
-                        raise ValueError('To update the prior on {} please specify the instrument '
-                                         'by entering the parameter \n as \'{}_tag\', where '
-                                         '\'tag\' is one of {} for RV source(s) {}'
-                                         .format(multi_types[i], p,
-                                         self.rv_data['src_tags'], self.rv_data['src_names']))
-
-                    try:
-                        ind = np.where(np.array(self.rv_data['src_tags'])
-                                       == parameter.split('_')[1])[0][0]
-                        self.prior[p][ind] = new_prior
-
-                    except IndexError:
-
-                        raise ValueError('Error in updating prior on {}, must be specified with '
-                                         'the format \'{}_tag\', \n where \'tag\' is one of {} for '
-                                         'RV source(s) {}.'.format(multi_types[i], p,
-                                         self.rv_data['src_tags'], self.rv_data['src_names']))
-
-        else:
-
-            if parameter not in self.legal_params:  # check if parameter name is incorrect
-
-                raise ValueError('\'{}\' is not a variable in any of the models, allowed parameters'
-                                 ' are:\n{}\n\nSee the OrbDot documentation for more information '
-                                 'on model parameters.'.format(parameter, self.legal_params))
-            else:
-                self.prior[parameter] = new_prior  # update prior
-
-        # print updated prior
-        print("* Prior for \'{}\' updated to: {} *\n".format(parameter, new_prior))
-
-        return
-
     def get_star_planet_system_params(self, planet_number):
-        """Extracts star, planet, and system parameters from the provided information file.
+        """Extracts the star, planet, and system parameters from the provided information file.
 
-        The returned dictionary is passed to the :class:Analysis class to be combined with
-        the relevant model fit results. See the class documentation for a description of the
-        parameters that are implemented in its methods.
-
-        Notes
-        -----
-        Not all of these parameters are used by the :class:`Analysis` class, and thus do not
-        need to be specified in the 'info.json' file. The extra parameters are loaded simply for
-        convenience, so that they may be accessed by the user if desired for custom functions.
-        The 'defaults/info_file.json' file contains null entries for the parameters that are
-        not specified by the user.
+        The dictionary returned by this method is passed to the :class:`~orbdot.analysis.Analyzer`
+        class to be combined with the relevant model fit results.
 
         Parameters
         ----------
-        sys_info : dict
-            Dictionary containing information about the star-planet system.
         planet_number : int
             Index of the planet for which parameters are to be extracted.
 
@@ -358,3 +184,156 @@ class StarPlanet(TransitTiming, RadialVelocity, TransitDuration, JointFit):
         }
 
         return vals
+
+    def update_default(self, parameter, new_value):
+        """Updates the default (fixed) value for the specified parameter.
+
+        The fixed value will be used in the model fits if a parameter is not allowed to vary.
+
+        Parameters
+        ----------
+        parameter : str
+            The parameter name.
+        new_value : float
+            The new parameter value.
+
+        Raises
+        ------
+        ValueError
+            If the parameter name is incorrect and/or the specified format for multi-instrument
+            parameters is invalid.
+
+        Returns
+        -------
+        None
+            The default (fixed) value for the specified parameter is updated.
+
+        """
+        multi_source = ['v0', 'jit']
+        multi_types = ['RV zero velocity', 'RV jitter']
+
+        # this is more complex for multi-instrument parameters
+        if parameter.split('_')[0] in multi_source:
+
+            for i, p in enumerate(multi_source):
+
+                if parameter.split('_')[0] == p:
+
+                    if len(parameter.split('_')) == 1:
+                        raise ValueError('To update the fixed value for {} please specify the '
+                                         'instrument by entering the \n parameter as \'{}_tag\', '
+                                         'where \'tag\' is one of {} for RV source(s) {}'
+                                         .format(multi_types[i], p,
+                                                 self.rv_data['src_tags'],
+                                                 self.rv_data['src_names']))
+
+                    try:
+
+                        ind = np.where(np.array(self.rv_data['src_tags'])
+                                       == parameter.split('_')[1])[0][0]
+
+                        self.fixed[p][ind] = new_value
+
+                        # print updated parameter
+                        print("* Default value for \'{}\' updated to: {}\n"
+                              .format(parameter, self.fixed[p][ind]))
+
+                    except IndexError:
+
+                        raise ValueError('Error in updating fixed value for {}, must be specified '
+                                         'with the format \'{}_tag\', \n where \'tag\' is one of {}'
+                                         ' for RV source(s) {}.'.format(multi_types[i], p,
+                                                                        self.rv_data['src_tags'],
+                                                                        self.rv_data['src_names']))
+
+        else:
+
+            if parameter not in self.legal_params:  # check if parameter name is incorrect
+
+                raise ValueError('\'{}\' is not a variable in the models, allowed parameters are: '
+                                 '{}.\n For more information, see ReadMe file or documentation in '
+                                 'the NestedSampling class file.'
+                                 .format(parameter, self.legal_params))
+
+            else:
+                self.fixed[parameter] = new_value  # update fixed value
+
+                # print updated parameter
+                print("* Default value for \'{}\' updated to: {}\n"
+                      .format(parameter, self.fixed[parameter]))
+
+                return
+
+    def update_prior(self, parameter, new_prior):
+        """Updates the prior distribution for the specified parameter.
+
+        This method allows the user to update the prior distribution for a particular parameter.
+
+        Parameters
+        ----------
+        parameter : str
+            The parameter name.
+        new_prior : list
+            A list three of values specifying the prior distribution, where the first element is
+            the type of prior (``"uniform"``, ``"gaussian"``, or ``"log"``), and subsequent
+            elements define the distribution.
+
+        Returns
+        -------
+        None
+            The prior distribution for the specified parameter is updated.
+
+        """
+        multi_source = ['v0', 'jit']
+        multi_types = ['RV systemic velocity', 'RV jitter']
+
+        if len(new_prior) < 3:
+            raise ValueError('The prior on {} cannot be updated to {}, as it is not in '
+                             'the correct format.\nThe allowed formats are:\n'
+                             '   Gaussian    ->  list : ["gaussian", mean, std]\n'
+                             '   Log-Uniform ->  list : ["log", log10(min), log10(max)]\n'
+                             '   Uniform     ->  list : ["uniform", min, max]\n\n'
+                             .format(parameter, new_prior))
+
+        # this is more complex for multi-instrument parameters
+        if parameter.split('_')[0] in multi_source:
+
+            for i, p in enumerate(multi_source):
+
+                if parameter.split('_')[0] == p:
+
+                    if len(parameter.split('_')) == 1:
+                        raise ValueError('To update the prior on {} please specify the instrument '
+                                         'by entering the parameter \n as \'{}_tag\', where '
+                                         '\'tag\' is one of {} for RV source(s) {}'
+                                         .format(multi_types[i], p,
+                                                 self.rv_data['src_tags'],
+                                                 self.rv_data['src_names']))
+
+                    try:
+                        ind = np.where(np.array(self.rv_data['src_tags'])
+                                       == parameter.split('_')[1])[0][0]
+                        self.prior[p][ind] = new_prior
+
+                    except IndexError:
+
+                        raise ValueError('Error in updating prior on {}, must be specified with '
+                                         'the format \'{}_tag\', \n where \'tag\' is one of {} for '
+                                         'RV source(s) {}.'.format(multi_types[i], p,
+                                                                   self.rv_data['src_tags'],
+                                                                   self.rv_data['src_names']))
+
+        else:
+
+            if parameter not in self.legal_params:  # check if parameter name is incorrect
+
+                raise ValueError('\'{}\' is not a variable in any of the models, allowed parameters'
+                                 ' are:\n{}\n\nSee the OrbDot documentation for more information '
+                                 'on model parameters.'.format(parameter, self.legal_params))
+            else:
+                self.prior[parameter] = new_prior  # update prior
+
+        # print updated prior
+        print("* Prior for \'{}\' updated to: {} *\n".format(parameter, new_prior))
+
+        return

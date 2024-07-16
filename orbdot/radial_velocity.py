@@ -1,8 +1,8 @@
 """
 RadialVelocity
---------------
-This module defines the :class:`RadialVelocity` class, which extends the capabilities of the
-:class:NestedSampling class to facilitate model fitting of radial velocity observations.
+==============
+This module defines the ``RadialVelocity`` class, which extends the capabilities of the
+``NestedSampling`` class to facilitate model fitting of radial velocity observations.
 """
 
 import os
@@ -16,24 +16,21 @@ from orbdot.nested_sampling import NestedSampling
 
 class RadialVelocity(NestedSampling):
     """
-    This class extends the capabilities of the :class:`NestedSampling` class to support radial
-    velocity applications.
+    This class utilizes the capabilities of the :class:`~orbdot.nested_sampling.NestedSampling`
+    class to facilitate model fitting of radial velocity data.
     """
+
     def __init__(self, rv_settings, prior, fixed_values):
         """Initializes the RadialVelocity class.
-
-        This class requires a prior, fixed parameter values, and settings for the nested sampling
-        analysis. The structure of the prior and fixed parameters are described further in the
-        :class:`NestedSampling` documentation.
 
         Parameters
         ----------
         rv_settings : dict
             A dictionary specifying directories and settings for the nested sampling analysis.
         prior : dict
-            A dictionary of the prior distributions for each parameter.
-        fixed_values : list
-            A list of default parameter values to be used if any given parameter is not varied.
+            A dictionary that defines the prior distributions for each parameter.
+        fixed_values : dict
+            A dictionary that specifies the fixed value for each parameter.
 
         """
         # directory for saving the output files
@@ -61,20 +58,15 @@ class RadialVelocity(NestedSampling):
         NestedSampling.__init__(self, fixed_values, prior)
 
     def rv_loglike_constant(self, theta):
-        """Computes the log-likelihood of a radial velocity model of an unchanging orbit.
+        """Calculates the log-likelihood for the constant-period radial velocity model.
 
-        This function calculates the log-likelihood for the radial velocity (RV) model
-        using the :meth:`models.rv_models.rv_constant` method.
-
-        Notes
-        -----
-        The error in the observed RVs is modified to be the sum in quadrature of the
-        measurement error and a jitter term for each instrument.
+        This function returns the log-likelihood for the constant-period radial velocity model
+        using the :meth:`~orbdot.models.rv_models.rv_constant` method.
 
         Parameters
         ----------
-        theta : tuple
-            A tuple containing the current state of the model parameters.
+        theta : array_like
+            An array containing parameter values, passed from the sampling algorithm.
 
         Returns
         -------
@@ -94,7 +86,6 @@ class RadialVelocity(NestedSampling):
         # calculate log-likelihood with the jitter term
         loglike = 0
         for i in self.rv_data['src_order']:
-
             # calculate model-predicted radial velocities
             rv_model = rv.rv_constant(tc, pp, ee, ww, kk, v0[i], dv, ddv, self.rv_data['trv'][i])
 
@@ -108,20 +99,15 @@ class RadialVelocity(NestedSampling):
         return loglike
 
     def rv_loglike_decay(self, theta):
-        """Computes the log-likelihood of a radial velocity model with orbital decay.
+        """Calculates the log-likelihood for the orbital decay radial velocity model.
 
-        This function calculates the log-likelihood for the radial velocity (RV) model
-        using the :meth:`models.rv_models.rv_decay` method.
-
-        Notes
-        -----
-        The error in the observed RVs is modified to be the sum in quadrature of the
-        measurement error and a jitter term for each instrument.
+        This function returns the log-likelihood for the orbital decay radial velocity model
+        using the :meth:`~orbdot.models.rv_models.rv_decay` method.
 
         Parameters
         ----------
-        theta : tuple
-            A tuple containing the current state of the model parameters.
+        theta : array_like
+            An array containing parameter values, passed from the sampling algorithm.
 
         Returns
         -------
@@ -142,7 +128,6 @@ class RadialVelocity(NestedSampling):
         # calculate log-likelihood with the jitter term
         loglike = 0
         for i in self.rv_data['src_order']:
-
             # calculate model-predicted radial velocities
             rv_model = rv.rv_decay(tc, pp, ee, ww, kk, v0[i], dv, ddv, dp, self.rv_data['trv'][i])
 
@@ -156,20 +141,15 @@ class RadialVelocity(NestedSampling):
         return loglike
 
     def rv_loglike_precession(self, theta):
-        """Computes the log-likelihood of a radial velocity model with apsidal precession.
+        """Calculates the log-likelihood for the apsidal precession radial velocity model.
 
-        This function calculates the log-likelihood for the radial velocity (RV) model
-        using the :meth:`models.rv_models.rv_decay` method.
-
-        Notes
-        -----
-        The error in the observed RVs is modified to be the sum in quadrature of the
-        measurement error and a jitter term for each instrument.
+        This function returns the log-likelihood for the apsidal precession radial velocity model
+        using the :meth:`~orbdot.models.rv_models.rv_precession` method.
 
         Parameters
         ----------
-        theta : tuple
-            A tuple containing the current state of the model parameters.
+        theta : array_like
+            An array containing parameter values, passed from the sampling algorithm.
 
         Returns
         -------
@@ -190,7 +170,6 @@ class RadialVelocity(NestedSampling):
         # calculate log-likelihood with the jitter term
         loglike = 0
         for i in self.rv_data['src_order']:
-
             # calculate model-predicted radial velocities
             rv_model = rv.rv_precession(tc, pp, ee, ww, kk, v0[i], dv, ddv, dw,
                                         self.rv_data['trv'][i])
@@ -205,26 +184,35 @@ class RadialVelocity(NestedSampling):
         return loglike
 
     def run_rv_fit(self, free_params, model='constant', suffix='', make_plot=True):
-        """Run a model fit of radial velocity data.
+        """Run a model fit of the radial velocity measurements.
 
-        An overhead function for running the RV model fits.
+        This method executes a model fit of the observed radial velocities using one of two
+        nested sampling packages, Nestle [1]_ or PyMultiNest [2]_.
 
         Parameters
         ----------
         free_params : list or tuple
-            The list of free parameters for the RV model fit. The parameter names should be
-            given as strings and may be in any order.
+            The list of free parameters for the model fit, in any order. The parameter names are
+            formatted as strings and must be a variable in the physical model. If the data are
+            from multiple sources, the instrument-dependent parameters (``"v0"`` and ``"jit"``)
+            are split into multiple variables before the fit is performed.
         model : str, optional
-            The chosen RV model ('constant', 'decay', or 'precession'), default is 'constant'.
+            The radial velocity model, must be ``"constant"``, ``"decay"``, or ``"precession"``.
+            Default is ``"constant"``.
         suffix : str, optional
-            An option to append a string to the end of the output files to differentiate fits.
+            A string appended to the end of the output file names.
         make_plot : bool, optional
-            Whether to generate an RV plot.
+            If True, an RV plot is generated. Default is True.
 
         Returns
         -------
-        None
-            The chosen model fit is performed.
+        res: dict
+            A dictionary containing the model fit results and settings.
+
+        References
+        ----------
+        .. [1] Nestle by Kyle Barbary. http://kbarbary.github.io/nestle
+        .. [2] PyMultiNest by Johannes Buchner. http://johannesbuchner.github.io/PyMultiNest
 
         """
         if model == 'constant':
@@ -243,33 +231,23 @@ class RadialVelocity(NestedSampling):
         return res
 
     def run_rv_constant(self, free_params, suffix='', make_plot=True):
-        """Fits the radial velocity model.
+        """Run a fit of the constant-period radial velocity model.
 
-        Performs a fit of the radial velocity (RV) data to an unchanging ('constant') orbit
-        model using one of the two sampling packages: Nestle or MultiNest, as specified in
-        the settings file.
-
-        Notes
-        -----
-        If there are multiple RV instruments, the mean velocity and jitter parameters are split
-        into the separate sources before the fit is performed.
+        This method executes a constant-period model fit of the observed radial velocities using
+        one of two nested sampling packages, Nestle [1]_ or PyMultiNest [2]_.
 
         Parameters
         ----------
-        free_params : list
-            The list of free parameters for the RV model fit. The parameter names should be given
-            as strings and may be in any order. The allowed parameters are:
-
-                't0'  --> reference transit time [BJD_TDB]
-                'P0'  --> orbital period in days
-                'e0' --> orbit eccentricity.
-                'w0' --> argument of pericenter of the planet's orbit in radians
-                'K'     --> radial velocity semi-amplitude in m/s
-                'v0'    --> RV zero velocity in m/s (instrument specific)
-                'jit'   --> RV jitter in m/s (instrument specific)
-                'dvdt'  --> a linear RV trend in m/s/day
-                'ddvdt' --> a quadratic RV trend in m/s^2/day
-
+        free_params : list or tuple
+            The list of free parameters for the model fit, in any order. The parameter names are
+            formatted as strings and must be in the set: ``["t0", "P0", "e0", "w0", "K", "v0",
+            "jit", "dvdt", "ddvdt"]``. If the data are from multiple sources,
+            the instrument-dependent parameters (``"v0"`` and ``"jit"``) are split into multiple
+            variables before the fit is performed.
+        suffix : str, optional
+            A string appended to the end of the output file names.
+        make_plot : bool, optional
+            If True, an RV plot is generated. Default is True.
         suffix : str, optional
             An option to append a string to the end of the output files to differentiate fits.
         make_plot : bool, optional
@@ -278,15 +256,22 @@ class RadialVelocity(NestedSampling):
         Returns
         -------
         res: dict
-            A dictionary containing the results of the fit for access within a script.
+            A dictionary containing the model fit results and settings.
 
-        Output Files
-        ------------
-            'rv_constant_summary.txt'  --> quick visual summary of the results
-            'rv_constant_results.json' --> complete set of results in a dictionary format
-            'rv_constant_corner.png'   --> a corner plot for diagnostics
-            'rv_constant_weighted_samples.txt' --> the weighted posterior samples
-            'rv_constant_random_samples.json'  --> 300 random samples for plotting
+        Notes
+        -----
+        The following output files are generated:
+
+        1. ``"rv_constant_summary.txt"``: a quick visual summary of the results
+        2. ``"rv_constant_results.json"``: the entire model fitting results dictionary.
+        3. ``"rv_constant_corner.png"``: a corner plot.
+        4. ``"rv_constant_weighted_samples.txt"``: the weighted posterior samples.
+        5. ``"rv_constant_random_samples.json"``: a random set of 300 posterior samples.
+
+        References
+        ----------
+        .. [1] Nestle by Kyle Barbary. http://kbarbary.github.io/nestle
+        .. [2] PyMultiNest by Johannes Buchner. http://johannesbuchner.github.io/PyMultiNest
 
         """
         free_params = np.array(free_params, dtype='<U16')
@@ -305,7 +290,7 @@ class RadialVelocity(NestedSampling):
         # raise an exception if any of the the free parameters are not valid
         utl.raise_not_valid_param_error(free_params, self.legal_params, illegal_params)
 
-        self.plot_settings['RV_PLOT']['data_file'+suffix] = self.rv_data_filename
+        self.plot_settings['RV_PLOT']['data_file' + suffix] = self.rv_data_filename
 
         # split multi-instrument RV parameters ('v0', 'jit') into separate sources
         free_params = utl.split_rv_instrument_params(self.rv_data['src_order'],
@@ -338,7 +323,7 @@ class RadialVelocity(NestedSampling):
 
         # save residuals
         resf = prefix + '_residuals' + suffix + '.txt'
-        self.save_rv_residuals('constant', res, resf)
+        self.save_rv_residuals(res, resf)
 
         # save results
         rf = prefix + '_results' + suffix + '.json'
@@ -354,8 +339,8 @@ class RadialVelocity(NestedSampling):
                           self.rv_sampler, suffix, prefix, illegal_params)
 
         # generate radial velocity plot
-        self.plot_settings['RV_PLOT']['rv_constant_results_file'+suffix] = rf
-        self.plot_settings['RV_PLOT']['rv_constant_samples_file'+suffix] = sf
+        self.plot_settings['RV_PLOT']['rv_constant_results_file' + suffix] = rf
+        self.plot_settings['RV_PLOT']['rv_constant_samples_file' + suffix] = sf
         self.plot_settings['RV_PLOT']['rv_constant_residuals_file' + suffix] = resf
 
         if make_plot:
@@ -365,33 +350,23 @@ class RadialVelocity(NestedSampling):
         return res
 
     def run_rv_decay(self, free_params, suffix='', make_plot=True):
-        """Fits a radial velocity model to a circular orbit with orbital decay.
+        """Run a fit of the orbital decay radial velocity model.
 
-        Performs a fit of the radial velocity (RV) data to a model with orbital decay using one
-        of the two sampling packages: Nestle or MultiNest, as specified in the settings file.
-
-        Notes
-        -----
-        If there are multiple RV instruments, the mean velocity and jitter parameters are split
-        into the separate sources before the fit is performed.
+        This method executes an orbital decay model fit of the observed radial velocities using
+        one of two nested sampling packages, Nestle [1]_ or PyMultiNest [2]_.
 
         Parameters
         ----------
-        free_params : list
-            The list of free parameters for the RV model fit. The parameter names should be given
-            as strings and may be in any order. The allowed parameters are:
-
-                't0'  --> reference transit time [BJD_TDB]
-                'P0'  --> orbital period in days
-                'e0' --> orbit eccentricity.
-                'w0' --> argument of pericenter of the planet's orbit in radians
-                'PdE'   --> a constant change of the orbital period in days per orbit
-                'K'     --> radial velocity semi-amplitude in m/s
-                'v0'    --> RV zero velocity in m/s (instrument specific)
-                'jit'   --> RV jitter in m/s (instrument specific)
-                'dvdt'  --> a linear RV trend in m/s/day
-                'ddvdt' --> a quadratic RV trend in m/s^2/day
-
+        free_params : list or tuple
+            The list of free parameters for the model fit, in any order. The parameter names are
+            formatted as strings and must be in the set: ``["t0", "P0", "PdE", "e0", "w0", "K",
+            "v0", "jit", "dvdt", "ddvdt"]``. If the data are from multiple sources,
+            the instrument-dependent parameters (``"v0"`` and ``"jit"``) are split into multiple
+            variables before the fit is performed.
+        suffix : str, optional
+            A string appended to the end of the output file names.
+        make_plot : bool, optional
+            If True, an RV plot is generated. Default is True.
         suffix : str, optional
             An option to append a string to the end of the output files to differentiate fits.
         make_plot : bool, optional
@@ -400,15 +375,22 @@ class RadialVelocity(NestedSampling):
         Returns
         -------
         res: dict
-            A dictionary containing the results of the fit for access within a script.
+            A dictionary containing the model fit results and settings.
 
-        Output Files
-        ------------
-            'rv_decay_summary.txt'  --> quick visual summary of the results
-            'rv_decay_results.json' --> complete set of results in a dictionary format
-            'rv_decay_corner.png'   --> a corner plot for diagnostics
-            'rv_decay_weighted_samples.txt' --> the weighted posterior samples
-            'rv_decay_random_samples.json'  --> 300 random samples for plotting
+        Notes
+        -----
+        The following output files are generated:
+
+        1. ``"rv_decay_summary.txt"``: a quick visual summary of the results
+        2. ``"rv_decay_results.json"``: the entire model fitting results dictionary.
+        3. ``"rv_decay_corner.png"``: a corner plot.
+        4. ``"rv_decay_weighted_samples.txt"``: the weighted posterior samples.
+        5. ``"rv_decay_random_samples.json"``: a random set of 300 posterior samples.
+
+        References
+        ----------
+        .. [1] Nestle by Kyle Barbary. http://kbarbary.github.io/nestle
+        .. [2] PyMultiNest by Johannes Buchner. http://johannesbuchner.github.io/PyMultiNest
 
         """
         free_params = np.array(free_params, dtype='<U16')
@@ -427,7 +409,7 @@ class RadialVelocity(NestedSampling):
         # raise an exception if the free parameter(s) are not valid
         utl.raise_not_valid_param_error(free_params, self.legal_params, illegal_params)
 
-        self.plot_settings['RV_PLOT']['data_file'+suffix] = self.rv_data_filename
+        self.plot_settings['RV_PLOT']['data_file' + suffix] = self.rv_data_filename
 
         # split multi-instrument RV parameters ('v0', 'jit') into separate sources
         free_params = utl.split_rv_instrument_params(self.rv_data['src_order'],
@@ -459,7 +441,7 @@ class RadialVelocity(NestedSampling):
 
         # save residuals
         resf = prefix + '_residuals' + suffix + '.txt'
-        self.save_rv_residuals('decay', res, resf)
+        self.save_rv_residuals(res, resf)
 
         # save results
         rf = prefix + '_results' + suffix + '.json'
@@ -475,9 +457,9 @@ class RadialVelocity(NestedSampling):
                           self.rv_sampler, suffix, prefix, illegal_params)
 
         # generate radial velocity plot
-        self.plot_settings['RV_PLOT']['rv_decay_results_file'+suffix] = rf
-        self.plot_settings['RV_PLOT']['rv_decay_samples_file'+suffix] = sf
-        self.plot_settings['RV_PLOT']['rv_decay_residuals_file'+suffix] = resf
+        self.plot_settings['RV_PLOT']['rv_decay_results_file' + suffix] = rf
+        self.plot_settings['RV_PLOT']['rv_decay_samples_file' + suffix] = sf
+        self.plot_settings['RV_PLOT']['rv_decay_residuals_file' + suffix] = resf
 
         if make_plot:
             plot_filename = prefix + '_plot' + suffix
@@ -486,33 +468,23 @@ class RadialVelocity(NestedSampling):
         return res
 
     def run_rv_precession(self, free_params, suffix='', make_plot=True):
-        """Fits a radial velocity model with apsidal precession.
+        """Run a fit of the apsidal precession radial velocity model.
 
-        Performs a fit of the radial velocity (RV) data to a model with apsidal precession using
-        one of the two sampling packages: Nestle or MultiNest, as specified in the settings file.
-
-        Notes
-        -----
-        If there are multiple RV instruments, the mean velocity and jitter parameters are split
-        into the separate sources before the fit is performed.
+        This method executes an apsidal precession model fit of the observed radial velocities using
+        one of two nested sampling packages, Nestle [1]_ or PyMultiNest [2]_.
 
         Parameters
         ----------
-        free_params : list
-            The list of free parameters for the RV model fit. The parameter names should be given
-            as strings and may be in any order. The allowed parameters are:
-
-                't0'  --> reference transit time [BJD_TDB]
-                'P0'  --> orbital period in days
-                'e0' --> orbit eccentricity
-                'w0' --> argument of pericenter of the planet's orbit in radians
-                'wdE'   --> a constant change of the (A.O.P) (precession) in radians per orbit
-                'K'     --> radial velocity semi-amplitude in m/s
-                'v0'    --> RV zero velocity in m/s (instrument specific)
-                'jit'   --> RV jitter in m/s (instrument specific)
-                'dvdt'  --> a linear RV trend in m/s/day
-                'ddvdt' --> a quadratic RV trend in m/s^2/day
-
+        free_params : list or tuple
+            The list of free parameters for the model fit, in any order. The parameter names are
+            formatted as strings and must be in the set: ``["t0", "P0", "e0", "w0", "wdE", "K",
+            "v0", "jit", "dvdt", "ddvdt"]``. If the data are from multiple sources,
+            the instrument-dependent parameters (``"v0"`` and ``"jit"``) are split into multiple
+            variables before the fit is performed.
+        suffix : str, optional
+            A string appended to the end of the output file names.
+        make_plot : bool, optional
+            If True, an RV plot is generated. Default is True.
         suffix : str, optional
             An option to append a string to the end of the output files to differentiate fits.
         make_plot : bool, optional
@@ -521,15 +493,22 @@ class RadialVelocity(NestedSampling):
         Returns
         -------
         res: dict
-            A dictionary containing the results of the fit for access within a script.
+            A dictionary containing the model fit results and settings.
 
-        Output Files
-        ------------
-            'rv_precession_summary.txt'  --> quick visual summary of the results
-            'rv_precession_results.json' --> complete set of results in a dictionary format
-            'rv_precession_corner.png'   --> a corner plot for diagnostics
-            'rv_precession_weighted_samples.txt' --> the weighted posterior samples
-            'rv_precession_random_samples.json'  --> 300 random samples for plotting
+        Notes
+        -----
+        The following output files are generated:
+
+        1. ``"rv_precession_summary.txt"``: a quick visual summary of the results
+        2. ``"rv_precession_results.json"``: the entire model fitting results dictionary.
+        3. ``"rv_precession_corner.png"``: a corner plot.
+        4. ``"rv_precession_weighted_samples.txt"``: the weighted posterior samples.
+        5. ``"rv_precession_random_samples.json"``: a random set of 300 posterior samples.
+
+        References
+        ----------
+        .. [1] Nestle by Kyle Barbary. http://kbarbary.github.io/nestle
+        .. [2] PyMultiNest by Johannes Buchner. http://johannesbuchner.github.io/PyMultiNest
 
         """
         free_params = np.array(free_params, dtype='<U16')
@@ -548,7 +527,7 @@ class RadialVelocity(NestedSampling):
         # raise an exception if the free parameter(s) are not valid
         utl.raise_not_valid_param_error(free_params, self.legal_params, illegal_params)
 
-        self.plot_settings['RV_PLOT']['data_file'+suffix] = self.rv_data_filename
+        self.plot_settings['RV_PLOT']['data_file' + suffix] = self.rv_data_filename
 
         # split multi-instrument RV parameters ('v0', 'jit') into separate sources
         free_params = utl.split_rv_instrument_params(self.rv_data['src_order'],
@@ -568,7 +547,8 @@ class RadialVelocity(NestedSampling):
         # if selected, run the MultiNest sampling algorithm
         elif self.rv_sampler == 'multinest':
             res, samples, random_samples = self.run_multinest(self.rv_loglike_precession,
-                                                        free_params, self.rv_n_points, self.rv_tol,
+                                                              free_params, self.rv_n_points,
+                                                              self.rv_tol,
                                                               prefix + suffix)
 
         else:
@@ -580,7 +560,7 @@ class RadialVelocity(NestedSampling):
 
         # save residuals
         resf = prefix + '_residuals' + suffix + '.txt'
-        self.save_rv_residuals('precession', res, resf)
+        self.save_rv_residuals(res, resf)
 
         # save results
         rf = prefix + '_results' + suffix + '.json'
@@ -596,9 +576,9 @@ class RadialVelocity(NestedSampling):
                           self.rv_sampler, suffix, prefix, illegal_params)
 
         # generate radial velocity plot
-        self.plot_settings['RV_PLOT']['rv_precession_results_file'+suffix] = rf
-        self.plot_settings['RV_PLOT']['rv_precession_samples_file'+suffix] = sf
-        self.plot_settings['RV_PLOT']['rv_precession_residuals_file'+suffix] = resf
+        self.plot_settings['RV_PLOT']['rv_precession_results_file' + suffix] = rf
+        self.plot_settings['RV_PLOT']['rv_precession_samples_file' + suffix] = sf
+        self.plot_settings['RV_PLOT']['rv_precession_residuals_file' + suffix] = resf
 
         if make_plot:
             plot_filename = prefix + '_plot' + suffix
@@ -606,19 +586,18 @@ class RadialVelocity(NestedSampling):
 
         return res
 
-    def save_rv_residuals(self, model, fit_results, outfile):
-        """Save radial velocity model fit residuals to a .csv file.
+    def save_rv_residuals(self, fit_results, outfile):
+        """Saves the best-fit radial velocity model residuals.
 
-        This method saves the residuals of the radial velocity fit to a .csv file. The
-        residuals are calculated as the difference between the observed radial velocities
-        and the model predictions obtained from the fit results.
+        This method writes to a file the difference between the observed radial velocities
+        and the best-fit model, ie. the "residuals".
 
         Parameters
         ----------
         fit_results : dict
             Dictionary containing the results of the radial velocity fit.
         outfile : str
-            Path to the file where the residuals are to be saved.
+            Output file path name.
 
         Returns
         -------
@@ -635,7 +614,7 @@ class RadialVelocity(NestedSampling):
             # write header row
             writer.writerow(['Time', 'Velocity', 'Err', 'Source'])
 
-            if model == 'constant':
+            if fit_results['model'] == 'constant':
 
                 # iterate over radial velocity data sets
                 for i in self.rv_data['src_order']:
@@ -649,7 +628,7 @@ class RadialVelocity(NestedSampling):
                     writer.writerows(zip(self.rv_data['trv'][i], self.rv_data['rvs'][i] - rv_model,
                                          self.rv_data['err'][i], self.rv_data['src'][i]))
 
-            if model == 'decay':
+            if fit_results['model'] == 'decay':
 
                 # iterate over radial velocity data sets
                 for i in self.rv_data['src_order']:
@@ -663,15 +642,15 @@ class RadialVelocity(NestedSampling):
                     writer.writerows(zip(self.rv_data['trv'][i], self.rv_data['rvs'][i] - rv_model,
                                          self.rv_data['err'][i], self.rv_data['src'][i]))
 
-            if model == 'precession':
+            if fit_results['model'] == 'precession':
 
                 # iterate over radial velocity data sets
                 for i in self.rv_data['src_order']:
                     rv_model = rv.rv_precession(vals['t0'][0], vals['P0'][0],
-                                           vals['e0'][0], vals['w0'][0], vals['K'][0],
-                                           vals['v0_' + self.rv_data['src_tags'][i]][0],
-                                           vals['dvdt'][0], vals['ddvdt'][0], vals['wdE'][0],
-                                           self.rv_data['trv'][i])
+                                                vals['e0'][0], vals['w0'][0], vals['K'][0],
+                                                vals['v0_' + self.rv_data['src_tags'][i]][0],
+                                                vals['dvdt'][0], vals['ddvdt'][0], vals['wdE'][0],
+                                                self.rv_data['trv'][i])
 
                     # write time, velocity residuals, velocity errors, and source to CSV
                     writer.writerows(zip(self.rv_data['trv'][i], self.rv_data['rvs'][i] - rv_model,

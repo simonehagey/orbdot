@@ -18,6 +18,7 @@ import orbdot.tools.utilities as utl
 import orbdot.models.rv_models as rv
 import orbdot.models.ttv_models as ttv
 
+
 def make_ttv_plot(plot_settings, outfile, suffix=''):
     """Generate a TTV plot (observed minus calculated).
 
@@ -62,19 +63,19 @@ def make_ttv_plot(plot_settings, outfile, suffix=''):
     pad_inches = plot_settings['TTV_PLOT']['pad_inches']
 
     # load full dataset
-    data_file = plot_settings['TTV_PLOT']['data_file'+suffix]
+    data_file = plot_settings['TTV_PLOT']['data_file' + suffix]
     data = utl.read_ttv_data(data_file)
 
     try:
 
         # load constant-period fit results
-        with open(plot_settings['TTV_PLOT']['ttv_constant_results_file'+suffix]) as jf:
+        with open(plot_settings['TTV_PLOT']['ttv_constant_results_file' + suffix]) as jf:
             rf_c = json.load(jf)
             res_c = rf_c['params']
 
         # load constant-period samples
         s_orb_c, s_tdp_c, s_rv_c = \
-            read_random_samples(plot_settings['TTV_PLOT']['ttv_constant_samples_file'+suffix])
+            read_random_samples(plot_settings['TTV_PLOT']['ttv_constant_samples_file' + suffix])
 
     except KeyError:
         print('ERROR: Missing \'*_results{}.json\' file for constant-period TTV fit. The O-C plot '
@@ -121,7 +122,7 @@ def make_ttv_plot(plot_settings, outfile, suffix=''):
 
         # generate best-fit constant-period model (eclipses) over full epoch range
         cmod_full_ecl = ttv.ttv_constant(res_c['t0'][0], res_c['P0'][0], res_c['e0'][0],
-                                        res_c['w0'][0], epochs_full, primary=False)
+                                         res_c['w0'][0], epochs_full, primary=False)
 
         # plot best-fit constant period model (eclipses) over full epoch range
         ax2.plot(epochs_full, np.array(cmod_full_ecl - cmod_full_ecl) * 1440,
@@ -139,7 +140,7 @@ def make_ttv_plot(plot_settings, outfile, suffix=''):
     elif eclipses and not transits:
         # generate best-fit constant-period model (eclipses) over full epoch range
         cmod_full_ecl = ttv.ttv_constant(res_c['t0'][0], res_c['P0'][0], res_c['e0'][0],
-                                        res_c['w0'][0], epochs_full, primary=False)
+                                         res_c['w0'][0], epochs_full, primary=False)
 
         # plot best-fit constant period model (eclipses) over full epoch range
         ax1.plot(epochs_full, np.array(cmod_full_ecl - cmod_full_ecl) * 1440,
@@ -152,7 +153,7 @@ def make_ttv_plot(plot_settings, outfile, suffix=''):
 
             # generate constant-period model (transits)
             smod_c = ttv.ttv_constant(s_orb_c[i][0], s_orb_c[i][1], s_orb_c[i][2],
-                                       s_orb_c[i][3], epochs_full, primary=True)
+                                      s_orb_c[i][3], epochs_full, primary=True)
 
             # plot constant-period model (transits)
             ax1.plot(epochs_full, np.array(smod_c - cmod_full) * 1440,
@@ -160,7 +161,7 @@ def make_ttv_plot(plot_settings, outfile, suffix=''):
 
             # generate constant-period model (eclipses)
             smod_c_ecl = ttv.ttv_constant(s_orb_c[i][0], s_orb_c[i][1], s_orb_c[i][2],
-                                             s_orb_c[i][3], epochs_full, primary=False)
+                                          s_orb_c[i][3], epochs_full, primary=False)
 
             # plot constant-period model (eclipses)
             ax2.plot(epochs_full, np.array(smod_c_ecl - cmod_full_ecl) * 1440,
@@ -178,7 +179,7 @@ def make_ttv_plot(plot_settings, outfile, suffix=''):
         elif eclipses and not transits:
             # generate constant-period model (eclipses)
             smod_c_ecl = ttv.ttv_constant(s_orb_c[i][0], s_orb_c[i][1], s_orb_c[i][2],
-                                             s_orb_c[i][3], epochs_full, primary=False)
+                                          s_orb_c[i][3], epochs_full, primary=False)
 
             # plot constant-period model (eclipses)
             ax1.plot(epochs_full, np.array(smod_c_ecl - cmod_full_ecl) * 1440,
@@ -187,13 +188,13 @@ def make_ttv_plot(plot_settings, outfile, suffix=''):
     try:
 
         # load orbital decay fit results
-        with open(plot_settings['TTV_PLOT']['ttv_decay_results_file'+suffix]) as jf:
+        with open(plot_settings['TTV_PLOT']['ttv_decay_results_file' + suffix]) as jf:
             rf_d = json.load(jf)
             res_d = rf_d['params']
 
         # load orbital decay samples
         s_orb_d, s_tdp_d, s_rv_d \
-            = read_random_samples(plot_settings['TTV_PLOT']['ttv_decay_samples_file'+suffix])
+            = read_random_samples(plot_settings['TTV_PLOT']['ttv_decay_samples_file' + suffix])
 
         if transits and eclipses:
             # generate best-fit orbital decay model (transits) over full epoch range
@@ -206,8 +207,8 @@ def make_ttv_plot(plot_settings, outfile, suffix=''):
 
             # generate best-fit orbital decay model (eclipses) over full epoch range
             dmod_full_ecl = ttv.ttv_decay(res_d['t0'][0], res_d['P0'][0], res_d['PdE'][0],
-                                              res_d['e0'][0], res_d['w0'][0], epochs_full,
-                                              primary=False)
+                                          res_d['e0'][0], res_d['w0'][0], epochs_full,
+                                          primary=False)
 
             # plot best-fit orbital decay model (eclipses) over full epoch range
             ax2.plot(epochs_full, np.array(dmod_full_ecl - cmod_full_ecl) * 1440,
@@ -226,13 +227,12 @@ def make_ttv_plot(plot_settings, outfile, suffix=''):
         elif eclipses and not transits:
             # generate best-fit orbital decay model (eclipses) over full epoch range
             dmod_full_ecl = ttv.ttv_decay(res_d['t0'][0], res_d['P0'][0], res_d['PdE'][0],
-                                              res_d['e0'][0], res_d['w0'][0], epochs_full,
-                                              primary=False)
+                                          res_d['e0'][0], res_d['w0'][0], epochs_full,
+                                          primary=False)
 
             # plot best-fit orbital decay model (eclipses) over full epoch range
             ax1.plot(epochs_full, np.array(dmod_full_ecl - cmod_full_ecl) * 1440,
                      color='#9c3535', label='Orbital Decay', linewidth=m_lw, alpha=m_alpha)
-
 
         # plot 300 random samples orbital decay model fit
         for i in range(np.shape(s_orb_d)[0]):
@@ -241,7 +241,7 @@ def make_ttv_plot(plot_settings, outfile, suffix=''):
 
                 # generate orbital decay model (transits)
                 smod_d = ttv.ttv_decay(s_orb_d[i][0], s_orb_d[i][1], s_tdp_d[i][0],
-                                            s_orb_d[i][2], s_orb_d[i][3], epochs_full, primary=True)
+                                       s_orb_d[i][2], s_orb_d[i][3], epochs_full, primary=True)
 
                 # generate orbital decay model (transits)
                 ax1.plot(epochs_full, np.array(smod_d - cmod_full) * 1440,
@@ -249,7 +249,7 @@ def make_ttv_plot(plot_settings, outfile, suffix=''):
 
                 # generate orbital decay model (eclipses)
                 smod_d_ecl = ttv.ttv_decay(s_orb_d[i][0], s_orb_d[i][1], s_tdp_d[i][0],
-                                        s_orb_d[i][2], s_orb_d[i][3], epochs_full, primary=False)
+                                           s_orb_d[i][2], s_orb_d[i][3], epochs_full, primary=False)
 
                 # generate orbital decay model (eclipses)
                 ax2.plot(epochs_full, np.array(smod_d_ecl - cmod_full_ecl) * 1440,
@@ -268,7 +268,7 @@ def make_ttv_plot(plot_settings, outfile, suffix=''):
 
                 # generate orbital decay model (eclipses)
                 smod_d_ecl = ttv.ttv_decay(s_orb_d[i][0], s_orb_d[i][1], s_tdp_d[i][0],
-                                        s_orb_d[i][2], s_orb_d[i][3], epochs_full, primary=False)
+                                           s_orb_d[i][2], s_orb_d[i][3], epochs_full, primary=False)
 
                 # generate orbital decay model (eclipses)
                 ax1.plot(epochs_full, np.array(smod_d_ecl - cmod_full_ecl) * 1440,
@@ -280,13 +280,13 @@ def make_ttv_plot(plot_settings, outfile, suffix=''):
     try:
 
         # load apsidal precession fit results
-        with open(plot_settings['TTV_PLOT']['ttv_precession_results_file'+suffix]) as jf:
+        with open(plot_settings['TTV_PLOT']['ttv_precession_results_file' + suffix]) as jf:
             rf_p = json.load(jf)
             res_p = rf_p['params']
 
         # load apsidal precession samples
         s_orb_p, s_tdp_p, s_rv_p = \
-            read_random_samples(plot_settings['TTV_PLOT']['ttv_precession_samples_file'+suffix])
+            read_random_samples(plot_settings['TTV_PLOT']['ttv_precession_samples_file' + suffix])
 
         if transits and eclipses:
 
@@ -301,8 +301,8 @@ def make_ttv_plot(plot_settings, outfile, suffix=''):
 
             # generate best-fit apsidal precession model (eclipses) over full epoch range
             pmod_full_ecl = ttv.ttv_precession(res_p['t0'][0], res_p['P0'][0],
-                                                   res_p['e0'][0], res_p['w0'][0],
-                                                   res_p['wdE'][0], epochs_full, primary=False)
+                                               res_p['e0'][0], res_p['w0'][0],
+                                               res_p['wdE'][0], epochs_full, primary=False)
 
             # plot best-fit apsidal precession model (eclipses) over full epoch range
             ax2.plot(epochs_full, np.array(pmod_full_ecl - cmod_full_ecl) * 1440,
@@ -322,8 +322,8 @@ def make_ttv_plot(plot_settings, outfile, suffix=''):
         elif eclipses and not transits:
             # generate best-fit apsidal precession model (eclipses) over full epoch range
             pmod_full_ecl = ttv.ttv_precession(res_p['t0'][0], res_p['P0'][0],
-                                                   res_p['e0'][0], res_p['w0'][0],
-                                                   res_p['wdE'][0], epochs_full, primary=False)
+                                               res_p['e0'][0], res_p['w0'][0],
+                                               res_p['wdE'][0], epochs_full, primary=False)
 
             # plot best-fit apsidal precession model (eclipses) over full epoch range
             ax1.plot(epochs_full, np.array(pmod_full_ecl - cmod_full_ecl) * 1440,
@@ -345,8 +345,8 @@ def make_ttv_plot(plot_settings, outfile, suffix=''):
 
                 # generate apsidal precession model (eclipses)
                 smod_p_ecl = ttv.ttv_precession(s_orb_p[i][0], s_orb_p[i][1], s_orb_p[i][2],
-                                                    s_orb_p[i][3], s_tdp_p[i][1], epochs_full,
-                                                    primary=False)
+                                                s_orb_p[i][3], s_tdp_p[i][1], epochs_full,
+                                                primary=False)
 
                 # plot apsidal precession model (eclipses)
                 ax2.plot(epochs_full, np.array(smod_p_ecl - cmod_full_ecl) * 1440,
@@ -365,8 +365,8 @@ def make_ttv_plot(plot_settings, outfile, suffix=''):
             elif eclipses and not transits:
                 # generate apsidal precession model (eclipses)
                 smod_p_ecl = ttv.ttv_precession(s_orb_p[i][0], s_orb_p[i][1], s_orb_p[i][2],
-                                                    s_orb_p[i][3], s_tdp_p[i][1], epochs_full,
-                                                    primary=False)
+                                                s_orb_p[i][3], s_tdp_p[i][1], epochs_full,
+                                                primary=False)
 
                 # plot apsidal precession model (eclipses)
                 ax1.plot(epochs_full, np.array(smod_p_ecl - cmod_full_ecl) * 1440,
@@ -386,8 +386,8 @@ def make_ttv_plot(plot_settings, outfile, suffix=''):
 
         # generate best-fit constant-period model (eclipses)
         cmod_obs_ecl = ttv.ttv_constant(res_c['t0'][0], res_c['P0'][0],
-                                           res_c['e0'][0], res_c['w0'][0],
-                                           data['epoch_ecl'], primary=False)
+                                        res_c['e0'][0], res_c['w0'][0],
+                                        data['epoch_ecl'], primary=False)
 
         # calculate O-C values for eclipse data
         oc_ecl = data['bjd_ecl'] - cmod_obs_ecl
@@ -404,8 +404,8 @@ def make_ttv_plot(plot_settings, outfile, suffix=''):
     elif eclipses and not transits:
         # generate best-fit constant-period model (eclipses)
         cmod_obs_ecl = ttv.ttv_constant(res_c['t0'][0], res_c['P0'][0],
-                                           res_c['e0'][0], res_c['w0'][0],
-                                           data['epoch_ecl'], primary=False)
+                                        res_c['e0'][0], res_c['w0'][0],
+                                        data['epoch_ecl'], primary=False)
 
         # calculate O-C values for eclipse data
         oc_ecl = data['bjd_ecl'] - cmod_obs_ecl
@@ -464,7 +464,7 @@ def make_ttv_plot(plot_settings, outfile, suffix=''):
     try:
         # generate best-fit constant-period model for clipped epochs (transits)
         cmod_obs_clipped = ttv.ttv_constant(res_c['t0'][0], res_c['P0'][0],
-                                               res_c['e0'], res_c['w0'], clipped_data['epoch'])
+                                            res_c['e0'], res_c['w0'], clipped_data['epoch'])
 
         # calculate O-C values for clipped transit data
         clipped_OCs = clipped_data['bjd'] - cmod_obs_clipped
@@ -600,7 +600,7 @@ def make_rv_plots(plot_settings, outfile, suffix='', model='constant'):
     pad_inches = plot_settings['RV_PLOT']['pad_inches']
 
     # load full dataset
-    data_file = plot_settings['RV_PLOT']['data_file'+suffix]
+    data_file = plot_settings['RV_PLOT']['data_file' + suffix]
     data = utl.read_rv_data(data_file)
 
     # start subplots
@@ -613,18 +613,18 @@ def make_rv_plots(plot_settings, outfile, suffix='', model='constant'):
 
     if model == 'constant':
         CONSTANT = True
-        results_file = plot_settings['RV_PLOT']['rv_constant_results_file'+suffix]
-        samples_file = plot_settings['RV_PLOT']['rv_constant_samples_file'+suffix]
+        results_file = plot_settings['RV_PLOT']['rv_constant_results_file' + suffix]
+        samples_file = plot_settings['RV_PLOT']['rv_constant_samples_file' + suffix]
 
     elif model == 'decay':
         DECAY = True
-        results_file = plot_settings['RV_PLOT']['rv_decay_results_file'+suffix]
-        samples_file = plot_settings['RV_PLOT']['rv_decay_samples_file'+suffix]
+        results_file = plot_settings['RV_PLOT']['rv_decay_results_file' + suffix]
+        samples_file = plot_settings['RV_PLOT']['rv_decay_samples_file' + suffix]
 
     elif model == 'precession':
         PRECESSION = True
-        results_file = plot_settings['RV_PLOT']['rv_precession_results_file'+suffix]
-        samples_file = plot_settings['RV_PLOT']['rv_precession_samples_file'+suffix]
+        results_file = plot_settings['RV_PLOT']['rv_precession_results_file' + suffix]
+        samples_file = plot_settings['RV_PLOT']['rv_precession_samples_file' + suffix]
 
     else:
         raise ValueError('Invalid RV model, must be \'constant\', \'decay\', or \'precession\'.')
@@ -754,7 +754,6 @@ def make_rv_plots(plot_settings, outfile, suffix='', model='constant'):
 
             x_fold = []
             for t in data['trv'][i]:
-
                 E = int((t - res['t0'][0]) / res['P0'][0])
                 P_anom = res['P0'][0] / (1 - res['wdE'][0] / (2 * np.pi))
                 nu = TWOPI / P_anom
@@ -914,7 +913,7 @@ def make_rv_plots(plot_settings, outfile, suffix='', model='constant'):
             E_tra = (2 * np.arctan(
                 np.sqrt((1 - res['e0'][0]) / (1 + res['e0'][0])) * np.tan(f_tra / 2))) % TWOPI
             M_tra = E_tra - res['e0'][0] * np.sin(E_tra)
-            t_tra = res['t0'][0] + res['P0'][0] * E  - \
+            t_tra = res['t0'][0] + res['P0'][0] * E - \
                     (res['e0'][0] * P_anom / np.pi) * np.cos(w_p)
 
             t_p = t_tra - (1 / nu) * M_tra
@@ -999,7 +998,7 @@ def make_rv_plots(plot_settings, outfile, suffix='', model='constant'):
         tmax = Time([max(times_observed)], format='jd', scale='tdb')
         label_max = 'Orbit on ' + (tmax.to_value('iso', subfmt='date')[0]) + r' ($t_{\rm max}$)'
 
-        ax3.plot(x_fold_max, y_fold_max, label=label_max, color='k', linestyle='-',  linewidth=1)
+        ax3.plot(x_fold_max, y_fold_max, label=label_max, color='k', linestyle='-', linewidth=1)
 
     # plot zero lines for reference
     ax1.axhline(y=0, linestyle='-', color='grey', linewidth=1)
@@ -1010,10 +1009,11 @@ def make_rv_plots(plot_settings, outfile, suffix='', model='constant'):
 
     # calculate the true anomaly, eccentric anomaly, and mean anomaly at t0
     f_t0 = (np.pi / 2 - res['w0'][0]) % (2 * np.pi)
-    E_t0 = (2 * np.arctan(np.sqrt((1 - res['e0'][0]) / (1 + res['e0'][0])) * np.tan(f_t0 / 2))) % (2 * np.pi)
+    E_t0 = (2 * np.arctan(np.sqrt((1 - res['e0'][0]) / (1 + res['e0'][0])) * np.tan(f_t0 / 2))) % (
+            2 * np.pi)
     M_t0 = E_t0 - res['e0'][0] * np.sin(E_t0)
     ax3.axvline(x=M_t0, linestyle='--', color='dimgrey', linewidth=1)
-    ax3.text(M_t0-0.15, min(y_fold), 'transits', fontsize=11, rotation=90)
+    ax3.text(M_t0 - 0.15, min(y_fold), 'transits', fontsize=11, rotation=90)
 
     # add text for t0 date
     t = Time([str(res['t0'][0])], format='jd', scale='tdb')
@@ -1025,7 +1025,7 @@ def make_rv_plots(plot_settings, outfile, suffix='', model='constant'):
               r'$5\pi/4$', r'$3\pi/2$', r'$7\pi/4$', r'$2\pi$']
     ax3.set_xticks(np.arange(0, 2 * np.pi + 0.01, np.pi / 4))
     ax3.set_xticklabels(labels)
-    ax3.set_xlim(0, 2*np.pi)
+    ax3.set_xlim(0, 2 * np.pi)
 
     plt.suptitle(plot_settings['RV_PLOT']['title'], fontsize=18)
     ax1.set_title('All Time')
@@ -1071,10 +1071,10 @@ def corner_plot(dic, samples, params, outfile):
 
     # update plot settings
     plot_dic = {
-          "figure.figsize": [10, 10], "font.family": "serif",
-          "xtick.direction": "in", "ytick.direction": "in",
-          "xtick.labelsize": 11, "ytick.labelsize": 11,
-          "axes.labelsize": 14, "axes.titlesize": 14}
+        "figure.figsize": [10, 10], "font.family": "serif",
+        "xtick.direction": "in", "ytick.direction": "in",
+        "xtick.labelsize": 11, "ytick.labelsize": 11,
+        "axes.labelsize": 14, "axes.titlesize": 14}
     plt.rcParams.update(plot_dic)
 
     # generate corner plot
@@ -1140,9 +1140,9 @@ def read_random_samples(data_file, delim='\t'):
             rdv.append(float(row[14]))
             rdv.append(float(row[15]))
 
-            orbital_elements.append(orb)   # t0 P0 e0 w0 i0 O0
-            time_dependent.append(tdp)     # PdE wdE edE idE OdE
-            radial_velocity.append(rdv)    # K v0 jit dvdt ddvdt
+            orbital_elements.append(orb)  # t0 P0 e0 w0 i0 O0
+            time_dependent.append(tdp)  # PdE wdE edE idE OdE
+            radial_velocity.append(rdv)  # K v0 jit dvdt ddvdt
 
     # make arrays
     orbital_elements = np.array(orbital_elements)

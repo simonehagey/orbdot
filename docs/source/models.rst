@@ -323,6 +323,38 @@ Transit Duration Models
 
    Under active development and testing.
 
+.. math::
+    T = \frac{P}{\pi} \frac{\varrho_{\mathrm{c}}^2}{\sqrt{1-e^2}} \arcsin \left(
+    \frac{\sqrt{ 1-a_R^2 \varrho_{\mathrm{c}}^2 \cos ^2 i}}{a_R \varrho_{\mathrm{c}}
+    \sin i}\right)
+
+Constant-Period
+---------------
+
+.. autofunction:: orbdot.models.tdv_models.tdv_constant
+
+Orbital Decay
+-------------
+
+.. math::
+    \frac{\partial T}{\partial a} = \frac{P}{\pi} \frac{\varrho_{\mathrm{c}}^2}{a
+    \sqrt{1-e^2}}\left(\frac{3}{2} \arcsin \left(\frac{\sqrt{1-b^2}}{a_R \varrho_{
+    \mathrm{c}} \sin i}\right)\right \left.-\frac{1}{\sqrt{1-b^2} \sqrt{a_R^2
+    \varrho_{\mathrm{ c}}^2-1}}\right)
+
+.. autofunction:: orbdot.models.tdv_models.tdv_decay
+
+Apsidal Precession
+------------------
+
+.. math::
+    \frac{\partial T}{\partial \omega} =  \frac{P}{\pi} \frac{e \varrho_{\mathrm{
+    c}}^3 \cos\omega}{\left(1-e^2\right)^{3 / 2}}\left(\frac{1}{\sqrt{1-b^2} \sqrt{
+    a_R^2 \varrho_{\mathrm{c}}^2-1}}\right \left -2 \arcsin \left(\frac{\sqrt{
+    1-b^2}}{a_R \varrho_{\mathrm{c}} \sin i}\right)\right)
+
+.. autofunction:: orbdot.models.tdv_models.tdv_precession
+
 ------------
 
 .. _theory_module:

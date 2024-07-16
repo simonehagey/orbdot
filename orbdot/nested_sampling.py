@@ -1,13 +1,8 @@
 """
 NestedSampling
 ==============
-The :class:`~orbdot.nested_sampling.NestedSampling` class contains all of the methods required to
-run the model fits defined in the :class:`TransitTiming`, :class:`RadialVelocity`,
-:class:`TransitDuration`, and :class:`JointFit` classes. It is designed such that running a model
-fit simply requires a log-likelihood function and list of free parameter names, meaning that any
-classes inheriting :class:`~orbdot.nested_sampling.NestedSampling` can be written quickly and
-concisely. It is straightforward to fit your own model, as long as the free variables are
-consistent with the OrbDot parameter set.
+This module defines the ``NestedSampling`` class, which contains all of the methods required to
+run the model fitting routines defined in the OrbDot classes.
 """
 
 import os
@@ -23,33 +18,15 @@ from orbdot.tools.plots import corner_plot
 
 class NestedSampling:
     """
-    Sampler
-    -------
-    To perform the nested sampling methods the user may choose between two packages: Nestle [1]_
-    and PyMultiNest [2]_. PyMultiNest is generally faster and more robust, but it can be tricky to
-    install, thus it is not a requirement to use this code. The desired sampler is specified in the
-    settings file as 'nestle' or 'multinest'.
+    This class contains all of the methods required to run the model fitting routines defined in the
+    :class:`~orbdot.transit_timing.TransitTiming`, :class:`~orbdot.radial_velocity.RadialVelocity`,
+    :class:`~orbdot.transit_duration.TransitDuration`, and :class:`~orbdot.joint_fit.JointFit`
+    classes.
 
-    Free Parameters
-    ---------------
-    To keep the use of this class clean and concise, there is a main set of 'allowed' model
-    parameters. For every model fit, the list of free parameters is compared to this set and the
-    given order is recorded. This means that any number of free parameters can be provided in any
-    order as long as they are part of the physical model (see :ref:`model_parameters`).
-
-    Fixed Parameter Values
-    ----------------------
-    The fixed values are used as the default for any parameters that are not set to vary in a
-    model fit. The built-in default values are defined in the the 'defaults/info_file.json'
-    file, but the user may specify their own in the star-planet system 'info' files given to
-    the :class:'StarPlanet' class.
-
-    Priors
-    ------
-    The prior is structured as a dictionary with keys for each parameter, with each value
-    being a list specifying the prior type and bounds. The built-in priors are defined in the
-    'defaults/fit_settings.json' file, but the user should specify their own in the
-    'settings' file that is given to the :class:'StarPlanet' class.
+    The user may choose between two packages, Nestle [1]_ or PyMultiNest [2]_. PyMultiNest is
+    generally faster and more robust, but it can be tricky to install, thus it is not a
+    requirement to use this code. The desired sampler is specified in the settings file as
+    ``"nestle"`` or ``"multinest"``.
 
     References
     ----------
@@ -57,9 +34,9 @@ class NestedSampling:
     .. [2] PyMultiNest by Johannes Buchner. http://johannesbuchner.github.io/PyMultiNest/
 
     """
+
     def __init__(self, fixed_values, prior):
-        """
-        Initiating this class requires both the priors on each parameter and their fixed values.
+        """Initialize the NestedSampling class.
 
         Parameters
         ----------
@@ -75,9 +52,9 @@ class NestedSampling:
     def run_nestle(self, loglike, free_params, method, n_points, tol):
         """Runs a model fit with the nested sampling package Nestle.
 
-        This is the main function that performs a model fit using the Nestle package by
-        Kyle Barbary [1]_. The Nestle package is imported within this function so that it does
-        not need to be installed if the user already uses PyMultiNest.
+        This method is an overhead function that performs a model fit using the Nestle Python
+        package [1]_. Nestle is imported within this function, so that it does not need to be
+        installed if PyMultiNest is preferred.
 
         Parameters
         ----------
@@ -86,8 +63,8 @@ class NestedSampling:
         free_params : list
             A list of parameters to vary in the model fit.
         method : str
-            The Nestle sampling method. Can be 'multi' for multiple ellipsoids, 'single' for
-            single ellipsoid, or 'classic' for MCMC exploration.
+            The Nestle sampling type, which may be "multi" for multiple ellipsoids, "single" for
+            single ellipsoid, or "classic" for classic MCMC exploration.
         n_points : int
             The number of live points for the nested sampling algorithm.
         tol : int
@@ -96,24 +73,23 @@ class NestedSampling:
         Returns
         -------
         tuple
-            A tuple containing:
-                - A dictionary containing the nested sampling results.
-                - The (weighted) posterior samples.
-                - A set of 300 random samples for plotting/visualization.
+            A tuple with the following elements:
+              1. A dictionary with the nested sampling results.
+              2. The (weighted) posterior samples.
+              3. A set of 300 random samples for plotting.
 
         References
         ----------
-        .. [1] Nestle by Kyle Barbary. `http://kbarbary.github.io/nestle`
+        .. [1] Nestle by Kyle Barbary. http://kbarbary.github.io/nestle
 
         """
         import nestle
 
-        # assign free parameters
+        # assign the list of free parameters
         self.vary = free_params
 
-        # for a circular orbit, set 'w0'=0
+        # for a circular orbit, ensure that w0=0.0
         if 'e0' not in self.vary and self.fixed['e0'] == 0.0 and self.fixed['w0'] != 0.0:
-
             print('\nNOTE: the default value of \'w0\' was set to zero, as this it is a '
                   'circular orbit. The previous value was {} rad.\n'.format(self.fixed['w0']))
 
@@ -122,7 +98,7 @@ class NestedSampling:
         print('Number of live points: ', n_points)
         print('Evidence tolerance: ', tol)
 
-        # define number of dimensions
+        # define the number of dimensions
         self.n_dims = len(self.vary)
 
         # set parameter indices
@@ -144,7 +120,7 @@ class NestedSampling:
         weights = res.weights
         norm_weights = weights / np.max(weights)
         keep_indx = np.where(np.random.rand(len(norm_weights)) < norm_weights)[0]
-        weighted_samples = res.samples[keep_indx, :]  # weighted samples
+        weighted_samples = res.samples[keep_indx, :]
 
         # calculate effective sample size
         num_w = len(weights)
@@ -163,15 +139,15 @@ class NestedSampling:
                 'n_live_points': n_points,
                 'n_samples': len(weighted_samples),
                 'eff_sample_size': eff_ss,
-                'eff_samples_per_s': int(eff_ss/run_time)
+                'eff_samples_per_s': int(eff_ss / run_time)
             }
         }
 
         # calculate best-fit parameters
-        best_fit_params= self.get_best_fit(weighted_samples)
+        best_fit_params = self.get_best_fit(weighted_samples)
         res_dict['params'] = best_fit_params
 
-        # save prior for reference
+        # save the priors for reference
         res_dict['prior'] = self.prior
 
         # generate 300 random samples for plotting
@@ -185,9 +161,9 @@ class NestedSampling:
     def run_multinest(self, loglike, free_params, n_points, tol, save_dir, run_num=0, resume=False):
         """Runs a model fit with the nested sampling package PyMultiNest.
 
-        This is the main function that performs a model fit using the PyMultiNest package by
-        Johannes Buchner [1]_. The PyMultiNest package is imported within this function so that
-        it does not need to be installed if the user prefers to use the Nestle package.
+        This method is an overhead function that performs a model fit using the PyMultiNest Python
+        package [1]_. PyMultiNest is imported within this function, so that it does not need to be
+        installed if Nestle is preferred.
 
         Parameters
         ----------
@@ -209,14 +185,14 @@ class NestedSampling:
         Returns
         -------
         tuple
-            A tuple containing:
-                - A dictionary containing the nested sampling results.
-                - The (weighted) posterior samples.
-                - A set of 300 random samples for plotting/visualization.
+            A tuple with the following elements:
+              1. A dictionary with the nested sampling results.
+              2. The (weighted) posterior samples.
+              3. A set of 300 random samples for plotting.
 
         References
         ----------
-        .. [1] PyMultiNest by Johannes Buchner. `http://johannesbuchner.github.io/PyMultiNest/`
+        .. [1] PyMultiNest by Johannes Buchner. http://johannesbuchner.github.io/PyMultiNest/
 
         """
         from pymultinest.solve import solve
@@ -225,9 +201,8 @@ class NestedSampling:
         # assign free parameters
         self.vary = free_params
 
-        # for a circular orbit, set 'w0'=0
+        # for a circular orbit, ensure that w0=0.0
         if 'e0' not in self.vary and self.fixed['e0'] == 0.0 and self.fixed['w0'] != 0.0:
-
             print('\nNOTE: the default value of \'w0\' was set to zero, as this it is a '
                   'circular orbit. The previous value was {} rad.\n'.format(self.fixed['w0']))
 
@@ -236,7 +211,7 @@ class NestedSampling:
         print('Number of live points: ', n_points)
         print('Evidence tolerance: ', tol)
 
-        # define number of dimensions
+        # define the number of dimensions
         self.n_dims = len(self.vary)
 
         # set parameter indices
@@ -253,9 +228,9 @@ class NestedSampling:
 
         # run PyMultiNest and track the elapsed time
         t0 = time.time()
-        res = solve(LogLikelihood=loglike, Prior=self.prior_transform,
-                        n_dims=self.n_dims, n_live_points=n_points, evidence_tolerance=tol,
-                        outputfiles_basename=prefix, verbose=True, resume=resume, multimodal=False)
+        solve(LogLikelihood=loglike, Prior=self.prior_transform,
+              n_dims=self.n_dims, n_live_points=n_points, evidence_tolerance=tol,
+              outputfiles_basename=prefix, verbose=True, resume=resume, multimodal=False)
         t1 = time.time()
         run_time = (t1 - t0)
 
@@ -281,7 +256,7 @@ class NestedSampling:
                 'n_live_points': n_points,
                 'n_samples': len(weighted_samples),
                 'eff_sample_size': len(weighted_samples),
-                'eff_samples_per_s': int(len(weighted_samples)/run_time),
+                'eff_samples_per_s': int(len(weighted_samples) / run_time),
             },
 
             'highest_likelihood': highest_likelihood
@@ -291,7 +266,7 @@ class NestedSampling:
         best_fit_params, new_samples = self.get_best_fit(weighted_samples)
         res_dict['params'] = best_fit_params
 
-        # save prior for reference
+        # save the priors for reference
         res_dict['prior'] = self.prior
 
         # generate 300 random samples for plotting
@@ -303,7 +278,7 @@ class NestedSampling:
         return res_dict, new_samples, random_samples
 
     def prior_transform(self, theta):
-        """Transforms the free parameters from the unit hypercube to their true values.
+        """Transforms a unit hypercube value (from 0 to 1) to a physical value.
 
         This method transforms the current state of the free parameters from the unit hypercube to
         their true values with the specified prior distributions. The transformed parameters may
@@ -423,7 +398,7 @@ class NestedSampling:
     def get_index(self):
         """Retrieves the index (order) of the free parameters.
 
-        This method iterates through the list of parameter variations and determines the index
+        This method iterates through the list of free parameters and determines the index
         (order) of each free parameter, storing them in instance variables for later use.
 
         Returns
@@ -526,30 +501,140 @@ class NestedSampling:
 
         return
 
+    def clear_index(self):
+        """Clears the free parameters indices to prepare for the next model fit.
+
+        This method removes instance variables that store the index (order) of the free parameters,
+        allowing them to be redefined in a subsequent model fit.
+
+        Returns
+        -------
+        None
+
+        """
+        # orbital elements
+        try:
+            del self.it0
+        except AttributeError:
+            pass
+        try:
+            del self.iP0
+        except AttributeError:
+            pass
+        try:
+            del self.ie0
+        except AttributeError:
+            pass
+        try:
+            del self.iw0
+        except AttributeError:
+            pass
+        try:
+            del self.ii0
+        except AttributeError:
+            pass
+        try:
+            del self.iO0
+        except AttributeError:
+            pass
+
+        # coupled parameters
+        try:
+            del self.iecosw
+        except AttributeError:
+            pass
+        try:
+            del self.iesinw
+        except AttributeError:
+            pass
+        try:
+            del self.isq_ecosw
+        except AttributeError:
+            pass
+        try:
+            del self.isq_esinw
+        except AttributeError:
+            pass
+
+        # time-dependent parameters
+        try:
+            del self.idP
+        except AttributeError:
+            pass
+        try:
+            del self.idw
+        except AttributeError:
+            pass
+        try:
+            del self.ide
+        except AttributeError:
+            pass
+        try:
+            del self.idi
+        except AttributeError:
+            pass
+        try:
+            del self.idO
+        except AttributeError:
+            pass
+
+        # radial velocity
+        try:
+            del self.iK
+        except AttributeError:
+            pass
+        try:
+            del self.idv
+        except AttributeError:
+            pass
+        try:
+            del self.iddv
+        except AttributeError:
+            pass
+        try:
+            del self.iKt
+        except AttributeError:
+            pass
+
+        # radial velocity - instrument specific parameters
+        try:
+            del self.iv0
+        except AttributeError:
+            pass
+        try:
+            del self.ijit
+        except AttributeError:
+            pass
+
+        return
+
     def get_vals(self, theta):
-        """Combines and returns full parameter sets to pass to physical models.
+        """Combines and returns full parameter sets to pass to the physical models.
 
         This function combines and returns values for the entire set of model parameters. If a
-        parameter is not set to vary in the fit, its default value is used.
+        parameter is not set to vary in the fit, its default value is entered.
 
         Parameters
         ----------
         theta : array_like
-            Array containing parameter values from sampling algorithm
+            An array containing parameter values passed from the sampling algorithm.
 
         Returns
         -------
         orbital_elements : list
-            List of orbital elements in the order: ['t0', 'P0', 'e0', 'w0', 'i0', 'O0']
+            A list of the orbital elements, given in the order: [``"t0"``, ``"P0"``, ``"e0"``,
+            ``"w0"``, ``"i0"``, ``"O0"``]
         time_dependent : list
-            List of time-dependent parameters in the order: ['PdE', 'wdE', 'edE', 'idE', 'OdE']
+            A list of the time-dependent parameters, given in the order: [``"PdE"``, ``"wdE"``,
+            ``"edE"``, ``"idE"``, ``"OdE"``]
         radial_velocity : list
-            List of radial velocity parameters in the order: ['K', 'v0', 'jit', 'dvdt', 'ddvdt']
+            A list of the radial velocity parameters, given in the order: [``"K"``, ``"v0"``,
+            ``"jit"``, ``"dvdt"``, ``"ddvdt"``, ``K_tide``]
 
         Notes
         -----
-        If the user has chosen to fit 'ecosw' and 'esinw' or 'sq_ecosw' and 'sq_esinw' the values
-        are converted to 'e0' and 'w0' here.
+        If the user has chosen to fit ``"ecosw"`` and ``"esinw"`` or ``"sq_ecosw"`` and
+        ``"sq_esinw"``, their values are converted to ``"e0"`` and ``"w0"`` in this function.
 
         """
         # orbital elements
@@ -580,7 +665,7 @@ class NestedSampling:
 
         # coupled parameters
         try:
-            ee = np.sqrt(theta[self.iecosw]**2 + theta[self.iesinw]**2)
+            ee = np.sqrt(theta[self.iecosw] ** 2 + theta[self.iesinw] ** 2)
         except AttributeError:
             pass
         try:
@@ -588,7 +673,7 @@ class NestedSampling:
         except AttributeError:
             pass
         try:
-            ee = theta[self.isq_ecosw]**2 + theta[self.isq_esinw]**2
+            ee = theta[self.isq_ecosw] ** 2 + theta[self.isq_esinw] ** 2
         except AttributeError:
             pass
         try:
@@ -655,26 +740,24 @@ class NestedSampling:
     def get_best_fit(self, samples):
         """Retrieves the 68% confidence intervals on each parameter.
 
-        This method calculates the confidence intervals using the provided samples and stores them
-        in a dictionary. If a parameter was not allowed to vary in the model fit, its default value
-        is recorded in the dictionary for completeness.
+        This method returns the 68% confidence intervals on each free parameter with the provided
+        weighted posterior samples. If a model parameter was not allowed to vary in the model
+        fit, its default value is recorded in the returned dictionary for completeness.
 
         Parameters
         ----------
         samples : array_like
-            Array containing the samples generated by the model fit.
+            An array of the weighted posterior samples from the the model fit.
 
         Returns
         -------
-        dic : dict
-            Dictionary containing the 68% confidence intervals on each parameter.
-        samples : array_like
-            Array containing the original samples.
+        dict
+            A dictionary containing the best-fit parameter values.
 
         Notes
         -----
-        If the user has chosen to fit 'ecosw' and 'esinw' or 'sq_ecosw' and 'sq_esinw', the
-        derived 'e0' and 'w0' are also returned.
+        If the user has chosen to fit ``"ecosw"`` and ``"esinw"`` or ``"sq_ecosw"`` and
+        ``"sq_esinw"``, their values are converted to ``"e0"`` and ``"w0"`` in this function.
 
         """
         dic = {}
@@ -784,124 +867,110 @@ class NestedSampling:
 
         return dic
 
-    def clear_index(self):
-        """Clears the free parameter indices (order) to prepare for the next model fit.
+    def generate_random_samples(self, weighted_samples, num=300):
+        """Generates a set of random samples for plotting.
 
-        This method removes instance variables storing the location of the free parameters,
-        allowing them to be redefined for another run.
+        This function selects random samples from the provided array of weighted posterior
+        samples, and retrieves the corresponding values using the ``get_vals`` method.
+
+        Parameters
+        ----------
+        weighted_samples : array_like
+            Array of weighted posterior samples.
+        num : int, optional
+            Number of random samples to generate. Default is 300.
+
+        Returns
+        -------
+        tuple
+            A tuple with the following elements:
+              1. List of orbital element samples.
+              2. List of time-dependent parameter samples.
+              3. List of radial velocity parameter samples.
+
+        """
+        orbital_elements = []
+        time_dependent = []
+        radial_velocity = []
+
+        for i in np.random.randint(len(weighted_samples), size=num):
+            s = weighted_samples[i]
+            orbit, timedp, rvel = self.get_vals(s)
+
+            for j in range(len(rvel)):
+                try:
+                    rvel[j] = rvel[j].tolist()
+                except AttributeError:
+                    pass
+
+            orbital_elements.append(orbit)
+            time_dependent.append(timedp)
+            radial_velocity.append(rvel)
+
+        return orbital_elements, time_dependent, radial_velocity
+
+    def save_random_samples(self, random_samples, filename):
+        """Overhead function that saves the random posterior samples for plotting.
+
+        Parameters
+        ----------
+        random_samples : array_like
+            Array containing the samples generated by the model fit.
+        filename : str
+            Name of the output file.
 
         Returns
         -------
         None
+            The output file is written.
 
         """
-        # orbital elements
-        try:
-            del self.it0
-        except AttributeError:
-            pass
-        try:
-            del self.iP0
-        except AttributeError:
-            pass
-        try:
-            del self.ie0
-        except AttributeError:
-            pass
-        try:
-            del self.iw0
-        except AttributeError:
-            pass
-        try:
-            del self.ii0
-        except AttributeError:
-            pass
-        try:
-            del self.iO0
-        except AttributeError:
-            pass
+        param_names = ['t0', 'P0', 'e0', 'w0', 'i0', 'O0',
+                       'PdE', 'wdE', 'edE', 'idE', 'OdE',
+                       'K', 'v0', 'jit', 'dvdt', 'ddvdt']
 
-        # coupled parameters
-        try:
-            del self.iecosw
-        except AttributeError:
-            pass
-        try:
-            del self.iesinw
-        except AttributeError:
-            pass
-        try:
-            del self.isq_ecosw
-        except AttributeError:
-            pass
-        try:
-            del self.isq_esinw
-        except AttributeError:
-            pass
+        with open(filename, 'w') as f:
+            writer = csv.writer(f, delimiter='\t')
+            writer.writerow(param_names)
+            for i in range(len(random_samples[0])):
+                writer.writerow(random_samples[0][i]
+                                + random_samples[1][i]
+                                + random_samples[2][i])
 
-        # time-dependent parameters
-        try:
-            del self.idP
-        except AttributeError:
-            pass
-        try:
-            del self.idw
-        except AttributeError:
-            pass
-        try:
-            del self.ide
-        except AttributeError:
-            pass
-        try:
-            del self.idi
-        except AttributeError:
-            pass
-        try:
-            del self.idO
-        except AttributeError:
-            pass
+    def save_weighted_samples(self, weighted_samples, filename):
+        """Overhead function that saves the weighted posterior samples.
 
-        # radial velocity
-        try:
-            del self.iK
-        except AttributeError:
-            pass
-        try:
-            del self.idv
-        except AttributeError:
-            pass
-        try:
-            del self.iddv
-        except AttributeError:
-            pass
-        try:
-            del self.iKt
-        except AttributeError:
-            pass
+        Parameters
+        ----------
+        weighted_samples : array_like
+            Array containing the samples generated by the model fit.
+        filename : str
+            Name of the output file.
 
-        # radial velocity - instrument specific parameters
-        try:
-            del self.iv0
-        except AttributeError:
-            pass
-        try:
-            del self.ijit
-        except AttributeError:
-            pass
+        Returns
+        -------
+        None
+            The output file is written.
 
-        return
+        """
+        with open(filename, 'w') as f:
+            writer = csv.writer(f, delimiter=' ')
+            writer.writerow(self.vary)  # write header row
+            for row in weighted_samples:
+                writer.writerow(row)
 
     def print_results(self, dic, sampler):
         """Print the results of the sampler.
 
-        This method prints the results of the sampler, including statistics and parameter values.
+        This method prints the results of the sampler to the console, including the best-fit
+        parameter values and Bayesian evidence.
 
         Parameters
         ----------
         dic : dict
             Dictionary containing the results of the sampler.
         sampler : str
-            Name of the sampler used ('nestle' or 'multinest')
+            Name of the sampler used ("nestle" or "multinest").
 
         Returns
         -------
@@ -920,33 +989,38 @@ class NestedSampling:
 
         if 'ecosw' in self.vary and 'esinw' in self.vary:
             print('   e (derived) = {} + {} - {}'.format(vals['e_derived'][0],
-                                                    vals['e_derived'][1], vals['e_derived'][2]))
+                                                         vals['e_derived'][1],
+                                                         vals['e_derived'][2]))
 
             print('   w0 (derived) = {} + {} - {}'.format(vals['w_derived'][0],
-                                                        vals['w_derived'][1], vals['w_derived'][2]))
+                                                          vals['w_derived'][1],
+                                                          vals['w_derived'][2]))
 
         elif 'sq_ecosw' in self.vary and 'sq_esinw' in self.vary:
             print('   e (derived) = {} + {} - {}'.format(vals['e_derived'][0],
-                                                        vals['e_derived'][1], vals['e_derived'][2]))
+                                                         vals['e_derived'][1],
+                                                         vals['e_derived'][2]))
             print('   w0 (derived) = {} + {} - {}'.format(dic['params']['w_derived'][0],
-                                                        vals['w_derived'][1], vals['w_derived'][2]))
+                                                          vals['w_derived'][1],
+                                                          vals['w_derived'][2]))
 
-        print('log(Z) = {} ± {}'.format(round(dic['stats']['logZ'], 2), round(dic['stats']['logZ_err'], 2)))
+        print('log(Z) = {} ± {}'.format(round(dic['stats']['logZ'], 2),
+                                        round(dic['stats']['logZ_err'], 2)))
         print('{} run time (s): {} \n'.format(sampler, round(dic['stats']['run_time'], 2)))
 
     def save_summary(self, dic, filename, sampler, not_model_params):
         """Saves a summary of the nested sampling results.
 
-        This method summarizes the results of the model fit in an easy-to-read .txt file.
+        This method summarizes the results of the model fit in an easy-to-read text file.
 
         Parameters
         ----------
         dic : dict
             Dictionary containing the results of the sampler.
         filename : str
-            File path where the output files will be saved.
+            Path to the directory for the output files.
         sampler : str
-            Name of the sampler used.
+            Name of the sampler used ("nestle" or "multinest")
         not_model_params : list or tuple
             A list of OrbDot parameters that do not belong to the model.
 
@@ -1003,137 +1077,39 @@ class NestedSampling:
 
         return
 
-    def generate_random_samples(self, weighted_samples, num=300):
-        """Generates a set of random samples for plotting.
-
-        This function randomly selects samples from the provided array of weighted samples and
-        retrieves the corresponding values using the 'get_vals' method.
-
-        Parameters
-        ----------
-        weighted_samples : array_like
-            Array of weighted samples to generate random samples from.
-        num : int, optional
-            Number of random samples to generate. Default is 300.
-
-        Returns
-        -------
-        random_samples : dict
-            Dictionary containing randomly generated samples for orbital elements, time-dependent
-            parameters, and radial velocity parameters.
-
-            'orbital_elements' : list
-                List of orbital element samples.
-            'time_dependent' : list
-                List of time-dependent parameter samples.
-            'radial_velocity' : list
-                List of radial velocity parameter samples.
-
-        """
-        orbital_elements = []
-        time_dependent = []
-        radial_velocity = []
-
-        for i in np.random.randint(len(weighted_samples), size=num):
-            s = weighted_samples[i]
-            orbit, timedp, rvel = self.get_vals(s)
-
-            for j in range(len(rvel)):
-                try:
-                    rvel[j] = rvel[j].tolist()
-                except AttributeError:
-                    pass
-
-            orbital_elements.append(orbit)
-            time_dependent.append(timedp)
-            radial_velocity.append(rvel)
-
-        return orbital_elements, time_dependent, radial_velocity
-
-    def save_random_samples(self, random_samples, filename):
-        """Overhead function that saves the random posterior samples for plotting.
-
-        Parameters
-        ----------
-        samples : array_like
-            Array containing the samples generated by the model fit.
-        filename : str
-            Name of the output .txt file.
-
-        Returns
-        -------
-        None
-            The output file is written.
-
-        """
-        param_names = ['t0', 'P0', 'e0', 'w0', 'i0', 'O0',
-                       'PdE', 'wdE', 'edE', 'idE', 'OdE',
-                       'K', 'v0', 'jit', 'dvdt', 'ddvdt']
-
-        with open(filename, 'w') as f:
-            writer = csv.writer(f, delimiter='\t')
-            writer.writerow(param_names)
-            for i in range(len(random_samples[0])):
-                writer.writerow(random_samples[0][i]
-                                + random_samples[1][i]
-                                + random_samples[2][i])
-
-    def save_weighted_samples(self, weighted_samples, filename):
-        """Overhead function that saves the weighted posterior samples.
-
-        Parameters
-        ----------
-        samples : array_like
-            Array containing the samples generated by the model fit.
-        filename : str
-            Name of the output .txt file.
-
-        Returns
-        -------
-        None
-            The output file is written.
-
-        """
-        with open(filename, 'w') as f:
-            writer = csv.writer(f, delimiter=' ')
-            writer.writerow(self.vary) # write header row
-            for row in weighted_samples:
-                writer.writerow(row)
-
     def save_results(self, random_samples, weighted_samples, res_dic, free_params, sampler_type,
                      suffix, prefix, not_model_params):
-        """Save the results of the sampling analysis.
+        """Saves the results of the sampling analysis.
 
         Parameters
         ----------
         random_samples : array-like
             A set of 300 random samples for plotting.
         weighted_samples : array-like
-            The whole set of weighted posterior samples.
+            The entire set of weighted posterior samples.
         res_dic : dict
             A dictionary containing the results of the model fit.
         free_params : list or tuple
             A list of free parameters used in the model fit.
         sampler_type : str
-            The type of sampler used ('nestle' or 'multinest').
+            The type of sampler used ("nestle" or "multinest").
         suffix : str
-            A string to append to the end of the output filenames.
+            A string appended to the end of the output file names.
         prefix : str
-            A string to prepend to the beginning of the output filenames.
+            A string added to the beginning of the output filenames.
         not_model_params : list or tuple
             A list of OrbDot parameters that do not belong to the model.
 
         Returns
         -------
         None
+            The following output files are generated:
 
-        Output Files
-        ------------
-            '*_summary.txt'  --> quick visual summary of the results
-            '*_results.json' --> complete set of results in a dictionary format
-            '*_corner.png'   --> a corner plot for diagnostics
-            '*_weighted_samples.txt'  --> the weighted posterior samples
-            '*_random_samples.json'   --> 300 random samples for plotting
+            1. ``*_summary.txt``: a quick visual summary of the results.
+            2. ``*_results.json``: the entire model fitting results dictionary.
+            3. ``*_corner.png``: a corner plot.
+            4. ``*_weighted_samples.txt``: the weighted posterior samples.
+            5. ``*_random_samples.json``: a random set of 300 posterior samples for plotting.
 
         """
         # save set of 300 random samples for plotting
