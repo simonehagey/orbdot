@@ -144,12 +144,6 @@ class StarPlanet(TransitTiming, RadialVelocity, TransitDuration, JointFit, Neste
         new_value : float
             The new parameter value.
 
-        Raises
-        ------
-        ValueError
-            If the parameter name is incorrect and/or the specified format for multi-instrument
-            parameters is invalid.
-
         Returns
         -------
         None
