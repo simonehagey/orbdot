@@ -16,9 +16,9 @@ from orbdot.nested_sampling import NestedSampling
 
 class StarPlanet(TransitTiming, RadialVelocity, TransitDuration, JointFit, NestedSampling):
     """
-    Initializing this class creates an object that represents the star-planet system and acts as
-    an interface for the core capabilities of the OrbDot package. It combines the data, methods,
-    and attributes needed to run model fitting routines and interpret the results.
+    A ``StarPlanet`` class instance represents a star-planet system and acts as an interface for the
+    core capabilities of the OrbDot package. It combines the data, methods, and attributes needed
+    to run model fitting routines and interpret the results.
     """
     def __init__(self, settings_file, planet_num=0):
         """Initializes the StarPlanet class.

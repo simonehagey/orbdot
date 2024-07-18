@@ -22,7 +22,7 @@ Classes
 
 ------------
 
-.. autoclass:: orbdot.star_planet.StarPlanet
+.. automodule:: orbdot.star_planet.StarPlanet
    :members:
 
 ------------
