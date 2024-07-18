@@ -59,7 +59,7 @@ def ttv_decay(t0, P0, PdE, e0, w0, E, primary=True):
     t0 : float
         Reference transit time in :math:`\\mathrm{BJD}_\\mathrm{TDB}`.
     P0 : float
-        Orbital period at the reference mid-time, in days.
+        Orbital period at the reference mid-time in days.
     PdE : float
         Rate of change of the orbital period in days per epoch.
     e0 : float
@@ -94,9 +94,8 @@ def ttv_precession(t0, P0, e0, w0, wdE, E, primary=True):
     """Apsidal precession model for transit and eclipse mid-times.
 
     This method calculates the expected transit or eclipse mid-times for an elliptical orbit
-    undergoing apsidal precession. It uses a numerical approximation for low eccentricities (
-    :math:`e << 0.1`), which is adapted from equation (15) in Giminez and Bastero (1995) [1]_ by
-    Patra et al. (2017) [2]_.
+    undergoing apsidal precession. It uses a numerical approximation for low eccentricities that
+    is adapted from equation (15) in Giminez and Bastero (1995) [1]_ by Patra et al. (2017) [2]_.
 
     Parameters
     ----------
@@ -107,7 +106,7 @@ def ttv_precession(t0, P0, e0, w0, wdE, E, primary=True):
     e0 : float
         Eccentricity of the orbit.
     w0 : float
-        Argument of pericenter of the planetary orbit at the reference mid-time, in radians.
+        Argument of pericenter of the planetary orbit at the reference mid-time in radians.
     wdE : float
         Apsidal precession rate in radians per epoch.
     E : array-like

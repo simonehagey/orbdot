@@ -30,9 +30,9 @@ def rv_constant(t0, P0, e0, w0, K, v0, dvdt, ddvdt, t):
     v0 : float
         Systemic radial velocity in m/s.
     dvdt : float
-        Linear radial velocity trend in m/s/day.
+        First-order acceleration term in m/s/day.
     ddvdt : float
-        Quadratic radial velocity trend in m/s/day^2.
+        Second-order acceleration term in m/s/day^2.
     t : float
         Measurement time(s) in :math:`\\mathrm{BJD}_\\mathrm{TDB}`.
 
@@ -76,7 +76,8 @@ def rv_constant(t0, P0, e0, w0, K, v0, dvdt, ddvdt, t):
 
     3. **Calculate the true anomaly of the planet at the given time.**
 
-     The mean anomaly may be calculated at any time :math:`t` as:
+     With the time of pericenter passage, the planet's mean anomaly may be calculated at any
+     time :math:`t`:
 
      .. math::
             \\mathrm{M} = n \\left(t - t_p\\right)
@@ -99,9 +100,9 @@ def rv_constant(t0, P0, e0, w0, K, v0, dvdt, ddvdt, t):
             v_r = K[\\cos{(\\phi(t)+\\omega_p)}+e\\cos{\\omega_p}] + \\gamma_j +
             \\dot{\\gamma} \\left(t-t_0\\right) + \\ddot{\\gamma} \\left(t-t_0\\right)^2
 
-     where :math:`K` is the semi-amplitude of the planetary signal, :math:`\\gamma_j` is the (
-     instrument-dependent) systemic radial velocity, and :math:`\\dot{ \\gamma}` and
-     :math:`\\ddot{\\gamma}` are first and second-order acceleration terms, respectively.
+     where :math:`K` is the semi-amplitude of the planetary signal, :math:`\\gamma_j` is the
+     systemic radial velocity, and :math:`\\dot{ \\gamma}` and :math:`\\ddot{\\gamma}` are first
+     and second-order acceleration terms, respectively.
 
     """
     # determine the epoch of the most recent transit
@@ -158,9 +159,9 @@ def rv_decay(t0, P0, e0, w0, K, v0, dvdt, ddvdt, PdE, t):
     v0 : float
         Systemic radial velocity in m/s.
     dvdt : float
-        Linear radial velocity trend in m/s/day.
+        First-order acceleration term in m/s/day.
     ddvdt : float
-        Quadratic radial velocity trend in m/s/day^2.
+        Second-order acceleration term in m/s/day^2.
     PdE : float
         Rate of change of the orbital period in days per epoch.
     t : float
@@ -201,23 +202,23 @@ def rv_decay(t0, P0, e0, w0, K, v0, dvdt, ddvdt, PdE, t):
      transit mid-time is:
 
      .. math::
-            \\phi_{\\mathrm{I} = \\frac{\\pi}{2} - \\omega
+            \\phi_{\\mathrm{I}} = \\frac{\\pi}{2} - \\omega
 
      The eccentric anomaly may then be calculated by:
 
      .. math::
-            \\tan \\left(\\frac{\\mathrm{E}_{\\mathrm{I}}{2}\\right) = \\sqrt{\\frac{1-e}{
-            1+e}}\\tan \\left( \\frac{\\phi_{\\mathrm{I}}{2}\\right)
+            \\tan \\left(\\frac{\\mathrm{E}_{\\mathrm{I}}}{2}\\right) = \\sqrt{\\frac{1-e}{
+            1+e}}\\tan \\left( \\frac{\\phi_{\\mathrm{I}}}{2}\\right)
 
      which yields the mean anomaly via Kepler's equation:
 
      .. math::
-            \\mathrm{M}_{\\mathrm{I} = \\mathrm{E}_{\\mathrm{I} - e \\sin\\mathrm{E}_{\\mathrm{I}
+            \\mathrm{M}_{\\mathrm{I}} = \\mathrm{E}_{\\mathrm{I}} - e \\sin\\mathrm{E}_{\\mathrm{I}}
 
      Finally, the time of pericenter passage :math:`t_p` is related to the mean anomaly by:
 
      .. math::
-            \\mathrm{M}_{\\mathrm{I} = n \\left(t_{\\mathrm{I}} - t_p\\right)
+            \\mathrm{M}_{\\mathrm{I}} = n \\left(t_{\\mathrm{I}} - t_p\\right)
 
      where :math:`n = 2 \\pi/P` is the mean motion.
 
@@ -248,9 +249,9 @@ def rv_decay(t0, P0, e0, w0, K, v0, dvdt, ddvdt, PdE, t):
             v_r = K[\\cos{(\\phi(t)+\\omega_p)}+e\\cos{\\omega_p}] + \\gamma_j +
             \\dot{\\gamma} \\left(t-t_0\\right) + \\ddot{\\gamma} \\left(t-t_0\\right)^2
 
-     where :math:`K` is the semi-amplitude of the planetary signal, :math:`\\gamma_j` is the (
-     instrument-dependent) systemic radial velocity, and :math:`\\dot{ \\gamma}` and
-     :math:`\\ddot{\\gamma}` are first and second-order acceleration terms, respectively.
+     where :math:`K` is the semi-amplitude of the planetary signal, :math:`\\gamma_j` is the
+     systemic radial velocity, and :math:`\\dot{ \\gamma}` and :math:`\\ddot{\\gamma}` are first
+     and second-order acceleration terms, respectively.
 
     """
     # determine the epoch of the most recent transit
@@ -305,9 +306,9 @@ def rv_precession(t0, P0, e0, w0, K, v0, dvdt, ddvdt, wdE, t):
     v0 : float
         Systemic radial velocity in m/s.
     dvdt : float
-        Linear radial velocity trend in m/s/day.
+        First-order acceleration term in m/s/day.
     ddvdt : float
-        Quadratic radial velocity trend in m/s/day^2.
+        Second-order acceleration term in m/s/day^2.
     wdE : float
         Apsidal precession rate in radians per epoch.
     t : float
@@ -355,23 +356,23 @@ def rv_precession(t0, P0, e0, w0, K, v0, dvdt, ddvdt, wdE, t):
      transit mid-time is:
 
      .. math::
-            \\phi_{\\mathrm{I} = \\frac{\\pi}{2} - \\omega
+            \\phi_{\\mathrm{I}} = \\frac{\\pi}{2} - \\omega
 
      The eccentric anomaly may then be calculated by:
 
      .. math::
-            \\tan\\left(\\frac{\\mathrm{E}_{\\mathrm{I}}{2}\\right) = \\sqrt{\\frac{1-e}{1+e}}
-            \\tan\\left(\\frac{\\phi_{\\mathrm{I}}{2}\\right)
+            \\tan\\left(\\frac{\\mathrm{E}_{\\mathrm{I}}}{2}\\right) = \\sqrt{\\frac{1-e}{1+e}}
+            \\tan\\left(\\frac{\\phi_{\\mathrm{I}}}{2}\\right)
 
      which yields the mean anomaly via Kepler's equation:
 
      .. math::
-            \\mathrm{M}_{\\mathrm{I} = \\mathrm{E}_{\\mathrm{I} - e \\sin\\mathrm{E}_{\\mathrm{I}
+            \\mathrm{M}_{\\mathrm{I}} = \\mathrm{E}_{\\mathrm{I}} - e \\sin\\mathrm{E}_{\\mathrm{I}}
 
      Finally, the time of pericenter passage :math:`t_p` is related to the mean anomaly by:
 
      .. math::
-            \\mathrm{M}_{\\mathrm{I} = n \\left(t_{\\mathrm{I}} - t_p\\right)
+            \\mathrm{M}_{\\mathrm{I}} = n \\left(t_{\\mathrm{I}} - t_p\\right)
 
      where :math:`n = 2 \\pi/P` is the mean motion.
 
@@ -402,9 +403,9 @@ def rv_precession(t0, P0, e0, w0, K, v0, dvdt, ddvdt, wdE, t):
             v_r = K[\\cos{(\\phi(t)+\\omega_p)}+e\\cos{\\omega_p}] + \\gamma_j +
             \\dot{\\gamma} \\left(t-t_0\\right) + \\ddot{\\gamma} \\left(t-t_0\\right)^2
 
-     where :math:`K` is the semi-amplitude of the planetary signal, :math:`\\gamma_j` is the (
-     instrument-dependent) systemic radial velocity, and :math:`\\dot{ \\gamma}` and
-     :math:`\\ddot{\\gamma}` are first and second-order acceleration terms, respectively.
+     where :math:`K` is the semi-amplitude of the planetary signal, :math:`\\gamma_j` is the
+     systemic radial velocity, and :math:`\\dot{ \\gamma}` and :math:`\\ddot{\\gamma}` are first
+     and second-order acceleration terms, respectively.
 
     """
     # determine the epoch of the most recent transit

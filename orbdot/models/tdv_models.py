@@ -60,7 +60,7 @@ def tdv_decay(P0, e0, w0, i0, PdE, E, M_s, R_s):
     Parameters
     ----------
     P0 : float
-        Orbital period at the reference mid-time, in days.
+        Orbital period at the reference mid-time in days.
     e0 : float
         Eccentricity of the orbit.
     w0 : float
@@ -153,7 +153,7 @@ def tdv_precession(P0, e0, w0, i0, wdE, E, M_s, R_s):
     e0 : float
         Eccentricity of the orbit.
     w0 : float
-        Argument of pericenter of the planetary orbit at the reference mid-time, in radians.
+        Argument of pericenter of the planetary orbit at the reference mid-time in radians.
     i0 : float
         Line-of-sight inclination of the orbit in degrees.
     wdE : float
