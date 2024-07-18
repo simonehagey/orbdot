@@ -2,12 +2,12 @@
 Classes
 =======
 
-.. autoclass:: orbdot.analysis.Analyzer
+.. autoclass:: orbdot.star_planet.StarPlanet
    :members:
 
 ------------
 
-.. autoclass:: orbdot.joint_fit.JointFit
+.. autoclass:: orbdot.analysis.Analyzer
    :members:
 
 ------------
@@ -17,17 +17,17 @@ Classes
 
 ------------
 
-.. autoclass:: orbdot.radial_velocity.RadialVelocity
-   :members:
-
-------------
-
-.. automodule:: orbdot.star_planet.StarPlanet
+.. autoclass:: orbdot.joint_fit.JointFit
    :members:
 
 ------------
 
 .. autoclass:: orbdot.transit_timing.TransitTiming
+   :members:
+
+------------
+
+.. autoclass:: orbdot.radial_velocity.RadialVelocity
    :members:
 
 ------------
@@ -63,11 +63,6 @@ Models
 Tools
 =====
 
-.. automodule:: orbdot.tools.plots
-   :members:
-
-------------
-
 .. automodule:: orbdot.tools.priors
    :members:
 
@@ -79,4 +74,9 @@ Tools
 ------------
 
 .. automodule:: orbdot.tools.utilities
+   :members:
+
+------------
+
+.. automodule:: orbdot.tools.plots
    :members:
