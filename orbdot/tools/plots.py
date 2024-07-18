@@ -1,7 +1,7 @@
 """
 Plots
 =====
-This module contains the methods that generate the TTV, RV, and corner plots.
+This module defines methods for generating various plots from OrbDot model fit results.
 """
 
 import csv
@@ -9,21 +9,19 @@ import json
 import corner
 import numpy as np
 import scipy.signal as sci
-from astropy.time import Time
-from astropy.timeseries import LombScargle
 from matplotlib import pyplot as plt
 import matplotlib.gridspec as gridspec
 import matplotlib.transforms as transforms
+from astropy.time import Time
+from astropy.timeseries import LombScargle
 import orbdot.tools.utilities as utl
 import orbdot.models.rv_models as rv
 import orbdot.models.ttv_models as ttv
+import orbdot.models.tdv_models as tdv
 
 
 def make_ttv_plot(plot_settings, outfile, suffix=''):
-    """Generate a TTV plot (observed minus calculated).
-
-    This function generates a TTV plot using the provided plot settings and saves it to
-    the specified output file name.
+    """Generates a transit timing variation (TTV) plot.
 
     Parameters
     ----------
@@ -31,9 +29,9 @@ def make_ttv_plot(plot_settings, outfile, suffix=''):
         A dictionary containing plot settings, such as data file paths, results files,
         and plot configurations.
     outfile : str
-        The path to save the generated TTV plot.
+        The file path for saving the plot.
     suffix : str, optional
-        Optional string that matches to particular model fit(s).
+        Optional string for matching model fit results.
 
     Returns
     -------
@@ -67,7 +65,6 @@ def make_ttv_plot(plot_settings, outfile, suffix=''):
     data = utl.read_ttv_data(data_file)
 
     try:
-
         # load constant-period fit results
         with open(plot_settings['TTV_PLOT']['ttv_constant_results_file' + suffix]) as jf:
             rf_c = json.load(jf)
@@ -458,10 +455,6 @@ def make_ttv_plot(plot_settings, outfile, suffix=''):
     try:
         clipped_data = utl.read_ttv_data(plot_settings['TTV_PLOT']['clipped_data_file'])
 
-    except FileNotFoundError:
-        pass
-
-    try:
         # generate best-fit constant-period model for clipped epochs (transits)
         cmod_obs_clipped = ttv.ttv_constant(res_c['t0'][0], res_c['P0'][0],
                                             res_c['e0'], res_c['w0'], clipped_data['epoch'])
@@ -474,7 +467,7 @@ def make_ttv_plot(plot_settings, outfile, suffix=''):
                      yerr=clipped_data['err'] * 1440, label='Excluded',
                      fmt='x', markersize='5', ecolor='r', elinewidth=.8, color='r')
 
-    except UnboundLocalError:
+    except KeyError:
         pass
 
     # plot vertical lines for reference dates
@@ -541,30 +534,32 @@ def make_ttv_plot(plot_settings, outfile, suffix=''):
 
 
 def make_rv_plots(plot_settings, outfile, suffix='', model='constant'):
-    """Radial velocity plot.
+    """Generates a radial velocity (RV) plot.
 
-    Generates a 3-part plot of the RV models and data:
+    This method creates a plot of the radial velocity data and best-fit model with three parts:
 
-    1. The radial velocity measurements vs. time, with an option to plot the
-       best-fit RV curve. The data are shifted by the zero velocity for each instrument.
+     1. The radial velocity measurements vs. time, with an option to plot the best-fit RV curve.
+     The data are shifted by the zero velocity for each instrument and the measurement times are
+     shifted by the reference transit mid-time (``t0``).
 
-    2. The residuals of the data after subtracting the signal of only the planet
-       on the star. That is, subtracting the best-fit RV model without including the
-       time-dependent radial velocity terms ('dvdt' and 'ddvdt').
+     2. The residuals of the data after subtracting the best-fit radial velocity model, including
+     the systemic velocity and long-term trends.
 
-    3. A phase-folded plot of the planet's orbit from 300 random samples from the model fit,
-       along with the best-fit model.
+     3. A phase-folded plot of the radial velocity signal due to the planet only,
+     ie. not including the systemic velocity and long-term trends, as well as 300 random samples
+     from the model fit.
 
     Parameters
     ----------
     plot_settings : dict
         A dictionary containing plot settings.
     outfile : str
-        The filename to save the plot.
+        The file path for saving the plot.
     suffix : str, optional
-        An option to append a string to the end of the output files to differentiate fits.
+        Optional string for matching model fit results.
     model : str, optional
-        The chosen RV model ('constant', 'decay', or 'precession'), default is 'constant'.
+        The chosen RV model (``"constant"``, ``"decay"``, or ``"precession"``). Default is
+        ``"constant"``.
 
     Returns
     -------
@@ -633,12 +628,6 @@ def make_rv_plots(plot_settings, outfile, suffix='', model='constant'):
     with open(results_file) as jf:
         rf = json.load(jf)
         res = rf['params']
-
-    try:
-        res['e0'] = res['e_derived']
-        res['w0'] = res['w_derived']
-    except KeyError:
-        pass
 
     # load random samples
     s_orb, s_tdp, s_rv = read_random_samples(samples_file)
@@ -978,8 +967,7 @@ def make_rv_plots(plot_settings, outfile, suffix='', model='constant'):
             E_tra = (2 * np.arctan(
                 np.sqrt((1 - res['e0'][0]) / (1 + res['e0'][0])) * np.tan(f_tra / 2))) % TWOPI
             M_tra = E_tra - res['e0'][0] * np.sin(E_tra)
-            t_tra = res['t0'][0] + res['P0'][0] * E \
-                    - (res['e0'][0] * P_anom / np.pi) * np.cos(w_p)
+            t_tra = res['t0'][0] + res['P0'][0] * E - (res['e0'][0] * P_anom / np.pi) * np.cos(w_p)
 
             t_p = t_tra - (1 / nu) * M_tra
             MA = TWOPI / P_anom * (t - t_p)
@@ -1009,8 +997,8 @@ def make_rv_plots(plot_settings, outfile, suffix='', model='constant'):
 
     # calculate the true anomaly, eccentric anomaly, and mean anomaly at t0
     f_t0 = (np.pi / 2 - res['w0'][0]) % (2 * np.pi)
-    E_t0 = (2 * np.arctan(np.sqrt((1 - res['e0'][0]) / (1 + res['e0'][0])) * np.tan(f_t0 / 2))) % (
-            2 * np.pi)
+    E_t0 = (2 * np.arctan(np.sqrt((1 - res['e0'][0]) / (1 + res['e0'][0])) * np.tan(f_t0 / 2))) %\
+           (2 * np.pi)
     M_t0 = E_t0 - res['e0'][0] * np.sin(E_t0)
     ax3.axvline(x=M_t0, linestyle='--', color='dimgrey', linewidth=1)
     ax3.text(M_t0 - 0.15, min(y_fold), 'transits', fontsize=11, rotation=90)
@@ -1040,8 +1028,225 @@ def make_rv_plots(plot_settings, outfile, suffix='', model='constant'):
     plt.close()
 
 
+def make_tdv_plot(plot_settings, outfile, suffix=''):
+    """Generates a transit duration variation (TDV) plot.
+
+    Parameters
+    ----------
+    plot_settings : dict
+        A dictionary containing plot settings, such as data file paths, results files,
+        and plot configurations.
+    outfile : str
+        The file path for saving the plot.
+    suffix : str, optional
+        Optional string for matching model fit results.
+
+    Returns
+    -------
+    None
+
+    """
+    print('-' * 100)
+    print('Generating TDV plot...')
+    print('-' * 100)
+
+    # load plot settings
+    plt.rcParams.update(plot_settings['TDV_PLOT']['rcParams'])
+
+    data_colors = plot_settings['TDV_PLOT']['data_colors']
+    dfmt = plot_settings['TDV_PLOT']['data_fmt']
+    dms = plot_settings['TDV_PLOT']['data_markersize']
+    delw = plot_settings['TDV_PLOT']['data_err_linewidth']
+    decap = plot_settings['TDV_PLOT']['data_err_capsize']
+
+    s_alpha = plot_settings['TDV_PLOT']['samples_alpha']
+    s_lw = plot_settings['TDV_PLOT']['samples_linewidth']
+    m_alpha = plot_settings['TDV_PLOT']['model_alpha']
+    m_lw = plot_settings['TDV_PLOT']['model_linewidth']
+
+    bbox = plot_settings['TDV_PLOT']['bbox_inches']
+    dpi = plot_settings['TDV_PLOT']['dpi']
+    pad_inches = plot_settings['TDV_PLOT']['pad_inches']
+
+    # load full dataset
+    data_file = plot_settings['TDV_PLOT']['data_file' + suffix]
+    data = utl.read_tdv_data(data_file)
+
+    try:
+        # load constant-period fit results
+        with open(plot_settings['TDV_PLOT']['tdv_constant_results_file' + suffix]) as jf:
+            rf_c = json.load(jf)
+            res_c = rf_c['params']
+
+        # load constant-period samples
+        s_orb_c, s_tdp_c, s_rv_c = \
+            read_random_samples(plot_settings['TDV_PLOT']['tdv_constant_samples_file' + suffix])
+
+    except KeyError:
+        print('ERROR: Missing \'*_results{}.json\' file for constant-period TDV fit. The TDV plot '
+              'cannot be generated without first fitting the constant-period TDV model.\n\n'
+              .format(suffix))
+        return
+
+    fig, ax1 = plt.subplots(1, 1)
+
+    # define a full range of epochs
+    preE = plot_settings['TDV_PLOT']['num_epochs_pre_data']
+    postE = plot_settings['TDV_PLOT']['num_epochs_post_data']
+
+    epochs_full = np.arange(min(data['epoch']) - preE, max(data['epoch']) + postE, 1)
+
+    # generate best-fit constant period model over full epoch range
+    cmod_full = tdv.tdv_constant(res_c['P0'][0], res_c['e0'][0], res_c['w0'][0],
+                                 res_c['i0'][0], epochs_full, res_c['M_s'], res_c['R_s'])
+
+    # plot best-fit constant period model over full epoch range
+    ax1.plot(epochs_full, np.array(cmod_full - cmod_full),
+             color='darkgrey', label='Constant Period', linewidth=m_lw, alpha=m_alpha)
+
+    # plot 300 random samples from constant-period model fit
+    for i in range(np.shape(s_orb_c)[0]):
+        # generate constant-period model
+        smod_c = tdv.tdv_constant(s_orb_c[i][1], s_orb_c[i][2], s_orb_c[i][3],
+                                  s_orb_c[i][4], epochs_full, res_c['M_s'], res_c['R_s'])
+
+        # plot constant-period model
+        ax1.plot(epochs_full, np.array(smod_c - cmod_full),
+                 color='darkgrey', label='_', linewidth=s_lw, alpha=s_alpha)
+
+    try:
+
+        # load orbital decay fit results
+        with open(plot_settings['TDV_PLOT']['tdv_decay_results_file' + suffix]) as jf:
+            rf_d = json.load(jf)
+            res_d = rf_d['params']
+
+        # load orbital decay samples
+        s_orb_d, s_tdp_d, s_rv_d \
+            = read_random_samples(plot_settings['TDV_PLOT']['tdv_decay_samples_file' + suffix])
+
+        # generate best-fit orbital decay model over full epoch range
+        dmod_full = tdv.tdv_decay(res_d['P0'][0], res_d['e0'][0], res_d['w0'][0],
+                                  res_d['i0'][0], res_d['PdE'][0], epochs_full,
+                                  res_d['M_s'], res_d['R_s'])
+
+        # plot best-fit orbital decay model over full epoch range
+        ax1.plot(epochs_full, np.array(dmod_full - cmod_full),
+                 color='#9c3535', label='Orbital Decay', linewidth=m_lw, alpha=m_alpha)
+
+        # plot 300 random samples orbital decay model fit
+        for i in range(np.shape(s_orb_d)[0]):
+            # generate orbital decay model
+            smod_d = tdv.tdv_decay(s_orb_d[i][1], s_orb_d[i][2], s_orb_d[i][3], s_orb_d[i][4],
+                                   s_tdp_d[i][0], epochs_full, res_d['M_s'], res_d['R_s'])
+
+            # generate orbital decay model
+            ax1.plot(epochs_full, np.array(smod_d - cmod_full),
+                     color='#9c3535', label='_', linewidth=s_lw, alpha=s_alpha)
+    except KeyError:
+        print(' --> No orbital decay fit results detected.')
+
+    try:
+
+        # load apsidal precession fit results
+        with open(plot_settings['TDV_PLOT']['tdv_precession_results_file' + suffix]) as jf:
+            rf_p = json.load(jf)
+            res_p = rf_p['params']
+
+        # load apsidal precession samples
+        s_orb_p, s_tdp_p, s_rv_p = \
+            read_random_samples(plot_settings['TDV_PLOT']['tdv_precession_samples_file' + suffix])
+
+        # generate best-fit apsidal precession model over full epoch range
+        pmod_full = tdv.tdv_precession(res_p['P0'][0], res_p['e0'][0],
+                                       res_p['w0'][0], res_p['i0'][0],
+                                       res_p['wdE'][0], epochs_full,
+                                       res_p['M_s'], res_p['R_s'])
+
+        # plot best-fit apsidal precession model over full epoch range
+        ax1.plot(epochs_full, np.array(pmod_full - cmod_full),
+                 color='cadetblue', label='Apsidal Precession', linewidth=m_lw, alpha=m_alpha)
+
+        # plot 300 random samples apsidal precession model fit
+        for i in range(np.shape(s_orb_p)[0]):
+            # generate apsidal precession model
+            smod_p = tdv.tdv_precession(s_orb_p[i][1], s_orb_p[i][2],
+                                        s_orb_p[i][3], s_orb_p[i][4],
+                                        s_tdp_p[i][1], epochs_full,
+                                        res_p['M_s'], res_p['R_s'])
+
+            # plot apsidal precession model (transits)
+            ax1.plot(epochs_full, np.array(smod_p - cmod_full),
+                     color='cadetblue', label='_', linewidth=s_lw, alpha=s_alpha)
+
+    except KeyError:
+        print(' --> No apsidal precession fit results detected.\n')
+
+    # generate best-fit constant-period model (transits)
+    cmod_obs = tdv.tdv_constant(res_c['P0'][0], res_c['e0'][0],
+                                res_c['w0'][0], res_c['i0'][0],
+                                data['epoch'], res_c['M_s'], res_c['R_s'])
+
+    # calculate O-C values for transit data
+    oc = data['dur'] - cmod_obs
+
+    # plot data, separating sources into different colours and labels
+    sources_unique = np.unique(list(data['src']))
+    num_sources = len(sources_unique)
+
+    # iterate through transit data sources
+    for i in range(num_sources):
+        # plot transit data
+        indx = np.where(data['src'] == sources_unique[i])[0]
+        ax1.errorbar(np.take(data['epoch'], indx), np.array(np.take(oc, indx)),
+                     yerr=np.take(data['err'], indx),
+                     label=sources_unique[i], color=data_colors[i], ecolor=data_colors[i],
+                     fmt=dfmt, markersize=dms, elinewidth=delw, capsize=decap)
+
+    # plot vertical lines for reference dates
+    trans = transforms.blended_transform_factory(ax1.transData, ax1.transAxes)
+
+    date_refs = plot_settings['TDV_PLOT']['reference_dates']
+    t_ref = Time(date_refs, format='iso', in_subfmt='date')
+    dates_jd = t_ref.to_value('jd', subfmt='float')
+    dates_e = utl.calculate_epochs(res_c['t0'][0], res_c['P0'][0], dates_jd, primary=True)
+
+    t_t0 = Time([str(res_c['t0'][0])], format='jd', scale='tdb')  # add t0
+    date_refs = list(date_refs)
+    date_refs.append(t_t0.to_value('iso', subfmt='date')[0])
+    dates_e.append(0)
+
+    # remove month and day
+    dates_year = [s.split('-')[0] for s in date_refs]
+    for i, date in enumerate(dates_e):
+        ax1.axvline(x=date, linewidth=0.5, linestyle='-', color='grey')
+        ax1.text(date, 0.05, dates_year[i], rotation=90, fontsize=12,
+                 ha='right', va='bottom', transform=trans)
+
+    # finish plot
+    plt.xlabel('Epoch')
+    ax1.set_ylabel('Transit Duration Variation (minutes)')
+
+    plt.xlim(epochs_full[0], epochs_full[-1])
+    plt.ylim(plot_settings['TDV_PLOT']['y_axis_limits'][0],
+             plot_settings['TDV_PLOT']['y_axis_limits'][1])
+
+    ax1.set_title('{}'.format(plot_settings['TDV_PLOT']['title'] + ' Transit Durations'))
+
+    ax1.legend()
+    legend1 = ax1.legend()
+    for line in legend1.get_lines():
+        line.set_linewidth(6)
+        line.set_alpha(1)
+
+    plt.savefig(outfile, bbox_inches=bbox, dpi=dpi, pad_inches=pad_inches)
+    plt.close()
+
+    print('Done!\n')
+
+
 def corner_plot(dic, samples, params, outfile):
-    """Generate a corner plot from the weighted posterior samples.
+    """Generates a corner plot from the weighted posterior samples.
 
     This method generates a corner plot from the weighted posterior samples using the
     corner.py package written by Daniel Foreman-Mackey [1]_.
@@ -1105,7 +1310,7 @@ def read_random_samples(data_file, delim='\t'):
     data_file : str
         Name of the file containing the posterior samples.
     delim : str, optional
-        The data file delimiter, default is '\t' for a tab-separated file.
+        The data file delimiter, default is tab-separated.
 
     Returns
     -------
@@ -1140,9 +1345,9 @@ def read_random_samples(data_file, delim='\t'):
             rdv.append(float(row[14]))
             rdv.append(float(row[15]))
 
-            orbital_elements.append(orb)  # t0 P0 e0 w0 i0 O0
-            time_dependent.append(tdp)  # PdE wdE edE idE OdE
-            radial_velocity.append(rdv)  # K v0 jit dvdt ddvdt
+            orbital_elements.append(orb)  # t0, P0, e0, w0, i0, O0
+            time_dependent.append(tdp)    # PdE, wdE, edE, idE, OdE
+            radial_velocity.append(rdv)   # K, v0, jit, dvdt, ddvdt, K_tide
 
     # make arrays
     orbital_elements = np.array(orbital_elements)
@@ -1153,12 +1358,11 @@ def read_random_samples(data_file, delim='\t'):
 
 
 def periodogram(data_file, outfile, min_period=3, max_period=100000.0, num=1000000):
-    """Generate a periodogram from the residuals of an RV model fit.
+    """Generates a periodogram from the residuals of an RV model fit.
 
-    Notes
-    -----
-    The making of this plot is not currently implemented in the model fit routines, and this
-    function should be considered to be under development. It is provided here for convenience.
+    Note
+    ----
+    This plot is not currently implemented in any model fitting routines.
 
     Parameters
     ----------
@@ -1178,7 +1382,6 @@ def periodogram(data_file, outfile, min_period=3, max_period=100000.0, num=10000
     None
 
     """
-
     print('-' * 100)
     print('Generating periodogram of RV residuals...')
     print('-' * 100)

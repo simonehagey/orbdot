@@ -310,6 +310,35 @@ The following sections summarize key :class:`~orbdot.analysis.Analyzer` methods,
 ^^^^^^^^^^^^^^^^^^^
 The :meth:`~orbdot.analysis.Analyzer.model_comparison` method compares the Bayesian evidence for the model fit given to :class:`~orbdot.analysis.Analyzer` with that of a different model. For more details on how the model comparison is done, see the :meth:`~orbdot.analysis.Analyzer.model_comparison` docstring. The following code snippet calls :meth:`~orbdot.analysis.Analyzer.model_comparison` after running a different TTV model fit:
 
+To compare two models, this method calculate the Bayes factor, denoted as:
+
+.. math::
+
+    \log{B_{12}} = \log{\mathrm{Z}}_{1} - \log{\mathrm{Z}}_{2}
+
+where :math:`\log{\mathrm{Z}}` is the Bayesian evidence, defined such that a lower
+value signifies a superior fit to the observed data. The calculated Baye's factor is then
+compared to the thresholds established by :cite:t:`KassRaftery1995`, tabulated below.
+
+.. table::
+  :name: tab:bayesian_evidence
+  :width: 80%
+  :align: center
+
+   +----------------------------------+---------------------------------------------------+
+   | Condition                        | Evidence for Model 1 (Model 1)                    |
+   +==================================+===================================================+
+   | :math:`B_{12} \leq 1`            | Model 1 is not supported over Model 2             |
+   +----------------------------------+---------------------------------------------------+
+   | :math:`1 < B_{12} \leq 3`        | Evidence for Model 1 barely worth mentioning      |
+   +----------------------------------+---------------------------------------------------+
+   | :math:`3 < B_{12} \leq 20`       | Positive evidence for Model 1                     |
+   +----------------------------------+---------------------------------------------------+
+   | :math:`20 < B_{12} \leq 150`     | Strong evidence for Model 1                       |
+   +----------------------------------+---------------------------------------------------+
+   | :math:`150 < B_{12}`             | Very strong evidence for Model 1                  |
+   +----------------------------------+---------------------------------------------------+
+
 .. code-block:: python
 
     # run the apsidal precession TTV model fit
@@ -599,3 +628,36 @@ The following attributes of the :class:`~orbdot.analysis.Analyzer` class may be 
    * - ``ddvdt``
      - ``float``
      - A second order radial velocity trend [m/s/day^2]
+
+.. code-block:: text
+
+    Attributes
+    ----------
+    res : dict
+        The parameters resulting from the model fit.
+    stats : dict
+        The statistical information related to the model fit.
+    sys : dict
+        System parameters of the planetary system.
+    star_name : str
+        The name of the star hosting the planet.
+    planet_name : str
+        The name of the planet being analyzed.
+    save_dir : str
+        The directory where analysis results are saved.
+    model : str
+        The model used for the analysis.
+    file_prefix : str
+        The prefix for the output file name.
+    file_suffix : str
+        The suffix for the output file name.
+    outfile : str
+        The complete path of the output file.
+    ttv_data : dict or None
+        Transit timing variation data.
+    tdv_data : dict or None
+        Transit duration variation data.
+    rv_data : dict or None
+        Radial velocity data.
+    tau : float or None
+        Time span of the radial velocity data in years.

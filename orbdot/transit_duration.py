@@ -11,31 +11,25 @@ import orbdot.tools.plots as pl
 import orbdot.tools.stats as stat
 import orbdot.tools.utilities as utl
 import orbdot.models.tdv_models as tdv
-from orbdot.nested_sampling import NestedSampling
 
 
-class TransitDuration(NestedSampling):
+class TransitDuration:
     """
     This class utilizes the capabilities of the :class:`~orbdot.nested_sampling.NestedSampling`
     class to facilitate transit duration model fitting.
     """
 
-    def __init__(self, tdv_settings, prior, fixed_values, sys_info):
+    def __init__(self, tdv_settings, system_info):
         """Initializes the TransitDuration class.
 
         Parameters
         ----------
         tdv_settings : dict
             A dictionary specifying directories and settings for the nested sampling analysis.
-        prior : dict
-            A dictionary that defines the prior distributions for each parameter.
-        fixed_values : dict
-            A dictionary that specifies the fixed value for each parameter.
 
         """
-        self.M_s = sys_info['M_s']  # star mass in solar masses
-        self.R_s = sys_info['R_s']  # star radius in solar radii
-        self.R_p = sys_info['R_p']  # planet radius in earth radii
+        self.M_s = system_info['M_s [M_sun]']  # star mass in solar masses
+        self.R_s = system_info['R_s [R_sun]']  # star radius in solar radii
 
         # directory for saving the output files
         self.tdv_save_dir = tdv_settings['save_dir']
@@ -57,9 +51,6 @@ class TransitDuration(NestedSampling):
 
         except FileExistsError:
             pass
-
-        # initiate the NestedSampling class
-        NestedSampling.__init__(self, fixed_values, prior)
 
     def tdv_loglike_constant(self, theta):
         """Calculates the log-likelihood for the constant-period transit duration model.
@@ -86,10 +77,12 @@ class TransitDuration(NestedSampling):
         if ee >= 1.0:
             return -1e10  # return a very low likelihood if eccentricity is invalid
 
-        # ToDo: check if inclination exceeds limit to transit
-
         # calculate log-likelihood with transit duration data
         mod = tdv.tdv_constant(pp, ee, ww, ii, self.tdv_data['epoch'], self.M_s, self.R_s)
+
+        if mod is None:
+            return -1e10
+
         ll = stat.calc_chi2(self.tdv_data['dur'], mod, self.tdv_data['err'])
 
         return ll
@@ -120,10 +113,11 @@ class TransitDuration(NestedSampling):
         if ee >= 1.0:
             return -1e10  # return a very low likelihood if eccentricity is invalid
 
-        # ToDo: check if inclination exceeds limit to transit
-
         # calculate log-likelihood with transit duration data
         mod = tdv.tdv_decay(pp, ee, ww, ii, dp, self.tdv_data['epoch'], self.M_s, self.R_s)
+
+        if mod is None:
+            return -1e10
 
         ll = stat.calc_chi2(self.tdv_data['dur'], mod, self.tdv_data['err'])
 
@@ -155,15 +149,17 @@ class TransitDuration(NestedSampling):
         if ee >= 1.0:
             return -1e10  # return a very low likelihood if eccentricity is invalid
 
-        # ToDo: check if inclination exceeds limit to transit
-
         # calculate log-likelihood with transit duration data
         mod = tdv.tdv_precession(pp, ee, ww, ii, dw, self.tdv_data['epoch'], self.M_s, self.R_s)
+
+        if mod is None:
+            return -1e10
+
         ll = stat.calc_chi2(self.tdv_data['dur'], mod, self.tdv_data['err'])
 
         return ll
 
-    def run_tdv_fit(self, free_params, model='constant', suffix='', make_plot=False):
+    def run_tdv_fit(self, free_params, model='constant', file_suffix='', make_plot=True):
         """Run a model fit of the observed transit durations.
 
         This method executes a model fit of the observed transit durations using one of two
@@ -177,7 +173,7 @@ class TransitDuration(NestedSampling):
         model : str, optional
             The transit duration model, must be ``"constant"``, ``"decay"``,
             or ``"precession"``. Default is``"constant"``.
-        suffix : str, optional
+        file_suffix : str, optional
             A string appended to the end of the output file names.
         make_plot : bool, optional
             If True, a TDV plot is generated. Default is True.
@@ -194,13 +190,13 @@ class TransitDuration(NestedSampling):
 
         """
         if model == 'constant':
-            res = self.run_tdv_constant(free_params, suffix=suffix, make_plot=make_plot)
+            res = self.run_tdv_constant(free_params, file_suffix, make_plot)
 
         elif model == 'decay':
-            res = self.run_tdv_decay(free_params, suffix=suffix, make_plot=make_plot)
+            res = self.run_tdv_decay(free_params, file_suffix, make_plot)
 
         elif model == 'precession':
-            res = self.run_tdv_precession(free_params, suffix=suffix, make_plot=make_plot)
+            res = self.run_tdv_precession(free_params, file_suffix, make_plot)
 
         else:
             raise ValueError('The string \'{}\' does not represent a valid TDV model. Options '
@@ -208,7 +204,7 @@ class TransitDuration(NestedSampling):
 
         return res
 
-    def run_tdv_constant(self, free_params, suffix='', make_plot=False):
+    def run_tdv_constant(self, free_params, suffix, plot):
         """Run a fit of the constant-period transit duration model.
 
         This method executes a constant-period model fit of the observed transit durations using
@@ -218,11 +214,12 @@ class TransitDuration(NestedSampling):
         ----------
         free_params : list or tuple
             The list of free parameters for the model fit, in any order. The parameter names are
-            formatted as strings and must be in the set: ``["P0", "e0", "w0", "i0"]``.
-        suffix : str, optional
+            formatted as strings and must be in the set: ``["P0", "e0", "w0", "ecosw", "esinw",
+            "sq_ecosw", sq_esinw", "i0"]``.
+        suffix : str
             A string appended to the end of the output file names.
-        make_plot : bool, optional
-            If True, a TDV plot is generated. Default is True.
+        plot : bool
+            If True, a TDV plot is generated.
 
         Returns
         -------
@@ -262,7 +259,7 @@ class TransitDuration(NestedSampling):
         # raise an exception if the free parameter(s) are not valid
         utl.raise_not_valid_param_error(free_params, self.legal_params, illegal_params)
 
-        # self.plot_settings['TDV_PLOT']['data_file'+suffix] = self.tdv_data_filename
+        self.plot_settings['TDV_PLOT']['data_file'+suffix] = self.tdv_data_filename
 
         print('-' * 100)
         print('Running constant-period TDV fit with free parameters: {}'.format(free_params))
@@ -286,6 +283,9 @@ class TransitDuration(NestedSampling):
         else:
             raise ValueError('Unrecognized sampler, specify \'nestle\' or \'multinest\'')
 
+        res['params']['M_s'] = self.M_s
+        res['params']['R_s'] = self.R_s
+
         rf = prefix + '_results' + suffix + '.json'
         sf = prefix + '_random_samples' + suffix + '.txt'
 
@@ -298,16 +298,16 @@ class TransitDuration(NestedSampling):
                           self.tdv_sampler, suffix, prefix, illegal_params)
 
         # generate a TDV plot
-        # self.plot_settings['TDV_PLOT']['tdv_constant_results_file' + suffix] = rf
-        # self.plot_settings['TDV_PLOT']['tdv_constant_samples_file' + suffix] = sf
+        self.plot_settings['TDV_PLOT']['tdv_constant_results_file' + suffix] = rf
+        self.plot_settings['TDV_PLOT']['tdv_constant_samples_file' + suffix] = sf
 
-        # if make_plot:
-        #     plot_filename = prefix + '_plot' + suffix
-        #     pl.make_tdv_plots(self.plot_settings, plot_filename, suffix=suffix, model='constant')
+        if plot:
+            plot_filename = prefix + '_plot' + suffix
+            pl.make_tdv_plot(self.plot_settings, plot_filename, suffix=suffix)
 
         return res
 
-    def run_tdv_decay(self, free_params, suffix='', make_plot=True):
+    def run_tdv_decay(self, free_params, suffix, plot):
         """Run a fit of the orbital decay transit duration model.
 
         This method executes an orbital decay model fit of the observed transit durations using
@@ -317,11 +317,12 @@ class TransitDuration(NestedSampling):
         ----------
         free_params : list or tuple
             The list of free parameters for the model fit, in any order. The parameter names are
-            formatted as strings and must be in the set: ``["P0", "e0", "w0", "i0", "PdE"]``.
-        suffix : str, optional
+            formatted as strings and must be in the set: ``["P0", "e0", "w0", "ecosw", "esinw",
+            "sq_ecosw", sq_esinw", "i0", "PdE"]``.
+        suffix : str
             A string appended to the end of the output file names.
-        make_plot : bool, optional
-            If True, a TDV plot is generated. Default is True.
+        plot : bool
+            If True, a TDV plot is generated.
 
         Returns
         -------
@@ -360,7 +361,7 @@ class TransitDuration(NestedSampling):
         # raise an exception if the free parameter(s) are not valid
         utl.raise_not_valid_param_error(free_params, self.legal_params, illegal_params)
 
-        # self.plot_settings['TDV_PLOT']['data_file'+suffix] = self.tdv_data_filename
+        self.plot_settings['TDV_PLOT']['data_file'+suffix] = self.tdv_data_filename
 
         print('-' * 100)
         print('Running orbital decay TDV fit with free parameters: {}'.format(free_params))
@@ -384,6 +385,9 @@ class TransitDuration(NestedSampling):
         else:
             raise ValueError('Unrecognized sampler, specify \'nestle\' or \'multinest\'')
 
+        res['params']['M_s'] = self.M_s
+        res['params']['R_s'] = self.R_s
+
         rf = prefix + '_results' + suffix + '.json'
         sf = prefix + '_random_samples' + suffix + '.txt'
 
@@ -395,17 +399,17 @@ class TransitDuration(NestedSampling):
         self.save_results(random_samples, samples, res, free_params,
                           self.tdv_sampler, suffix, prefix, illegal_params)
 
-        # # generate a TDV plot
-        # self.plot_settings['TDV_PLOT']['tdv_decay_results_file' + suffix] = rf
-        # self.plot_settings['TDV_PLOT']['tdv_decay_samples_file' + suffix] = sf
-        #
-        # if make_plot:
-        #     plot_filename = prefix + '_plot' + suffix
-        #     pl.make_tdv_plots(self.plot_settings, plot_filename, suffix=suffix, model='decay')
+        # generate a TDV plot
+        self.plot_settings['TDV_PLOT']['tdv_decay_results_file' + suffix] = rf
+        self.plot_settings['TDV_PLOT']['tdv_decay_samples_file' + suffix] = sf
+
+        if plot:
+            plot_filename = prefix + '_plot' + suffix
+            pl.make_tdv_plot(self.plot_settings, plot_filename, suffix=suffix)
 
         return res
 
-    def run_tdv_precession(self, free_params, suffix='', make_plot=True):
+    def run_tdv_precession(self, free_params, suffix, plot):
         """Run a fit of the apsidal precession transit duration model.
 
         This method executes an apsidal precession model fit of the observed transit durations using
@@ -415,11 +419,12 @@ class TransitDuration(NestedSampling):
         ----------
         free_params : list or tuple
             The list of free parameters for the model fit, in any order. The parameter names are
-            formatted as strings and must be in the set: ``["P0", "e0", "w0", "i0", "wdE"]``.
-        suffix : str, optional
+            formatted as strings and must be in the set: ``["P0", "e0", "w0", "ecosw", "esinw",
+            "sq_ecosw", sq_esinw", "i0", "wdE"]``.
+        suffix : str
             A string appended to the end of the output file names.
-        make_plot : bool, optional
-            If True, a TDV plot is generated. Default is True.
+        plot : bool
+            If True, a TDV plot is generated.
 
         Returns
         -------
@@ -458,7 +463,7 @@ class TransitDuration(NestedSampling):
         # raise an exception if the free parameter(s) are not valid
         utl.raise_not_valid_param_error(free_params, self.legal_params, illegal_params)
 
-        # self.plot_settings['TDV_PLOT']['data_file' + suffix] = self.tdv_data_filename
+        self.plot_settings['TDV_PLOT']['data_file' + suffix] = self.tdv_data_filename
 
         print('-' * 100)
         print('Running apsidal precession TDV fit with free parameters: {}'.format(free_params))
@@ -480,6 +485,9 @@ class TransitDuration(NestedSampling):
         else:
             raise ValueError('Unrecognized sampler, specify \'nestle\' or \'multinest\'')
 
+        res['params']['M_s'] = self.M_s
+        res['params']['R_s'] = self.R_s
+
         rf = prefix + '_results' + suffix + '.json'
         sf = prefix + '_random_samples' + suffix + '.txt'
 
@@ -491,11 +499,12 @@ class TransitDuration(NestedSampling):
         self.save_results(random_samples, samples, res, free_params,
                           self.tdv_sampler, suffix, prefix, illegal_params)
 
-        # # generate a TDV plot
-        # self.plot_settings['TDV_PLOT']['tdv_precession_results_file' + suffix] = rf
-        # self.plot_settings['TDV_PLOT']['tdv_precession_samples_file' + suffix] = sf
-        #
-        # if make_plot: plot_filename = prefix + '_plot' + suffix pl.make_tdv_plots(
-        # self.plot_settings, plot_filename, suffix=suffix, model='precession')
+        # generate a TDV plot
+        self.plot_settings['TDV_PLOT']['tdv_precession_results_file' + suffix] = rf
+        self.plot_settings['TDV_PLOT']['tdv_precession_samples_file' + suffix] = sf
+
+        if plot:
+            plot_filename = prefix + '_plot' + suffix
+            pl.make_tdv_plot(self.plot_settings, plot_filename, suffix=suffix)
 
         return res

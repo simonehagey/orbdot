@@ -19,52 +19,16 @@ class Analyzer:
     It combines model fit results, star-planet system characteristics, and the data to compute and
     summarize analyses of various physical models, such as equilibrium tides, apsidal precession,
     systemic proper motion, and companion objects.
-
-    Attributes
-    ----------
-    res : dict
-        The parameters resulting from the model fit.
-    stats : dict
-        The statistical information related to the model fit.
-    sys : dict
-        System parameters of the planetary system.
-    star_name : str
-        The name of the star hosting the planet.
-    planet_name : str
-        The name of the planet being analyzed.
-    save_dir : str
-        The directory where analysis results are saved.
-    model : str
-        The model used for the analysis.
-    file_prefix : str
-        The prefix for the output file name.
-    file_suffix : str
-        The suffix for the output file name.
-    outfile : str
-        The complete path of the output file.
-    ttv_data : dict or None
-        Transit timing variation data.
-    tdv_data : dict or None
-        Transit duration variation data.
-    rv_data : dict or None
-        Radial velocity data.
-    tau : float or None
-        Time span of the radial velocity data in years.
-
     """
-    def __init__(self, planet_instance, results_dic):
-        """Initialize an ``Analyzer`` object.
+    def __init__(self, planet, results_dic):
+        """Initializes the Analyzer class.
 
         Parameters
         ----------
-        planet_instance : object
-            An instance of a ``~orbdot.star_planet.StarPlanet`` class.
+        planet : object
+            An instance of the :class:`~orbdot.star_planet.StarPlanet` class.
         results_dic : dict
             A dictionary containing the results of an OrbDot model fit.
-
-        Returns
-        -------
-        None
 
         """
         # copy the results dictionary
@@ -73,15 +37,78 @@ class Analyzer:
         # initialize attributes with results from the dictionary
         self.res = results['params']
         self.stats = results['stats']
-        self.sys = planet_instance.sp_system_params
-        self.star_name = planet_instance.star_name
-        self.planet_name = planet_instance.planet_name
+        self.info = planet.sys_info
 
         # set up the directory for saving analysis results
-        self.save_dir = planet_instance.main_save_dir + 'analysis/'
+        self.save_dir = planet.main_save_dir + 'analysis/'
         self.model = results['model']
         self.file_prefix = self.model + '_'
         self.file_suffix = results['suffix']
+
+        # attempt to get TTV data from the planet instance
+        try:
+            self.ttv_data = planet.ttv_data
+        except AttributeError:
+            self.ttv_data = None
+
+        # attempt to get TDV data from the planet instance
+        try:
+            self.tdv_data = planet.tdv_data
+        except AttributeError:
+            self.tdv_data = None
+
+        # attempt to get RV data from the planet instance and determine the baseline
+        try:
+            self.rv_data = planet.rv_data
+            self.tau = (max(self.rv_data['trv_all']) - min(self.rv_data['trv_all'])) / 365.25
+        except AttributeError:
+            self.rv_data = None
+            self.tau = None
+
+        # load model fit results
+        self.t0 = self.res['t0'][0]  # BJD_TDB
+        self.P0 = self.res['P0'][0]  # days
+        self.e0 = self.res['e0'][0]  # unitless
+        self.w0 = self.res['w0'][0]  # radians
+        self.i0 = self.res['i0'][0]  # degrees
+        self.O0 = self.res['O0'][0]  # radians
+
+        self.PdE = self.res['PdE'][0]  # days/epoch
+        self.wdE = self.res['wdE'][0]  # rad/epoch
+        self.edE = self.res['edE'][0]  # epoch^(-1)
+        self.idE = self.res['idE'][0]  # deg/epoch
+        self.OdE = self.res['OdE'][0]  # rad/epoch
+
+        self.K = self.res['K'][0]  # m/s
+        self.dvdt = self.res['dvdt'][0]  # m/s/day
+        self.ddvdt = self.res['ddvdt'][0]  # m/s/day^2
+
+        # load star-planet system info
+        self.star_name = planet.star_name
+        self.planet_name = planet.planet_name
+        self.RA = self.info['RA']
+        self.DEC = self.info['DEC']
+        self.num_stars = self.info['num_stars']
+        self.num_planets = self.info['num_planets']
+        self.mu = self.info['mu [mas/yr]']
+        self.mu_RA = self.info['mu_RA [mas/yr]']
+        self.mu_DEC = self.info['mu_RA [mas/yr]']
+        self.D = self.info['distance [pc]']
+        self.rad_vel = self.info['rad_vel [km/s]']
+        self.age = self.info['age [Gyr]']
+        self.discovery_year = self.info['discovery_year']
+
+        # load star parameters
+        self.M_s = self.info['M_s [M_sun]']
+        self.R_s = self.info['R_s [R_sun]']
+        self.k2_s = self.info['k2_s']
+        self.P_rot_s = self.info['P_rot_s [days]']
+
+        # load planet parameters
+        self.M_p = self.info['M_p [M_earth]'][planet.planet_index]
+        self.R_p = self.info['R_p [R_earth]'][planet.planet_index]
+        self.k2_p = self.info['k2_p'][planet.planet_index]
+        self.P_rot_p = self.info['P_rot_p [days]'][planet.planet_index]
 
         # create a save directory if not found
         parent_dir = os.path.abspath(os.getcwd()) + '/'
@@ -104,89 +131,24 @@ class Analyzer:
             print('-' * 100)
             print(' ')
 
-        # attempt to get TTV data from the planet instance
-        try:
-            self.ttv_data = planet_instance.ttv_data
-        except AttributeError:
-            self.ttv_data = None
-
-        # attempt to get TDV data from the planet instance
-        try:
-            self.tdv_data = planet_instance.tdv_data
-        except AttributeError:
-            self.tdv_data = None
-
-        # attempt to get RV data from the planet instance and determine the baseline
-        try:
-            self.rv_data = planet_instance.rv_data
-            self.tau = (max(self.rv_data['trv_all']) - min(self.rv_data['trv_all'])) / 365.25
-        except AttributeError:
-            self.rv_data = None
-            self.tau = None
-
-        # load model fit results
-        self.t0 = self.res['t0'][0]    # BJD_TDB
-        self.P0 = self.res['P0'][0]    # days
-        self.e0 = self.res['e0'][0]
-        self.w0 = self.res['w0'][0]    # radians
-        self.i0 = self.res['i0'][0]    # degrees
-        self.O0 = self.res['O0'][0]    # radians
-
-        self.PdE = self.res['PdE'][0]    # days/epoch
-        self.wdE = self.res['wdE'][0]    # rad/epoch
-        self.edE = self.res['edE'][0]    # epoch^(-1)
-        self.idE = self.res['idE'][0]    # deg/epoch
-        self.OdE = self.res['OdE'][0]    # rad/epoch
-
-        self.K = self.res['K'][0]          # m/s
-        self.dvdt = self.res['dvdt'][0]    # m/s/day
-        self.ddvdt = self.res['ddvdt'][0]  # m/s^2/day
-
-        # load star-planet system info
-        self.RA = self.sys['RA']
-        self.DEC = self.sys['DEC']
-        self.D = self.sys['distance']     # pc
-        self.mu = self.sys['mu']          # mas/yr
-        self.mu_RA = self.sys['mu_RA']    # mas/yr
-        self.mu_DEC = self.sys['mu_RA']   # mas/yr
-        self.v_radial = self.sys['v_radial']   # km/s
-
-        # load star parameters
-        self.M_s = self.sys['M_s']             # solar masses
-        self.R_s = self.sys['R_s']             # solar radii
-        self.vsini = self.sys['vsini']         # km/s
-        self.P_rot_s = self.sys['P_rot_s']     # days
-        self.k2_s = self.sys['k2_s']           # Love number
-
-        # load planet parameters
-        self.M_p = self.sys['M_p']           # earth masses
-        self.R_p = self.sys['R_p']           # earth radii
-        self.P_rot_p = self.sys['P_rot_p']   # days
-        self.k2_p = self.sys['k2_p']         # Love number
-
-        # TODO: if total mu not available, calculate from mu_RA and mu_DEC
-        # derive parameters
-        try:
-            if self.P_rot_s is None:
-                self.P_rot_s = (2 * np.pi * self.R_s * 6.957e5) / self.vsini
-
-        except:
-
-            pass
-
         return
 
     def model_comparison(self, model_2_results, printout=False):
         """Compares the Bayesian evidence with that of another model fit.
 
-        Evaluates the strength of the Bayesian evidence when comparing this model ('Model 1') to
-        another ('Model 2'), following the thresholds given in Kass and Raftery (1995) [1]_.
+        To compare two models, this method calculate the Bayes factor, denoted as:
+
+        .. math:: \\log{B_{12}} = \\log{\\mathrm{Z}}_{1} - \\log{\\mathrm{Z}}_{2}
+
+        where :math:`\\log{\\mathrm{Z}}` is the Bayesian evidence, defined such that a lower
+        value signifies a superior fit to the observed data. The calculated Baye's factor is then
+        compared to the thresholds established by Kass and Raftery (1995) [1]_.
 
         Parameters
         ----------
         model_2_results : dict
             The results dictionary returned by the other model fit.
-        printout : bool
+        printout : bool, optional
             An option to print the results to the console, default is False.
 
         Returns
@@ -194,40 +156,9 @@ class Analyzer:
         float
             The results are printed to the console and written to a text file.
 
-        Notes
-        -----
-        To compare two models, this method calculate the Bayes factor, denoted as:
-
-        .. math::
-
-            \log{B_{12}} = \log{\mathrm{Z}}_{1} - \log{\mathrm{Z}}_{2}
-
-        where :math:`\\log{\\mathrm{Z}}` is the Bayesian evidence, defined such that a lower
-        value signifies a superior fit to the observed data. The calculated Baye's factor is then
-        compared to the thresholds established by Kass and Raftery (1995) [1]_, tabulated below.
-
-        .. table::
-          :name: tab:bayesian_evidence
-          :width: 80%
-          :align: center
-
-           +----------------------------------+---------------------------------------------------+
-           | Condition                        | Evidence for Model 1 (Model 1)                    |
-           +==================================+===================================================+
-           | :math:`B_{12} \leq 1`            | Model 1 is not supported over Model 2             |
-           +----------------------------------+---------------------------------------------------+
-           | :math:`1 < B_{12} \leq 3`        | Evidence for Model 1 barely worth mentioning      |
-           +----------------------------------+---------------------------------------------------+
-           | :math:`3 < B_{12} \leq 20`       | Positive evidence for Model 1                     |
-           +----------------------------------+---------------------------------------------------+
-           | :math:`20 < B_{12} \leq 150`     | Strong evidence for Model 1                       |
-           +----------------------------------+---------------------------------------------------+
-           | :math:`150 < B_{12}`             | Very strong evidence for Model 1                  |
-           +----------------------------------+---------------------------------------------------+
-
         References
         ----------
-        .. [1] :cite:t:`KassRaftery1995`. https://doi.org/10.2307/2291091.
+        .. [1] :cite:t:`KassRaftery1995`. https://doi.org/10.2307/2291091
 
         """
         print(' --> model_comparison()\n')
@@ -291,20 +222,20 @@ class Analyzer:
             return
 
     def apsidal_precession_fit(self, printout=False):
-        """Interpret the results of an apsidal precession model fit.
+        """Interprets the results of an apsidal precession model fit.
 
         This method produces a concise summary of various interpretations of the results of an
-        apsidal precession model fit. It is independent of the type(s) of data that are fit.
+        apsidal precession model fit, independent of the data type(s) that are fit.
 
         Parameters
         ----------
-        printout : bool
-            An option to print the results to the console, default is False.
+        printout : bool, optional
+            An option to print the results to the console. Default is False.
 
         Returns
         -------
         None
-            The results are printed to the console and written to a text file.
+            The results are written to a text file.
 
         Raises
         ------
@@ -332,8 +263,8 @@ class Analyzer:
                 # write and optionally print the best-fit apsidal precession rate
                 str1 = ' * Best-fit apsidal precession rate:\n'
                 str2 = '\t  dw/dE = {:.2E} + {:.2E} - {:.2E} rad/E\n'.format(self.res['wdE'][0],
-                                                                              self.res['wdE'][1],
-                                                                              self.res['wdE'][2])
+                                                                             self.res['wdE'][1],
+                                                                             self.res['wdE'][2])
                 str3 = '\t  dw/dt = {:.2f} + {:.2f} - {:.2f} deg/yr\n'.format(
                     self.res['wdE'][0] * conv,
                     self.res['wdE'][1] * conv,
@@ -403,6 +334,7 @@ class Analyzer:
                     print(str1, str2)
 
         except IndexError:
+
             # handle when the results for an apsidal precession model fit are not available
             print('\nERROR: results for an apsidal precession model fit are '
                   'not available to this instance of the Analysis class.')
@@ -410,20 +342,20 @@ class Analyzer:
         return
 
     def apsidal_precession_predicted(self, printout=False):
-        """Compute and summarize predicted apsidal precession rates.
+        """Calculates various apsidal precession rates that are predicted by theory.
 
         This method produces a concise summary of the expected rates of apsidal precession due
-        to general relativistic effects, tides,and rotation.
+        to general relativistic effects, tides, and rotation.
 
         Parameters
         ----------
-        printout : bool
-            An option to print the results to the console, default is False.
+        printout : bool, optional
+            An option to print the results to the console. Default is False.
 
         Returns
         -------
         None
-            The results are printed to the console and written to a text file.
+            The results are written to a text file.
 
         """
         print(' --> apsidal_precession_predicted()\n')
@@ -451,7 +383,7 @@ class Analyzer:
                 print(str1, str2, str3)
 
             # calculate expected precession rate due to stellar rotation
-            wdot_rot_s = m.precession_rotational_star(self.P0, self.e0,  self.M_s,
+            wdot_rot_s = m.precession_rotational_star(self.P0, self.e0, self.M_s,
                                                       self.R_s, self.k2_s, self.P_rot_s)
             str1 = ' * Precession induced by stellar rotation (k2_s={}):\n'.format(self.k2_s)
             str2 = '\t  dw/dE = {:.2E} rad/E\n'.format(wdot_rot_s)
@@ -502,20 +434,20 @@ class Analyzer:
         return
 
     def orbital_decay_fit(self, printout=False):
-        """Interpret the results of an orbital decay model fit.
+        """Interprets the results of an orbital decay model fit.
 
         This method produces a concise summary of various interpretations of the results of an
-        orbital decay model fit. It is independent of the type(s) of data that are fit.
+        orbital decay model fit, independent of the data type(s) that are fit.
 
         Parameters
         ----------
-        printout : bool
-            An option to print the results to the console, default is False.
+        printout : bool, optional
+            An option to print the results to the console. Default is False.
 
         Returns
         -------
         None
-            The results are printed to the console and written to a text file.
+            The results are written to a text file.
 
         Raises
         ------
@@ -550,7 +482,8 @@ class Analyzer:
                     print(str1, str2, str3)
 
                 # calculate the modified stellar quality factor from the decay rate
-                q_fit = m.decay_quality_factor_from_pdot(self.P0, self.PdE, self.M_s, self.M_p, self.R_s)
+                q_fit = m.decay_quality_factor_from_pdot(self.P0, self.PdE, self.M_s, self.M_p,
+                                                         self.R_s)
                 str1 = ' * Modified stellar quality factor:\n'
                 str2 = '\t  Q\' = {:.2E}\n'.format(q_fit)
                 f.write(str1 + str2)
@@ -589,24 +522,20 @@ class Analyzer:
         return
 
     def orbital_decay_predicted(self, printout=False):
-        """Compute and summarize predicted orbital decay parameters.
+        """Calculates various orbital decay parameters that are predicted by theory.
 
-        This method produces a concise summary of the orbital decay predicted by an empirical
-        law for the stellar tidal quality factor derived by Penev et al. (2018) [1]_.
+        This method produces a concise summary of various orbital decay characteristics that are
+        predicted by the theory of equilibrium tides.
 
         Parameters
         ----------
-        printout : bool
+        printout : bool, optional
             An option to print the results to the console, default is False.
 
         Returns
         -------
         None
-            The results are printed to the console and written to a text file.
-
-        References
-        ----------
-        .. [1] Penev et al. (2018). https://doi.org/10.3847/1538-3881/aaaf71.
+            The results are written to a text file.
 
         """
         print(' --> orbital_decay_predicted()\n')
@@ -636,7 +565,8 @@ class Analyzer:
                 print(str1, str2)
 
             # calculate the predicted decay rate
-            pdot_pred = m.decay_pdot_from_quality_factor(self.P0, self.M_s, self.M_p, self.R_s, q_pred)
+            pdot_pred = m.decay_pdot_from_quality_factor(self.P0, self.M_s, self.M_p, self.R_s,
+                                                         q_pred)
             str1 = ' * Predicted decay rate:\n'
             str2 = '\t  dP/dE = {:.2E} days/E\n'.format(pdot_pred)
             str3 = '\t  dP/dt = {:.2f} ms/yr\n'.format(pdot_pred * 365.25 * 8.64e+7 / self.P0)
@@ -671,20 +601,20 @@ class Analyzer:
         return
 
     def proper_motion(self, printout=False):
-        """Compute and summarize predicted TTVs and TDVs due to systemic proper motion.
+        """Calculates the expected TTVs and TDVs due to systemic proper motion.
 
-        This method produces a concise summary of the transit variations that are expected due
-        to systemic proper motion.
+        This method produces a concise summary of the apparent transit timing and
+        duration variations that are expected due to the systemic proper motion.
 
         Parameters
         ----------
-        printout : bool
-            An option to print the results to the console, default is False.
+        printout : bool, optional
+            An option to print the results to the console. Default is False.
 
         Returns
         -------
         None
-            The results are printed to the console and written to a text file.
+            The results are written to a text file.
 
         """
         print(' --> proper_motion()\n')
@@ -752,15 +682,15 @@ class Analyzer:
         return
 
     def resolved_binary(self, separation, secondary_mass=None, printout=False):
-        """Characterize the observational effect(s) of a visual binary companion star.
+        """Calculates and summarizes observable effects and properties of a resolved companion star.
 
         Parameters
         ----------
-        secondary_mass : float
-            The mass of the stellar companion in solar masses.
         separation : float
             The angular separation of the binary in arcseconds.
-        printout : bool
+        secondary_mass : float, optional
+            The mass of the stellar companion in solar masses.
+        printout : bool, optional
             An option to print the results to the console, default is False.
 
         Returns
@@ -781,7 +711,7 @@ class Analyzer:
             if printout:
                 print(' ' + str1, str2)
 
-        if secondary_mass != None:
+        if secondary_mass is not None:
 
             # write the properties of the secondary star
             str1 = ' * Properties of the secondary star:\n'
@@ -807,7 +737,7 @@ class Analyzer:
             if printout:
                 print(str1, str2)
 
-        elif secondary_mass == None:
+        elif secondary_mass is None:
 
             # check if the best-fit RV slope is non-zero
             if self.dvdt != 0.0:
@@ -868,10 +798,7 @@ class Analyzer:
         return
 
     def unknown_companion(self, a2_min=0.001, a2_max=10, printout=False):
-        """Investigate model fit results for evidence of a nonresonant companion planet.
-
-        This method produces a concise summary of the constraints on a possible undetected,
-        nonresonant companion planet given parameters derived from the given model fit.
+        """Calculates and summarizes observable effects and properties of a nonresonant companion.
 
         Parameters
         ----------
@@ -959,8 +886,8 @@ class Analyzer:
             if self.PdE != 0.0:
                 str1 = ' * Best-fit orbital decay rate:\n'
                 str2 = '\t  dP/dE = {:.2E} + {:.2E} - {:.2E} rad/E\n'.format(self.res['PdE'][0],
-                                                                              self.res['PdE'][1],
-                                                                              self.res['PdE'][2])
+                                                                             self.res['PdE'][1],
+                                                                             self.res['PdE'][2])
                 str3 = '\t  dP/dt = {:.2f} + {:.2f} - {:.2f} ms/yr\n'.format(
                     self.res['dPdt (ms/yr)'][0],
                     self.res['dPdt (ms/yr)'][1],
@@ -1000,8 +927,8 @@ class Analyzer:
                 conv = (1 / self.P0) * 365.25 * (180 / np.pi)
                 str1 = ' * Best-fit apsidal precession rate:\n'
                 str2 = '\t  dw/dE = {:.2E} + {:.2E} - {:.2E} rad/E\n'.format(self.res['wdE'][0],
-                                                                              self.res['wdE'][1],
-                                                                              self.res['wdE'][2])
+                                                                             self.res['wdE'][1],
+                                                                             self.res['wdE'][2])
                 str3 = '\t  dw/dt = {:.2f} + {:.2f} - {:.2f} deg/yr\n'.format(
                     self.res['wdE'][0] * conv,
                     self.res['wdE'][1] * conv,
@@ -1015,7 +942,7 @@ class Analyzer:
                 masses = []
                 for a2 in separations:
                     masses.append(m.companion_mass_from_precession(self.P0, a2,
-                                                                       self.wdE, self.M_s))
+                                                                   self.wdE, self.M_s))
 
                 masses = np.array(masses)
 
@@ -1031,7 +958,7 @@ class Analyzer:
 
                     M = m.companion_mass_from_precession(self.P0, a, self.wdE, self.M_s)
                     str1 = '\t  - a2 = {:.4f} au: ' \
-                           'M_comp = {:.4f} M_earth = {:.4f} M_jup = {:.4f} M_sun\n'\
+                           'M_comp = {:.4f} M_earth = {:.4f} M_jup = {:.4f} M_sun\n' \
                         .format(a, M, M * 0.00314558, M * 3.0027e-6)
 
                     f.write(str1)
@@ -1046,20 +973,19 @@ class Analyzer:
 
         return
 
-    # TODO: finish documenting
     def rv_trend_quadratic(self):
-        """Estimate the minimum period of an outer companion given a quadratic fit to RV residuals.
+        """Estimates the minimum period of an outer companion given a quadratic fit to RV residuals.
 
         This method analyzes the best-fit quadratic radial velocity curve to estimate the minimum
         orbital period of an outer companion that could cause such acceleration. It assumes that
         the companion orbit is circular, and is designed to complement the the
-        :meth:`~orbdot.models.theory.companion_from_quadratic_rv` method, which requires the
-        minimum period.
+        :meth:`~orbdot.models.theory.companion_from_quadratic_rv` method, which follows the
+        derivations from Equations 1, 3, and 4 of Kipping et al. (2011) [1]_.
 
         Returns
         -------
         float
-            The estimated minimum possible orbital period of the outer companion in days.
+            The estimated minimum orbital period of the outer companion in days.
 
         Notes
         -----
@@ -1073,50 +999,27 @@ class Analyzer:
         acceleration terms, respectively.
 
         After subtracting the contribution from the planet and the systemic velocity
-        :math:`\\gamma`, the residuals are only the long term trend.
+        :math:`\\gamma`, the residuals are only the long term trend [1]_.
 
         .. math::
             RV_c(t) = 0.5 \\ddot{\\gamma} (t - t_{\\mathrm{pivot}})^2 + \\dot{\\gamma} (t - t_{
             \\mathrm{pivot}})
 
-        If :math:`\\ddot{\\gamma}` and dvdt are nonzero, it's quadratic. if :math:`\\ddot{
-        \\gamma} = 0`, the trend is linear and this method is not appropriate.
+        If :math:`\\ddot{\\gamma}` and dvdt are nonzero, the RV residuals are quadratic. if
+        :math:`\\ddot{\\gamma} = 0`, they are linear. For the latter, this method is not valid.
 
-        This method assumes that the companion orbit is circular, in which case the signal is a
-        nice looking sinusoid. Because we aren't seeing the whole orbit of the companion,
-        it looks quadratic, so the minimum possible orbital period of the companion is loosley
-        constrained by the length of the baseline of RV observations.
-
-        This is designed to complement the the
-        :meth:`~orbdot.models.theory.companion_from_quadratic_rv` method, which follows the
-        derivations from Equations 1, 3, and 4 of Kipping et al. (2011) [1]_. This method
-        requires a minimum orbital period estimate as an argument.
-
-        In [1]_, the authors describe a process by which they estimate the minimum companion
-        period, which involves fitting a circular orbit signal to the RV residuals and stepping
-        through various possible orbital periods. In order to lend itself to general use,
-        this OrbDot method implements a different approach.
-
-        First the x coordinate (time) of the vertex of the quadratic curve is determined by:
-
-        .. math::
-            t_{\\mathrm{vertex}} = -b / (2 * a) + t_{\\mathrm{pivot}}
-
-        Then, the minimum companion period is estimated as 4X the span of time between the vertex
-        and its most distant end datum:
+        The minimum orbital period of the companion is loosely constrained by the length of the
+        baseline of RV observations. Assuming that the companion orbit is circular, in which case
+        the signal is sinusoidal, the minimum period is approximated as being 4 times the
+        time span between the vertex of the quadratic and the most distant end datum:
 
         .. math::
             P_{\\mathrm{min}} =  4 \\times \\mathrm{max}\\left[t_{\\mathrm{vertex}} - t_{\\mathrm{
             min}}, t_{\\mathrm{max}} - t_{\\mathrm{vertex}}\\right]
 
-        For an example of this in action, see the HAT-P-22 example in :ref:`example-rv-trends`
+        where the x-coordinate of the vertex (time) is determined by:
 
-        .. important::
-
-            The pivot point :math:`t_{\\mathrm{pivot}}` is typically set to the mean time of the
-            RV observations or the reference mid-time of the transiting planet in joint fitting
-            cases. The minimum orbital period is estimated as four times the distance between the
-            vertex of the quadratic fit and the nearest data point.
+        .. math:: t_{\\mathrm{vertex}} = -b / (2 * a) + t_{\\mathrm{pivot}}
 
         References
         ----------
@@ -1184,7 +1087,8 @@ class Analyzer:
 
         # plot the quadratic fit
         times_all = np.linspace(min(times), max(times), 1000)
-        plt.plot(times_all - 2450000, quadratic(times_all), label='Quadratic Fit', color='firebrick')
+        plt.plot(times_all - 2450000, quadratic(times_all), label='Quadratic Fit',
+                 color='firebrick')
 
         # finish the plot
         plt.scatter(x_vertex - 2450000, y_vertex, color='green', s=60, label='Estimated vertex')
@@ -1202,32 +1106,23 @@ class Analyzer:
         # return the minimum possible orbital period
         return P_min
 
-    # TODO: document
     def rv_trend_linear(self):
-        """Plot the RV residuals given a best-fit linear trend.
-
-        This method analyzes the best-fit linear radial velocity curve to plot it.
-
-        Returns
-        -------
-        None
-
+        """Plots the best-fit linear trend over the RV residuals.
         """
         t_pivot = self.t0
         b = self.dvdt
         c = 0
 
-        def linear(x, b):
-            return b * (x - t_pivot) + c
+        def linear(xx, bb):
+            return bb * (xx - t_pivot) + c
 
         times = []
         errs = []
         residuals = []
         for i in self.rv_data['src_order']:
-
             planet_model = rv.rv_constant(t0=self.t0, P0=self.P0, e0=self.e0, w0=self.w0, K=self.K,
-                                  v0=self.res['v0_' + self.rv_data['src_tags'][i]][0],
-                                  dvdt=0.0, ddvdt=0.0, t=self.rv_data['trv'][i])
+                                          v0=self.res['v0_' + self.rv_data['src_tags'][i]][0],
+                                          dvdt=0.0, ddvdt=0.0, t=self.rv_data['trv'][i])
 
             residuals.extend(self.rv_data['rvs'][i] - planet_model)
             times.extend(self.rv_data['trv'][i])

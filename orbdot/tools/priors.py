@@ -2,7 +2,7 @@
 Priors
 ======
 The methods in this module are designed for the :class:`~orbdot.nested_sampling.NestedSampling`
-class, or similar algorithms, for which sampling from a unit hypercube is required to explore the
+class, or similar algorithms for which sampling from a unit hypercube is required to explore the
 parameter space.
 """
 
@@ -64,20 +64,20 @@ def uniform_prior(hypval, prior):
 
 
 def get_prior(hypval, prior):
-    """Get the physical value of a parameter from the unit hypercube given a prior distribution.
+    """Retrieves the value of a parameter from the unit hypercube given a prior distribution.
 
     Parameters
     ----------
     hypval : float
         Value in the unit hypercube (from 0 to 1).
     prior : list or tuple
-        A list of values specifying the prior distribution, where the first element is the type
-        of prior (``"uniform"``, ``"gaussian"``, or ``"log"``), and subsequent elements define the
-        distribution. It must be given in one of the following forms:
+        A list of values that specify the prior distribution, of which the first element is the type
+        of prior (``"uniform"``, ``"gaussian"``, or ``"log"``) and subsequent elements define the
+        distribution. The options are:
 
-        - Gaussian Prior: ``["gaussian", mean, std]``
-        - Uniform Prior: ``["uniform", min, max]``
-        - Log-Uniform Prior: ``["log", log10(min), log10(max)]``
+        1. Gaussian Prior: ``["gaussian", mean, std]``
+        2. Uniform Prior: ``["uniform", min, max]``
+        3. Log-Uniform Prior: ``["log", log10(min), log10(max)]``
 
     Returns
     -------

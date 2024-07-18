@@ -1,7 +1,7 @@
 """
 Utilities
 =========
-This module provides a collection of general functions that are used throughout the OrbDot package.
+This module defines a set of general functions that are used throughout the OrbDot package.
 """
 
 import os
@@ -15,7 +15,7 @@ import astropy.coordinates as coord
 from importlib import resources as impresources
 
 
-def read_ttv_data(filename, delim=' ', sfile=None):
+def read_ttv_data(filename, delim=' '):
     """Reads a timing data file with columns: ``[Epoch, Time (BJD), Error (BJD), Source]``.
 
     Parameters
@@ -24,8 +24,6 @@ def read_ttv_data(filename, delim=' ', sfile=None):
         The path name of the file that contains the data.
     delim : str, optional
         The column delimiter, default is space-delimited.
-    sfile : str, optional
-        The name of the settings file.
 
     Returns
     -------
@@ -48,11 +46,7 @@ def read_ttv_data(filename, delim=' ', sfile=None):
     """
     # raise error if file not found
     if not os.path.exists(filename):
-        raise FileNotFoundError('\n\nThe timing data file "{}" was not found. If there is no '
-                                'transit or eclipse timing data for this target, you can avoid '
-                                'this error by navigating to the\n"{}" file and setting the '
-                                '"TTV_fit" dictionary key: "data_file" to "None"'
-                                .format(filename, sfile))
+        raise FileNotFoundError('\n\nThe timing data file "{}" was not found.'.format(filename))
 
     # initialize dictionary to store data
     dic = {'epoch': [], 'bjd': [], 'err': [], 'src': [],
@@ -93,7 +87,7 @@ def read_ttv_data(filename, delim=' ', sfile=None):
     return dic
 
 
-def read_rv_data(filename, delim=' ', sfile=None):
+def read_rv_data(filename, delim=' '):
     """Reads a radial velocity data file with columns: ``[Time (BJD), Velocity (m/s), Err (m/s),
     Source]``.
 
@@ -103,14 +97,12 @@ def read_rv_data(filename, delim=' ', sfile=None):
         The path name of the file that contains the data.
     delim : str, optional
         The column delimiter, default is space-delimited.
-    sfile : str, optional
-        The name of the settings file.
 
     Returns
     -------
     dict
         A dictionary containing the RV measurements, times, errors, and sources. Each value is a
-        list of arrays, where the separate arrays correspond to different RV measurement sources.
+        list of arrays, with the different arrays corresponding to separate RV data sources.
 
     Raises
     ------
@@ -125,11 +117,8 @@ def read_rv_data(filename, delim=' ', sfile=None):
     """
     # raise error if file not found
     if not os.path.exists(filename):
-        raise FileNotFoundError('\n\nThe radial velocity data file "{}" was not found. '
-                                'If there is no radial velocity data for this target, '
-                                'you can avoid this error by navigating to the\n"{}" file and '
-                                'setting the "RV_fit" dictionary key: "data_file" to "None"'
-                                .format(filename, sfile))
+        raise FileNotFoundError('\n\nThe radial velocity data file "{}" was not found.'
+                                .format(filename))
 
     # load the data file
     reader = csv.reader(open(filename), delimiter=delim)
@@ -179,7 +168,7 @@ def read_rv_data(filename, delim=' ', sfile=None):
     return dic
 
 
-def read_tdv_data(filename, delim=' ', sfile=None):
+def read_tdv_data(filename, delim=' '):
     """Reads a transit duration data file with columns: ``[Epoch, Duration (min), Error (min),
     Source]``.
 
@@ -189,8 +178,6 @@ def read_tdv_data(filename, delim=' ', sfile=None):
         The path name of the file that contains the data.
     delim : str, optional
         The column delimiter, default is space-delimited.
-    sfile : str, optional
-        The name of the settings file.
 
     Returns
     -------
@@ -209,11 +196,8 @@ def read_tdv_data(filename, delim=' ', sfile=None):
     """
     # raise error if file not found
     if not os.path.exists(filename):
-        raise FileNotFoundError('\n\nThe transit duration data file "{}" was not found. If '
-                                'there is no duration data for this target, you can avoid '
-                                'this error by navigating to the\n"{}" file and setting the '
-                                '"TDV_fit" dictionary key: "data_file" to "None"'
-                                .format(filename, sfile))
+        raise FileNotFoundError('\n\nThe transit duration data file "{}" was not found.'
+                                .format(filename))
 
     # initialize dictionary to store data
     dic = {'epoch': [], 'dur': [], 'err': [], 'src': []}
@@ -240,14 +224,14 @@ def read_tdv_data(filename, delim=' ', sfile=None):
 
 
 def merge_dictionaries(default_file, user_file):
-    """Merge the user input files with defaults.
+    """Merge user input files with defaults.
 
     Parameters
     ----------
     default_file : str
-        Path name of the default JSON file.
+        Path name of the default input file.
     user_file : str
-        Path name of the user-defined JSON file.
+        Path name of the user-defined input file.
 
     Returns
     -------
@@ -305,7 +289,7 @@ def merge_dictionaries(default_file, user_file):
 
 
 def assign_default_values(system_info, planet_number):
-    """Assigns default parameter values based on the system information file.
+    """Assigns default parameter values from the system information file.
 
     Parameters
     ----------
@@ -346,7 +330,7 @@ def assign_default_values(system_info, planet_number):
         'v0': 0.0,
         'jit': 0.0,
         'dvdt': system_info['dvdt [m/s/day]'][planet_number],
-        'ddvdt': system_info['ddvdt [m/s^2/day]'][planet_number],
+        'ddvdt': system_info['ddvdt [m/s/day^2]'][planet_number],
         'K_tide': system_info['K_tide [m/s]']
     }
 
@@ -358,19 +342,19 @@ def assign_default_values(system_info, planet_number):
 
 
 def raise_not_valid_param_error(requested_params, allowed_params, illegal_params):
-    """Raise an exception if the free parameters are not valid and/or not in the physical model.
+    """Raises an exception if a given set of free parameters are not valid.
 
-    This function checks whether the free parameters are valid, ie. that they are all part of the
-    physical model and that certain pairs of parameters are not fit together.
+    This method checks that the given free parameters are valid, ie. that they are a part of the
+    physical model, and that certain pairs of parameters are not fit together.
 
     Parameters
     ----------
     requested_params : list
         The requested free parameters.
     allowed_params : list
-        The parameters that are part of the model being fit.
+        The parameters that are part of the model.
     illegal_params : list
-        The OrbDot parameters that are not relevant to the model.
+        The parameters that are not relevant to the model.
 
     Returns
     -------
@@ -388,8 +372,8 @@ def raise_not_valid_param_error(requested_params, allowed_params, illegal_params
         if x in illegal_params:
             raise ValueError('\'{}\' is not a variable in the model.'.format(x))
 
-    if 'dPdE' in requested_params and 'dwdE' in requested_params:
-        raise ValueError('Simultaneous fitting of \'dPdE\' and \'dwdE\' is not supported.')
+    if 'PdE' in requested_params and 'wdE' in requested_params:
+        raise ValueError('Simultaneous fitting of \'PdE\' and \'wdE\' is not currently supported.')
 
     # Check if certain pairs of parameters are fitted simultaneously
     illegal_pairs = [('e0', 'ecosw'), ('e0', 'esinw'), ('e0', 'sq_ecosw'), ('e0', 'sq_esinw'),
@@ -413,7 +397,7 @@ def raise_not_valid_param_error(requested_params, allowed_params, illegal_params
 
 
 def split_rv_instrument_params(source_order, source_tags, free_params):
-    """Splits the instrument-dependent free parameters in the case of multiple sources of RV data.
+    """Splits instrument-dependent free parameters when there are multiple sources of RV data.
 
     If ``"jit"`` and/or ``"v0"`` are given as free parameters in a model fit and there is more
     than one source of radial velocity data, this method removes them from the list of free
@@ -435,14 +419,18 @@ def split_rv_instrument_params(source_order, source_tags, free_params):
 
     """
     if 'jit' in free_params:
+
         jit_index = np.where(free_params == 'jit')[0]
         free_params = np.delete(free_params, jit_index)
+
         for i in source_order:
             free_params = np.append(free_params, 'jit_' + source_tags[i])
 
     if 'v0' in free_params:
+
         jit_index = np.where(free_params == 'v0')[0]
         free_params = np.delete(free_params, jit_index)
+
         for i in source_order:
             free_params = np.append(free_params, 'v0_' + source_tags[i])
 
@@ -450,9 +438,9 @@ def split_rv_instrument_params(source_order, source_tags, free_params):
 
 
 def split_rv_instrument_results(free_params, source_order, source_tags, results_dic):
-    """Splits instrument-dependent parameter results in the case of multiple sources of RV data.
+    """Splits instrument-dependent parameter results when there are multiple sources of RV data.
 
-    If ``"jit"`` and/or ``"v0"`` were given as free parameters in a model fit and there is more
+    If ``"jit"`` and/or ``"v0"`` are given as free parameters in a model fit and there is more
     than one source of radial velocity data, this method splits the associated value in the output
     dictionary into separate keys for each source.
 
@@ -509,12 +497,13 @@ def calculate_epochs(tc, P, times, primary=True):
     times : array-like
         The mid-times at which to calculate the epochs.
     primary : bool, optional
-        If True, the mid-times must be transits, or False for secondary eclipses. Default is True.
+        If True, the mid-time(s) must be transits. If False, they are treated as secondary
+        eclipses. Default is True.
 
     Returns
     -------
     list
-        The epoch (orbit number) for every given transit or eclipse mid-time.
+        The epoch (orbit number) for the given mid-time(s).
 
     """
     if primary:

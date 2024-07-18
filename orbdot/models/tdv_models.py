@@ -11,8 +11,7 @@ from orbdot.models.theory import G, M_sun, R_sun, get_semi_major_axis_from_perio
 def transit_duration(P0, e0, w0, i0, M_s, R_s):
     """Calculates the transit duration.
 
-    This method returns the expected transit duration for a single planet on an unchanging
-    orbit using equation (15) from Kipping (2010) [1]_.
+    This method returns the expected transit duration using equation (15) from Kipping (2010) [1]_.
 
     Parameters
     ----------
@@ -32,7 +31,7 @@ def transit_duration(P0, e0, w0, i0, M_s, R_s):
     Returns
     -------
     float
-        The predicted transit duration in minutes.
+        The transit duration in minutes.
 
     References
     ----------
@@ -40,8 +39,8 @@ def transit_duration(P0, e0, w0, i0, M_s, R_s):
 
     """
     # unit conversions
-    i0 *= np.pi/180
-    R_s *= R_sun      # solar radii to m
+    i0 *= np.pi/180     # degrees to radians
+    R_s *= R_sun        # solar radii to m
 
     # calculate the semi major axis in units of stellar radii
     a = get_semi_major_axis_from_period(P0, M_s)
@@ -53,8 +52,11 @@ def transit_duration(P0, e0, w0, i0, M_s, R_s):
     # calculate the planet-star separation at mid-transit
     rho_c = (1 - e0 ** 2) / (1 + e0 * np.sin(f_c))
 
-    # calculate the impact parameter
+    # calculate the impact parameter and check that its magnitude is less than 1
     b = rho_c * a_r * np.cos(i0)
+
+    if np.abs(b) >= 1.0:
+        return None
 
     # convert the orbital period from days to seconds
     P0 *= 86400
@@ -71,7 +73,7 @@ def tdv_constant(P0, e0, w0, i0, E, M_s, R_s):
     """Constant-period model for transit durations.
 
     This method returns the expected transit duration(s) for a single planet on an unchanging
-    orbit using the ``transit_duration`` method.
+    orbit using the ``transit_duration`` method, defined in this module.
 
     Parameters
     ----------
@@ -93,7 +95,7 @@ def tdv_constant(P0, e0, w0, i0, E, M_s, R_s):
     Returns
     -------
     array-like
-        The predicted transit duration in minutes.
+        The predicted transit durations in minutes.
 
     References
     ----------
@@ -103,8 +105,13 @@ def tdv_constant(P0, e0, w0, i0, E, M_s, R_s):
     # make array for all of the epochs
     arr = np.ones(len(E))
 
+    T0 = transit_duration(P0, e0, w0, i0, M_s, R_s)
+
     # return the transit duration in minutes
-    return transit_duration(P0, e0, w0, i0, M_s, R_s) * arr
+    if T0 is None:
+        return None
+
+    return T0 * arr
 
 
 def tdv_decay(P0, e0, w0, i0, PdE, E, M_s, R_s):
@@ -137,7 +144,7 @@ def tdv_decay(P0, e0, w0, i0, PdE, E, M_s, R_s):
     Returns
     -------
     array-like
-        The predicted transit duration in minutes.
+        The predicted transit durations in minutes.
 
     References
     ----------
@@ -146,6 +153,9 @@ def tdv_decay(P0, e0, w0, i0, PdE, E, M_s, R_s):
     """
     # get initial transit duration in minutes
     T0 = transit_duration(P0, e0, w0, i0, M_s, R_s)
+
+    if T0 is None:
+        return None
 
     # unit conversions
     i0 *= np.pi/180     # degrees to radians
@@ -164,8 +174,11 @@ def tdv_decay(P0, e0, w0, i0, PdE, E, M_s, R_s):
     # calculate the planet-star separation at mid-transit
     rho_c = (1 - e0 ** 2) / (1 + e0 * np.cos(f_c))
 
-    # calculate the impact parameter
+    # calculate the impact parameter and check that its magnitude is less than 1
     b = rho_c * a_r * np.cos(i0)
+
+    if np.any(np.abs(b) >= 1.0):
+        return None
 
     # more unit conversions
     M_s *= M_sun
@@ -218,7 +231,7 @@ def tdv_precession(P0, e0, w0, i0, wdE, E, M_s, R_s):
     Returns
     -------
     array-like
-        The predicted transit duration in minutes.
+        The predicted transit durations in minutes.
 
     References
     ----------
@@ -228,9 +241,12 @@ def tdv_precession(P0, e0, w0, i0, wdE, E, M_s, R_s):
     # get initial transit duration
     T0 = transit_duration(P0, e0, w0, i0, M_s, R_s) # minutes
 
-    # unit conversion
-    i0 *= np.pi/180
-    R_s *= R_sun      # solar radii to m
+    if T0 is None:
+        return None
+
+    # unit conversions
+    i0 *= np.pi/180     # degrees to radians
+    R_s *= R_sun        # solar radii to m
 
     # anomalistic period
     P_anom = P0 / (1 - wdE / (2 * np.pi))
@@ -248,8 +264,11 @@ def tdv_precession(P0, e0, w0, i0, wdE, E, M_s, R_s):
     # calculate the planet-star separation at mid-transit
     rho_c = (1 - e0 ** 2) / (1 + e0 * np.cos(f_c))
 
-    # calculate the impact parameter
+    # calculate the impact parameter and check that its magnitude is less than 1
     b = rho_c * a_r * np.cos(i0)
+
+    if np.any(np.abs(b) >= 1.0):
+        return None
 
     # convert the anomalistic period from days to seconds
     P_anom *= 86400

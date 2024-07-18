@@ -11,26 +11,21 @@ import numpy as np
 import orbdot.tools.plots as pl
 import orbdot.tools.utilities as utl
 import orbdot.models.rv_models as rv
-from orbdot.nested_sampling import NestedSampling
 
 
-class RadialVelocity(NestedSampling):
+class RadialVelocity:
     """
     This class utilizes the capabilities of the :class:`~orbdot.nested_sampling.NestedSampling`
     class to facilitate model fitting of radial velocity data.
     """
 
-    def __init__(self, rv_settings, prior, fixed_values):
+    def __init__(self, rv_settings):
         """Initializes the RadialVelocity class.
 
         Parameters
         ----------
         rv_settings : dict
             A dictionary specifying directories and settings for the nested sampling analysis.
-        prior : dict
-            A dictionary that defines the prior distributions for each parameter.
-        fixed_values : dict
-            A dictionary that specifies the fixed value for each parameter.
 
         """
         # directory for saving the output files
@@ -53,9 +48,6 @@ class RadialVelocity(NestedSampling):
 
         except FileExistsError:
             pass
-
-        # initiate the NestedSampling class
-        NestedSampling.__init__(self, fixed_values, prior)
 
     def rv_loglike_constant(self, theta):
         """Calculates the log-likelihood for the constant-period radial velocity model.
@@ -183,7 +175,7 @@ class RadialVelocity(NestedSampling):
 
         return loglike
 
-    def run_rv_fit(self, free_params, model='constant', suffix='', make_plot=True):
+    def run_rv_fit(self, free_params, model='constant', file_suffix='', make_plot=True):
         """Run a model fit of the radial velocity measurements.
 
         This method executes a model fit of the observed radial velocities using one of two
@@ -199,7 +191,7 @@ class RadialVelocity(NestedSampling):
         model : str, optional
             The radial velocity model, must be ``"constant"``, ``"decay"``, or ``"precession"``.
             Default is ``"constant"``.
-        suffix : str, optional
+        file_suffix : str, optional
             A string appended to the end of the output file names.
         make_plot : bool, optional
             If True, an RV plot is generated. Default is True.
@@ -216,13 +208,13 @@ class RadialVelocity(NestedSampling):
 
         """
         if model == 'constant':
-            res = self.run_rv_constant(free_params, suffix=suffix, make_plot=make_plot)
+            res = self.run_rv_constant(free_params, file_suffix, make_plot)
 
         elif model == 'decay':
-            res = self.run_rv_decay(free_params, suffix=suffix, make_plot=make_plot)
+            res = self.run_rv_decay(free_params, file_suffix, make_plot)
 
         elif model == 'precession':
-            res = self.run_rv_precession(free_params, suffix=suffix, make_plot=make_plot)
+            res = self.run_rv_precession(free_params, file_suffix, make_plot)
 
         else:
             raise ValueError('The string \'{}\' does not represent a valid RV model. Options '
@@ -230,7 +222,7 @@ class RadialVelocity(NestedSampling):
 
         return res
 
-    def run_rv_constant(self, free_params, suffix='', make_plot=True):
+    def run_rv_constant(self, free_params, suffix, plot):
         """Run a fit of the constant-period radial velocity model.
 
         This method executes a constant-period model fit of the observed radial velocities using
@@ -240,26 +232,22 @@ class RadialVelocity(NestedSampling):
         ----------
         free_params : list or tuple
             The list of free parameters for the model fit, in any order. The parameter names are
-            formatted as strings and must be in the set: ``["t0", "P0", "e0", "w0", "K", "v0",
-            "jit", "dvdt", "ddvdt"]``. If the data are from multiple sources,
-            the instrument-dependent parameters (``"v0"`` and ``"jit"``) are split into multiple
-            variables before the fit is performed.
-        suffix : str, optional
+            formatted as strings and must be in the set: ``["t0", "P0", "e0", "w0", "ecosw",
+            "esinw", "sq_ecosw", sq_esinw", "K", "v0", "jit", "dvdt", "ddvdt"]``. If the data are
+            from multiple sources, the instrument-dependent parameters (``"v0"`` and ``"jit"``)
+            are split into multiple variables before the fit is performed.
+        suffix : str
             A string appended to the end of the output file names.
-        make_plot : bool, optional
-            If True, an RV plot is generated. Default is True.
-        suffix : str, optional
-            An option to append a string to the end of the output files to differentiate fits.
-        make_plot : bool, optional
-            An option to generate a radial velocity plot as an output file. Default is True.
+        plot : bool
+            If True, an RV plot is generated.
 
         Returns
         -------
         res: dict
             A dictionary containing the model fit results and settings.
 
-        Notes
-        -----
+        Note
+        ----
         The following output files are generated:
 
         1. ``"rv_constant_summary.txt"``: a quick visual summary of the results
@@ -321,10 +309,6 @@ class RadialVelocity(NestedSampling):
         res['params'] = utl.split_rv_instrument_results(free_params, self.rv_data['src_order'],
                                                         self.rv_data['src_tags'], res['params'])
 
-        # save residuals
-        resf = prefix + '_residuals' + suffix + '.txt'
-        self.save_rv_residuals(res, resf)
-
         # save results
         rf = prefix + '_results' + suffix + '.json'
         sf = prefix + '_random_samples' + suffix + '.txt'
@@ -338,18 +322,21 @@ class RadialVelocity(NestedSampling):
         self.save_results(random_samples, samples, res, free_params,
                           self.rv_sampler, suffix, prefix, illegal_params)
 
+        # save residuals
+        self.save_rv_residuals(res, resf)
+
         # generate radial velocity plot
         self.plot_settings['RV_PLOT']['rv_constant_results_file' + suffix] = rf
         self.plot_settings['RV_PLOT']['rv_constant_samples_file' + suffix] = sf
         self.plot_settings['RV_PLOT']['rv_constant_residuals_file' + suffix] = resf
 
-        if make_plot:
+        if plot:
             plot_filename = prefix + '_plot' + suffix
             pl.make_rv_plots(self.plot_settings, plot_filename, suffix=suffix, model='constant')
 
         return res
 
-    def run_rv_decay(self, free_params, suffix='', make_plot=True):
+    def run_rv_decay(self, free_params, suffix, plot):
         """Run a fit of the orbital decay radial velocity model.
 
         This method executes an orbital decay model fit of the observed radial velocities using
@@ -359,26 +346,22 @@ class RadialVelocity(NestedSampling):
         ----------
         free_params : list or tuple
             The list of free parameters for the model fit, in any order. The parameter names are
-            formatted as strings and must be in the set: ``["t0", "P0", "PdE", "e0", "w0", "K",
-            "v0", "jit", "dvdt", "ddvdt"]``. If the data are from multiple sources,
-            the instrument-dependent parameters (``"v0"`` and ``"jit"``) are split into multiple
-            variables before the fit is performed.
-        suffix : str, optional
+            formatted as strings and must be in the set: ``["t0", "P0", "PdE", "e0", "w0",
+            "ecosw", "esinw", "sq_ecosw", sq_esinw", "K", "v0", "jit", "dvdt", "ddvdt"]``. If the
+            data are from multiple sources, the instrument-dependent parameters (``"v0"`` and
+            ``"jit"``) are split into multiple variables before the fit is performed.
+        suffix : str
             A string appended to the end of the output file names.
-        make_plot : bool, optional
-            If True, an RV plot is generated. Default is True.
-        suffix : str, optional
-            An option to append a string to the end of the output files to differentiate fits.
-        make_plot : bool, optional
-            An option to generate a radial velocity plot as an output file. Default is True.
+        plot : bool
+            If True, an RV plot is generated.
 
         Returns
         -------
         res: dict
             A dictionary containing the model fit results and settings.
 
-        Notes
-        -----
+        Note
+        ----
         The following output files are generated:
 
         1. ``"rv_decay_summary.txt"``: a quick visual summary of the results
@@ -439,10 +422,6 @@ class RadialVelocity(NestedSampling):
         res['params'] = utl.split_rv_instrument_results(free_params, self.rv_data['src_order'],
                                                         self.rv_data['src_tags'], res['params'])
 
-        # save residuals
-        resf = prefix + '_residuals' + suffix + '.txt'
-        self.save_rv_residuals(res, resf)
-
         # save results
         rf = prefix + '_results' + suffix + '.json'
         sf = prefix + '_random_samples' + suffix + '.txt'
@@ -456,18 +435,21 @@ class RadialVelocity(NestedSampling):
         self.save_results(random_samples, samples, res, free_params,
                           self.rv_sampler, suffix, prefix, illegal_params)
 
+        # save residuals
+        self.save_rv_residuals(res, resf)
+
         # generate radial velocity plot
         self.plot_settings['RV_PLOT']['rv_decay_results_file' + suffix] = rf
         self.plot_settings['RV_PLOT']['rv_decay_samples_file' + suffix] = sf
         self.plot_settings['RV_PLOT']['rv_decay_residuals_file' + suffix] = resf
 
-        if make_plot:
+        if plot:
             plot_filename = prefix + '_plot' + suffix
             pl.make_rv_plots(self.plot_settings, plot_filename, suffix=suffix, model='decay')
 
         return res
 
-    def run_rv_precession(self, free_params, suffix='', make_plot=True):
+    def run_rv_precession(self, free_params, suffix, plot):
         """Run a fit of the apsidal precession radial velocity model.
 
         This method executes an apsidal precession model fit of the observed radial velocities using
@@ -477,26 +459,22 @@ class RadialVelocity(NestedSampling):
         ----------
         free_params : list or tuple
             The list of free parameters for the model fit, in any order. The parameter names are
-            formatted as strings and must be in the set: ``["t0", "P0", "e0", "w0", "wdE", "K",
-            "v0", "jit", "dvdt", "ddvdt"]``. If the data are from multiple sources,
-            the instrument-dependent parameters (``"v0"`` and ``"jit"``) are split into multiple
-            variables before the fit is performed.
-        suffix : str, optional
+            formatted as strings and must be in the set: ``["t0", "P0", "e0", "w0", "ecosw",
+            "esinw", "sq_ecosw", sq_esinw", "wdE", "K", "v0", "jit", "dvdt", "ddvdt"]``. If the
+            data are from multiple sources, the instrument-dependent parameters (``"v0"`` and
+            ``"jit"``) are split into multiple variables before the fit is performed.
+        suffix : str
             A string appended to the end of the output file names.
-        make_plot : bool, optional
-            If True, an RV plot is generated. Default is True.
-        suffix : str, optional
-            An option to append a string to the end of the output files to differentiate fits.
-        make_plot : bool, optional
-            An option to generate a radial velocity plot as an output file. Default is True.
+        plot : bool
+            If True, an RV plot is generated.
 
         Returns
         -------
         res: dict
             A dictionary containing the model fit results and settings.
 
-        Notes
-        -----
+        Note
+        ----
         The following output files are generated:
 
         1. ``"rv_precession_summary.txt"``: a quick visual summary of the results
@@ -558,10 +536,6 @@ class RadialVelocity(NestedSampling):
         res['params'] = utl.split_rv_instrument_results(free_params, self.rv_data['src_order'],
                                                         self.rv_data['src_tags'], res['params'])
 
-        # save residuals
-        resf = prefix + '_residuals' + suffix + '.txt'
-        self.save_rv_residuals(res, resf)
-
         # save results
         rf = prefix + '_results' + suffix + '.json'
         sf = prefix + '_random_samples' + suffix + '.txt'
@@ -575,12 +549,15 @@ class RadialVelocity(NestedSampling):
         self.save_results(random_samples, samples, res, free_params,
                           self.rv_sampler, suffix, prefix, illegal_params)
 
+        # save residuals
+        self.save_rv_residuals(res, resf)
+
         # generate radial velocity plot
         self.plot_settings['RV_PLOT']['rv_precession_results_file' + suffix] = rf
         self.plot_settings['RV_PLOT']['rv_precession_samples_file' + suffix] = sf
         self.plot_settings['RV_PLOT']['rv_precession_residuals_file' + suffix] = resf
 
-        if make_plot:
+        if plot:
             plot_filename = prefix + '_plot' + suffix
             pl.make_rv_plots(self.plot_settings, plot_filename, suffix=suffix, model='precession')
 
@@ -614,7 +591,7 @@ class RadialVelocity(NestedSampling):
             # write header row
             writer.writerow(['Time', 'Velocity', 'Err', 'Source'])
 
-            if fit_results['model'] == 'constant':
+            if fit_results['model'] == 'rv_constant':
 
                 # iterate over radial velocity data sets
                 for i in self.rv_data['src_order']:
@@ -628,7 +605,7 @@ class RadialVelocity(NestedSampling):
                     writer.writerows(zip(self.rv_data['trv'][i], self.rv_data['rvs'][i] - rv_model,
                                          self.rv_data['err'][i], self.rv_data['src'][i]))
 
-            if fit_results['model'] == 'decay':
+            if fit_results['model'] == 'rv_decay':
 
                 # iterate over radial velocity data sets
                 for i in self.rv_data['src_order']:
@@ -642,7 +619,7 @@ class RadialVelocity(NestedSampling):
                     writer.writerows(zip(self.rv_data['trv'][i], self.rv_data['rvs'][i] - rv_model,
                                          self.rv_data['err'][i], self.rv_data['src'][i]))
 
-            if fit_results['model'] == 'precession':
+            if fit_results['model'] == 'rv_precession':
 
                 # iterate over radial velocity data sets
                 for i in self.rv_data['src_order']:

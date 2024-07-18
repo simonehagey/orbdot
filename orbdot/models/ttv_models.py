@@ -10,7 +10,7 @@ import numpy as np
 def ttv_constant(t0, P0, e0, w0, E, primary=True):
     """Constant-period model for transit and eclipse mid-times.
 
-    This method calculates the expected transit and eclipse mid-times for a single planet on an
+    This method calculates the expected transit or eclipse mid-times for a single planet on an
     unchanging orbit.
 
     Parameters
@@ -24,7 +24,7 @@ def ttv_constant(t0, P0, e0, w0, E, primary=True):
     w0 : float
         Argument of pericenter in radians.
     E : array-like
-        The epoch(s) at which to calculate the transit or eclipse mid-time.
+        The epoch(s) at which to calculate the transit or eclipse mid-times.
     primary : bool, optional
         If True, returns the mid-time of the primary eclipse. If False, returns the mid-time of
         the secondary eclipse. Default is True.
@@ -45,7 +45,7 @@ def ttv_constant(t0, P0, e0, w0, E, primary=True):
 def ttv_decay(t0, P0, PdE, e0, w0, E, primary=True):
     """Orbital decay model for transit and eclipse mid-times.
 
-    This method calculates the expected transit and eclipse mid-times for a single planet on an
+    This method calculates the expected transit or eclipse mid-times for a single planet on an
     orbit with a constant change in the period. Though the main application of this model is for
     orbital decay, a positive period derivative is allowed.
 
@@ -62,7 +62,7 @@ def ttv_decay(t0, P0, PdE, e0, w0, E, primary=True):
     w0 : float
         Argument of pericenter in radians.
     E : array-like
-        The epoch(s) at which to calculate the transit or eclipse mid-time.
+        The epoch(s) at which to calculate the transit or eclipse mid-times.
     primary : bool, optional
         If True, returns the mid-time of the primary eclipse. If False, returns the mid-time of
         the secondary eclipse. Default is True.
@@ -88,7 +88,7 @@ def ttv_decay(t0, P0, PdE, e0, w0, E, primary=True):
 def ttv_precession(t0, P0, e0, w0, wdE, E, primary=True):
     """Apsidal precession model for transit and eclipse mid-times.
 
-    This method calculates the expected transit and eclipse mid-times for an elliptical orbit
+    This method calculates the expected transit or eclipse mid-times for an elliptical orbit
     undergoing apsidal precession. It uses a numerical approximation for low eccentricities (e <<
     0.1), which is adapted from equation (15) in Giminez and Bastero (1995) [1]_ by Patra et al.
     (2017) [2]_.
@@ -106,7 +106,7 @@ def ttv_precession(t0, P0, e0, w0, wdE, E, primary=True):
     wdE : float
         Apsidal precession rate in radians per epoch.
     E : array-like
-        The epoch(s) at which to calculate the transit or eclipse mid-time.
+        The epoch(s) at which to calculate the transit or eclipse mid-times.
     primary : bool, optional
         If True, returns the mid-time of the primary eclipse. If False, returns the mid-time of
         the secondary eclipse. Default is True.

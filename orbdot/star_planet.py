@@ -11,22 +11,22 @@ from orbdot.joint_fit import JointFit
 from orbdot.transit_timing import TransitTiming
 from orbdot.radial_velocity import RadialVelocity
 from orbdot.transit_duration import TransitDuration
+from orbdot.nested_sampling import NestedSampling
 
 
-class StarPlanet(TransitTiming, RadialVelocity, TransitDuration, JointFit):
+class StarPlanet(TransitTiming, RadialVelocity, TransitDuration, JointFit, NestedSampling):
     """
-    Initializing this class creates an object that represents the star-planet system, containing
-    the provided data, physical system characteristics, and methods needed for model fitting and
-    comparison.
+    Initializing this class creates an object that represents the star-planet system and acts as
+    an interface for the core capabilities of the OrbDot package. It combines the data, methods,
+    and attributes needed to run model fitting routines and interpret the results.
     """
-
     def __init__(self, settings_file, planet_num=0):
-        """Initialize the StarPlanet class.
+        """Initializes the StarPlanet class.
 
         Parameters
         ----------
         settings_file : str
-            Path to the settings file.
+            Path to the main settings file.
         planet_num : int, optional
             Planet number in case of multi-planet systems (default is 0).
 
@@ -39,7 +39,7 @@ class StarPlanet(TransitTiming, RadialVelocity, TransitDuration, JointFit):
             'K', 'v0', 'jit', 'dvdt', 'ddvdt', 'K_tide')  # radial velocity
 
         # load settings file and merge with defaults
-        args = utl.merge_dictionaries('default_fit_settings.json', settings_file)
+        args = utl.merge_dictionaries('default_settings_file.json', settings_file)
 
         # load system info file and merge with defaults
         self.sys_info = utl.merge_dictionaries('default_info_file.json', args['system_info_file'])
@@ -49,6 +49,7 @@ class StarPlanet(TransitTiming, RadialVelocity, TransitDuration, JointFit):
                                                     args['plot_settings_file'])
 
         # define the star and planet names
+        self.planet_index = planet_num
         self.star_name = self.sys_info['star_name']
         self.planet_name = self.sys_info['star_name'] + self.sys_info['planets'][planet_num]
 
@@ -61,9 +62,6 @@ class StarPlanet(TransitTiming, RadialVelocity, TransitDuration, JointFit):
 
         print('\nInitializing {} instance...\n'.format(self.planet_name))
 
-        # save characteristics of the star-planet system as a dictionary
-        self.sp_system_params = self.get_star_planet_system_params(planet_num)
-
         # specify default values for model parameters (retrieved from the ``system_info_file``)
         default_values = utl.assign_default_values(self.sys_info, planet_num)
 
@@ -72,16 +70,16 @@ class StarPlanet(TransitTiming, RadialVelocity, TransitDuration, JointFit):
 
         # initialize the TransitTiming class
         if args['TTV_fit']['data_file'] != 'None':
+
             # define save directory and load data
             args['TTV_fit']['save_dir'] = self.main_save_dir + args['TTV_fit']['save_dir']
 
             self.ttv_data_filename = args['TTV_fit']['data_file']
             self.ttv_data = utl.read_ttv_data(filename=self.ttv_data_filename,
-                                              delim=args['TTV_fit']['data_delimiter'],
-                                              sfile=settings_file)
+                                              delim=args['TTV_fit']['data_delimiter'])
 
             # initialize class instance
-            TransitTiming.__init__(self, args['TTV_fit'], args['prior'], default_values)
+            TransitTiming.__init__(self, args['TTV_fit'])
 
         # initialize the RadialVelocity class
         if args['RV_fit']['data_file'] != 'None':
@@ -91,8 +89,7 @@ class StarPlanet(TransitTiming, RadialVelocity, TransitDuration, JointFit):
 
             self.rv_data_filename = args['RV_fit']['data_file']
             self.rv_data = utl.read_rv_data(filename=self.rv_data_filename,
-                                            delim=args['RV_fit']['data_delimiter'],
-                                            sfile=settings_file)
+                                            delim=args['RV_fit']['data_delimiter'])
 
             # adjust the priors and default values for multi-instrument RV parameters
             try:
@@ -113,82 +110,32 @@ class StarPlanet(TransitTiming, RadialVelocity, TransitDuration, JointFit):
                 pass
 
             # initialize class instance
-            RadialVelocity.__init__(self, args['RV_fit'], args['prior'], default_values)
+            RadialVelocity.__init__(self, args['RV_fit'])
 
         # initialize the TransitDuration class
         if args['TDV_fit']['data_file'] != 'None':
+
             # define save directory and load data
             args['TDV_fit']['save_dir'] = self.main_save_dir + args['TDV_fit']['save_dir']
 
             self.tdv_data_filename = args['TDV_fit']['data_file']
             self.tdv_data = utl.read_tdv_data(filename=self.tdv_data_filename,
-                                              delim=args['TDV_fit']['data_delimiter'],
-                                              sfile=settings_file)
+                                              delim=args['TDV_fit']['data_delimiter'])
 
             # initialize class instance
-            TransitDuration.__init__(self, args['TDV_fit'], args['prior'],
-                                     default_values, self.sp_system_params)
+            TransitDuration.__init__(self, args['TDV_fit'], self.sys_info)
 
         # initialize the JointFit class
         args['joint_fit']['save_dir'] = self.main_save_dir + args['joint_fit']['save_dir']
+        JointFit.__init__(self, args['joint_fit'])
 
-        JointFit.__init__(self, args['joint_fit'], args['prior'], default_values)
-
-    def get_star_planet_system_params(self, planet_number):
-        """Extracts the star, planet, and system parameters from the provided information file.
-
-        The dictionary returned by this method is passed to the :class:`~orbdot.analysis.Analyzer`
-        class to be combined with the relevant model fit results.
-
-        Parameters
-        ----------
-        planet_number : int
-            Index of the planet for which parameters are to be extracted.
-
-        Returns
-        -------
-        dict
-            A dictionary containing the parameters.
-
-        """
-        vals = {
-
-            # system parameters
-            "star_name": self.sys_info["star_name"],
-            "RA": self.sys_info["RA"],
-            "DEC": self.sys_info["DEC"],
-            "num_stars": self.sys_info["num_stars"],
-            "num_planets": self.sys_info["num_planets"],
-            "mu": self.sys_info["mu [mas/yr]"],
-            "mu_RA": self.sys_info["mu_RA [mas/yr]"],
-            "mu_DEC": self.sys_info["mu_DEC [mas/yr]"],
-            "parallax": self.sys_info["parallax [mas]"],
-            "distance": self.sys_info["distance [pc]"],
-            "v_radial": self.sys_info["rad_vel [km/s]"],
-            "discovery_year": self.sys_info["discovery_year"],
-
-            # star parameters
-            "star_age": self.sys_info["age [Gyr]"],
-            "M_s": self.sys_info["M_s [M_sun]"],
-            "R_s": self.sys_info["R_s [R_sun]"],
-            "k2_s": self.sys_info["k2_s"],
-            "vsini": self.sys_info["vsini [km/s]"],
-            "P_rot_s": self.sys_info["P_rot_s [days]"],
-
-            # planet parameters
-            "M_p": self.sys_info["M_p [M_earth]"][planet_number],
-            "R_p": self.sys_info["R_p [R_earth]"][planet_number],
-            "P_rot_p": self.sys_info["P_rot_p [days]"][planet_number],
-            "k2_p": self.sys_info["k2_p"][planet_number],
-
-        }
-
-        return vals
+        # initiate the NestedSampling class
+        NestedSampling.__init__(self, default_values, args['prior'])
 
     def update_default(self, parameter, new_value):
         """Updates the default (fixed) value for the specified parameter.
 
-        The fixed value will be used in the model fits if a parameter is not allowed to vary.
+        The default value will be used in a model fit if the parameter is not allowed to vary.
 
         Parameters
         ----------
@@ -206,7 +153,7 @@ class StarPlanet(TransitTiming, RadialVelocity, TransitDuration, JointFit):
         Returns
         -------
         None
-            The default (fixed) value for the specified parameter is updated.
+            The default value for the specified parameter is updated.
 
         """
         multi_source = ['v0', 'jit']
@@ -266,8 +213,6 @@ class StarPlanet(TransitTiming, RadialVelocity, TransitDuration, JointFit):
 
     def update_prior(self, parameter, new_prior):
         """Updates the prior distribution for the specified parameter.
-
-        This method allows the user to update the prior distribution for a particular parameter.
 
         Parameters
         ----------

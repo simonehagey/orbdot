@@ -59,7 +59,7 @@ def rv_constant(t0, P0, e0, w0, K, v0, dvdt, ddvdt, t):
             \\tan \\left(\\frac{\\phi_0}{2}\\right) = \\sqrt{\\frac{1+e}{1-e}} \\tan \\left(
             \\frac{\\mathrm{E}_0}{2}\\right)
 
-     The mean anomaly can only be calculated by solving Kepler's equation numerically:
+     The mean anomaly is then calculated by solving Kepler's equation numerically:
 
      .. math::
             \\mathrm{M}_0 = \\mathrm{E}_0 - e \\sin\\mathrm{E}_0
@@ -69,9 +69,9 @@ def rv_constant(t0, P0, e0, w0, K, v0, dvdt, ddvdt, t):
      The time of pericenter passage :math:`t_p` is related to the mean anomaly by:
 
      .. math::
-            \\mathrm{M}_0 = \\eta \\left(t_0 - t_p\\right)
+            \\mathrm{M}_0 = n \\left(t_0 - t_p\\right)
 
-     where :math:`\\eta = 2 \\pi/P` is the mean motion.
+     where :math:`n = 2 \\pi/P` is the mean motion.
 
     3. Calculate the true anomaly of the planet at the given time.
 
@@ -79,7 +79,7 @@ def rv_constant(t0, P0, e0, w0, K, v0, dvdt, ddvdt, t):
      time :math:`t`:
 
      .. math::
-            \\mathrm{M} = \\eta \\left(t - t_p\\right)
+            \\mathrm{M} = n \\left(t - t_p\\right)
 
      Then, the eccentric anomaly is:
 
@@ -203,7 +203,7 @@ def rv_decay(t0, P0, e0, w0, K, v0, dvdt, ddvdt, PdE, t):
             \\tan \\left(\\frac{\\phi_0}{2}\\right) = \\sqrt{\\frac{1+e}{1-e}} \\tan \\left(
             \\frac{\\mathrm{E}_0}{2}\\right)
 
-     The mean anomaly can only be calculated by solving Kepler's equation numerically:
+     The mean anomaly is then calculated by solving Kepler's equation numerically:
 
      .. math::
             \\mathrm{M}_0 = \\mathrm{E}_0 - e \\sin\\mathrm{E}_0
@@ -214,7 +214,7 @@ def rv_decay(t0, P0, e0, w0, K, v0, dvdt, ddvdt, PdE, t):
      must be calculated relative to the most recent transit mid-time:
 
      .. math::
-            t_{\\mathrm{I}} = t_0 + PE + \\frac{1}{2}\,\\frac{dP}{dE}\\,E^2
+            t_{\\mathrm{I}} = t_0 + PE + \\frac{1}{2}\\,\\frac{dP}{dE}\\,E^2
 
      where :math:`P` is the sidereal (observed) period and :math:`\\frac{dP}{dE}` is the orbital
      decay rate in days per epoch.
@@ -224,9 +224,9 @@ def rv_decay(t0, P0, e0, w0, K, v0, dvdt, ddvdt, PdE, t):
      The time of pericenter passage :math:`t_p` is related to the mean anomaly by:
 
      .. math::
-            \\mathrm{M}_0 = \\eta \\left(t_{\\mathrm{I}} - t_p\\right)
+            \\mathrm{M}_0 = n \\left(t_{\\mathrm{I}} - t_p\\right)
 
-     where :math:`\\eta = 2 \\pi/P` is the mean motion.
+     where :math:`n = 2 \\pi/P` is the mean motion.
 
     6. Calculate the true anomaly of the planet at the given time.
 
@@ -234,7 +234,7 @@ def rv_decay(t0, P0, e0, w0, K, v0, dvdt, ddvdt, PdE, t):
      time :math:`t`:
 
      .. math::
-            \\mathrm{M} = \\eta \\left(t - t_p\\right)
+            \\mathrm{M} = n \\left(t - t_p\\right)
 
      Then, the eccentric anomaly is:
 
@@ -364,7 +364,7 @@ def rv_precession(t0, P0, e0, w0, K, v0, dvdt, ddvdt, wdE, t):
             \\tan \\left(\\frac{\\phi_0}{2}\\right) = \\sqrt{\\frac{1+e}{1-e}} \\tan \\left(
             \\frac{\\mathrm{E}_0}{2}\\right)
 
-     The mean anomaly can only be calculated by solving Kepler's equation numerically:
+     The mean anomaly is then calculated by solving Kepler's equation numerically:
 
      .. math::
             \\mathrm{M}_0 = \\mathrm{E}_0 - e \\sin\\mathrm{E}_0
@@ -382,9 +382,9 @@ def rv_precession(t0, P0, e0, w0, K, v0, dvdt, ddvdt, wdE, t):
      The time of pericenter passage :math:`t_p` is related to the mean anomaly by:
 
      .. math::
-            \\mathrm{M}_0 = \\eta \\left(t_{\\mathrm{I}} - t_p\\right)
+            \\mathrm{M}_0 = n \\left(t_{\\mathrm{I}} - t_p\\right)
 
-     where :math:`\\eta = 2 \\pi/P` is the mean motion.
+     where :math:`n = 2 \\pi/P` is the mean motion.
 
     7. Calculate the true anomaly of the planet at the given time.
 
@@ -392,7 +392,7 @@ def rv_precession(t0, P0, e0, w0, K, v0, dvdt, ddvdt, wdE, t):
      time :math:`t`:
 
      .. math::
-            \\mathrm{M} = \\eta \\left(t - t_p\\right)
+            \\mathrm{M} = n \\left(t - t_p\\right)
 
      Then, the eccentric anomaly is:
 
@@ -467,7 +467,7 @@ def true_anomaly(t, t_peri, nu, e):
     Returns
     -------
     array-like
-        The true anomaly value(s) in radians.
+        The true anomaly in radians.
 
     """
     # calculate the mean anomaly

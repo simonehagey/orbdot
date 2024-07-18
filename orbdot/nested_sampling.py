@@ -2,7 +2,7 @@
 NestedSampling
 ==============
 This module defines the ``NestedSampling`` class, which contains all of the methods required to
-run the model fitting routines defined in the OrbDot classes.
+run the model fitting routines in the other OrbDot classes.
 """
 
 import os
@@ -36,7 +36,7 @@ class NestedSampling:
     """
 
     def __init__(self, fixed_values, prior):
-        """Initialize the NestedSampling class.
+        """Initializes the NestedSampling class.
 
         Parameters
         ----------
@@ -622,14 +622,14 @@ class NestedSampling:
         Returns
         -------
         orbital_elements : list
-            A list of the orbital elements, given in the order: [``"t0"``, ``"P0"``, ``"e0"``,
-            ``"w0"``, ``"i0"``, ``"O0"``]
+            A list of the orbital elements, given in the order: ``"t0"``, ``"P0"``, ``"e0"``,
+            ``"w0"``, ``"i0"``, ``"O0"``.
         time_dependent : list
-            A list of the time-dependent parameters, given in the order: [``"PdE"``, ``"wdE"``,
-            ``"edE"``, ``"idE"``, ``"OdE"``]
+            A list of the time-dependent parameters, given in the order: ``"PdE"``, ``"wdE"``,
+            ``"edE"``, ``"idE"``, ``"OdE"``.
         radial_velocity : list
-            A list of the radial velocity parameters, given in the order: [``"K"``, ``"v0"``,
-            ``"jit"``, ``"dvdt"``, ``"ddvdt"``, ``K_tide``]
+            A list of the radial velocity parameters, given in the order: ``"K"``, ``"v0"``,
+            ``"jit"``, ``"dvdt"``, ``"ddvdt"``, ``K_tide``.
 
         Notes
         -----
@@ -894,12 +894,16 @@ class NestedSampling:
         radial_velocity = []
 
         for i in np.random.randint(len(weighted_samples), size=num):
+
             s = weighted_samples[i]
+
             orbit, timedp, rvel = self.get_vals(s)
 
             for j in range(len(rvel)):
+
                 try:
                     rvel[j] = rvel[j].tolist()
+
                 except AttributeError:
                     pass
 
@@ -930,12 +934,15 @@ class NestedSampling:
                        'K', 'v0', 'jit', 'dvdt', 'ddvdt']
 
         with open(filename, 'w') as f:
+
             writer = csv.writer(f, delimiter='\t')
             writer.writerow(param_names)
+
             for i in range(len(random_samples[0])):
-                writer.writerow(random_samples[0][i]
-                                + random_samples[1][i]
-                                + random_samples[2][i])
+
+                writer.writerow(random_samples[0][i] + random_samples[1][i] + random_samples[2][i])
+
+        return
 
     def save_weighted_samples(self, weighted_samples, filename):
         """Overhead function that saves the weighted posterior samples.
@@ -954,10 +961,14 @@ class NestedSampling:
 
         """
         with open(filename, 'w') as f:
+
             writer = csv.writer(f, delimiter=' ')
             writer.writerow(self.vary)  # write header row
+
             for row in weighted_samples:
                 writer.writerow(row)
+
+        return
 
     def print_results(self, dic, sampler):
         """Print the results of the sampler.
@@ -1144,3 +1155,5 @@ class NestedSampling:
         # save a text summary of the results
         self.save_summary(res_dic, prefix + '_summary' + suffix + '.txt',
                           sampler_type, not_model_params)
+
+        return

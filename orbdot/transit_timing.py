@@ -12,25 +12,20 @@ import orbdot.tools.plots as pl
 import orbdot.tools.stats as stat
 import orbdot.tools.utilities as utl
 import orbdot.models.ttv_models as ttv
-from orbdot.nested_sampling import NestedSampling
 
 
-class TransitTiming(NestedSampling):
+class TransitTiming:
     """
     This class utilizes the capabilities of the :class:`~orbdot.nested_sampling.NestedSampling`
     class to facilitate model fitting of transit and eclipse mid-times.
     """
-    def __init__(self, ttv_settings, prior, fixed_values):
+    def __init__(self, ttv_settings):
         """Initializes the TransitTiming class.
 
         Parameters
         ----------
         ttv_settings : dict
             A dictionary specifying directories and settings for the nested sampling analysis.
-        prior : dict
-            A dictionary that defines the prior distributions for each parameter.
-        fixed_values : dict
-            A dictionary that specifies the fixed value for each parameter.
 
         """
         # directory for saving the output files
@@ -53,9 +48,6 @@ class TransitTiming(NestedSampling):
 
         except FileExistsError:
             pass
-
-        # initiate the NestedSampling class
-        NestedSampling.__init__(self, fixed_values, prior)
 
     def ttv_loglike_constant(self, theta):
         """Calculates the log-likelihood for the constant-period timing model.
@@ -177,8 +169,8 @@ class TransitTiming(NestedSampling):
 
         return ll
 
-    def run_ttv_fit(self, free_params, model='constant', suffix='', make_plot=True,
-                    clip=False, clip_method='linear'):
+    def run_ttv_fit(self, free_params, model='constant', file_suffix='', make_plot=True,
+                    sigma_clip=False, clip_model='linear'):
         """Run a model fit of the observed transit and/or eclipse mid-times.
 
         This method executes a model fit of the observed transit and/or eclipse mid-times using
@@ -192,13 +184,13 @@ class TransitTiming(NestedSampling):
         model : str, optional
             The timing model, must be ``"constant"``, ``"decay"``, or ``"precession"``. Default is
             ``"constant"``.
-        suffix : str, optional
+        file_suffix : str, optional
             A string appended to the end of the output file names.
         make_plot : bool, optional
             If True, a TTV (O-C) plot is generated. Default is True.
-        clip : bool, optional
+        sigma_clip : bool, optional
             Option to execute a sigma-clipping routine on the transit mid-times. Default is False.
-        clip_method : str, optional
+        clip_model : str, optional
             Specifies the model to be used in the sigma-clipping routine. The options are
             ``"linear"`` or ``"quadratic"``, with the default being ``"linear"``.
 
@@ -214,16 +206,16 @@ class TransitTiming(NestedSampling):
 
         """
         if model == 'constant':
-            res = self.run_ttv_constant(free_params, suffix=suffix, make_plot=make_plot,
-                                        clip=clip, clip_method=clip_method)
+            res = self.run_ttv_constant(free_params, file_suffix, make_plot,
+                                        sigma_clip, clip_model, save=True)
 
         elif model == 'decay':
-            res = self.run_ttv_decay(free_params, suffix=suffix, make_plot=make_plot,
-                                     clip=clip, clip_method=clip_method)
+            res = self.run_ttv_decay(free_params, file_suffix, make_plot,
+                                     sigma_clip, clip_model, save=True)
 
         elif model == 'precession':
-            res = self.run_ttv_precession(free_params, suffix=suffix, make_plot=make_plot,
-                                          clip=clip, clip_method=clip_method)
+            res = self.run_ttv_precession(free_params, file_suffix, make_plot,
+                                          sigma_clip, clip_model, save=True)
 
         else:
             raise ValueError('The string \'{}\' does not represent a valid TTV model. Options '
@@ -231,8 +223,7 @@ class TransitTiming(NestedSampling):
 
         return res
 
-    def run_ttv_constant(self, free_params, suffix='', make_plot=False, save=True,
-                         clip=False, clip_method='linear'):
+    def run_ttv_constant(self, free_params, suffix, plot, clip, clip_method, save):
         """Run a fit of the constant-period timing model.
 
         This method executes a constant-period model fit of the observed transit and/or eclipse
@@ -242,30 +233,34 @@ class TransitTiming(NestedSampling):
         ----------
         free_params : list or tuple
             The list of free parameters for the model fit, in any order. The parameter names are
-            formatted as strings and must be in the set: ``["t0", "P0", "e0", "w0"]``.
-        suffix : str, optional
+            formatted as strings and must be in the set: ``["t0", "P0", "e0", "w0", "ecosw",
+            "esinw", "sq_ecosw", sq_esinw"]``.
+        suffix : str
             A string appended to the end of the output file names.
-        make_plot : bool, optional
-            If True, a TTV (O-C) plot is generated. Default is True.
-        save : bool, optional
-            If True, The following output files are generated (default is True):
-
-            1. ``"ttv_constant_summary.txt"``: a quick visual summary of the results
-            2. ``"ttv_constant_results.json"``: the entire model fitting results dictionary.
-            3. ``"ttv_constant_corner.png"``: a corner plot.
-            4. ``"ttv_constant_weighted_samples.txt"``: the weighted posterior samples.
-            5. ``"ttv_constant_random_samples.json"``: a random set of 300 posterior samples.
-
-        clip : bool, optional
-            Option to execute a sigma-clipping routine on the transit mid-times. Default is False.
-        clip_method : str, optional
-            Specifies the model to be used in the sigma-clipping routine. The options are
-            ``"linear"`` or ``"quadratic"``, with the default being ``"linear"``.
+        plot : bool
+            If True, a TTV (O-C) plot is generated.
+        clip : bool
+            If True, a sigma-clipping routine is run on the transit mid-times before model fitting.
+        clip_method : str
+            Specifies the model to be used in the sigma-clipping routine, either ``"linear"`` or
+            ``"quadratic"``.
+        save : bool
+            If False, the output files are not saved.
 
         Returns
         -------
         res: dict
             A dictionary containing the model fit results and settings.
+
+        Note
+        ----
+        The following output files are generated:
+
+        1. ``"ttv_constant_summary.txt"``: a quick visual summary of the results
+        2. ``"ttv_constant_results.json"``: the entire model fitting results dictionary.
+        3. ``"ttv_constant_corner.png"``: a corner plot.
+        4. ``"ttv_constant_weighted_samples.txt"``: the weighted posterior samples.
+        5. ``"ttv_constant_random_samples.json"``: a random set of 300 posterior samples.
 
         References
         ----------
@@ -344,14 +339,13 @@ class TransitTiming(NestedSampling):
             self.plot_settings['TTV_PLOT']['ttv_constant_results_file' + suffix] = rf
             self.plot_settings['TTV_PLOT']['ttv_constant_samples_file' + suffix] = sf
 
-            if make_plot:
+            if plot:
                 plot_filename = prefix + '_plot' + suffix
                 pl.make_ttv_plot(self.plot_settings, plot_filename, suffix=suffix)
 
         return res
 
-    def run_ttv_decay(self, free_params, suffix='', make_plot=True, save=True,
-                      clip=False, clip_method='linear'):
+    def run_ttv_decay(self, free_params, suffix, plot, clip, clip_method, save):
         """Run a fit of the orbital decay timing model.
 
         This method executes an orbital decay model fit of the observed transit and/or eclipse
@@ -361,30 +355,34 @@ class TransitTiming(NestedSampling):
         ----------
         free_params : list or tuple
             The list of free parameters for the model fit, in any order. The parameter names are
-            formatted as strings and must be in the set: ``["t0", "P0", "e0", "w0", "PdE"]``.
-        suffix : str, optional
+            formatted as strings and must be in the set: ``["t0", "P0", "PdE", "e0", "w0", "ecosw",
+            "esinw", "sq_ecosw", sq_esinw"]``.
+        suffix : str
             A string appended to the end of the output file names.
-        make_plot : bool, optional
-            If True, a TTV (O-C) plot is generated. Default is True.
-        save : bool, optional
-            If True, The following output files are generated (default is True):
-
-            1. ``"ttv_decay_summary.txt"``: a quick visual summary of the results
-            2. ``"ttv_decay_results.json"``: the entire model fitting results dictionary.
-            3. ``"ttv_decay_corner.png"``: a corner plot.
-            4. ``"ttv_decay_weighted_samples.txt"``: the weighted posterior samples.
-            5. ``"ttv_decay_random_samples.json"``: a random set of 300 posterior samples.
-
-        clip : bool, optional
-            Option to execute a sigma-clipping routine on the transit mid-times. Default is False.
-        clip_method : str, optional
-            Specifies the model to be used in the sigma-clipping routine. The options are
-            ``"linear"`` or ``"quadratic"``, with the default being ``"linear"``.
+        plot : bool
+            If True, a TTV (O-C) plot is generated.
+        save : bool
+            If False, the output files are not saved.
+        clip : bool
+            If True, a sigma-clipping routine is run on the transit mid-times before model fitting.
+        clip_method : str
+            Specifies the model to be used in the sigma-clipping routine, either ``"linear"`` or
+            ``"quadratic"``.
 
         Returns
         -------
         res: dict
             A dictionary containing the model fit results and settings.
+
+        Note
+        ----
+        The following output files are generated:
+
+        1. ``"ttv_decay_summary.txt"``: a quick visual summary of the results
+        2. ``"ttv_decay_results.json"``: the entire model fitting results dictionary.
+        3. ``"ttv_decay_corner.png"``: a corner plot.
+        4. ``"ttv_decay_weighted_samples.txt"``: the weighted posterior samples.
+        5. ``"ttv_decay_random_samples.json"``: a random set of 300 posterior samples.
 
         References
         ----------
@@ -464,14 +462,13 @@ class TransitTiming(NestedSampling):
             self.plot_settings['TTV_PLOT']['ttv_decay_results_file' + suffix] = rf
             self.plot_settings['TTV_PLOT']['ttv_decay_samples_file' + suffix] = sf
 
-            if make_plot:
+            if plot:
                 plot_filename = prefix + '_plot' + suffix
                 pl.make_ttv_plot(self.plot_settings, plot_filename, suffix=suffix)
 
         return res
 
-    def run_ttv_precession(self, free_params, suffix='', make_plot=True, save=True,
-                           clip=False, clip_method='linear'):
+    def run_ttv_precession(self, free_params, suffix, plot, clip, clip_method, save):
         """Run a fit of the apsidal precession timing model.
 
         This method executes a apsidal precession model fit of the observed transit and/or eclipse
@@ -481,30 +478,34 @@ class TransitTiming(NestedSampling):
         ----------
         free_params : list or tuple
             The list of free parameters for the model fit, in any order. The parameter names are
-            formatted as strings and must be in the set: ``["t0", "P0", "e0", "w0", "wdE"]``.
-        suffix : str, optional
+            formatted as strings and must be in the set: ``["t0", "P0", "e0", "w0", "wdE", "ecosw",
+            "esinw", "sq_ecosw", sq_esinw"]``.
+        suffix : str
             A string appended to the end of the output file names.
-        make_plot : bool, optional
-            If True, a TTV (O-C) plot is generated. Default is True.
-        save : bool, optional
-            If True, The following output files are generated (default is True):
-
-            1. ``"ttv_precession_summary.txt"``: a quick visual summary of the results
-            2. ``"ttv_precession_results.json"``: the entire model fitting results dictionary.
-            3. ``"ttv_precession_corner.png"``: a corner plot.
-            4. ``"ttv_precession_weighted_samples.txt"``: the weighted posterior samples.
-            5. ``"ttv_precession_random_samples.json"``: a random set of 300 posterior samples.
-
-        clip : bool, optional
-            Option to execute a sigma-clipping routine on the transit mid-times. Default is False.
-        clip_method : str, optional
-            Specifies the model to be used in the sigma-clipping routine. The options are
-            ``"linear"`` or ``"quadratic"``, with the default being ``"linear"``.
+        plot : bool
+            If True, a TTV (O-C) plot is generated.
+        save : bool
+            If False, the output files are not saved.
+        clip : bool
+            If True, a sigma-clipping routine is run on the transit mid-times before model fitting.
+        clip_method : str
+            Specifies the model to be used in the sigma-clipping routine, either ``"linear"`` or
+            ``"quadratic"``.
 
         Returns
         -------
         res: dict
             A dictionary containing the model fit results and settings.
+
+        Note
+        ----
+        The following output files are generated:
+
+        1. ``"ttv_precession_summary.txt"``: a quick visual summary of the results
+        2. ``"ttv_precession_results.json"``: the entire model fitting results dictionary.
+        3. ``"ttv_precession_corner.png"``: a corner plot.
+        4. ``"ttv_precession_weighted_samples.txt"``: the weighted posterior samples.
+        5. ``"ttv_precession_random_samples.json"``: a random set of 300 posterior samples.
 
         References
         ----------
@@ -584,7 +585,7 @@ class TransitTiming(NestedSampling):
             self.plot_settings['TTV_PLOT']['ttv_precession_results_file' + suffix] = rf
             self.plot_settings['TTV_PLOT']['ttv_precession_samples_file' + suffix] = sf
 
-            if make_plot:
+            if plot:
                 plot_filename = prefix + '_plot' + suffix
                 pl.make_ttv_plot(self.plot_settings, plot_filename, suffix=suffix)
 
@@ -594,12 +595,11 @@ class TransitTiming(NestedSampling):
         """Remove outliers from the transit timing data.
 
         This method runs an iterative sigma-clipping routine on the observed transit mid-times,
-        which was originally developed in Hagey et al. (2022) [1]_.
-
-        In every iteration, the best-fit model (linear or quadratic) is subtracted from the
-        observed mid-times, and any datum that lies outside of 3 standard deviations from the
-        mean are removed. This process is repeated until no remaining data points fit this
-        criteria, or until a maximum number of iterations has been reached.
+        originally developed in Hagey et al. (2022) [1]_. At every iteration, the best-fit model
+        (linear or quadratic) is subtracted from the observed mid-times, and any data point that
+        lies outside of 3 standard deviations from the mean are removed. This process is repeated
+        until no remaining data points fit this criteria, or until a maximum number of iterations
+        has been reached.
 
         Parameters
         ----------
@@ -623,11 +623,13 @@ class TransitTiming(NestedSampling):
 
         # run initial model fit
         if method == 'linear':
-            res = self.run_ttv_constant(['t0', 'P0'], make_plot=False, save=False)
+            res = self.run_ttv_constant(['t0', 'P0'], suffix='', plot=False, clip=False,
+                                        clip_method='', save=False)
             print('\n')
 
         elif method == 'quadratic':
-            res = self.run_ttv_decay(['t0', 'P0', 'PdE'], make_plot=False, save=False)
+            res = self.run_ttv_decay(['t0', 'P0', 'PdE'], suffix='', plot=False, clip=False,
+                                     clip_method='', save=False)
             print('\n')
 
         else:
@@ -690,11 +692,13 @@ class TransitTiming(NestedSampling):
 
             # repeat model fitting
             if method == 'linear':
-                res = self.run_ttv_constant(['t0', 'P0'], make_plot=False, save=False)
+                res = self.run_ttv_constant(['t0', 'P0'], suffix='', plot=False, clip=False,
+                                            clip_method='', save=False)
                 print('\n')
 
-            if method == 'quadratic':
-                res = self.run_ttv_decay(['t0', 'P0', 'PdE'], make_plot=False, save=False)
+            elif method == 'quadratic':
+                res = self.run_ttv_decay(['t0', 'P0', 'PdE'], suffix='', plot=False, clip=False,
+                                         clip_method='', save=False)
                 print('\n')
 
             current_fit = res

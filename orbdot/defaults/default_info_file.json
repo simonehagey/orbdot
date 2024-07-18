@@ -9,19 +9,16 @@
       "mu [mas/yr]": null,
       "mu_RA [mas/yr]": null,
       "mu_DEC [mas/yr]": null,
-      "parallax [mas]": null,
       "distance [pc]": null,
       "rad_vel [km/s]": null,
-      "gaia_dr3_ID": null,
+      "age [Gyr]": null,
       "discovery_year": null,
 
   "_comment2": "Star Characteristics",
 
-      "age [Gyr]": null,
       "M_s [M_sun]": null,
       "R_s [R_sun]": null,
       "k2_s": null,
-      "vsini [km/s]": null,
       "P_rot_s [days]": null,
 
   "_comment3": "Planet Characteristics",
@@ -29,16 +26,14 @@
       "planets": ["b"],
       "M_p [M_earth]": [null],
       "R_p [R_earth]": [null],
-      "P_rot_p [days]": [null],
       "k2_p": [null],
-      "lambda [deg]": [null],
-      "Psi [deg]": [null],
+      "P_rot_p [days]": [null],
 
   "_comment4": "Fit Parameters",
 
       "_comment4_1": "Orbital Elements",
-      "t0 [BJD_TDB]": [0.0],
-      "P [days]": [0.0],
+      "t0 [BJD_TDB]": [null],
+      "P [days]": [null],
       "e": [0.0],
       "w [rad]": [0.0],
       "i [deg]": [90.0],
@@ -56,6 +51,6 @@
       "v0 [m/s]": [0.0],
       "jit [m/s]": [0.0],
       "dvdt [m/s/day]": [0.0],
-      "ddvdt [m/s^2/day]": [0.0],
+      "ddvdt [m/s/day^2]": [0.0],
       "K_tide [m/s]": 0.0
 }

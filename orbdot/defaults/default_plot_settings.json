@@ -1,15 +1,7 @@
 {
-  "_comment1": "TTV (O-C) plot settings",
-
   "TTV_PLOT": {"title": "None",
 
-    "_comment12": "TTV fit results and samples, only change for use outside of model fit functions",
-
-    "_comment13": "clipped data files",
-        "clipped_data_file": "None",
-        "data_file": "None",
-
-    "_comment14": "TTV general plot settings",
+    "_comment1": "TTV general plot settings",
         "num_epochs_pre_data": 200,
         "num_epochs_post_data": 500,
         "y_axis_limits": [-20, 20],
@@ -27,12 +19,12 @@
           "darkorchid", "dodgerblue", "goldenrod", "lightcoral", "peru", "slategrey",
           "tab:blue", "tab:orange", "tab:purple", "tab:cyan", "tab:pink", "tab:green", "tab:brown"],
 
-    "_comment15": "TTV save figure settings",
+    "_comment2": "TTV save figure settings",
         "bbox_inches": "tight",
         "dpi": 300,
         "pad_inches": 0.25,
 
-    "_comment16": "TTV rcParams dictionary",
+    "_comment3": "TTV rcParams dictionary",
         "rcParams": {
           "figure.figsize": [10, 8],
           "font.family": "serif",
@@ -49,24 +41,9 @@
           "legend.borderpad": 0.5,
           "legend.loc": "upper right"}  },
 
-  "_comment2": "RV plot settings",
-
   "RV_PLOT": {"title": "None", "show_RV_curve": "True",
 
-    "_comment21": "RV fit results and samples, only change for use outside of model fit functions",
-        "rv_results_file": "None",
-        "rv_samples_file": "None",
-        "rv_decay_results_file": "None",
-        "rv_decay_samples_file": "None",
-        "rv_precession_results_file": "None",
-        "rv_precession_samples_file": "None",
-        "data_file": "None",
-
-        "rv_constant_residuals_file": "None",
-        "rv_decay_residuals_file": "None",
-        "rv_precession_residuals_file": "None",
-
-    "_comment22": "RV general plot settings",
+    "_comment4": "RV general plot settings",
         "samples_alpha": 0.1,
         "samples_linewidth": 1,
         "model_alpha": 0.4,
@@ -79,12 +56,12 @@
         "data_colors": ["tab:orange", "tab:blue", "tab:green", "tab:pink", "tab:cyan",
         "tab:purple", "tab:red", "blue", "mediumspringgreen"],
 
-    "_comment23": "RV save figure settings",
+    "_comment5": "RV save figure settings",
         "bbox_inches": "tight",
         "dpi": 300,
         "pad_inches": 0.25,
 
-    "_comment24": "RV rcParams dictionary",
+    "_comment6": "RV rcParams dictionary",
         "rcParams": {
           "figure.figsize": [18, 7],
           "font.family": "serif",
@@ -97,5 +74,48 @@
           "legend.fontsize": 9.5,
           "legend.labelspacing": 0.5,
           "legend.framealpha": 1.0,
-          "legend.borderpad": 0.5}  }
+          "legend.borderpad": 0.5}  },
+
+  "TDV_PLOT": {"title": "None",
+
+    "_comment8": "TDV general plot settings",
+        "num_epochs_pre_data": 500,
+        "num_epochs_post_data": 3000,
+        "y_axis_limits": [-75, 75],
+
+        "samples_alpha": 0.01,
+        "samples_linewidth": 1,
+        "model_alpha": 0.05,
+        "model_linewidth": 1.5,
+        "data_fmt": ".",
+        "data_markersize": 5,
+        "data_err_linewidth": 1.5,
+        "data_err_capsize": 3,
+        "reference_dates": ["2020-01-01"],
+        "data_colors": ["blue", "darkorange", "mediumvioletred", "forestgreen", "orangered", "darkkhaki",
+          "darkorchid", "dodgerblue", "goldenrod", "lightcoral", "peru", "slategrey",
+          "tab:blue", "tab:orange", "tab:purple", "tab:cyan", "tab:pink", "tab:green", "tab:brown"],
+
+    "_comment9": "TDV save figure settings",
+        "bbox_inches": "tight",
+        "dpi": 300,
+        "pad_inches": 0.25,
+
+    "_comment10": "TDV rcParams dictionary",
+        "rcParams": {
+          "figure.figsize": [10, 8],
+          "font.family": "serif",
+          "xtick.direction": "in",
+          "ytick.direction": "in",
+          "xtick.labelsize": 14,
+          "ytick.labelsize": 14,
+          "axes.labelsize": 14,
+          "axes.labelpad": 10,
+          "axes.titlesize": 14,
+          "legend.fontsize": 10,
+          "legend.labelspacing": 0.3,
+          "legend.framealpha": 1.0,
+          "legend.borderpad": 0.5,
+          "legend.loc": "upper right"}
   }
+}
