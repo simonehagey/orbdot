@@ -45,7 +45,7 @@ def rv_constant(t0, P0, e0, w0, K, v0, dvdt, ddvdt, t):
     -----
     The following steps outline the implementation of this method:
 
-    1. **Calculate the true anomaly, eccentric anomaly, and mean anomaly at :math:`t_0`.**
+    1. **Calculate the true anomaly, eccentric anomaly, and mean anomaly at mid-transit.**
 
      Given the definition of the OrbDot coordinate system, we know that the true anomaly at the
      reference transit mid-time is:
@@ -181,7 +181,7 @@ def rv_decay(t0, P0, e0, w0, K, v0, dvdt, ddvdt, PdE, t):
      rate-of-change is constant, the period at any epoch :math:`E` is:
 
      .. math::
-            P = P_0 + \\frac{dP}{dE}]\\,E
+            P = P_0 + \\frac{dP}{dE}\\,E
 
      where :math:`E` is calculated by rounding the result of the following equation to an
      integer value:
@@ -195,7 +195,7 @@ def rv_decay(t0, P0, e0, w0, K, v0, dvdt, ddvdt, PdE, t):
      calculated relative to the most recent transit mid-time:
 
      .. math::
-            t_{\\mathrm{I}} = t_0 + P_0 E + \\frac{1}{2}\\,\\frac{dP}{dE}\\,E^2
+            t_{\\mathrm{I}} = t_0 + P_0 E + \\frac{1}{2}\\frac{dP}{dE}\\,E^2
 
      Given the definition of the OrbDot coordinate system, we know that the true anomaly at the
      transit mid-time is:
@@ -206,8 +206,8 @@ def rv_decay(t0, P0, e0, w0, K, v0, dvdt, ddvdt, PdE, t):
      The eccentric anomaly may then be calculated by:
 
      .. math::
-            \\tan \\left(\\frac{\\mathrm{E}_{\\mathrm{I}}{2}\\right) = \\sqrt{\\frac{1-e}{1+e}}
-            \\tan \\left( \\frac{\\phi_{\\mathrm{I}}{2}\\right)
+            \\tan \\left(\\frac{\\mathrm{E}_{\\mathrm{I}}{2}\\right) = \\sqrt{\\frac{1-e}{
+            1+e}}\\tan \\left( \\frac{\\phi_{\\mathrm{I}}{2}\\right)
 
      which yields the mean anomaly via Kepler's equation:
 
@@ -221,7 +221,7 @@ def rv_decay(t0, P0, e0, w0, K, v0, dvdt, ddvdt, PdE, t):
 
      where :math:`n = 2 \\pi/P` is the mean motion.
 
-    4. **Calculate the true anomaly of the planet at the given time.**
+    3. **Calculate the true anomaly of the planet at the given time.**
 
      With the time of pericenter passage, the mean anomaly may be calculated at any time
      :math:`t`:
@@ -240,7 +240,7 @@ def rv_decay(t0, P0, e0, w0, K, v0, dvdt, ddvdt, PdE, t):
             \\tan \\left(\\frac{\\phi}{2}\\right) = \\sqrt{\\frac{1+e}{1-e}} \\tan \\left(\\frac{
             \\mathrm{E}}{2}\\right)
 
-    5. **Return the total RV signal, including long-term trends.**
+    4. **Return the total RV signal, including long-term trends.**
 
      The total radial velocity signal at time :math:`t` is:
 
@@ -355,13 +355,13 @@ def rv_precession(t0, P0, e0, w0, K, v0, dvdt, ddvdt, wdE, t):
      transit mid-time is:
 
      .. math::
-        \\phi_{\\mathrm{I} = \\frac{\\pi}{2} - \\omega
+            \\phi_{\\mathrm{I} = \\frac{\\pi}{2} - \\omega
 
      The eccentric anomaly may then be calculated by:
 
      .. math::
-            \\tan \\left(\\frac{\\mathrm{E}_{\\mathrm{I}}{2}\\right) = \\sqrt{\\frac{1-e}{1+e}}
-            \\tan \\left( \\frac{\\phi_{\\mathrm{I}}{2}\\right)
+            \\tan\\left(\\frac{\\mathrm{E}_{\\mathrm{I}}{2}\\right) = \\sqrt{\\frac{1-e}{1+e}}
+            \\tan\\left(\\frac{\\phi_{\\mathrm{I}}{2}\\right)
 
      which yields the mean anomaly via Kepler's equation:
 

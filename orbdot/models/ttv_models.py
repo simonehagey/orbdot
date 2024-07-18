@@ -94,9 +94,9 @@ def ttv_precession(t0, P0, e0, w0, wdE, E, primary=True):
     """Apsidal precession model for transit and eclipse mid-times.
 
     This method calculates the expected transit or eclipse mid-times for an elliptical orbit
-    undergoing apsidal precession. It uses a numerical approximation for low eccentricities (e <<
-    0.1), which is adapted from equation (15) in Giminez and Bastero (1995) [1]_ by Patra et al.
-    (2017) [2]_.
+    undergoing apsidal precession. It uses a numerical approximation for low eccentricities (
+    :math:`e << 0.1`), which is adapted from equation (15) in Giminez and Bastero (1995) [1]_ by
+    Patra et al. (2017) [2]_.
 
     Parameters
     ----------

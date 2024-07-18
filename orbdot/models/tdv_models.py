@@ -36,10 +36,6 @@ def tdv_constant(P0, e0, w0, i0, E, M_s, R_s):
     array-like
         The predicted transit durations in minutes.
 
-    References
-    ----------
-    .. [1] :cite:t:`Kipping2010`. https://doi.org/10.1111/j.1365-2966.2010.16894.x
-
     """
     arr = np.ones(len(E))
 

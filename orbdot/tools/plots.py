@@ -537,16 +537,15 @@ def make_rv_plots(plot_settings, outfile, suffix='', model='constant'):
 
     This method creates a 3-part plot of the radial velocity model and data:
 
-    1. **A plot of the radial velocity measurements vs. time**, with an option to plot the
-    best-fit model (``plot_settings["RV_PLOT"]['show_RV_curve']``). The data are shifted by the (
-    instrument-dependent) systemic velocity ``"v0"``, and the corresponding measurement times are
-    shifted by the reference transit mid-time ``"t0"``.
+     1. A plot of the **radial velocity measurements vs. time**, with an option to plot the
+     best-fit model. The RV data are shifted by the systemic radial velocity and the
+     corresponding measurement times are shifted by the reference time.
 
-    2. **A plot of the residuals** of subtracting the best-fit radial velocity model from the
-    data, including the systemic velocity and long-term trends.
+     2. A plot of the **residuals** of subtracting the best-fit radial velocity model from the
+     data, including the systemic radial velocity and long-term trends.
 
-    3. **A plot of the phase-folded RV signal due to the planet**, ie. not including the systemic
-    velocity and long-term trends, and 300 random posterior samples from the model fit.
+     3. A plot of the **phase-folded RV signal** due to the planet, ie. not including the
+     systemic velocity and long-term trends, and 300 random posterior samples from the model fit.
 
     Parameters
     ----------
@@ -1247,18 +1246,18 @@ def corner_plot(dic, samples, params, outfile):
     """Generates a corner plot from the weighted posterior samples.
 
     This method generates a corner plot from the weighted posterior samples using the
-    corner.py package written by Daniel Foreman-Mackey [1]_.
+    corner.py package by Daniel Foreman-Mackey [1]_.
 
     Parameters
     ----------
     dic : dict
-        Dictionary containing the results of the sampler.
+        Dictionary containing the results of the model fit.
     samples : array_like
-        Array containing the weighted posterior samples.
+        The weighted posterior samples.
     params : list
-        List of the parameter names.
+        List of the free parameters.
     outfile : str
-        File name of the saved plot.
+        File name for saving the plot.
 
     Returns
     -------
@@ -1369,11 +1368,11 @@ def periodogram(data_file, outfile, min_period=3, max_period=100000.0, num=10000
     outfile : str
         File name of the saved plot.
     min_period : float
-        The minimum period in days to include in the periodogram.
+        The minimum period in days.
     max_period : float
-        The maximum period in days to include in the periodogram.
+        The maximum period in days.
     num : int
-        The number of periods/frequencies in between 'min_period' and 'max_period'.
+        The number of frequencies in between those of ``min_period`` and ``max_period``.
 
     Returns
     -------
