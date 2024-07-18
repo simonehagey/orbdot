@@ -40,7 +40,7 @@ def confidence_intervals(params, samples, dic, inds, circular=False):
 
             s = samples[:, i]
             mean = np.mean(s)
-            shifted = s - mean    # shift samples to zero at the median value
+            shifted = s - mean    # shift samples to zero at the mean value
 
             # wrap shifted samples to fall within [-pi, pi] of mean
             for j in range(len(shifted)):
@@ -59,7 +59,7 @@ def confidence_intervals(params, samples, dic, inds, circular=False):
 
 
 def quantiles(samples):
-    """Calculates quantiles for 68% confidence intervals.
+    """Calculates quantiles for the 68% confidence intervals.
 
     Parameters
     ----------

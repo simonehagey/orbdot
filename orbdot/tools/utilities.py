@@ -28,7 +28,7 @@ def read_ttv_data(filename, delim=' '):
     Returns
     -------
     dict
-        A dictionary containing the mid-times, errors, sources, and epoch numbers.
+        A dictionary containing the epochs, mid-times, errors, and sources.
 
     Raises
     ------
@@ -110,8 +110,8 @@ def read_rv_data(filename, delim=' '):
 
     Note
     ----
-    The data are split by the instrument/source so that instrument-specific parameters, such as
-    the zero velocity and jitter, are fit separately.
+    The data are split by the instrument/source so that the instrument-specific parameters
+    ``"v0"`` and ``"jit"`` are fit separately.
 
     """
     # raise error if file not found
@@ -288,7 +288,7 @@ def merge_dictionaries(default_file, user_file):
 
 
 def assign_default_values(system_info, planet_number):
-    """Assigns default parameter values from the system information file.
+    """Assigns default parameter values using the system information file.
 
     Parameters
     ----------
@@ -405,9 +405,9 @@ def split_rv_instrument_params(source_order, source_tags, free_params):
     Parameters
     ----------
     source_order : list
-        Order of the radial velocity sources read from the data file.
+        Order of the RV sources as read from the data file.
     source_tags : list
-        Tags identifying the different sources of radial velocity data.
+        Tags identifying the different RV data sources.
     free_params : array-like
         The list of free parameters in the model fit.
 
@@ -440,17 +440,17 @@ def split_rv_instrument_results(free_params, source_order, source_tags, results_
     """Splits instrument-dependent parameter results when there are multiple sources of RV data.
 
     If ``"jit"`` and/or ``"v0"`` are given as free parameters in a model fit and there is more
-    than one source of radial velocity data, this method splits the associated value in the output
-    dictionary into separate keys for each source.
+    than one source of radial velocity data, this method splits the relevant results dictionary
+    entry into separate keys for each source.
 
     Parameters
     ----------
     free_params : array-like
         The list of free parameters in the model fit.
     source_order : list
-        Order of the radial velocity sources read from the data file.
+        Order of the RV sources as read from the data file.
     source_tags : list
-        Tags identifying the different sources of radial velocity data.
+        Tags identifying the different RV data sources.
     results_dic : dict
         The results dictionary returned by the nested sampling methods.
 
@@ -484,69 +484,10 @@ def split_rv_instrument_results(free_params, source_order, source_tags, results_
     return results_dic
 
 
-def calculate_epochs(tc, P, times, primary=True):
-    """Calculate the epoch (orbit number) of a given transit or eclipse mid-time.
-
-    Parameters
-    ----------
-    tc : float
-        The reference transit mid-time [BJD_TDB].
-    P : float
-        The orbital period in days.
-    times : array-like
-        The mid-times at which to calculate the epochs.
-    primary : bool, optional
-        If True, the mid-time(s) must be transits. If False, they are treated as secondary
-        eclipses. Default is True.
-
-    Returns
-    -------
-    list
-        The epoch (orbit number) for the given mid-time(s).
-
-    """
-    if primary:
-
-        return [int(round((t - tc) / P, 0)) for t in times]
-
-    elif not primary:
-
-        return [int(round((t - tc - P / 2) / P, 0)) for t in times]
-
-    else:
-        print("error: invalid observation type")
-
-        return None
-
-
-def wrap(angle):
-    """Wrap an angle to a value between :math:`0` and :math:`2\\pi`.
-
-    Parameters
-    ----------
-    angle : float
-        An angle in radians.
-
-    Returns
-    -------
-    float
-        The associated angle in the range :math:`0` to :math:`2\\pi`.
-
-    """
-    if angle >= 2 * np.pi:
-        return angle - 2 * np.pi
-
-    if angle <= 0:
-        return angle + 2 * np.pi
-
-    else:
-        return angle
-
-
 def hjd_to_bjd(hjd, RA, DEC):
     """Converts heliocentric julian days (HJD) to barycentric julian days (BJD).
 
-    This method uses the ``astropy`` package to convert the time of an observation from
+    This method uses the Astropy package to convert the time of an observation from
     heliocentric julian days (HJD_UTC) to barycentric julian days (BJD_TDB).
 
     Parameters
@@ -594,7 +535,7 @@ def hjd_to_bjd(hjd, RA, DEC):
 def bjd_to_hjd(bjd, RA, DEC):
     """Converts barycentric julian days (BJD) to heliocentric julian days (HJD).
 
-    This method uses the ``astropy`` package to convert the time of an observation from
+    This method uses the Astropy package to convert the time of an observation from
     barycentric julian days (BJD_TDB) to heliocentric julian days (HJD_UTC).
 
     Parameters
@@ -637,3 +578,62 @@ def bjd_to_hjd(bjd, RA, DEC):
     HJD_UTC = np.array([float(x.to_value("jd")) for x in HJD_UTC])
 
     return HJD_UTC
+
+
+def calculate_epochs(tc, P, times, primary=True):
+    """Calculate the epoch (orbit number) of a given transit or eclipse mid-time.
+
+    Parameters
+    ----------
+    tc : float
+        The reference transit mid-time [BJD_TDB].
+    P : float
+        The orbital period in days.
+    times : array-like
+        The mid-times at which to calculate the epochs.
+    primary : bool, optional
+        If True, the mid-time(s) must be transits. If False, they are treated as secondary
+        eclipses. Default is True.
+
+    Returns
+    -------
+    list
+        The epoch of the given mid-time(s).
+
+    """
+    if primary:
+
+        return [int(round((t - tc) / P, 0)) for t in times]
+
+    elif not primary:
+
+        return [int(round((t - tc - P / 2) / P, 0)) for t in times]
+
+    else:
+        print("error: invalid observation type")
+
+        return None
+
+
+def wrap(angle):
+    """Wrap an angle to its corresponding value in the range :math:`0` to :math:`2\\pi`.
+
+    Parameters
+    ----------
+    angle : float
+        An angle in radians.
+
+    Returns
+    -------
+    float
+        The wrapped angle in radians.
+
+    """
+    if angle >= 2 * np.pi:
+        return angle - 2 * np.pi
+
+    if angle <= 0:
+        return angle + 2 * np.pi
+
+    else:
+        return angle

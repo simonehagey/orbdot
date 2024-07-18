@@ -22,17 +22,22 @@ def ttv_constant(t0, P0, e0, w0, E, primary=True):
     e0 : float
         Eccentricity of the orbit.
     w0 : float
-        Argument of pericenter in radians.
+        Argument of pericenter of the planetary orbit in radians.
     E : array-like
-        The epoch(s) at which to calculate the transit or eclipse mid-times.
+        The epoch(s) at which to calculate the mid-times.
     primary : bool, optional
-        If True, returns the mid-time of the primary eclipse. If False, returns the mid-time of
-        the secondary eclipse. Default is True.
+        If True, returns the transit mid-time. If False, returns the eclipse mid-time. Default is
+        True.
 
     Returns
     -------
     float or array-like
-        The predicted transit or eclipse time(s) in :math:`\\mathrm{BJD}_\\mathrm{TDB}`.
+        The predicted transit or eclipse times in :math:`\\mathrm{BJD}_\\mathrm{TDB}`.
+
+    Note
+    ----
+    If the orbit is eccentric, an offset of :math:`\\frac{2P}{\\pi} e\\cos{\\omega}`
+    is added to the eclipse mid-times.
 
     """
     if primary:
@@ -54,28 +59,28 @@ def ttv_decay(t0, P0, PdE, e0, w0, E, primary=True):
     t0 : float
         Reference transit time in :math:`\\mathrm{BJD}_\\mathrm{TDB}`.
     P0 : float
-        Orbital period in days.
+        Orbital period at the reference mid-time, in days.
     PdE : float
-        Rate of change of the orbital period in days per orbit.
+        Rate of change of the orbital period in days per epoch.
     e0 : float
         Eccentricity of the orbit.
     w0 : float
-        Argument of pericenter in radians.
+        Argument of pericenter of the planetary orbit in radians.
     E : array-like
-        The epoch(s) at which to calculate the transit or eclipse mid-times.
+        The epoch(s) at which to calculate the mid-times.
     primary : bool, optional
-        If True, returns the mid-time of the primary eclipse. If False, returns the mid-time of
-        the secondary eclipse. Default is True.
+        If True, returns the transit mid-time. If False, returns the eclipse mid-time. Default is
+        True.
 
     Returns
     -------
     float or array-like
-        The predicted transit or eclipse time(s) in :math:`\\mathrm{BJD}_\\mathrm{TDB}`.
+        The predicted transit or eclipse times in :math:`\\mathrm{BJD}_\\mathrm{TDB}`.
 
-    Notes
-    -----
-    If the orbit is eccentric, an offset of :math:`2\\frac{P}{\\pi} e\\cos{\\omega}`
-    is added to the eclipse times.
+    Note
+    ----
+    If the orbit is eccentric, an offset of :math:`\\frac{2P}{\\pi} e\\cos{\\omega}`
+    is added to the eclipse mid-times.
 
     """
     if primary:
@@ -102,19 +107,19 @@ def ttv_precession(t0, P0, e0, w0, wdE, E, primary=True):
     e0 : float
         Eccentricity of the orbit.
     w0 : float
-        Argument of pericenter of the planet's orbit at time ``t_0`` in radians.
+        Argument of pericenter of the planetary orbit at the reference mid-time, in radians.
     wdE : float
         Apsidal precession rate in radians per epoch.
     E : array-like
-        The epoch(s) at which to calculate the transit or eclipse mid-times.
+        The epoch(s) at which to calculate the mid-times.
     primary : bool, optional
-        If True, returns the mid-time of the primary eclipse. If False, returns the mid-time of
-        the secondary eclipse. Default is True.
+        If True, returns the transit mid-time. If False, returns the eclipse mid-time. Default is
+        True.
 
     Returns
     -------
     float or array-like
-        The predicted transit or eclipse time(s) in :math:`\\mathrm{BJD}_\\mathrm{TDB}`.
+        The predicted transit or eclipse times in :math:`\\mathrm{BJD}_\\mathrm{TDB}`.
 
     References
     ----------

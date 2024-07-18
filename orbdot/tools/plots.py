@@ -537,16 +537,16 @@ def make_rv_plots(plot_settings, outfile, suffix='', model='constant'):
 
     This method creates a 3-part plot of the radial velocity model and data:
 
-    1. **A plot of the radial velocity measurements vs. time**, with an option to plot the best-fit
-    model (``plot_settings["RV_PLOT"]['show_RV_curve']``). The measured radial velocities are
-    shifted by the instrument-dependent systemic velocity ``v0``, and the corresponding measurement
-    times are shifted by the reference transit mid-time ``t0``.
+    1. **A plot of the radial velocity measurements vs. time**, with an option to plot the
+    best-fit model (``plot_settings["RV_PLOT"]['show_RV_curve']``). The data are shifted by the (
+    instrument-dependent) systemic velocity ``"v0"``, and the corresponding measurement times are
+    shifted by the reference transit mid-time ``"t0"``.
 
-    2. **A plot of the residuals** from subtracting the best-fit radial velocity model, including
-    the systemic velocity and long-term trends, from the data.
+    2. **A plot of the residuals** of subtracting the best-fit radial velocity model from the
+    data, including the systemic velocity and long-term trends.
 
-    3. **A plot of the phase-folded RV signal from the planet** (ie. not including the systemic
-    velocity and long-term trends), as well as 300 random posterior samples from the model fit.
+    3. **A plot of the phase-folded RV signal due to the planet**, ie. not including the systemic
+    velocity and long-term trends, and 300 random posterior samples from the model fit.
 
     Parameters
     ----------
@@ -557,8 +557,8 @@ def make_rv_plots(plot_settings, outfile, suffix='', model='constant'):
     suffix : str, optional
         Optional string for matching model fit results.
     model : str, optional
-        The chosen RV model (``"constant"``, ``"decay"``, or ``"precession"``). Default is
-        ``"constant"``.
+        The RV model that was fit, must be ``"constant"``, ``"decay"``, or ``"precession"``.
+        Default is ``"constant"``.
 
     Returns
     -------
