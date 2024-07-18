@@ -192,7 +192,7 @@ class JointFit:
 
         This function returns the sum of the log-likelihoods calculated by the
         :meth:`~orbdot.transit_timing.TransitTiming.ttv_loglike_decay` and
-        :meth:`~orbdot.transit_duration.TransitDuration.tdv_loglike_decay methods.
+        :meth:`~orbdot.transit_duration.TransitDuration.tdv_loglike_decay` methods.
 
         Parameters
         ----------
@@ -212,7 +212,7 @@ class JointFit:
 
         This function returns the sum of the log-likelihoods calculated by the
         :meth:`~orbdot.transit_timing.TransitTiming.ttv_loglike_precession` and
-        :meth:`~orbdot.transit_duration.TransitDuration.tdv_loglike_precession methods.
+        :meth:`~orbdot.transit_duration.TransitDuration.tdv_loglike_precession` methods.
 
         Parameters
         ----------
@@ -302,13 +302,13 @@ class JointFit:
         ----------
         free_params : list or tuple
             The list of free parameters for the model fit, in any order. The parameter names are
-            formatted as strings and must be a variable in the physical model.
-        TTV : bool, optional
+            formatted as strings and must be part of the physical model.
+        TTV : bool
             If True, the transit and/or eclipse timing data are included in the model fit.
             Default is False.
-        RV : bool, optional
+        RV : bool
             If True, the radial velocity data are included in the model fit. Default is False.
-        TDV : bool, optional
+        TDV : bool
             If True, the transit duration data are included in the model fit. Default is False.
         model : str, optional
             The timing model, must be ``"constant"``, ``"decay"``, or ``"precession"``. Default is
@@ -525,7 +525,7 @@ class JointFit:
         """Run a joint TTV/RV/TDV model fit.
 
         This method executes a simultaneous model fit of the transit/eclipse mid-times,
-        radial velocity data, and transit durations. It uses one of two nested sampling packages,
+        radial velocity, and transit duration data. It uses one of two nested sampling packages,
         Nestle [1]_ or PyMultiNest [2]_. The physical model is specified by the ``model``
         argument, which may be equal to ``"constant"`` for an unchanging orbit, ``"decay"`` for
         orbital decay, or ``"precession"`` for apsidal precession.
@@ -543,7 +543,7 @@ class JointFit:
         suffix : str
             A string appended to the end of the output file names.
         plot : bool
-            If True, TDV and RV plots are generated. Default is True.
+            If True, the TTV, RV, and TDV plots are generated. Default is True.
         clip : bool
             Option to execute a sigma-clipping routine on the transit mid-times. Default is False.
         clip_method : str
@@ -863,9 +863,9 @@ class JointFit:
     def run_rv_tdv_fit(self, free_params, model, suffix, plot):
         """Run a joint RV/TDV model fit.
 
-        This method executes a simultaneous model fit of the radial velocity data and transit
-        durations. It uses one of two nested sampling packages, Nestle [1]_ or PyMultiNest [2]_.
-        The physical model is specified by the ``model`` argument, which may be equal to
+        This method executes a simultaneous model fit of the radial velocity and transit duration
+        data. It uses one of two nested sampling packages, Nestle [1]_ or PyMultiNest [2]_. The
+        physical model is specified by the ``model`` argument, which may be equal to
         ``"constant"`` for an unchanging orbit, ``"decay"`` for orbital decay,
         or ``"precession"`` for apsidal precession.
 

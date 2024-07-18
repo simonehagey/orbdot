@@ -16,7 +16,7 @@ import orbdot.models.tdv_models as tdv
 class TransitDuration:
     """
     This class utilizes the capabilities of the :class:`~orbdot.nested_sampling.NestedSampling`
-    class to facilitate transit duration model fitting.
+    class to facilitate model fitting of transit durations.
     """
 
     def __init__(self, tdv_settings, system_info):
@@ -169,10 +169,10 @@ class TransitDuration:
         ----------
         free_params : list or tuple
             The list of free parameters for the model fit, in any order. The parameter names are
-            formatted as strings and must be a variable in the physical model.
+            formatted as strings and must be part of the physical model.
         model : str, optional
             The transit duration model, must be ``"constant"``, ``"decay"``,
-            or ``"precession"``. Default is``"constant"``.
+            or ``"precession"``. Default is ``"constant"``.
         file_suffix : str, optional
             A string appended to the end of the output file names.
         make_plot : bool, optional
@@ -226,8 +226,8 @@ class TransitDuration:
         res: dict
             A dictionary containing the model fit results and settings.
 
-        Notes
-        -----
+        Note
+        ----
         The following output files are generated:
 
         1. ``"tdv_constant_summary.txt"``: a quick visual summary of the results
@@ -329,8 +329,8 @@ class TransitDuration:
         res: dict
             A dictionary containing the model fit results and settings.
 
-        Notes
-        -----
+        Note
+        ----
         The following output files are generated:
 
         1. ``"tdv_decay_summary.txt"``: a quick visual summary of the results
@@ -431,8 +431,8 @@ class TransitDuration:
         res: dict
             A dictionary containing the model fit results and settings.
 
-        Notes
-        -----
+        Note
+        ----
         The following output files are generated:
 
         1. ``"tdv_precession_summary.txt"``: a quick visual summary of the results

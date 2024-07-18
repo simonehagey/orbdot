@@ -88,8 +88,7 @@ def read_ttv_data(filename, delim=' '):
 
 
 def read_rv_data(filename, delim=' '):
-    """Reads a radial velocity data file with columns: ``[Time (BJD), Velocity (m/s), Err (m/s),
-    Source]``.
+    """Reads an RV data file with columns: ``[Time (BJD), Velocity (m/s), Err (m/s), Source]``.
 
     Parameters
     ----------

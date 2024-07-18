@@ -185,9 +185,9 @@ class RadialVelocity:
         ----------
         free_params : list or tuple
             The list of free parameters for the model fit, in any order. The parameter names are
-            formatted as strings and must be a variable in the physical model. If the data are
-            from multiple sources, the instrument-dependent parameters (``"v0"`` and ``"jit"``)
-            are split into multiple variables before the fit is performed.
+            formatted as strings and must be part of the physical model. If the data are from
+            multiple sources, the instrument-dependent parameters (``"v0"`` and ``"jit"``) are
+            split into multiple variables before the fit is performed.
         model : str, optional
             The radial velocity model, must be ``"constant"``, ``"decay"``, or ``"precession"``.
             Default is ``"constant"``.

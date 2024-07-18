@@ -180,7 +180,7 @@ class TransitTiming:
         ----------
         free_params : list or tuple
             The list of free parameters for the model fit, in any order. The parameter names are
-            formatted as strings and must be a variable in the physical model.
+            formatted as strings and must part of the physical model.
         model : str, optional
             The timing model, must be ``"constant"``, ``"decay"``, or ``"precession"``. Default is
             ``"constant"``.
@@ -471,7 +471,7 @@ class TransitTiming:
     def run_ttv_precession(self, free_params, suffix, plot, clip, clip_method, save):
         """Run a fit of the apsidal precession timing model.
 
-        This method executes a apsidal precession model fit of the observed transit and/or eclipse
+        This method executes an apsidal precession model fit of the observed transit and/or eclipse
         mid-times using one of two nested sampling packages, Nestle [1]_ or PyMultiNest [2]_.
 
         Parameters

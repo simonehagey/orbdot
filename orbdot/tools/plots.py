@@ -1,23 +1,23 @@
 """
 Plots
 =====
-This module defines methods for generating various plots from OrbDot model fit results.
+This module defines methods for creating various plots with OrbDot model fit results.
 """
 
 import csv
 import json
 import corner
 import numpy as np
-import scipy.signal as sci
 from matplotlib import pyplot as plt
 import matplotlib.gridspec as gridspec
 import matplotlib.transforms as transforms
-from astropy.time import Time
-from astropy.timeseries import LombScargle
 import orbdot.tools.utilities as utl
 import orbdot.models.rv_models as rv
 import orbdot.models.ttv_models as ttv
 import orbdot.models.tdv_models as tdv
+import scipy.signal as sci
+from astropy.time import Time
+from astropy.timeseries import LombScargle
 
 
 def make_ttv_plot(plot_settings, outfile, suffix=''):
@@ -26,8 +26,7 @@ def make_ttv_plot(plot_settings, outfile, suffix=''):
     Parameters
     ----------
     plot_settings : dict
-        A dictionary containing plot settings, such as data file paths, results files,
-        and plot configurations.
+        A dictionary containing plot settings.
     outfile : str
         The file path for saving the plot.
     suffix : str, optional
@@ -536,18 +535,18 @@ def make_ttv_plot(plot_settings, outfile, suffix=''):
 def make_rv_plots(plot_settings, outfile, suffix='', model='constant'):
     """Generates a radial velocity (RV) plot.
 
-    This method creates a plot of the radial velocity data and best-fit model with three parts:
+    This method creates a 3-part plot of the radial velocity model and data:
 
-     1. The radial velocity measurements vs. time, with an option to plot the best-fit RV curve.
-     The data are shifted by the zero velocity for each instrument and the measurement times are
-     shifted by the reference transit mid-time (``t0``).
+    1. **A plot of the radial velocity measurements vs. time**, with an option to plot the best-fit
+    model (``plot_settings["RV_PLOT"]['show_RV_curve']``). The measured radial velocities are
+    shifted by the instrument-dependent systemic velocity ``v0``, and the corresponding measurement
+    times are shifted by the reference transit mid-time ``t0``.
 
-     2. The residuals of the data after subtracting the best-fit radial velocity model, including
-     the systemic velocity and long-term trends.
+    2. **A plot of the residuals** from subtracting the best-fit radial velocity model, including
+    the systemic velocity and long-term trends, from the data.
 
-     3. A phase-folded plot of the radial velocity signal due to the planet only,
-     ie. not including the systemic velocity and long-term trends, as well as 300 random samples
-     from the model fit.
+    3. **A plot of the phase-folded RV signal from the planet** (ie. not including the systemic
+    velocity and long-term trends), as well as 300 random posterior samples from the model fit.
 
     Parameters
     ----------
@@ -1034,8 +1033,7 @@ def make_tdv_plot(plot_settings, outfile, suffix=''):
     Parameters
     ----------
     plot_settings : dict
-        A dictionary containing plot settings, such as data file paths, results files,
-        and plot configurations.
+        A dictionary containing plot settings.
     outfile : str
         The file path for saving the plot.
     suffix : str, optional
@@ -1303,12 +1301,12 @@ def corner_plot(dic, samples, params, outfile):
 
 
 def read_random_samples(data_file, delim='\t'):
-    """Read files with sets of random posterior samples into the format needed for plotting.
+    """Reads the ``*_random_samples.json`` files.
 
     Parameters
     ----------
     data_file : str
-        Name of the file containing the posterior samples.
+        Name of the file containing the random posterior samples.
     delim : str, optional
         The data file delimiter, default is tab-separated.
 

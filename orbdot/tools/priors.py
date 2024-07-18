@@ -17,7 +17,8 @@ def gaussian_prior(hypval, prior):
     hypval : float
         Value in the unit hypercube (from 0 to 1).
     prior : tuple
-        Tuple containing the mean and standard deviation of the Gaussian prior distribution.
+        Tuple containing the mean and standard deviation of the Gaussian prior distribution,
+        ie. ``["gaussian", mean, std]``.
 
     Returns
     -------
@@ -35,7 +36,8 @@ def log_prior(hypval, prior):
     hypval : float
         Value in the unit hypercube (from 0 to 1).
     prior : tuple
-        Tuple containing the minimum and maximum values of the log-uniform prior distribution.
+        Tuple containing the minimum and maximum values of the log-uniform prior distribution,
+        ie. ``["log", log10(min), log10(max)]``.
 
     Returns
     -------
@@ -53,7 +55,8 @@ def uniform_prior(hypval, prior):
     hypval : float
         Value in the unit hypercube (from 0 to 1).
     prior : tuple
-        Tuple containing the minimum and maximum values of the uniform prior distribution.
+        Tuple containing the minimum and maximum values of the uniform prior distribution,
+        ie. ``["uniform", min, max]``.
 
     Returns
     -------
@@ -71,9 +74,9 @@ def get_prior(hypval, prior):
     hypval : float
         Value in the unit hypercube (from 0 to 1).
     prior : list or tuple
-        A list of values that specify the prior distribution, of which the first element is the type
-        of prior (``"uniform"``, ``"gaussian"``, or ``"log"``) and subsequent elements define the
-        distribution. The options are:
+        Tuple that defines the prior distribution for the parameter. The first element specifies
+        the type of prior (``"uniform"``, ``"gaussian"``, or ``"log"``), and the subsequent elements define the
+        bounds of the distribution. The options are:
 
         1. Gaussian Prior: ``["gaussian", mean, std]``
         2. Uniform Prior: ``["uniform", min, max]``
