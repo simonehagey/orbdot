@@ -3,10 +3,9 @@
 **************************
 Orbital Decay of WASP-12 b
 **************************
+This example demonstrates an OrbDot reproduction of the results from "The Orbit of WASP-12b Is Decaying" by :cite:t:`Yee2020`, in which the authors performed a comprehensive analysis of new and published transit and eclipse mid-times for the Hot Jupiter WASP-12 b. They conclude that the orbit is decaying at a rate of :math:`-29.0 \pm 2.0 \, \mathrm{ms \, yr^{-1}}`, which corresponds to a remaining lifetime of :math:`3.25 \, \mathrm{Myr}` and a modified stellar tidal quality factor of :math:`1.75 \times 10^5`.
 
-This example demonstrates an OrbDot reproduction of the results from "The Orbit of WASP-12b Is Decaying" by :cite:t:`Yee2020`, in which the authors performed a comprehensive analysis of new and published transit and eclipse mid-times for the Hot Jupiter WASP-12 b. They conclude that the orbit is decaying at a rate of :math:`29.0 \pm 2.0 \, \mathrm{ms \, yr^{-1}}`, which corresponds to a remaining lifetime of :math:`3.25 \, \mathrm{Myr}` and a modified stellar tidal quality factor of :math:`1.75 \times 10^5`.
-
-Using the authors' compiled table of transit and eclipse mid-times, we will fit the constant-period, orbital decay, and apsidal precession models to the data, compare the Bayesian evidences, and use OrbDot's :class:`~orbdot.analysis.Analyzer` class to reproduce the derived results. The input files and a full script for running this example can be found in the ``examples/`` directory.
+Using the authors' compiled table of transit and eclipse mid-times, we will fit the constant-period, orbital decay, and apsidal precession models to the data, compare the Bayesian evidences, and use OrbDot's :class:`~orbdot.analysis.Analyzer` class to reproduce the derived results. The full script for this example is saved in the file ``examples/example_wasp-12.py`` and can be run without modifications.
 
 ------------
 
@@ -138,7 +137,7 @@ The :ref:`settings file <settings-file>` is saved as: ``examples/settings_files/
           }
         }
 
-The first part of the file defines path names for the other input files (``"system_info_file"`` and ``"plot_settings_file"``), as well as the base directory for saving the results (``"main_save_dir"``):
+The first part of the settings file specifies path names for the other input files with the ``"system_info_file"`` and ``"plot_settings_file"`` keys, and the base directory for saving the results with the ``"main_save_dir"`` key.
 
 .. code-block:: JSON
 
@@ -167,9 +166,9 @@ In this case, the ``"nestle"`` sampler has been specified with 1000 live points 
          "evidence_tolerance": 0.01
        },
 
-The remaining portion of the settings file is for the ``"prior"`` dictionary, which defines the :ref:`prior distributions <priors>` for the model parameters. We need only populate this with the parameters that are to be included in the model fits, which in this case are the reference transit mid-time (``"t0"``), orbital period (``"P0"``), eccentricity (``"e0"``), argument of pericentre (``"w0"``), orbital decay rate (``"PdE"``), and apsidal precession rate (``"wdE"``). If a model parameter is left out of the settings file, the default prior will be used, as specified in the file ``orbdot/defaults/info_file.json``. For more information on the available model parameters see :ref:`model_parameters`.
+The remaining portion of the settings file is for the ``"prior"`` dictionary, which defines the :ref:`prior distributions <priors>` for the model parameters. We need only populate this with the parameters that are to be included in the model fits, which in this case are the reference transit mid-time (``"t0"``), orbital period (``"P0"``), eccentricity (``"e0"``), argument of pericentre (``"w0"``), orbital decay rate (``"PdE"``), and apsidal precession rate (``"wdE"``). If a model parameter is left out of the settings file, the default prior will be used, as specified in the file ``orbdot/defaults/default_info_file.json``. For more information on the available model parameters see :ref:`model_parameters`.
 
-For WASP-12 b, we have chosen broad uniform prior distributions for ``"e0"``, ``"w0"``, ``"PdE"``, and ``"wdE"``, and for ``"t0"`` and ``"P0"`` the priors are Gaussian distributions centered on the known orbit.
+For WASP-12 b, we have chosen broad uniform prior distributions for ``"e0"``, ``"w0"``, ``"PdE"``, and ``"wdE"``, and Gaussian distributions for ``"t0"`` and ``"P0"`` that are centered on the known orbit.
 
 .. code-block:: JSON
 
@@ -220,23 +219,23 @@ Once the fit is complete, the output files can be found in the directory that wa
         -----
         Sampler: nestle
         Free parameters: ['t0' 'P0']
-        log(Z) = -204.93 ± 0.12
-        Run time (s): 3.43
+        log(Z) = -204.56 ± 0.11
+        Run time (s): 3.58
         Num live points: 1000
         Evidence tolerance: 0.01
-        Eff. samples per second: 1156
+        Eff. samples per second: 1104
 
         Results
         -------
-        t0 = 2456305.4555213926 + 2.592848613858223e-05 - 2.6030465960502625e-05
-        P0 = 1.0914196401923824 + 2.703604096154777e-08 - 2.672872967401929e-08
+        t0 = 2456305.4555211244 + 2.541998401284218e-05 - 2.416549250483513e-05
+        P0 = 1.091419640127365 + 2.7275076863730874e-08 - 2.6061967250967655e-08
 
         Fixed Parameters
         ----------------
         e0 = 0.0
         w0 = 0.0
 
-This shows us that it took 3.43 seconds to run and that the Bayesian evidence (``logZ``) for the model is -204.9. The best-fit parameter values are also shown, with the uncertainties representing the 68% confidence interval on the weighted posterior samples. The following table compares these results with those of :cite:author:`Yee2020`, and we see that they agree.
+This shows us that it took 3.58 seconds to run the model fit and that the Bayesian evidence (``logZ``) for the is -204.6. The best-fit parameter values are also shown, with the uncertainties derived from the 68% confidence intervals. The following table compares these results with those of :cite:author:`Yee2020`, and we see that they agree.
 
 .. list-table::
    :header-rows: 1
@@ -248,11 +247,11 @@ This shows us that it took 3.43 seconds to run and that the Bayesian evidence (`
    * - :math:`t_0`
      - :math:`\mathrm{BJD}_\mathrm{TDB}`
      - :math:`2456305.455521 \,\pm\, 0.000026`
-     - :math:`2456305.455521  \,\pm\, 0.000026`
+     - :math:`2456305.455521^{\,+0.000025}_{\,-0.000024}`
    * - :math:`P_0`
      - :math:`\mathrm{days}`
      - :math:`1.091419649 \,\pm\, 0.000000026`
-     - :math:`1.091419640 \,\pm\, 0.000000027`
+     - :math:`1.091419640^{\,+0.000000027}_{\,-0.000000026}`
 
 Orbital Decay Fit
 -----------------
@@ -263,7 +262,7 @@ To fit the orbital decay timing model we use the same method, this time specifyi
     # run the orbital decay TTV model fit
     fit_d = wasp12.run_ttv_fit(['t0', 'P0', 'PdE'], model='decay')
 
-The ``ttv_decay_summary.txt`` file shows us that the fitting routine ran for 6.36 seconds and that the Bayesian evidence is -104.4. The evidence clearly demonstrates that orbital decay is a far better fit to the data than an unchanging orbit model, but we will quantify this later on.
+The ``ttv_decay_summary.txt`` file shows us that the fitting routine ran for 7.04 seconds and that the Bayesian evidence is -104.5. The evidence clearly demonstrates that orbital decay is a far better fit to the data than an unchanging orbit model, but we will quantify this later on.
 
 .. admonition:: Summary of the orbital decay model fit:
   :class: dropdown
@@ -274,18 +273,18 @@ The ``ttv_decay_summary.txt`` file shows us that the fitting routine ran for 6.3
         -----
         Sampler: nestle
         Free parameters: ['t0' 'P0' 'PdE']
-        log(Z) = -104.4 ± 0.14
-        Run time (s): 6.36
+        log(Z) = -104.47 ± 0.14
+        Run time (s): 7.04
         Num live points: 1000
         Evidence tolerance: 0.01
-        Eff. samples per second: 729
+        Eff. samples per second: 663
 
         Results
         -------
-        t0 = 2456305.455808902 + 3.09208407998085e-05 - 3.068055957555771e-05
-        P0 = 1.0914201079360208 + 4.216883864316401e-08 - 4.308769985250649e-08
-        PdE = -1.0060233896628563e-09 + 6.983453717986182e-11 - 6.779901591341499e-11
-        dPdt (ms/yr) = -29.088417457932348 + 2.019213659783878 - 1.9603580775466223
+        t0 = 2456305.4558077552 + 3.379490226507187e-05 - 3.208918496966362e-05
+        P0 = 1.0914201076440608 + 4.156631039364811e-08 - 4.3833844109997244e-08
+        PdE = -1.00348670058712e-09 + 6.98096735732343e-11 - 6.878773061871802e-11
+        dPdt (ms/yr) = -29.015070989305705 + 2.0184947476459363 - 1.9889460278124174
 
         Fixed Parameters
         ----------------
@@ -304,19 +303,19 @@ The following table compares the orbital decay fit with that of :cite:author:`Ye
    * - :math:`t_0`
      - :math:`\mathrm{BJD}_\mathrm{TDB}`
      - :math:`2456305.455809 \, \pm \, 0.000032`
-     - :math:`2456305.455809 \, \pm \, 0.000031`
+     - :math:`2456305.455808^{\,+0.000034}_{\,-0.000032}`
    * - :math:`P_0`
      - :math:`\mathrm{days}`
      - :math:`1.091420107 \, \pm \, 0.000000042`
-     - :math:`1.091420108^{\,+0.000000042}_{\,-0.000000043}`
+     - :math:`1.091420108^{\,+0.000000042}_{\,-0.000000044}`
    * - :math:`dP/dE`
      - :math:`\mathrm{days\,E}^{-1}`
      - :math:`−10.04 \times 10^{−10} \, \pm \, 0.69 \times 10^{−10}`
-     - :math:`{-10.06 \times 10^{-10}}^{\,+0.70 \times 10^{-10}}_{\,-0.68 \times 10^{-10}}`
+     - :math:`{-10.03 \times 10^{-10}}^{\,+0.70 \times 10^{-10}}_{\,-0.69 \times 10^{-10}}`
    * - :math:`dP/dt`
      - :math:`\mathrm{ms\,yr}^{-1}`
      - :math:`-29.0 \, \pm \, 2.0`
-     - :math:`-29.1 \, \pm \, 2.0`
+     - :math:`-29.0 \, \pm \, 2.0`
 
 Apsidal Precession Fit
 ----------------------
@@ -327,7 +326,7 @@ Similarly, the apsidal precession model can be fitted by specifying ``model="pre
     # run the apsidal precession TTV model fit
     fit_p = wasp12.run_ttv_fit(['t0', 'P0', 'e0', 'w0', 'wdE'], model='precession')
 
-This time the summary file (``ttv_precession_summary.txt``) shows us that the model fit took 34.89 seconds to run and that the Bayesian evidence is -116.07. We will compare this with the other models in the next section of this tutorial.
+This time the summary file (``ttv_precession_summary.txt``) shows us that the model fit took 43.82 seconds to run and that the Bayesian evidence is -116.3. We will compare this with the other models in the next section of this tutorial.
 
 .. admonition:: Summary of the apsidal precession model fit:
   :class: dropdown
@@ -338,19 +337,19 @@ This time the summary file (``ttv_precession_summary.txt``) shows us that the mo
         -----
         Sampler: nestle
         Free parameters: ['t0' 'P0' 'e0' 'w0' 'wdE']
-        log(Z) = -116.07 ± 0.15
-        Run time (s): 34.89
+        log(Z) = -116.27 ± 0.15
+        Run time (s): 43.82
         Num live points: 1000
         Evidence tolerance: 0.01
-        Eff. samples per second: 170
+        Eff. samples per second: 135
 
         Results
         -------
-        t0 = 2456305.4548825813 + 0.00011802185326814651 - 0.00011980347335338593
-        P0 = 1.0914196305550177 + 8.069146284483963e-08 - 8.128624129355444e-08
-        e0 = 0.003099322432992428 + 0.00034758960275960973 - 0.00035118175039224476
-        w0 = 2.6128725544270974 + 0.09660310805837764 - 0.09785042840771002
-        wdE = 0.0010723819004700278 + 7.978063023170688e-05 - 6.441399488955001e-05
+        t0 = 2456305.454880826 + 0.00011899974197149277 - 0.00011747609823942184
+        P0 = 1.09141962928784 + 8.208843849111247e-08 - 8.127643225108727e-08
+        e0 = 0.003102454871620994 + 0.00035413532779573955 - 0.000348981821072355
+        w0 = 2.6150255828399716 + 0.09729062315255002 - 0.09844838245938625
+        wdE = 0.0010728800848238081 + 7.821040607610633e-05 - 6.420401515008301e-05
 
         Fixed Parameters
         ----------------
@@ -367,23 +366,23 @@ The table below shows again that the OrbDot result agrees with :cite:author:`Yee
    * - :math:`t_0`
      - :math:`\mathrm{BJD}_\mathrm{TDB}`
      - :math:`2456305.45488 \, \pm \, 0.00012`
-     - :math:`2456305.45488^{\,+0.00011}_{\,-0.00012}`
+     - :math:`2456305.45488^{\,+0.00012}_{\,-0.00012}`
    * - :math:`P_0`
      - :math:`\mathrm{days}`
      - :math:`1.091419633 \, \pm \, 0.000000081`
-     - :math:`1.091419631 \, \pm \, 0.000000081`
+     - :math:`1.09141962928784^{\,+0.000000082}_{\,-0.000000081}`
    * - :math:`e_0`
      - --
      - :math:`0.00310 \, \pm \, 0.00035`
-     - :math:`0.00310 \, \pm \, 0.00035`
+     - :math:`0.00310^{\,+0.00035}_{\,-0.00035}`
    * - :math:`w_0`
      - :math:`\mathrm{rad}`
      - :math:`2.62 \, \pm \, 0.10`
-     - :math:`2.61 \, \pm \, 0.10`
+     - :math:`2.62^{\,+0.10}_{\,-0.10}`
    * - :math:`d\omega/dE`
      - :math:`\mathrm{rad \, E}^{-1}`
-     - :math:`0.000984^{\,+0.000070}_{\,+0.000061}`
-     - :math:`0.001072^{\,+0.000080}_{\,-0.000064}`
+     - :math:`0.000984^{\,+0.000070}_{\,-0.000061}`
+     - :math:`0.001073^{\,+0.000078}_{\,-0.000064}`
 
 The following plot displays the timing residuals of WASP-12 b with future projections of all three models, shown with 300 random draws from the weighted posterior samples. Each data point is the difference between the observed time and the time predicted by the best-fit constant-period model. OrbDot automatically detects the previous model fits by matching the ``suffix`` argument of :meth:`~orbdot.transit_timing.TransitTiming.run_ttv_fit`, which we left blank for this example.
 
@@ -401,7 +400,6 @@ The following code snippet creates an ``Analyzer`` object with the results of th
 
     # create an 'Analyzer' instance for the orbital decay results
     analyzer = Analyzer(wasp12, fit_d)
-
 
 We can now call any relevant :class:`~orbdot.analysis.Analyzer` methods, the result of which will appear in the file: ``analysis/ttv_decay_analysis.txt``.
 
@@ -425,15 +423,15 @@ Now the analysis file looks like this:
 
     Model Comparison
     -----------------------------------------------------------------
-     * Decisive evidence for Model 1 vs. Model 2  (B = 2.91e+43)
-          Model 1: 'ttv_decay', logZ = -104.55
-          Model 2: 'ttv_constant', logZ = -204.63
+     * Decisive evidence for Model 1 vs. Model 2  (B = 2.93e+43)
+          Model 1: 'ttv_decay', logZ = -104.47
+          Model 2: 'ttv_constant', logZ = -204.56
 
     Model Comparison
     -----------------------------------------------------------------
-     * Decisive evidence for Model 1 vs. Model 2  (B = 1.12e+05)
-          Model 1: 'ttv_decay', logZ = -104.55
-          Model 2: 'ttv_precession', logZ = -116.18
+     * Decisive evidence for Model 1 vs. Model 2  (B = 1.33e+05)
+          Model 1: 'ttv_decay', logZ = -104.47
+          Model 2: 'ttv_precession', logZ = -116.27
 
 confirming that the evidence for the orbital decay model is decisive.
 
@@ -453,18 +451,18 @@ This appends the following summary to the ``analysis/ttv_decay_analysis.txt`` fi
     Orbital Decay Model Fit
     -----------------------------------------------------------------
      * Best-fit orbital decay rate:
-          dP/dE = -1.01E-09 + 6.86E-11 - 6.75E-11 days/E
-          dP/dt = -29.08 + 1.98 - 1.95 ms/yr
+          dP/dE = -1.00E-09 + 6.98E-11 - 6.88E-11 days/E
+          dP/dt = -29.02 + 2.02 - 1.99 ms/yr
      * Modified stellar quality factor:
           Q' = 1.73E+05
      * Remaining lifetime:
-          tau = 3.24E+00 Myr
+          tau = 3.25E+00 Myr
      * Energy loss rate:
-          dEdt = -4.82E+23 W
+          dEdt = -4.81E+23 W
      * Angular momentum loss rate:
-          dLdt = -7.23E+27 kg m^2 / s^2
+          dLdt = -7.22E+27 kg m^2 / s^2
 
-We see that the best-fit orbital decay model yields a stellar tidal quality factor of :math:`1.73 \times 10^5`, a remaining lifetime of :math:`3.24 \, \mathrm{Myr}`, and a decrease in orbital energy and angular momentum equal to :math:`-4.8 \times 10^{23} \, \mathrm{W}` and :math:`-7.2 \times 10^{27} \, \mathrm{kg \, m^2 \, s^{-2}}`, respectively. The following table shows that all of these derived results agree with :cite:author:`Yee2020`.
+We see that the best-fit orbital decay model yields a stellar tidal quality factor of :math:`1.73 \times 10^5`, a remaining lifetime of :math:`3.25 \, \mathrm{Myr}`, and a decrease in orbital energy and angular momentum equal to :math:`-4.8 \times 10^{23} \, \mathrm{W}` and :math:`-7.2 \times 10^{27} \, \mathrm{kg \, m^2 \, s^{-2}}`, respectively. The following table shows that all of these derived results agree with :cite:author:`Yee2020`.
 
 .. list-table::
    :header-rows: 1
@@ -480,7 +478,7 @@ We see that the best-fit orbital decay model yields a stellar tidal quality fact
    * - :math:`\tau`
      - :math:`\mathrm{Myr}`
      - :math:`3.25`
-     - :math:`3.24`
+     - :math:`3.25`
    * - :math:`dE/dt`
      - :math:`W`
      - :math:`-5 \times 10^{23}`

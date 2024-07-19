@@ -47,8 +47,7 @@ def rv_constant(t0, P0, e0, w0, K, v0, dvdt, ddvdt, t):
 
     1. **Calculate the true anomaly, eccentric anomaly, and mean anomaly at mid-transit.**
 
-     Given the definition of the OrbDot coordinate system, we know that the true anomaly at the
-     reference transit mid-time is:
+     In the OrbDot coordinate system, we know that the true anomaly at the transit mid-time is:
 
      .. math::
             \\phi_0 = \\frac{\\pi}{2} - \\omega
@@ -94,7 +93,7 @@ def rv_constant(t0, P0, e0, w0, K, v0, dvdt, ddvdt, t):
 
     4. **Return the total RV signal, including long-term trends.**
 
-     The total radial velocity signal at time :math:`t` is:
+     Thus, the total radial velocity signal at time :math:`t` is:
 
      .. math::
             v_r = K[\\cos{(\\phi(t)+\\omega_p)}+e\\cos{\\omega_p}] + \\gamma_j +
@@ -198,8 +197,7 @@ def rv_decay(t0, P0, e0, w0, K, v0, dvdt, ddvdt, PdE, t):
      .. math::
             t_{\\mathrm{I}} = t_0 + P_0 E + \\frac{1}{2}\\frac{dP}{dE}\\,E^2
 
-     Given the definition of the OrbDot coordinate system, we know that the true anomaly at the
-     transit mid-time is:
+     In the OrbDot coordinate system, we know that the true anomaly at the transit mid-time is:
 
      .. math::
             \\phi_{\\mathrm{I}} = \\frac{\\pi}{2} - \\omega
@@ -230,7 +228,7 @@ def rv_decay(t0, P0, e0, w0, K, v0, dvdt, ddvdt, PdE, t):
      .. math::
             \\mathrm{M} = n \\left(t - t_p\\right)
 
-     The eccentric anomaly then calculated by solving Kepler's equation:
+     allowing for the eccentric anomaly to be determined by solving Kepler's equation:
 
      .. math::
             \\mathrm{E} = \\mathrm{M} + e \\sin \\mathrm{E}
@@ -243,7 +241,7 @@ def rv_decay(t0, P0, e0, w0, K, v0, dvdt, ddvdt, PdE, t):
 
     4. **Return the total RV signal, including long-term trends.**
 
-     The total radial velocity signal at time :math:`t` is:
+     Thus, the total radial velocity signal at time :math:`t` is:
 
      .. math::
             v_r = K[\\cos{(\\phi(t)+\\omega_p)}+e\\cos{\\omega_p}] + \\gamma_j +
@@ -352,8 +350,7 @@ def rv_precession(t0, P0, e0, w0, K, v0, dvdt, ddvdt, wdE, t):
      .. math::
             t_{\\mathrm{I}} = t_0 + P_s E - \\frac{e P_a}{\\pi}\\cos{\\omega}
 
-     Given the definition of the OrbDot coordinate system, we know that the true anomaly at the
-     transit mid-time is:
+     In the OrbDot coordinate system, we know that the true anomaly at the transit mid-time is:
 
      .. math::
             \\phi_{\\mathrm{I}} = \\frac{\\pi}{2} - \\omega
@@ -384,10 +381,10 @@ def rv_precession(t0, P0, e0, w0, K, v0, dvdt, ddvdt, wdE, t):
      .. math::
             \\mathrm{M} = n \\left(t - t_p\\right)
 
-     which yields the eccentric anomaly with Kepler's equation:
+     allowing for the eccentric anomaly to be determined by solving Kepler's equation:
 
      .. math::
-            \\mathrm{E} = \\mathrm{M} + e \\sin \\mathrm{E}
+            \\mathrm{M} = \\mathrm{E} - e \\sin \\mathrm{E}
 
      Finally, the true anomaly at time :math:`t` is determined by:
 
@@ -397,7 +394,7 @@ def rv_precession(t0, P0, e0, w0, K, v0, dvdt, ddvdt, wdE, t):
 
     4. **Return the total RV signal, including long-term trends.**
 
-     The total radial velocity signal at time :math:`t` is:
+     Thus, the total radial velocity signal at time :math:`t` is:
 
      .. math::
             v_r = K[\\cos{(\\phi(t)+\\omega_p)}+e\\cos{\\omega_p}] + \\gamma_j +
