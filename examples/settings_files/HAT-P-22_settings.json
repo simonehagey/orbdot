@@ -1,4 +1,5 @@
-{"_comment1": "HAT-P-22 b Settings",
+{
+  "_comment1": "HAT-P-22 b Settings",
 
   "_comment2": "Input Files",
 
@@ -19,17 +20,14 @@
   "_comment4": "Priors",
 
        "prior": {
-
          "t0": ["gaussian", 2454930.22077, 0.001],
-         "P0": ["gaussian", 3.2122200, 0.00001],
-
+         "P0": ["gaussian", 3.21222, 0.00001],
          "ecosw": ["uniform", -0.1, 0.1],
          "esinw": ["uniform", -0.1, 0.1],
-
-         "K": ["uniform", 300, 330],
-         "v0": [["uniform", 12000, 13000], ["uniform", -100, 100]],
+         "K": ["uniform", 300.0, 330.0],
+         "v0": [["uniform", 12000.0, 13000.0], ["uniform", -100.0, 100.0]],
          "jit": ["log", -1, 2],
          "dvdt": ["uniform", -0.1, 0.1],
-         "ddvdt": ["uniform", -0.0001, 0.0001]
+         "ddvdt": ["uniform", -0.001, 0.001]
        }
 }

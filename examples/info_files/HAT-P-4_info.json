@@ -4,22 +4,19 @@
       "star_name": "HAT-P-4",
       "RA": "15h19m57.89s",
       "DEC": "+36d13m46.36s",
-      "num_stars": 2,
-      "num_planets": 1,
       "discovery_year": 2007,
 
-  "_comment2": "Star Characteristics",
+  "_comment2": "Star Properties",
 
       "M_s [M_sun]": 1.248,
       "R_s [R_sun]": 1.596,
-      "age [Gyr]": 4.6,
 
-  "_comment3": "Planet Characteristics",
+  "_comment3": "Planet Properties",
 
       "planets": ["b"],
-      "M_p [M_earth]": [206.957457],
+      "M_p [M_earth]": [206.957],
 
-  "_comment4": "Fit Parameters",
+  "_comment4": "Model Parameters",
 
       "_comment4_1": "Orbital Elements",
 

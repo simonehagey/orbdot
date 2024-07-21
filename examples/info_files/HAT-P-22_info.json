@@ -4,22 +4,19 @@
       "star_name": "HAT-P-22",
       "RA": "10h22m43.55s",
       "DEC": "+50d07m43.36s",
-      "num_stars": 2,
-      "num_planets": 1,
       "discovery_year": 2010,
 
-  "_comment2": "Star Characteristics",
+  "_comment2": "Star Properties",
 
       "M_s [M_sun]": 0.916,
-      "R_s [R_sun]": 1.04,
-      "age [Gyr]": 12.4,
+      "R_s [R_sun]": 1.040,
 
-  "_comment3": "Planet Characteristics",
+  "_comment3": "Planet Properties",
 
       "planets": ["b"],
-      "M_p [M_earth]": [690.494004],
+      "M_p [M_earth]": [690.492],
 
-  "_comment4": "Fit Parameters",
+  "_comment4": "Model Parameters",
 
       "_comment4_1": "Orbital Elements",
 

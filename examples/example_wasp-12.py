@@ -33,7 +33,7 @@ fit_p = wasp12.run_ttv_fit(['t0', 'P0', 'e0', 'w0', 'wdE'], model='precession')
 """
 Interpretation
 """
-# create an 'Analyzer' instance for the orbital decay results
+# create an ``Analyzer`` instance for the orbital decay results
 analyzer = Analyzer(wasp12, fit_d)
 
 # compare the Bayesian evidence for the orbital decay and constant-period models

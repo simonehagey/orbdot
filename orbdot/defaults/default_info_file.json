@@ -14,14 +14,14 @@
       "age [Gyr]": null,
       "discovery_year": null,
 
-  "_comment2": "Star Characteristics",
+  "_comment2": "Star Properties",
 
       "M_s [M_sun]": null,
       "R_s [R_sun]": null,
       "k2_s": null,
       "P_rot_s [days]": null,
 
-  "_comment3": "Planet Characteristics",
+  "_comment3": "Planet Properties",
 
       "planets": ["b"],
       "M_p [M_earth]": [null],
@@ -29,7 +29,7 @@
       "k2_p": [null],
       "P_rot_p [days]": [null],
 
-  "_comment4": "Fit Parameters",
+  "_comment4": "Model Parameters",
 
       "_comment4_1": "Orbital Elements",
       "t0 [BJD_TDB]": [null],
