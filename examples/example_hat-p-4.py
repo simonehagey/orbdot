@@ -7,8 +7,8 @@ host star HAT-P-4 from "The GAPS Programme with HARPS-N at TNG XIV" by Bonomo et
 statistically significant linear trend in the radial velocity measurements, suggestive of the
 existence of an outer planetary companion.
 
-This script fits four models to the RV data compiled from Bonomo et al. 2017 (HARPS) and Knutson
-et al. 2014 (HIRES):
+This script fits four models to the HAT-P-4 RV data, which are compiled from Bonomo et al. 2017 (
+HARPS) and Knutson et al. 2014 (HIRES):
 
  1. a circular orbit
  2. an eccentric orbit

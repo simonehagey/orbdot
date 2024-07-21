@@ -403,7 +403,7 @@ We can now call any relevant :class:`~orbdot.analysis.Analyzer` methods, the res
 
 Model Comparison
 ----------------
-Calling the :meth:`~orbdot.analysis.Analyzer.model_comparison` method compares the orbital decay fit to another by calculating the Baye's factor and evaluating the strength of the evidence with thresholds given by :cite:author:`KassRaftery1995`. The following code snippet calls this method twice, once for the constant-period model fit (``fit_c``), and once for the apsidal precession model fit (``fit_p``):
+Calling the :meth:`~orbdot.analysis.Analyzer.model_comparison` method compares the orbital decay fit to another by calculating the Bayes factor and evaluating the strength of the evidence with thresholds given by :cite:author:`KassRaftery1995`. The following code snippet calls this method twice, once for the constant-period model fit (``fit_c``), and once for the apsidal precession model fit (``fit_p``):
 
 .. code-block:: python
 

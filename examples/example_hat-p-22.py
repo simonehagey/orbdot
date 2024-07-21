@@ -2,13 +2,13 @@
 Long-Term Radial Velocity Trends : HAT-P-22
 ===========================================
 This example executes an OrbDot reproduction of the radial velocity analyses of the Hot Jupiter
-host star HAT-P-22 from "The GAPS Programme with HARPS-N at TNG. XIV" by Bonomo et al. (2017) and
-"Friends of Hot Jupiters. I" by Knutson et al. (2014). In both studies, the authors detect a
-statistically significant quadratic trend in the radial velocity measurements, suggestive of the
-existence of an outer planetary companion.
+host star HAT-P-22 from "The GAPS Programme with HARPS-N at TNG. XIV" by Bonomo et al. (2017),
+which includes data from "Friends of Hot Jupiters. I" by Knutson et al. (2014). The authors
+detect a statistically significant quadratic trend in the radial velocity measurements,
+suggestive of the existence of an outer planetary companion.
 
-This script fits four models to the RV data compiled from Bonomo et al. 2017 (HARPS) and Knutson
-et al. 2014 (HIRES):
+This script fits four models to the HAT-P-22 RV data, which are compiled from Bonomo et al. 2017 (
+HARPS) and Knutson et al. 2014 (HIRES):
 
  1. a circular orbit
  2. an eccentric orbit
@@ -58,4 +58,3 @@ analyzer.model_comparison(fit_linear)
 
 # investigate the trend as evidence of an outer companion planet
 analyzer.unknown_companion()
-
