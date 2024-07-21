@@ -10,18 +10,18 @@ import numpy as np
 import scipy.special as sci
 
 # define constants
-c = 2.99792458e8    # m/s
-G = 6.6743e-11      # m^3 / kg / s^2
+c = 2.99792458e8   # m/s
+G = 6.6743e-11     # m^3 / kg / s^2
 
 # define unit conversions
-AU = 1.495978707e11   # 1 AU = 1.496 x 10^11 m
-parsec = 3.0857e16    # 1 pc = 3.0857 x 10^16 m
-R_earth = 6.371e6     # earth radius = 6,371.000 km
-M_earth = 5.9722e24   # earth mass = 5.9722 x 10^24 kg
-R_jup = 6.9911e7      # jupiter radius = 69911 km
-M_jup = 1.89813e27    # jupiter mass = 1,898.13 x 10^24 kg
-R_sun = 6.957e8       # solar radius = 695,700 km
-M_sun = 1.9885e30     # solar mass = 1,988,500 x 10^30 kg
+AU = 1.495978707e11    # 1 AU = 1.496 x 10^11 m
+parsec = 3.0857e16     # 1 pc = 3.0857 x 10^16 m
+R_earth = 6.371e6      # earth radius = 6,371.000 km
+M_earth = 5.9722e24    # earth mass = 5.9722 x 10^24 kg
+R_jup = 6.9911e7       # jupiter radius = 69911 km
+M_jup = 1.89813e27     # jupiter mass = 1,898.13 x 10^24 kg
+R_sun = 6.957e8        # solar radius = 695,700 km
+M_sun = 1.9885e30      # solar mass = 1,988,500 x 10^30 kg
 
 
 def companion_doppler_pdot_from_rv_trend(P, dvdt):
@@ -106,7 +106,7 @@ def companion_doppler_rv_trend_from_pdot(P, dPdt):
 
     .. math:: \\dot{\\gamma} = \\frac{\\dot{P}_{\\mathrm{RV}} c}{P}
 
-    where math:`\\dot{\\gamma}` is the linear radial velocity trend, :math:`\\dot{P}_{\\mathrm{
+    where :math:`\\dot{\\gamma}` is the linear radial velocity trend, :math:`\\dot{P}_{\\mathrm{
     RV}}` is the time derivative of the observed orbital period, :math:`P` is the orbital period of
     the transiting planet, and :math:`c` is the speed of light in a vacuum.
 
@@ -123,7 +123,7 @@ def companion_mass_from_rv_trend(tau, dvdt, M_s):
 
     This method computes the minimum mass for an unseen outer companion planet given a linear
     trend in radial velocity data (i.e., an acceleration). While this approach to determining
-    the minimum companion mass was originally described in Feng et al. (2015) [1]_ (see eq. 1),
+    the minimum companion mass was originally described in Feng et al. (2015) [1]_ (see Eq. 1),
     this method implements the version given by equation (8) in Bouma et al. (2020) [2]_.
 
     Parameters
@@ -247,33 +247,34 @@ def companion_from_quadratic_rv(P_min, t_pivot, dvdt, ddvdt, M_s):
     """Constrain properties of the orbit of an outer companion given a quadratic RV trend.
 
     Given first and second order acceleration terms that describe a quadratic radial velocity
-    trend, this method follows the formulation from Kipping et al. (2011) [1]_ (see Equations 1,
-    3, and 4) to constrain properties of a possible outer companion. It requires a minimum
-    possible orbital period of the companion, which should be informed by the timespan of the
-    radial velocity measurements (see the :meth:`~orbdot.analysis.Analyzer.rv_trend_quadratic`
-    method from the :class:`~orbdot.analysis.Analyzer` class).
+    trend, :math:`\\dot{\\gamma}` and :math:`\\ddot{\\gamma}`, this method follows the formulation
+    from Kipping et al. (2011) [1]_ (see Equations 1, 3, and 4) to constrain properties of a
+    possible outer companion. It requires a minimum possible orbital period of the companion,
+    which should be informed by the timespan of the radial velocity measurements (see the
+    :meth:`~orbdot.analysis.Analyzer.rv_trend_quadratic` method from the
+    :class:`~orbdot.analysis.Analyzer` class).
 
     Parameters
     ----------
     P_min : float
-        The minimum possible orbital period of the companion in days.
+        The minimum orbital period of the companion in days.
     t_pivot : float
-        The 'pivot' point in days. This is often fixed as the mean time of the RV observations,
-        but in the case of OrbDot joint fitting, it is the reference mid-time of the transiting
-        planet.
+        The "pivot" point in days. This is often fixed as the mean time of the RV observations,
+        but in the case of OrbDot joint fitting it is the reference mid-time of the transiting
+        planet :math:`t_0`.
     dvdt : float
-        Linear radial velocity trend in m/s/day.
+        First-order acceleration term in m/s/day.
     ddvdt : float
-        Quadratic radial velocity trend in m/s/day^2.
+        Second-order acceleration term in m/s/day^2.
     M_s : float
         The mass of the host star in solar masses.
 
     Returns
     -------
     tuple
-        The minimum possible orbital period in days, the associated lower limit on the RV
-        semi-amplitude in m/s, the companion mass in Earth masses, and the time when the outer
-        companion RV signal is at a minimum.
+        A tuple with the following elements: 1) the minimum possible companion period in days,
+        2) the corresponding lower limit on the RV semi-amplitude in m/s, 3) the companion mass in
+        Earth masses, and 4) the time when the outer companion RV signal is at a minimum.
 
     References
     ----------
@@ -300,8 +301,9 @@ def companion_precession(P, M2, P2, M_s):
     Calculates the rate of apsidal precession driven by a nonresonant planetary companion.
 
     This method returns the rate of apsidal precession expected to be induced by a nonresonant
-    companion planet in the system, calculated using equation (8) from Heyl and Gladman (2007) [
-    1]_. This method is valid for a companion planet that is either interior or exterior to the
+    companion planet in the system, calculated using equation (8) from Heyl and Gladman (2007) [1]_.
+
+    This method is valid for a companion planet that is either interior or exterior to the
     observed (i.e., transiting) planet, but it assumes that the companion mass is much less than
     that of the host star.
 
@@ -319,32 +321,36 @@ def companion_precession(P, M2, P2, M_s):
     Returns
     -------
     float
-        The precession rate in radians per orbit.
+        The precession rate in radians per epoch.
 
     Notes
     -----
-    This method enables the exploration of the possibility that a nonresonant companion in the
-    system is driving apsidal precession of the observed planet. It assumes that the companion
+    This method enables the exploration of the scenario in which a nonresonant companion in the
+    system is driving apsidal precession of a transiting planet. It assumes that the companion
     object is on a circular, coplanar, and nonresonant orbit, and that its mass is far less than
     the host star. In the formulation of Heyl and Gladman (2007) [1]_, the induced precession
     rate in arcseconds per year is:
 
     .. math::
         \\delta \\varpi = \\frac{m_2}{M_\\star} \\frac{\\alpha}{(\\alpha+1)(\\alpha-1)^2}\\left[
-        \\left(\\alpha^2+1\\right) E\\left(\\frac{2 \\alpha^{1 / 2}}{\\alpha+1}\\right)
-        -(\\alpha-1)^2 K\\left(\\frac{2 \\alpha^{1/2}}{\\alpha+1}\\right)\\right]
+        \\left(\\alpha^2+1\\right) \\mathcal{E}\\left(\\frac{2 \\alpha^{1 / 2}}{\\alpha+1}\\right)
+        -(\\alpha-1)^2 \\mathcal{K}\\left(\\frac{2 \\alpha^{1/2}}{\\alpha+1}\\right)\\right]
 
     where :math:`m_2` is the mass of the perturbing planet, :math:`\\alpha = a_1/a_2` is the
     semi-major axis ratio, and :math:`\\mathcal{K}` and :math:`\\mathcal{E}` are the complete
     elliptic integrals of the first and second kind, respectively.
 
     .. important::
-        The ``scipy`` implementation of the complete elliptic integral of the first kind
-        :math:`\\mathcal{K}` expects an integrand of the form :math:`(1 - m \\sin^2 t)^{-1/2}`,
-        but we expect to have :math:`(1 - m^2 \\sin^2 t)^{-1/2}`, which can be seen via the
-        expansion of :math:`\\mathcal{K}`. To keep the code implementation consistent with the
-        equation, the argument for :math:`\\mathcal{K}` must be squared when using the ``scipy``
-        version, such that :math:`\\mathcal{K}( 4 \\alpha/( \\alpha+1)^2)`.
+        The ``scipy`` implementation of the complete elliptic integrals :math:`\\mathcal{K}` and
+        :math:`\\mathcal{E}` expect an integrand of the form :math:`(1 - m \\sin^2 t)^{ -1/2}`.
+        However the derivation of the above equation by :cite:author:`Heyl2007` [1]_ expects an
+        integrand of the form :math:`(1 - m^2 \\sin^2 t)^{-1/2}`, which can be shown by expanding
+        :math:`\\mathcal{ K}` and :math:`\\mathcal{E}`. To maintain consistency, the input for
+        the ` ``scipy.special.ellipe``
+        <https://docs.scipy.org/doc/scipy/reference/generated/scipy.special.ellipe.html>`_ and `
+        ``scipy.special.ellipk`` <https://docs.scipy.org/doc/scipy/reference/generated/scipy
+        .special.ellipk.html>`_ methods must but squared, ie. such that :math:`\\mathcal{K}(4
+        \\alpha/( \\alpha+1)^2)` and :math:`\\mathcal{E}(4 \\alpha/( \\alpha+1)^2)`.
 
     References
     ----------
@@ -377,7 +383,7 @@ def companion_precession(P, M2, P2, M_s):
 
     dwdE = (M2 / M_s) * t1 * (t2 - t3)
 
-    # return the apsidal precession rate in radians per orbit (rad/E)
+    # return the apsidal precession rate in radians per epoch (rad/E)
     return dwdE
 
 
@@ -395,41 +401,45 @@ def companion_mass_from_precession(P, P2, dwdE, M_s):
     P : float
         The orbital period of the transiting planet in days.
     P2 : float
-        The orbital period of the outer planet days.
+        The orbital period of the outer planet in days.
     dwdE : float
-        The rate of apsidal precession in radians per orbit.
+        The rate of apsidal precession in radians per epoch.
     M_s : float
         The mass of the host star in solar masses.
 
     Returns
     -------
     float
-        The mass of the outer companion in Earth masses.
+        The mass of the outer companion in earth masses.
 
     Notes
     -----
-    This method enables the exploration of the possibility that a nonresonant companion in the
-    system is driving apsidal precession of the observed planet. It assumes that the companion
+    This method enables the exploration of the scenario in which a nonresonant companion in the
+    system is driving apsidal precession of a transiting planet. It assumes that the companion
     object is on a circular, coplanar, and nonresonant orbit, and that its mass is far less than
     the host star. In the formulation of Heyl and Gladman (2007) [1]_, the mass of the companion
-    planet can be calculated from the induced precession rate in arcseconds per year using:
+    planet can be calculated from the precession rate as:
 
     .. math::
         m_2 = \\delta \\varpi \\frac{M_\\star (\\alpha+1)(\\alpha-1)^2}{\\alpha \\left[
-        \\left(\\alpha^2+1\\right) E\\left(\\frac{2 \\alpha^{1 / 2}}{\\alpha+1}\\right)
-        - (\\alpha-1)^2 K\\left(\\frac{2 \\alpha^{1/2}}{\\alpha+1}\\right)\\right]}
+        \\left(\\alpha^2+1\\right) \\mathcal{E}\\left(\\frac{2 \\alpha^{1 / 2}}{\\alpha+1}\\right)
+        - (\\alpha-1)^2 \\mathcal{K}\\left(\\frac{2 \\alpha^{1/2}}{\\alpha+1}\\right)\\right]}
 
     where :math:`\\delta \\varpi` is the observed precession rate, :math:`\\alpha = a_1/a_2` is
     the semimajor axis ratio, and :math:`\\mathcal{K}` and :math:`\\mathcal{E}` are the complete
     elliptic integrals of the first and second kind, respectively.
 
     .. important::
-        The ``scipy`` implementation of the complete elliptic integral of the first kind
-        :math:`\\mathcal{K}` expects an integrand of the form :math:`(1 - m \\sin^2 t)^{-1/2}`,
-        but we expect to have :math:`(1 - m^2 \\sin^2 t)^{-1/2}`, which can be seen via the
-        expansion of :math:`\\mathcal{K}`. To keep the code implementation consistent with the
-        equation, the argument for :math:`\\mathcal{K}` must be squared when using the ``scipy``
-        version, such that :math:`\\mathcal{K}(4 \\alpha/(\\alpha+1)^2)`.
+        The ``scipy`` implementation of the complete elliptic integrals :math:`\\mathcal{K}` and
+        :math:`\\mathcal{E}` expect an integrand of the form :math:`(1 - m \\sin^2 t)^{ -1/2}`.
+        However the derivation of the above equation by :cite:author:`Heyl2007` [1]_ expects an
+        integrand of the form :math:`(1 - m^2 \\sin^2 t)^{-1/2}`, which can be shown by expanding
+        :math:`\\mathcal{ K}` and :math:`\\mathcal{E}`. To maintain consistency, the input for
+        the ` ``scipy.special.ellipe``
+        <https://docs.scipy.org/doc/scipy/reference/generated/scipy.special.ellipe.html>`_ and `
+        ``scipy.special.ellipk`` <https://docs.scipy.org/doc/scipy/reference/generated/scipy
+        .special.ellipk.html>`_ methods must but squared, ie. such that :math:`\\mathcal{K}(4
+        \\alpha/( \\alpha+1)^2)` and :math:`\\mathcal{E}(4 \\alpha/( \\alpha+1)^2)`.
 
     References
     ----------
@@ -667,7 +677,7 @@ def decay_timescale(P, dPdE):
     P : float
         Orbital period in days.
     dPdE : float
-        Orbital decay rate in days per orbit.
+        Orbital decay rate in days per epoch.
 
     Returns
     -------
@@ -825,7 +835,7 @@ def get_tdot_from_wdot(P, e, w, i, T, dwdE, M_s, R_s):
     T : float
         The transit duration in minutes.
     dwdE : float
-        The precession rate in radians per orbit.
+        The precession rate in radians per epoch.
     M_s : float
         The host star mass in solar masses.
     R_s : float
@@ -895,7 +905,7 @@ def get_pdot_from_wdot(P, e, w, dwdE):
     w : float
         The argument of pericenter in radians.
     dwdE : float
-        The precession rate in radians per orbit.
+        The precession rate in radians per epoch.
 
     Returns
     -------
@@ -956,7 +966,7 @@ def precession_gr(P, e, M_s):
     Returns
     -------
     float
-        The precession rate in radians per orbit.
+        The precession rate in radians per epoch.
 
     Notes
     -----
@@ -988,7 +998,7 @@ def precession_gr(P, e, M_s):
     # convert from rad/s to rad/E
     wdot *= 86400 * P
 
-    # return the apsidal precession rate in radians per orbit
+    # return the apsidal precession rate in radians per epoch
     return wdot
 
 
@@ -1018,7 +1028,7 @@ def precession_rotational_planet(P, e, M_s, M_p, R_p, k2_p, P_rot_p):
     Returns
     -------
     float
-        The precession rate in radians per orbit.
+        The precession rate in radians per epoch.
 
     Notes
     -----
@@ -1097,7 +1107,7 @@ def precession_rotational_planet_k2(P, e, M_s, M_p, R_p, P_rot_p, dwdE):
     P_rot_p : float
         The period of the planet's rotation in days.
     dwdE : float
-        The precession rate in radians per orbit.
+        The precession rate in radians per epoch.
 
     Returns
     -------
@@ -1156,7 +1166,7 @@ def precession_rotational_star(P, e, M_s, R_s, k2_s, P_rot_s):
     Returns
     -------
     float
-        The precession rate in radians per orbit.
+        The precession rate in radians per epoch.
 
     Notes
     -----
@@ -1232,7 +1242,7 @@ def precession_rotational_star_k2(P, e, M_s, R_s, P_rot_s, dwdE):
     P_rot_s : float
         The period of the host star's rotation in days.
     dwdE : float
-        The precession rate in radians per orbit.
+        The precession rate in radians per epoch.
 
     Returns
     -------
@@ -1290,7 +1300,7 @@ def precession_tidal_planet(P, e, M_s, M_p, R_p, k2_p):
     Returns
     -------
     float
-        The precession rate in radians per orbit.
+        The precession rate in radians per epoch.
 
     Notes
     -----
@@ -1365,7 +1375,7 @@ def precession_tidal_planet_k2(P, e, M_s, M_p, R_p, dwdE):
     R_p : float
         The planet radius in earth radii.
     dwdE : float
-        The precession rate in radians per orbit.
+        The precession rate in radians per epoch.
 
     Returns
     -------
@@ -1422,7 +1432,7 @@ def precession_tidal_star(P, e, M_s, M_p, R_s, k2_s):
     Returns
     -------
     float
-        The precession rate in radians per orbit.
+        The precession rate in radians per epoch.
 
     Notes
     -----
@@ -1497,7 +1507,7 @@ def precession_tidal_star_k2(P, e, M_s, M_p, R_s, dwdE):
     R_s : float
         The host star radius in solar radii.
     dwdE : float
-        The precession rate in radians per orbit.
+        The precession rate in radians per epoch.
 
     Returns
     -------
@@ -1838,7 +1848,7 @@ def resolved_binary_rv_trend_from_mass(theta, D, M_B):
         The angular separation of the binary in arcseconds.
     D : float
         The distance to the system in parsecs.
-    dvdt : float
+    M_B : float
         The mass of the stellar companion in solar masses.
 
     Returns
@@ -1862,7 +1872,7 @@ def resolved_binary_rv_trend_from_mass(theta, D, M_B):
 
     The parameter :math:`\\Phi` is a function of the eccentricity, longitude of pericenter,
     and inclination of the companion's orbit. Assuming these parameters are unconstrained, this
-    method uses the minimum value :math:`\\Phi = \\sqrt{3}\\frac{3}{2}` to determine the minimum
+    method uses the minimum value :math:`\\Phi = \\frac{3\\sqrt{3}}{2}` to determine the minimum
     companion mass.
 
     References
@@ -1918,7 +1928,7 @@ def resolved_binary_mass_from_rv_trend(theta, D, dvdt):
 
     The parameter :math:`\\Phi` is a function of the eccentricity, longitude of pericenter,
     and inclination of the companion's orbit. Assuming these parameters are unconstrained, this
-    method uses the minimum value :math:`\\varphi = \\sqrt{3}\\frac{3}{2}` to determine the minimum
+    method uses the minimum value :math:``\\Phi = \\frac{3\\sqrt{3}}{2}`` to determine the minimum
     companion mass.
 
     References

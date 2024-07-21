@@ -15,10 +15,10 @@ from orbdot.models.tdv_models import transit_duration
 
 class Analyzer:
     """
-    This class enables various analyses related to the long-term variations of exoplanet orbits.
-    It combines model fit results, star-planet system characteristics, and the data to compute and
-    summarize analyses of various physical models, such as equilibrium tides, apsidal precession,
-    systemic proper motion, and companion objects.
+    This class enables various computations related to the long-term variations of exoplanet orbits.
+    It combines model fit results, star-planet system characteristics, and data to compute and
+    summarize analyses of various physical models, such as the effects of equilibrium tides,
+    apsidal precession, systemic proper motion, and companion objects.
     """
     def __init__(self, planet, results_dic):
         """Initializes the Analyzer class.
@@ -79,8 +79,8 @@ class Analyzer:
         self.idE = self.res['idE'][0]  # deg/epoch
         self.OdE = self.res['OdE'][0]  # rad/epoch
 
-        self.K = self.res['K'][0]  # m/s
-        self.dvdt = self.res['dvdt'][0]  # m/s/day
+        self.K = self.res['K'][0]          # m/s
+        self.dvdt = self.res['dvdt'][0]    # m/s/day
         self.ddvdt = self.res['ddvdt'][0]  # m/s/day^2
 
         # load star-planet system info
@@ -98,13 +98,13 @@ class Analyzer:
         self.age = self.info['age [Gyr]']
         self.discovery_year = self.info['discovery_year']
 
-        # load star parameters
+        # load star properties
         self.M_s = self.info['M_s [M_sun]']
         self.R_s = self.info['R_s [R_sun]']
         self.k2_s = self.info['k2_s']
         self.P_rot_s = self.info['P_rot_s [days]']
 
-        # load planet parameters
+        # load planet properties
         self.M_p = self.info['M_p [M_earth]'][planet.planet_index]
         self.R_p = self.info['R_p [R_earth]'][planet.planet_index]
         self.k2_p = self.info['k2_p'][planet.planet_index]
@@ -126,7 +126,7 @@ class Analyzer:
             f.write('{} Analysis | model: \'{}\'\n\n'.format(self.planet_name, self.model))
 
             print('-' * 100)
-            print('Initializing {} Analysis object for the \'{}\' model...'.format(self.planet_name,
+            print('Initializing {} ``Analyzer`` object for the \'{}\' model...'.format(self.planet_name,
                                                                                    self.model))
             print('-' * 100)
             print(' ')
@@ -136,25 +136,25 @@ class Analyzer:
     def model_comparison(self, model_2_results, printout=False):
         """Compares the Bayesian evidence with that of another model fit.
 
-        To compare two models, this method calculate the Bayes factor, denoted as:
+        To compare two models, Model 1 and Model 2, this method calculates the Bayes factor,
+        denoted as:
 
         .. math:: \\log{B_{12}} = \\log{\\mathrm{Z}}_{1} - \\log{\\mathrm{Z}}_{2}
 
-        where :math:`\\log{\\mathrm{Z}}` is the Bayesian evidence, defined such that a lower
-        value signifies a superior fit to the observed data. The calculated Baye's factor is then
-        compared to the thresholds established by Kass and Raftery (1995) [1]_.
+        where :math:`\\log{\\mathrm{Z}}` is the Bayesian evidence. The Bayes factor is then
+        evaluated against the thresholds established by Kass and Raftery (1995) [1]_.
 
         Parameters
         ----------
         model_2_results : dict
-            The results dictionary returned by the other model fit.
+            The dictionary returned by the alternative model fit.
         printout : bool, optional
-            An option to print the results to the console, default is False.
+            An option to print the results to the console. Default is False.
 
         Returns
         -------
-        float
-            The results are printed to the console and written to a text file.
+        None
+            The results are written to a text file.
 
         References
         ----------
@@ -245,7 +245,7 @@ class Analyzer:
         """
         print(' --> apsidal_precession_fit()\n')
 
-        # define a numerical conversion factor
+        # define conversion from rad/E to deg/yr
         conv = (1 / self.P0) * 365.25 * (180 / np.pi)
 
         try:
@@ -260,7 +260,7 @@ class Analyzer:
                 if printout:
                     print(' ' + str1, str2)
 
-                # write and optionally print the best-fit apsidal precession rate
+                # write and (optionally) print the best-fit apsidal precession rate
                 str1 = ' * Best-fit apsidal precession rate:\n'
                 str2 = '\t  dw/dE = {:.2E} + {:.2E} - {:.2E} rad/E\n'.format(self.res['wdE'][0],
                                                                              self.res['wdE'][1],
@@ -337,7 +337,7 @@ class Analyzer:
 
             # handle when the results for an apsidal precession model fit are not available
             print('\nERROR: results for an apsidal precession model fit are '
-                  'not available to this instance of the Analysis class.')
+                  'not available to this instance of the ``Analyzer`` class.')
 
         return
 
@@ -468,7 +468,7 @@ class Analyzer:
                 if printout:
                     print(' ' + str1, str2)
 
-                # write and optionally print the best-fit orbital decay rate
+                # write and (optionally) print the best-fit orbital decay rate
                 str1 = ' * Best-fit orbital decay rate:\n'
                 str2 = '\t  dP/dE = {:.2E} + {:.2E} - {:.2E} days/E\n'.format(self.res['PdE'][0],
                                                                               self.res['PdE'][1],
@@ -517,7 +517,7 @@ class Analyzer:
         except IndexError:
             # handle when the results for an orbital decay model fit are not available
             print('\nERROR: results for an orbital decay model fit are not '
-                  'available to this instance of the Analysis class.')
+                  'available to this instance of the ``Analyzer`` class.')
 
         return
 
@@ -525,12 +525,12 @@ class Analyzer:
         """Calculates various orbital decay parameters that are predicted by theory.
 
         This method produces a concise summary of various orbital decay characteristics that are
-        predicted by the theory of equilibrium tides.
+        predicted by equilibrium tidal theory.
 
         Parameters
         ----------
         printout : bool, optional
-            An option to print the results to the console, default is False.
+            An option to print the results to the console. Default is False.
 
         Returns
         -------
@@ -603,8 +603,8 @@ class Analyzer:
     def proper_motion(self, printout=False):
         """Calculates the expected TTVs and TDVs due to systemic proper motion.
 
-        This method produces a concise summary of the apparent transit timing and
-        duration variations that are expected due to the systemic proper motion.
+        This method produces a concise summary of the apparent transit timing and duration
+        variations that are expected due to the systemic proper motion.
 
         Parameters
         ----------
@@ -691,12 +691,12 @@ class Analyzer:
         secondary_mass : float, optional
             The mass of the stellar companion in solar masses.
         printout : bool, optional
-            An option to print the results to the console, default is False.
+            An option to print the results to the console. Default is False.
 
         Returns
         -------
         None
-            The results are printed to the console and written to a text file.
+            The results are written to a text file.
 
         """
         print(' --> visual_binary()\n')
@@ -807,7 +807,7 @@ class Analyzer:
         a2_max : float, optional
             Maximum semi-major axis of the companion's orbit in AU, default is 10.
         printout : bool, optional
-            An option to print the results to the console, default is False.
+            An option to print the results to the console. Default is False.
 
         Returns
         -------
@@ -856,6 +856,7 @@ class Analyzer:
 
                 # check if only the linear term is non-zero
                 elif self.dvdt != 0.0 and self.ddvdt == 0.0:
+
                     str1 = ' * Slope of the linear trend in the best-fit radial velocity model:\n'
                     str2 = '\t  dvdt = {:.2E} m/s/day\n'.format(self.dvdt)
                     f.write(str1 + str2)
@@ -890,6 +891,7 @@ class Analyzer:
 
             # check if there is an observed orbital decay rate
             if self.PdE != 0.0:
+
                 str1 = ' * Best-fit orbital decay rate:\n'
                 str2 = '\t  dP/dE = {:.2E} + {:.2E} - {:.2E} rad/E\n'.format(self.res['PdE'][0],
                                                                              self.res['PdE'][1],
@@ -931,6 +933,7 @@ class Analyzer:
 
             # check if there is an observed apsidal precession rate
             if self.wdE != 0.0:
+
                 # convert the precession rate to degrees per year
                 conv = (1 / self.P0) * 365.25 * (180 / np.pi)
                 str1 = ' * Best-fit apsidal precession rate:\n'
@@ -981,19 +984,107 @@ class Analyzer:
 
         return
 
+    def rv_trend_linear(self):
+        """Plots the best-fit linear trend over the RV residuals.
+
+        Notes
+        -----
+        The full radial velocity signal is expressed as:
+
+        .. math::
+            v_r = K[\\cos{(\\phi\\left(t\\right)+\\omega_p)}+e\\cos{\\omega_p}] + \\gamma_j +
+            \\dot{\\gamma} \\left(t-t_0\\right) + \\ddot{\\gamma} \\left(t-t_0\\right)^2
+
+        where :math:`\\dot{\\gamma}` and :math:`\\ddot{\\gamma}` are first and second-order
+        acceleration terms, respectively.
+
+        After subtracting the contribution from the planet and the systemic velocity
+        :math:`\\gamma`, the residuals are only the long-term trend [1]_.
+
+        .. math::
+            RV_c(t) = 0.5 \\ddot{\\gamma} (t - t_{\\mathrm{pivot}})^2 + \\dot{\\gamma} (t - t_{
+            \\mathrm{pivot}})
+
+        In this case the residuals follow a linear trend, so :math:`\\ddot{\\gamma} = 0`.
+
+        """
+        # define model parameters
+        t_pivot = self.t0
+        b = self.dvdt
+        c = 0
+
+        # define the linear function
+        def linear(xx, bb):
+            return bb * (xx - t_pivot) + c
+
+        times = []
+        errs = []
+        residuals = []
+
+        # iterate over each RV data source
+        for i in self.rv_data['src_order']:
+
+            # generate the planet model
+            planet_model = rv.rv_constant(t0=self.t0, P0=self.P0, e0=self.e0, w0=self.w0, K=self.K,
+                                          v0=self.res['v0_' + self.rv_data['src_tags'][i]][0],
+                                          dvdt=0.0, ddvdt=0.0, t=self.rv_data['trv'][i])
+
+            # calculate residuals by subtracting the planet model
+            residuals.extend(self.rv_data['rvs'][i] - planet_model)
+            times.extend(self.rv_data['trv'][i])
+            errs.extend(self.rv_data['err'][i])
+
+        # convert to arrays
+        x = np.array(times)
+        y = np.array(residuals)
+        y_errs = np.array(errs)
+
+        # update plot settings
+        figure_params = {'figure.figsize': [11, 5], 'font.family': 'serif',
+                         'xtick.direction': 'in', 'ytick.direction': 'in',
+                         'xtick.labelsize': 12, 'ytick.labelsize': 12,
+                         'axes.labelsize': 13, 'axes.titlesize': 16,
+                         'legend.fontsize': 12, 'legend.labelspacing': 0.9,
+                         'legend.framealpha': 1., 'legend.borderpad': 0.7}
+
+        plt.rcParams.update(figure_params)
+
+        # plot the data and the linear fit
+        x_all = np.linspace(min(x), max(x), 1000)
+        plt.errorbar(x - 2450000, y, yerr=y_errs, label='Data', fmt='o', color='blue')
+        plt.plot(x_all - 2450000, linear(x_all, b), label='Quadratic Fit', color='firebrick')
+
+        # add a dot for the pivot point
+        plt.scatter(t_pivot - 2450000, linear(t_pivot, b), color='green', s=60, label='t0')
+
+        # add a horizontal line at y=0
+        plt.axhline(y=0, color='dimgrey', linestyle='--', linewidth=2)
+
+        plt.legend()
+        plt.xlabel('BJD - 2450000')
+        plt.ylabel('Residuals (m/s)')
+        plt.title('Radial velocity residuals with linear fit')
+
+        # save the plot
+        filename = self.save_dir+self.file_prefix + 'analysis' + self.file_suffix + '_rv_trend.png'
+        plt.savefig(filename, bbox_inches='tight', dpi=300, pad_inches=0.25)
+        plt.close()
+
+        return
+
     def rv_trend_quadratic(self):
         """Estimates the minimum period of an outer companion given a quadratic fit to RV residuals.
 
         This method analyzes the best-fit quadratic radial velocity trend to estimate the minimum
-        orbital period of an outer companion that could cause such acceleration. It assumes that
-        the companion orbit is circular, and is designed to complement the the
-        :meth:`~orbdot.models.theory.companion_from_quadratic_rv` method, which follows the
-        derivations from Equations 1, 3, and 4 of Kipping et al. (2011) [1]_.
+        orbital period of an outer companion that could cause such acceleration, assuming that
+        the orbit is circular. It is designed to work in tandem with the
+        :meth:`~orbdot.models.theory.companion_from_quadratic_rv` method, which uses Equations 1,
+        3, and 4 of Kipping et al. (2011) [1]_.
 
         Returns
         -------
         float
-            The estimated minimum orbital period of the outer companion in days.
+            Lower limit for the orbital period of an outer companion in days.
 
         Notes
         -----
@@ -1018,17 +1109,19 @@ class Analyzer:
         this method is not valid.
 
         The minimum orbital period of the companion is loosely constrained by the length of the
-        baseline of RV observations. Assuming that the companion orbit is circular, in which case
-        the signal is sinusoidal, the minimum period is approximated as being 4 times the
-        time span between the vertex of the quadratic and the most distant end datum:
+        baseline of RV observations. Assuming that the companion's orbit is circular, for which
+        the signal is sinusoidal, the minimum period is approximated as 4x the span of time
+        between the vertex of the quadratic trend and furthest edge of the observed baseline:
 
         .. math::
-            P_{\\mathrm{min}} =  4 \\times \\mathrm{max}\\left[t_{\\mathrm{vertex}} - t_{\\mathrm{
-            min}}, t_{\\mathrm{max}} - t_{\\mathrm{vertex}}\\right]
+            P_{\\mathrm{min}} =  4 \\times \\mathrm{max} \\left[|t_{\\mathrm{vertex}} - t_{
+            \\mathrm{min}}|, |t_{\\mathrm{max}} - t_{\\mathrm{vertex}}|\\right]
 
-        where the x-coordinate of the vertex (time) is determined by:
+        where,
 
-        .. math:: t_{\\mathrm{vertex}} = -b / (2 * a) + t_{\\mathrm{pivot}}
+        .. math::
+            t_{\\mathrm{vertex}} = -\\frac{\\dot{\\gamma}}{(2 * \\ddot{\\gamma}}
+            + t_{\\mathrm{pivot}}
 
         References
         ----------
@@ -1114,78 +1207,3 @@ class Analyzer:
 
         # return the minimum possible orbital period
         return P_min
-
-    def rv_trend_linear(self):
-        """Plots the best-fit linear trend over the RV residuals.
-
-        Notes
-        -----
-        The full radial velocity signal is expressed as:
-
-        .. math::
-            v_r = K[\\cos{(\\phi\\left(t\\right)+\\omega_p)}+e\\cos{\\omega_p}] + \\gamma_j +
-            \\dot{\\gamma} \\left(t-t_0\\right) + \\ddot{\\gamma} \\left(t-t_0\\right)^2
-
-        where :math:`\\dot{\\gamma}` and :math:`\\ddot{\\gamma}` are first and second-order
-        acceleration terms, respectively.
-
-        After subtracting the contribution from the planet and the systemic velocity
-        :math:`\\gamma`, the residuals are only the long term trend [1]_.
-
-        .. math::
-            RV_c(t) = 0.5 \\ddot{\\gamma} (t - t_{\\mathrm{pivot}})^2 + \\dot{\\gamma} (t - t_{
-            \\mathrm{pivot}})
-
-        If both :math:`\\dot{\\gamma}` and :math:`\\ddot{\\gamma}` are nonzero, residuals are
-        quadratic, but if :math:`\\ddot{\\gamma} = 0` they are linear. For the latter case,
-        this method is not valid.
-
-        """
-        t_pivot = self.t0
-        b = self.dvdt
-        c = 0
-
-        def linear(xx, bb):
-            return bb * (xx - t_pivot) + c
-
-        times = []
-        errs = []
-        residuals = []
-        for i in self.rv_data['src_order']:
-            planet_model = rv.rv_constant(t0=self.t0, P0=self.P0, e0=self.e0, w0=self.w0, K=self.K,
-                                          v0=self.res['v0_' + self.rv_data['src_tags'][i]][0],
-                                          dvdt=0.0, ddvdt=0.0, t=self.rv_data['trv'][i])
-
-            residuals.extend(self.rv_data['rvs'][i] - planet_model)
-            times.extend(self.rv_data['trv'][i])
-            errs.extend(self.rv_data['err'][i])
-
-        x = np.array(times)
-        y = np.array(residuals)
-        y_errs = np.array(errs)
-
-        figure_params = {'figure.figsize': [11, 5], 'font.family': 'serif',
-                         'xtick.direction': 'in', 'ytick.direction': 'in',
-                         'xtick.labelsize': 12, 'ytick.labelsize': 12,
-                         'axes.labelsize': 13, 'axes.titlesize': 16,
-                         'legend.fontsize': 12, 'legend.labelspacing': 0.9,
-                         'legend.framealpha': 1., 'legend.borderpad': 0.7}
-
-        plt.rcParams.update(figure_params)
-
-        x_all = np.linspace(min(x), max(x), 1000)
-
-        plt.errorbar(x - 2450000, y, yerr=y_errs, label='Data', fmt='o', color='blue')
-        plt.plot(x_all - 2450000, linear(x_all, b),
-                 label='Quadratic Fit', color='firebrick')
-        plt.scatter(t_pivot - 2450000, linear(t_pivot, b), color='green', s=60, label='t0')
-        plt.axhline(y=0, color='dimgrey', linestyle='--', linewidth=2)
-        plt.legend()
-        plt.xlabel('BJD - 2450000')
-        plt.ylabel('Residuals (m/s)')
-        plt.title('Radial velocity residuals with linear fit')
-        plt.savefig(self.save_dir + self.file_prefix + 'analysis' + self.file_suffix
-                    + '_rv_trend.png', bbox_inches='tight', dpi=300, pad_inches=0.25)
-        plt.close()
-
-        return
