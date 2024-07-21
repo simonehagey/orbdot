@@ -831,8 +831,7 @@ class Analyzer:
                 # check if both linear and quadratic polynomial terms are non-zero
                 if self.dvdt != 0.0 and self.ddvdt != 0.0:
 
-                    str1 = ' * Linear and quadratic terms from ' \
-                           'the best-fit radial velocity model:\n'
+                    str1 = ' * Acceleration terms from the best-fit radial velocity model:\n'
                     str2 = '\t  linear: dvdt = {:.2E} m/s/day\n'.format(self.dvdt)
                     str3 = '\t  quadratic: ddvdt = {:.2E} m/s^2/day\n'.format(self.ddvdt)
                     f.write(str1 + str2 + str3)
@@ -843,14 +842,17 @@ class Analyzer:
                     P_min, K_min, M_min, tau_c = m.companion_from_quadratic_rv(
                         self.rv_trend_quadratic(), self.t0, self.dvdt, self.ddvdt, self.M_s)
 
-                    str1 = ' * Constraints on the orbit of an ' \
+                    a_min = m.get_semi_major_axis_from_period(P_min, self.M_s)
+
+                    str1 = ' * Constraints on the mass and orbit of an ' \
                            'outer companion from a quadratic RV:\n'
                     str2 = '\t  P_c > {:.2f} years\n'.format(P_min / 365.25)
-                    str3 = '\t  K_c > {:.2f} m/s\n'.format(K_min)
-                    str4 = '\t  M_c > {:.2f} M_jup\n\n'.format(M_min / 317.906)
-                    f.write(str1 + str2 + str3 + str4)
+                    str5 = '\t  M_c > {:.2f} M_jup\n\n'.format(M_min / 317.906)
+                    str3 = '\t  a_c > {:.2f} AU\n'.format(a_min / m.AU)
+                    str4 = '\t  K_c > {:.2f} m/s\n'.format(K_min)
+                    f.write(str1 + str2 + str3 + str4 + str5)
                     if printout:
-                        print(str1, str2, str3, str4)
+                        print(str1, str2, str3, str4, str5)
 
                 # check if only the linear term is non-zero
                 elif self.dvdt != 0.0 and self.ddvdt == 0.0:
@@ -861,14 +863,18 @@ class Analyzer:
                         print(str1, str2)
 
                     # get the minimum mass of the companion planet from the linear RV trend
-                    M_min = m.companion_mass_from_rv_trend(self.tau, self.dvdt, self.M_s)
+                    M_min, P_min, a_min, K_min = \
+                        m.companion_mass_from_rv_trend(self.tau, self.dvdt, self.M_s)
                     self.rv_trend_linear()
-                    str1 = ' * Constraint on the mass of an outer companion from the RV slope:\n'
-                    str2 = '\t  M_c > {:.2f} M_earth\n'.format(M_min)
-                    str3 = '\t  M_c > {:.2f} M_jup\n'.format(M_min / 317.906)
-                    f.write(str1 + str2 + str3)
+
+                    str1 = ' * Minimum outer companion mass from slope ' \
+                           '(assuming P_min = 1.25 * baseline = {:.2f} days):\n'.format(P_min)
+                    str2 = '\t  M_c > {:.2f} M_jup\n'.format(M_min / 317.906)
+                    str3 = '\t  a_c > {:.2f} AU\n'.format(a_min)
+                    str4 = '\t  K_c > {:.2f} m/s\n'.format(K_min)
+                    f.write(str1 + str2 + str3 + str4)
                     if printout:
-                        print(str1, str2, str3)
+                        print(str1, str2, str3, str4)
 
                     # get the apparent orbital period derivative from the linear RV trend
                     Pdot = m.companion_doppler_pdot_from_rv_trend(self.P0, self.dvdt)
@@ -909,14 +915,16 @@ class Analyzer:
 
                 try:
                     # get the minimum mass of the companion planet that can account for the trend
-                    M_min = m.companion_mass_from_rv_trend(self.tau, dvdt_pred, self.M_s)
-                    str1 = ' * Minimum mass of an outer planet that could cause ' \
-                           'the necessary acceleration:\n'
-                    str2 = '\t  M_c > {:.2f} M_earth\n'.format(M_min)
-                    str3 = '\t  M_c > {:.2f} M_jup\n\n'.format(M_min / 317.906)
-                    f.write(str1 + str2 + str3)
+                    M_min, P_min, a_min, K_min = \
+                        m.companion_mass_from_rv_trend(self.tau, dvdt_pred, self.M_s)
+                    str1 = ' * Minimum outer companion mass to induce the acceleration ' \
+                           '(assuming P_min = 1.25 * baseline = {} days):\n'.format(P_min)
+                    str2 = '\t  M_c > {:.2f} M_jup\n\n'.format(M_min / 317.906)
+                    str3 = '\t  a_c > {:.2f} AU\n\n'.format(a_min)
+                    str4 = '\t  K_c > {:.2f} m/s\n\n'.format(K_min)
+                    f.write(str1 + str2 + str3 + str4)
                     if printout:
-                        print(str1, str2, str3)
+                        print(str1, str2, str3, str4)
 
                 except TypeError:
                     pass
@@ -976,7 +984,7 @@ class Analyzer:
     def rv_trend_quadratic(self):
         """Estimates the minimum period of an outer companion given a quadratic fit to RV residuals.
 
-        This method analyzes the best-fit quadratic radial velocity curve to estimate the minimum
+        This method analyzes the best-fit quadratic radial velocity trend to estimate the minimum
         orbital period of an outer companion that could cause such acceleration. It assumes that
         the companion orbit is circular, and is designed to complement the the
         :meth:`~orbdot.models.theory.companion_from_quadratic_rv` method, which follows the
@@ -1005,8 +1013,9 @@ class Analyzer:
             RV_c(t) = 0.5 \\ddot{\\gamma} (t - t_{\\mathrm{pivot}})^2 + \\dot{\\gamma} (t - t_{
             \\mathrm{pivot}})
 
-        If :math:`\\ddot{\\gamma}` and dvdt are nonzero, the RV residuals are quadratic. if
-        :math:`\\ddot{\\gamma} = 0`, they are linear. For the latter, this method is not valid.
+        If both :math:`\\dot{\\gamma}` and :math:`\\ddot{\\gamma}` are nonzero, residuals are
+        quadratic, but if :math:`\\ddot{\\gamma} = 0` they are linear. For the latter case,
+        this method is not valid.
 
         The minimum orbital period of the companion is loosely constrained by the length of the
         baseline of RV observations. Assuming that the companion orbit is circular, in which case
@@ -1099,8 +1108,8 @@ class Analyzer:
         plt.title('Radial velocity residuals with quadratic fit')
 
         # save plot
-        plt.savefig(self.save_dir + self.file_prefix + 'rv_trend_quadratic'
-                    + self.file_suffix + '.png', bbox_inches='tight', dpi=300, pad_inches=0.25)
+        plt.savefig(self.save_dir + self.file_prefix + 'analysis' + self.file_suffix
+                    + '_rv_trend.png', bbox_inches='tight', dpi=300, pad_inches=0.25)
         plt.close()
 
         # return the minimum possible orbital period
@@ -1108,6 +1117,29 @@ class Analyzer:
 
     def rv_trend_linear(self):
         """Plots the best-fit linear trend over the RV residuals.
+
+        Notes
+        -----
+        The full radial velocity signal is expressed as:
+
+        .. math::
+            v_r = K[\\cos{(\\phi\\left(t\\right)+\\omega_p)}+e\\cos{\\omega_p}] + \\gamma_j +
+            \\dot{\\gamma} \\left(t-t_0\\right) + \\ddot{\\gamma} \\left(t-t_0\\right)^2
+
+        where :math:`\\dot{\\gamma}` and :math:`\\ddot{\\gamma}` are first and second-order
+        acceleration terms, respectively.
+
+        After subtracting the contribution from the planet and the systemic velocity
+        :math:`\\gamma`, the residuals are only the long term trend [1]_.
+
+        .. math::
+            RV_c(t) = 0.5 \\ddot{\\gamma} (t - t_{\\mathrm{pivot}})^2 + \\dot{\\gamma} (t - t_{
+            \\mathrm{pivot}})
+
+        If both :math:`\\dot{\\gamma}` and :math:`\\ddot{\\gamma}` are nonzero, residuals are
+        quadratic, but if :math:`\\ddot{\\gamma} = 0` they are linear. For the latter case,
+        this method is not valid.
+
         """
         t_pivot = self.t0
         b = self.dvdt
@@ -1152,8 +1184,8 @@ class Analyzer:
         plt.xlabel('BJD - 2450000')
         plt.ylabel('Residuals (m/s)')
         plt.title('Radial velocity residuals with linear fit')
-        plt.savefig(self.save_dir + self.file_prefix + 'rv_trend_linear'
-                    + self.file_suffix + '.png', bbox_inches='tight', dpi=300, pad_inches=0.25)
+        plt.savefig(self.save_dir + self.file_prefix + 'analysis' + self.file_suffix
+                    + '_rv_trend.png', bbox_inches='tight', dpi=300, pad_inches=0.25)
         plt.close()
 
         return

@@ -53,7 +53,7 @@ def companion_doppler_pdot_from_rv_trend(P, dvdt):
 
     .. math::
         \\dot{P}_{\\mathrm{RV}} = 105.3 \\mathrm{\\,ms\\,yr^{-1}}\\left(\\frac{P}{\\mathrm{
-        day}}\\right)\\left(\\frac{\\dot{\\gamma}}{\\mathrm{m\\,s^{-1}\\,day^{-1}}\\right)
+        day}}\\right)\\left(\\frac{\\dot{\\gamma}}{\\mathrm{m\\,s^{-1}\\,day^{-1}}}\\right)
 
     which is derived from,
 
@@ -145,8 +145,8 @@ def companion_mass_from_rv_trend(tau, dvdt, M_s):
     Given a measured acceleration in radial velocity observations and the time span over which
     there are RV measurements, this method calculates the minimum mass of an outer companion that
     could induce such an acceleration. While this approach to determining the minimum companion
-    mass was originally described in Feng et al. (2015) [1]_ (see eq. 1), this method implements
-    the version given by equation (8) in Bouma et al. (2020) [2]_:
+    mass was originally described in Feng et al. (2015) [1]_ (see Equation 1), this method
+    implements the version given by equation (8) in Bouma et al. (2020) [2]_:
 
     .. math::
         M_{c} \\approx 5.99 M_{\\mathrm{Jup}}\\left(\\frac{\\tau}{\\mathrm{yr}}\\right)^{
@@ -162,7 +162,7 @@ def companion_mass_from_rv_trend(tau, dvdt, M_s):
     span of the observations. In this case, the observed linear trend in the radial velocity
     model is effectively a section of the sawtooth-like curve of the companion planet (see
     Figure 1 of [1]_), for which the semi-amplitude can be approximated as half of
-    the baseline multiplied by the acceleration (:math:`0.5 * \\tau * \\frac{dv}{dt}`).
+    the baseline multiplied by the acceleration (:math:`K_c = 0.5 * \\tau * \\frac{dv}{dt}`).
 
     References
     ----------
@@ -170,11 +170,22 @@ def companion_mass_from_rv_trend(tau, dvdt, M_s):
     .. [2] :cite:t:`Bouma2020`. https://doi.org/10.3847/2041-8213/ab8563
 
     """
+    # define the minimum possible companion period in years
+    P_c = 1.25 * tau
+
+    # calculate the corresponding semi major axis in AU
+    a_c = get_semi_major_axis_from_period(1.25 * 365.25 * tau, M_s) / AU
+
+    # calculate the companion RV semi-amplitude in m/s
+    K_c = 0.5 * tau * 365.25 * dvdt
+
     # calculate the companion planet mass (Jupiter masses)
     M_c = 5.99 * tau ** (4/3) * np.abs(dvdt) * M_s ** (2/3)
 
-    # return the mass in Earth masses
-    return M_c * M_jup / M_earth
+    # convert to Earth masses
+    M_c *= M_jup / M_earth
+
+    return M_c, P_c, a_c, K_c
 
 
 def companion_rv_trend_from_mass(tau, M_c, M_s):
@@ -217,7 +228,7 @@ def companion_rv_trend_from_mass(tau, M_c, M_s):
     timespan of the observations. In this scenario, the observed linear trend in the radial
     velocity model is a segment of the sawtooth-like curve of the companion planet (see Figure 1
     of [1]_), for which the semi-amplitude can be approximated as half of the baseline multiplied
-    by the acceleration, ie. :math:`0.5 \\tau \\dot{\\gamma}`.
+    by the acceleration, ie. :math:`K_c = 0.5 \\tau \\dot{\\gamma}`.
 
     References
     ----------
@@ -446,90 +457,21 @@ def companion_mass_from_precession(P, P2, dwdE, M_s):
     return M2 / M_earth
 
 
-def decay_quality_factor_from_pdot(P, dPdE, M_s, M_p, R_s):
-    """Calculate the modified stellar quality factor given the orbital decay rate.
+def decay_pdot_from_quality_factor(P, M_s, M_p, R_s, Q_star):
+    """Calculate an orbital decay rate given the host star's modified tidal quality factor.
 
-    This method returns a predicted modified stellar quality factor for any given orbital decay
-    rate, assuming that the star-planet system is coplanar and that equilibrium tides dominate
+    This method returns an orbital decay rate for a given "modified" stellar tidal quality
+    factor, assuming that the star-planet system is coplanar and that equilibrium tides dominate
     the dynamical evolution.
 
     Parameters
     ----------
     P : float
         Orbital period in days.
-    dPdE : float
-        Orbital decay rate in days per orbit.
     M_s : float
         Host star mass in solar masses.
     M_p : float
         Planet mass in earth masses.
-    R_s : float
-        Host star radius in solar radii.
-
-    Returns
-    -------
-    float
-        The modified stellar quality tidal factor.
-
-    Notes
-    -----
-    Assuming that equilibrium tides dominate the evolution, the rate of orbital decay depends on
-    the efficiency of tidal energy dissipation within the star, which is parameterized by the
-    tidal quality factor. In the constant-phase lag model for equilibrium tides, the modified
-    stellar tidal quality factor is [1]_:
-
-    .. math::
-        Q_\\star^{'} = -\\frac{27\\pi}{2\\dot{P}_{\\mathrm{decay}}}\\left(\\frac{M_p}{
-        M_\\star}\\right)\\left(\\frac{R_\\star}{a}\\right)^5
-
-    where :math:`M_\\star` is the host star mass, :math:`M_p` is the planet mass,
-    :math:`R_\\star` is the host star radius, :math:`a` is the orbital semi-major axis,
-    and :math:`\\dot{P}_{\\mathrm{decay}}` is the orbital decay rate.
-
-    The modified tidal quality factor is defined as:
-
-    .. math:: Q_\\star^{'} = \\frac{3}{2} \\frac{Q_\\star}{k_{2,\\star}}
-
-    where :math:`Q_\\star` is the tidal quality factor and :math:`k_{2,\\star}` is the second-order
-    potential Love number [2]_. The theoretical upper limit is :math:`k_{2,\\star}` for a uniform
-    density sphere, in which case :math:`Q_\\star^{'} = Q_\\star`.
-
-    References
-    ----------
-    .. [1] :cite:t:`Goldreich1966`. https://doi.org/10.1016/0019-1035(66)90051-0
-    .. [2] :cite:t:`Ogilvie2007`. https://doi.org/10.1017/9781108304061
-
-    """
-    # derive parameters
-    a = get_semi_major_axis_from_period(P, M_s)
-
-    # unit conversions
-    M_p *= M_earth    # earth masses to kg
-    M_s *= M_sun      # solar masses to kg
-    R_s *= R_sun      # solar radii to m
-    dPdt = dPdE / P   # days/E to days/day
-
-    # compute and return the stellar tidal quality factor
-    Q_star = -27 * np.pi / (2 * dPdt) * (M_p / M_s) * (R_s / a) ** 5
-
-    return Q_star
-
-
-def decay_pdot_from_quality_factor(P, M_s, M_p, R_s, Q_star):
-    """Calculate the orbital decay rate given the host star's modified tidal quality factor.
-
-    This method returns a predicted orbital decay rate for any given "modified" stellar tidal
-    quality factor, assuming that the star-planet system is coplanar and that equilibrium
-    tides dominate the dynamical evolution.
-
-    Parameters
-    ----------
-    P : float
-        Orbital period in days.
-    M_s : float
-        Host star mass in solar masses.
-    M_p : float
-        Planet mass in Earth masses.
     R_s : float
         Host star radius in solar radii.
     Q_star : float
@@ -538,14 +480,14 @@ def decay_pdot_from_quality_factor(P, M_s, M_p, R_s, Q_star):
     Returns
     -------
     float
-        Rate of change of the planet's orbital period in days per orbit.
+        Orbital decay rate in days per epoch.
 
     Notes
     -----
-    Assuming that equilibrium tides dominate the evolution, the rate of orbital decay depends on
-    the efficiency of tidal energy dissipation within the star, which is parameterized by the
-    tidal quality factor. In the constant-phase lag model for equilibrium tides, the orbital
-    decay rate is [1]_:
+    Assuming that equilibrium tides dominate the evolution of a planet's orbit, the rate of
+    orbital decay depends on the efficiency of tidal energy dissipation within the star,
+    which is parameterized by the tidal quality factor. In the constant-phase lag model for
+    equilibrium tides, the orbital decay rate is [1]_:
 
     .. math::
         \\dot{P}_{\\mathrm{decay}} = -\\frac{27\\pi}{2 Q_\\star^{'}}\\left(\\frac{M_p}{
@@ -560,8 +502,8 @@ def decay_pdot_from_quality_factor(P, M_s, M_p, R_s, Q_star):
     .. math:: Q_\\star^{'} = \\frac{3}{2} \\frac{Q_\\star}{k_{2,\\star}}
 
     where :math:`Q_\\star` is the tidal quality factor and :math:`k_{2,\\star}` is the second-order
-    potential Love number [2]_. The theoretical upper limit is :math:`k_{2,\\star}` for a uniform
-    density sphere, in which case :math:`Q_\\star^{'} = Q_\\star`.
+    potential Love number [2]_. The theoretical upper limit is :math:`k_{2,\\star}=3/2`, that of a
+    uniform density sphere, in which case :math:`Q_\\star^{'} = Q_\\star`.
 
     References
     ----------
@@ -582,6 +524,75 @@ def decay_pdot_from_quality_factor(P, M_s, M_p, R_s, Q_star):
     pdot = -27 * np.pi / (2 * Q_star) * (M_p / M_s) * (R_s / a) ** 5
 
     return pdot * P   # days/E
+
+
+def decay_quality_factor_from_pdot(P, dPdE, M_s, M_p, R_s):
+    """Calculate the modified stellar quality factor given an orbital decay rate.
+
+    This method returns a modified stellar quality factor for a given orbital decay rate,
+    assuming that the star-planet system is coplanar and that equilibrium tides dominate the
+    dynamical evolution.
+
+    Parameters
+    ----------
+    P : float
+        Orbital period in days.
+    dPdE : float
+        Orbital decay rate in days per epoch.
+    M_s : float
+        Host star mass in solar masses.
+    M_p : float
+        Planet mass in earth masses.
+    R_s : float
+        Host star radius in solar radii.
+
+    Returns
+    -------
+    float
+        The modified stellar quality tidal factor.
+
+    Notes
+    -----
+    Assuming that equilibrium tides dominate the evolution of a planet's orbit, the rate of
+    orbital decay depends on the efficiency of tidal energy dissipation within the star,
+    which is parameterized by the tidal quality factor. In the constant-phase lag model for
+    equilibrium tides, the modified stellar tidal quality factor is [1]_:
+
+    .. math::
+        Q_\\star^{'} = -\\frac{27\\pi}{2\\dot{P}_{\\mathrm{decay}}}\\left(\\frac{M_p}{
+        M_\\star}\\right)\\left(\\frac{R_\\star}{a}\\right)^5
+
+    where :math:`M_\\star` is the host star mass, :math:`M_p` is the planet mass,
+    :math:`R_\\star` is the host star radius, :math:`a` is the orbital semi-major axis,
+    and :math:`\\dot{P}_{\\mathrm{decay}}` is the orbital decay rate.
+
+    The modified tidal quality factor is defined as:
+
+    .. math:: Q_\\star^{'} = \\frac{3}{2} \\frac{Q_\\star}{k_{2,\\star}}
+
+    where :math:`Q_\\star` is the tidal quality factor and :math:`k_{2,\\star}` is the second-order
+    potential Love number [2]_. The theoretical upper limit is :math:`k_{2,\\star}=3/2`, that of a
+    uniform density sphere, in which case :math:`Q_\\star^{'} = Q_\\star`.
+
+    References
+    ----------
+    .. [1] :cite:t:`Goldreich1966`. https://doi.org/10.1016/0019-1035(66)90051-0
+    .. [2] :cite:t:`Ogilvie2007`. https://doi.org/10.1017/9781108304061
+
+    """
+    # derive parameters
+    a = get_semi_major_axis_from_period(P, M_s)
+
+    # unit conversions
+    M_p *= M_earth    # earth masses to kg
+    M_s *= M_sun      # solar masses to kg
+    R_s *= R_sun      # solar radii to m
+    dPdt = dPdE / P   # days/E to days/day
+
+    # compute and return the stellar tidal quality factor
+    Q_star = -27 * np.pi / (2 * dPdt) * (M_p / M_s) * (R_s / a) ** 5
+
+    return Q_star
 
 
 def decay_empirical_quality_factor(P_orb, P_rot_s):
@@ -611,11 +622,11 @@ def decay_empirical_quality_factor(P_orb, P_rot_s):
     .. math:: Q_\\star^{'} = \\frac{3}{2} \\frac{Q_\\star}{k_{2,\\star}}
 
     where :math:`Q_\\star` is the tidal quality factor and :math:`k_{2,\\star}` is the second-order
-    potential Love number [2]_. The theoretical upper limit is :math:`k_{2,\\star}` for a uniform
-    density sphere, in which case :math:`Q_\\star^{'} = Q_\\star`.
+    potential Love number [2]_. The theoretical upper limit is :math:`k_{2,\\star}=3/2`, that of a
+    uniform density sphere, in which case :math:`Q_\\star^{'} = Q_\\star`.
 
-    This method estimates a value of :math:`Q_\\star^{'} ` with an empirical law derived by
-    Penev et al. (2018) [1]_, given as:
+    This method estimates a value for :math:`Q_\\star^{'}` using an empirical law derived by
+    Penev et al. (2018) [1]_:
 
     .. math::
         Q^{'}_\\star = \\max\\left(\\frac{10^6}{(P_{\\mathrm{tide}}/\\mathrm{day})^{3.1}},
@@ -628,7 +639,7 @@ def decay_empirical_quality_factor(P_orb, P_rot_s):
         P_{\\mathrm{tide}} = \\frac{1}{2\\left(P_{\\mathrm{orb}}^{-1} - P_{\\mathrm{rot}}^{
         -1}\\right)}
 
-    where :math:`P_{\\mathrm{orb}}` is the planet's orbital period and :math:`P_{\\mathrm{rot}}`
+    and where :math:`P_{\\mathrm{orb}}` is the planet's orbital period and :math:`P_{\\mathrm{rot}}`
     is the rotational period of the host star.
 
     References
@@ -665,16 +676,14 @@ def decay_timescale(P, dPdE):
 
     Notes
     -----
-    This method calculates the timescale over which a planetary orbit is shrinking using the
-    equation:
+    For a planet on a decaying orbit, its remaining lifetime can be estimated as simply:
 
     .. math:: \\tau = \\frac{P_0}{|\\dot{P}_{\\mathrm{decay}}|}
 
-    where :math:`\\dot{P}_{\\mathrm{decay}}` is the orbital decay rate and :math:`P_0` is the
+    where :math:`\\dot{P}_{\\mathrm{decay}}` is the orbital decay rate, and :math:`P_0` is the
     initial orbital period.
 
     """
-
     # convert days/orbit to days/yr
     dPdt = dPdE / P * 365.25
 
@@ -686,18 +695,17 @@ def decay_timescale(P, dPdE):
 
 
 def decay_energy_loss(P, dPdE, M_s, M_p):
-    """Calculate the rate of orbital energy loss due to tidal forces causing orbital decay.
+    """Calculate the rate of orbit energy loss due to tidal forces causing orbital decay.
 
     This function uses Equation (9) from Yee et al. (2020) [1]_ to compute the rate at which the
-    orbital energy of a planetary orbit decreases as the orbit decays due to tidal interactions
-    between the planet and its host star.
+    energy of a planetary orbit decreases as it decays due to tidal forces.
 
     Parameters
     ----------
     P : float
         Orbital period in days.
     dPdE : float
-        Orbital decay rate in days per orbit.
+        Orbital decay rate in days per epoch.
     M_s : float
         Mass of the host star in solar masses.
     M_p : float
@@ -746,15 +754,14 @@ def decay_angular_momentum_loss(P, dPdE, M_s, M_p):
     """Calculate the rate of angular momentum loss due to tidal forces causing orbital decay.
 
     This function uses Equation (10) from Yee et al. (2020) [1]_ to compute the rate at which
-    the angular momentum of a planetary orbit decreases as the orbit decays due to tidal
-    interactions between the planet and its host star.
+    the angular momentum of a planetary orbit decreases as it decays due to tidal forces.
 
     Parameters
     ----------
     P : float
         Orbital period in days.
     dPdE : float
-        Orbital decay rate in days per orbit.
+        Orbital decay rate in days per epoch.
     M_s : float
         Host star mass in solar masses.
     M_p : float
@@ -985,88 +992,8 @@ def precession_gr(P, e, M_s):
     return wdot
 
 
-def precession_rotational_star(P, e, M_s, R_s, k2_s, P_rot_s):
-    """Calculate the rate of apsidal precession driven by stellar rotation.
-
-    This method returns the expected apsidal precession rate of a planet's orbit due to the
-    rotational bulge of the host star, calculated using Equations (10) and (11) from Ragozzine
-    and Wolf (2009) [1]_.
-
-    Parameters
-    ----------
-    P : float
-        The orbital period in days.
-    e : float
-        The eccentricity of the orbit.
-    M_s : float
-        The host star mass in solar masses.
-    R_s : float
-        The host star radius in solar radii.
-    k2_s : float
-        The host star's Love number.
-    P_rot_s : float
-        The period of the host star's rotation in days.
-
-    Returns
-    -------
-    float
-        The precession rate in radians per orbit.
-
-    Notes
-    -----
-    The rotation of a fluid body raises an oblate distortion, i.e., flattening, that perturbs its
-    gravitational potential. For close-in planets and their host stars, this effect is expected
-    to drive apsidal precession of the planetary orbit. The rate of precession induced by the
-    star's rotational bulge is given in Equation (10) of Ragozzine and Wolf (2009) [1]_ as:
-
-    .. math::
-        \\dot{\\omega}_{\\mathrm{rot,\\star}} = \\frac{\\eta {R_\\star}^5 k_{2,\\star} {\\dot{
-        \\theta}_\\star}^2}{2 a^2 G M_\\star} g_2(e)
-
-    where :math:`\\dot{\\theta}_\\star` is the rotation speed of the star, :math:`k_{2,\\star}` is
-    its second-order potential Love number, :math:`G` is the gravitational constant, :math:`a` is
-    the semi-major axis of the orbit, :math:`\\eta = 2\\pi/P` is the mean motion,
-    and :math:`M_\\star` and :math:`R_\\star` are the stellar mass and radius, respectively.
-
-    The parameter :math:`g_2(e)` represents an expansion in eccentricity :math:`e`, defined in
-    Equation (11) of Ragozzine and Wolf (2009) [1]_ as:
-
-    .. math:: g_2(e) = (1-e^2)^{-2}
-
-    The Love number represents how centrally condensed the star is and is a fixed property of
-    the body [2]_. The lower the :math:`k_{2,\\star}`, the more centrally condensed the star's
-    interior structure, which in turn leads to a slower precession rate.
-
-    References
-    ----------
-    .. [1] :cite:t:`Ragozzine2009`. https://doi.org/10.1088/0004-637X/698/2/1778
-    .. [2] :cite:t:`Lissauer2019`. https://doi.org/10.1017/9781108304061
-
-    """
-    # derive parameters
-    a = get_semi_major_axis_from_period(P, M_s)
-    nu = 2 * np.pi / P
-
-    # calculate the eccentricity expansion and rotational velocity
-    g = (1 - e ** 2) ** (-2)
-    v_s = 2 * np.pi / P_rot_s  # rad/day
-
-    # unit conversions
-    M_s *= M_sun        # solar masses to kg
-    R_s *= R_sun        # solar radii to m
-    nu *= 1 / 86400     # 1/days to 1/s
-    v_s *= 1 / 86400    # rad/day to rad/s
-
-    # calculate precession rate
-    wdot = (k2_s / 2) * (R_s / a) ** 5 * (v_s ** 2 * a ** 3 / (G * M_s)) * g * nu
-    wdot *= (86400 * P)  # convert rad/s to rad/E
-
-    return wdot  # rad/E
-
-
 def precession_rotational_planet(P, e, M_s, M_p, R_p, k2_p, P_rot_p):
-    """
-    Calculates the rate of apsidal precession driven by planetary rotation.
+    """Calculates the rate of apsidal precession driven by planetary rotation.
 
     This method returns the expected apsidal precession rate of a planet's orbit due to its
     rotational bulge, calculated using Equations (10) and (11) from Ragozzine and Wolf (2009) [1]_.
@@ -1095,10 +1022,10 @@ def precession_rotational_planet(P, e, M_s, M_p, R_p, k2_p, P_rot_p):
 
     Notes
     -----
-    The rotation of a fluid body raises an oblate distortion (i.e., flattening) that perturbs its
-    gravitational potential. For close-in planets and their host stars, this effect is predicted
-    to drive apsidal precession of the planetary orbit. The rate of precession induced by the
-    planet's rotational bulge is given in Equation (10) of Ragozzine and Wolf (2009) [1]_ as:
+    The rotation of a fluid body raises an oblate distortion (i.e., flattening) that perturbs the
+    gravitational potential, driving apsidal precession. The rate of the apsidal precession that is
+    induced by a planet's rotational bulge is given in Equation (10) of Ragozzine and Wolf (2009)
+    [1]_ as:
 
     .. math::
         \\dot{\\omega}_{\\mathrm{rot,p}} = \\frac{\\eta {R_p}^5 k_{2,p} {\\dot{\\theta}_p}^2}{2
@@ -1141,6 +1068,143 @@ def precession_rotational_planet(P, e, M_s, M_p, R_p, k2_p, P_rot_p):
     # calculate precession rate in rad/E
     wdot = (k2_p / 2) * (R_p / a) ** 5 * (v_p ** 2 * a ** 3 / (G * M_p)) * g * nu  # rad/s
 
+    wdot *= (86400 * P)  # convert rad/s to rad/E
+
+    return wdot  # rad/E
+
+
+def precession_rotational_planet_k2(P, e, M_s, M_p, R_p, P_rot_p, dwdE):
+    """Calculate the Love number given a rate of apsidal precession driven by planetary rotation.
+
+    Given an apsidal precession rate for a planetary orbit, this method returns the second-order
+    potential Love number of the planet :math:`k_{2,p}` under the assumption that the precession
+    is driven entirely by the rotational bulge of the planet. See the
+    :meth:`~orbdot.models.theory.precession_rotational_planet` docstring for a more detailed
+    description of the relevant equations, which are adopted from Ragozzine and Wolf (2009) [1]_.
+
+    Parameters
+    ----------
+    P : float
+        The orbital period in days.
+    e : float
+        The eccentricity of the orbit.
+    M_s : float
+        The host star mass in solar masses.
+    M_p : float
+        The planet mass in earth masses.
+    R_p : float
+        The planet radius in earth radii.
+    P_rot_p : float
+        The period of the planet's rotation in days.
+    dwdE : float
+        The precession rate in radians per orbit.
+
+    Returns
+    -------
+    float
+        The planet's potential Love number of the second order.
+
+    References
+    ----------
+    .. [1] :cite:t:`Ragozzine2009`. https://doi.org/10.1088/0004-637X/698/2/1778
+
+    """
+    # derive parameters
+    a = get_semi_major_axis_from_period(P, M_s)
+    nu = 2 * np.pi / P
+
+    # calculate the eccentricity expansion and rotational velocity
+    g = (1 - e ** 2) ** (-2)
+    v_p = 2 * np.pi / P_rot_p  # rad/day
+
+    # unit conversions
+    M_p *= M_earth      # earth masses to kg
+    R_p *= R_earth      # earth radii to m
+    nu *= 1 / 86400     # 1/days to 1/s
+    v_p *= 1 / 86400    # rad/day to rad/s
+    dwdt = dwdE / (86400 * P)  # rad/E to rad/s
+
+    # compute and return the Love number
+    t1 = (1 / 2) * (R_p / a) ** 5 * (v_p ** 2 * a ** 3 / (G * M_p)) * g * nu
+    k2_p = dwdt * t1 ** (-1)
+
+    return k2_p
+
+
+def precession_rotational_star(P, e, M_s, R_s, k2_s, P_rot_s):
+    """Calculate the rate of apsidal precession driven by stellar rotation.
+
+    This method returns the expected apsidal precession rate of a planet's orbit due to the
+    rotational bulge of the host star, calculated using Equations (10) and (11) from Ragozzine
+    and Wolf (2009) [1]_.
+
+    Parameters
+    ----------
+    P : float
+        The orbital period in days.
+    e : float
+        The eccentricity of the orbit.
+    M_s : float
+        The host star mass in solar masses.
+    R_s : float
+        The host star radius in solar radii.
+    k2_s : float
+        The host star's Love number.
+    P_rot_s : float
+        The period of the host star's rotation in days.
+
+    Returns
+    -------
+    float
+        The precession rate in radians per orbit.
+
+    Notes
+    -----
+    The rotation of a fluid body raises an oblate distortion (i.e., flattening) that perturbs the
+    gravitational potential, driving apsidal precession. The rate of the apsidal precession that is
+    induced by a star's rotational bulge is given in Equation (10) of Ragozzine and Wolf (2009)
+    [1]_ as:
+
+    .. math::
+        \\dot{\\omega}_{\\mathrm{rot,\\star}} = \\frac{\\eta {R_\\star}^5 k_{2,\\star} {\\dot{
+        \\theta}_\\star}^2}{2 a^2 G M_\\star} g_2(e)
+
+    where :math:`\\dot{\\theta}_\\star` is the rotation speed of the star, :math:`k_{2,\\star}` is
+    its second-order potential Love number, :math:`G` is the gravitational constant, :math:`a` is
+    the semi-major axis of the orbit, :math:`\\eta = 2\\pi/P` is the mean motion,
+    and :math:`M_\\star` and :math:`R_\\star` are the stellar mass and radius, respectively.
+
+    The parameter :math:`g_2(e)` represents an expansion in eccentricity :math:`e`, defined in
+    Equation (11) of Ragozzine and Wolf (2009) [1]_ as:
+
+    .. math:: g_2(e) = (1-e^2)^{-2}
+
+    The Love number represents how centrally condensed the star is and is a fixed property of
+    the body [2]_. The lower the :math:`k_{2,\\star}`, the more centrally condensed the star's
+    interior structure, which in turn leads to a slower precession rate.
+
+    References
+    ----------
+    .. [1] :cite:t:`Ragozzine2009`. https://doi.org/10.1088/0004-637X/698/2/1778
+    .. [2] :cite:t:`Lissauer2019`. https://doi.org/10.1017/9781108304061
+
+    """
+    # derive parameters
+    a = get_semi_major_axis_from_period(P, M_s)
+    nu = 2 * np.pi / P
+
+    # calculate the eccentricity expansion and rotational velocity
+    g = (1 - e ** 2) ** (-2)
+    v_s = 2 * np.pi / P_rot_s  # rad/day
+
+    # unit conversions
+    M_s *= M_sun        # solar masses to kg
+    R_s *= R_sun        # solar radii to m
+    nu *= 1 / 86400     # 1/days to 1/s
+    v_s *= 1 / 86400    # rad/day to rad/s
+
+    # calculate precession rate
+    wdot = (k2_s / 2) * (R_s / a) ** 5 * (v_s ** 2 * a ** 3 / (G * M_s)) * g * nu
     wdot *= (86400 * P)  # convert rad/s to rad/E
 
     return wdot  # rad/E
@@ -1202,141 +1266,6 @@ def precession_rotational_star_k2(P, e, M_s, R_s, P_rot_s, dwdE):
     return k2_s
 
 
-def precession_rotational_planet_k2(P, e, M_s, M_p, R_p, P_rot_p, dwdE):
-    """Calculate the Love number given a rate of apsidal precession driven by planetary rotation.
-
-    Given an apsidal precession rate for a planetary orbit, this method returns the second-order
-    potential Love number of the planet :math:`k_{2,p}` under the assumption that the precession
-    is driven entirely by the rotational bulge of the planet. See the
-    :meth:`~orbdot.models.theory.precession_rotational_planet` docstring for a more detailed
-    description of the relevant equations, which are adopted from Ragozzine and Wolf (2009) [1]_.
-
-    Parameters
-    ----------
-    P : float
-        The orbital period in days.
-    e : float
-        The eccentricity of the orbit.
-    M_s : float
-        The host star mass in solar masses.
-    M_p : float
-        The planet mass in earth masses.
-    R_p : float
-        The planet radius in earth radii.
-    P_rot_p : float
-        The period of the planet's rotation in days.
-    dwdE : float
-        The precession rate in radians per orbit.
-
-    Returns
-    -------
-    float
-        The planet's potential Love number of the second order.
-
-    References
-    ----------
-    .. [1] :cite:t:`Ragozzine2009`. https://doi.org/10.1088/0004-637X/698/2/1778
-
-    """
-    # derive parameters
-    a = get_semi_major_axis_from_period(P, M_s)
-    nu = 2 * np.pi / P
-
-    # calculate the eccentricity expansion and rotational velocity
-    g = (1 - e ** 2) ** (-2)
-    v_p = 2 * np.pi / P_rot_p  # rad/day
-
-    # unit conversions
-    M_p *= M_earth      # earth masses to kg
-    R_p *= R_earth      # earth radii to m
-    nu *= 1 / 86400     # 1/days to 1/s
-    v_p *= 1 / 86400    # rad/day to rad/s
-    dwdt = dwdE / (86400 * P)  # rad/E to rad/s
-
-    # compute and return the Love number
-    t1 = (1 / 2) * (R_p / a) ** 5 * (v_p ** 2 * a ** 3 / (G * M_p)) * g * nu
-    k2_p = dwdt * t1 ** (-1)
-
-    return k2_p
-
-
-def precession_tidal_star(P, e, M_s, M_p, R_s, k2_s):
-    """Calculate the rate of apsidal precession driven by the star's tidal bulge.
-
-    This method returns the expected apsidal precession rate of the planet's orbit due to the
-    star's tidal bulge, calculated using Equations (6) and (7) from Ragozzine and Wolf (2009) [1]_.
-
-    Parameters
-    ----------
-    P : float
-        The orbital period in days.
-    e : float
-        The eccentricity of the orbit.
-    M_s : float
-        The host star mass in solar masses.
-    M_p : float
-        The planet mass in earth masses.
-    R_s : float
-        The host star radius in solar radii.
-    k2_s : float
-        The host star's Love number.
-
-    Returns
-    -------
-    float
-        The precession rate in radians per orbit.
-
-    Notes
-    -----
-    A massive, close-in planet raises a "tidal bulge" on its host star, which is an ellipsoidal
-    distortion caused by the varying gravitational force experienced across the extent of
-    the body. This physical distortion changes the gravitational potential, driving apsidal
-    precession of the orbit. The rate of precession induced by the star's tidal bulge is given in
-    Equation (6) of Ragozzine and Wolf (2009) [1]_ as:
-
-    .. math::
-        \\dot{\\omega}_{\\mathrm{tide,\\star}} = \\frac{15}{2}k_{2,\\star} \\eta \\left(\\frac{
-        R_\\star}{a}\\right)^5\\left(\\frac{M_p}{M_\\star}\\right)f_2(e)
-
-    where :math:`k_{2,\\star}` is the star's second-order potential Love number, :math:`\\eta =
-    2\\pi/P` is the orbital mean motion, :math:`a` is the semi-major axis, :math:`M_p` is the
-    planet mass, and :math:`M_\\star` and :math:`R_\\star` are the stellar mass and radius.
-
-    The parameter :math:`f_2(e)` represents an expansion in eccentricity :math:`e`, defined in
-    Equation (7) of Ragozzine and Wolf (2009) [1]_ as:
-
-    .. math:: f_2(e)= (1-e^2)^{-5} \\left(1 + \\frac{3}{2}e^2 + \\frac{1}{8}e^4 \\right).
-
-    The Love number represents how centrally condensed the star is and is a fixed property of
-    the body [2]_. The lower the :math:`k_{2,\\star}`, the more centrally condensed the stellar
-    interior structure, which in turn leads to a slower precession rate.
-
-    References
-    ----------
-    .. [1] :cite:t:`Ragozzine2009`. https://doi.org/10.1088/0004-637X/698/2/1778
-
-    """
-    # derive parameters
-    a = get_semi_major_axis_from_period(P, M_s)
-    nu = 2 * np.pi / P
-
-    # calculate the eccentricity expansion
-    f = (1 - e ** 2) ** (-5) * (1 + (3 / 2) * e ** 2 + (1 / 8) * e ** 4)
-
-    # unit conversions
-    M_p *= M_earth      # earth masses to kg
-    M_s *= M_sun        # solar masses to kg
-    R_s *= R_sun        # solar radii to m
-    nu *= 1 / 86400     # 1/days to 1/s
-
-    # calculate precession rate in rad/E
-    wdot = (15 / 2) * k2_s * nu * f * (R_s / a) ** 5 * (M_p / M_s)  # rad/s
-
-    wdot *= (86400 * P)  # convert rad/s to rad/E
-
-    return wdot  # rad/E
-
-
 def precession_tidal_planet(P, e, M_s, M_p, R_p, k2_p):
     """Calculate the rate of apsidal precession driven by the planet's tidal bulge.
 
@@ -1365,11 +1294,11 @@ def precession_tidal_planet(P, e, M_s, M_p, R_p, k2_p):
 
     Notes
     -----
-    The host star of a massive, close-in planet raises a "tidal bulge" on the planet, which is an
-    ellipsoidal distortion caused by the varying gravitational force experienced across
-    the extent of the body. This physical distortion changes the gravitational potential,
-    driving apsidal precession of the orbit. The rate of precession induced by the planet's tidal
-    bulge is given in Equation (6) of Ragozzine and Wolf (2009) [1]_ as:
+    The host star of a massive, close-in planet may raise a significant "tidal bulge" on the host
+    star, an ellipsoidal distortion caused by the varying gravitational force experienced across
+    the extent of the body, driving apsidal precession. The rate of apsidal precession that is
+    induced by the star's tidal bulge is given in Equation (6) of Ragozzine and Wolf (2009) [1]_
+    as:
 
     .. math::
         \\dot{\\omega}_{\\mathrm{tide,p}} = \\frac{15}{2}k_{2,p} \\eta \\left(\\frac{R_p}{
@@ -1408,6 +1337,138 @@ def precession_tidal_planet(P, e, M_s, M_p, R_p, k2_p):
 
     # calculate precession rate in rad/E
     wdot = (15 / 2) * k2_p * nu * f * (R_p / a) ** 5 * (M_s / M_p)  # rad/s
+
+    wdot *= (86400 * P)  # convert rad/s to rad/E
+
+    return wdot  # rad/E
+
+
+def precession_tidal_planet_k2(P, e, M_s, M_p, R_p, dwdE):
+    """Calculate a planet's Love number given a rate of apsidal precession driven by tides.
+
+    Given an apsidal precession rate for a planetary orbit, this method returns the second-order
+    potential Love number of the planet :math:`k_{2,p}` under the assumption that the precession
+    is driven entirely by the tidal bulge of the planet. See the
+    :meth:`~orbdot.models.theory.precession_tidal_planet` docstring for a more detailed
+    description of the relevant equations, which are adopted from Ragozzine and Wolf (2009) [1]_.
+
+    Parameters
+    ----------
+    P : float
+        The orbital period in days.
+    e : float
+        The eccentricity of the orbit.
+    M_s : float
+        The host star mass in solar masses.
+    M_p : float
+        The planet mass in earth masses.
+    R_p : float
+        The planet radius in earth radii.
+    dwdE : float
+        The precession rate in radians per orbit.
+
+    Returns
+    -------
+    float
+        The planet's potential Love number of the second order.
+
+    References
+    ----------
+    .. [1] :cite:t:`Ragozzine2009`. https://doi.org/10.1088/0004-637X/698/2/1778
+
+    """
+    # derive parameters
+    a = get_semi_major_axis_from_period(P, M_s)
+    nu = 2 * np.pi / P
+
+    # calculate the eccentricity expansion
+    f = (1 - e ** 2) ** (-5) * (1 + (3 / 2) * e ** 2 + (1 / 8) * e ** 4)
+
+    # unit conversions
+    M_p *= M_earth  # earth masses to kg
+    M_s *= M_sun  # solar masses to kg
+    R_p *= R_earth  # earth radii to m
+    nu *= 1 / 86400  # 1/days to 1/s
+    dwdt = dwdE / (86400 * P)  # convert rad/E to rad/s
+
+    # compute and return the Love number
+    t1 = (15 / 2) * nu * f * (R_p / a) ** 5 * (M_s / M_p)  # rad/s
+    k2_p = dwdt * t1 ** (-1)
+
+    return k2_p
+
+
+def precession_tidal_star(P, e, M_s, M_p, R_s, k2_s):
+    """Calculate the rate of apsidal precession driven by the star's tidal bulge.
+
+    This method returns the expected apsidal precession rate of the planet's orbit due to the
+    star's tidal bulge, calculated using Equations (6) and (7) from Ragozzine and Wolf (2009) [1]_.
+
+    Parameters
+    ----------
+    P : float
+        The orbital period in days.
+    e : float
+        The eccentricity of the orbit.
+    M_s : float
+        The host star mass in solar masses.
+    M_p : float
+        The planet mass in earth masses.
+    R_s : float
+        The host star radius in solar radii.
+    k2_s : float
+        The host star's Love number.
+
+    Returns
+    -------
+    float
+        The precession rate in radians per orbit.
+
+    Notes
+    -----
+    A massive, close-in planet may raise a significant "tidal bulge" on the host star,
+    an ellipsoidal distortion caused by the varying gravitational force experienced across the
+    extent of the body, driving apsidal precession. The rate of apsidal precession that is
+    induced by the star's tidal bulge is given in Equation (6) of Ragozzine and Wolf (2009) [1]_
+    as:
+
+    .. math::
+        \\dot{\\omega}_{\\mathrm{tide,\\star}} = \\frac{15}{2}k_{2,\\star} \\eta \\left(\\frac{
+        R_\\star}{a}\\right)^5\\left(\\frac{M_p}{M_\\star}\\right)f_2(e)
+
+    where :math:`k_{2,\\star}` is the star's second-order potential Love number, :math:`\\eta =
+    2\\pi/P` is the orbital mean motion, :math:`a` is the semi-major axis, :math:`M_p` is the
+    planet mass, and :math:`M_\\star` and :math:`R_\\star` are the stellar mass and radius.
+
+    The parameter :math:`f_2(e)` represents an expansion in eccentricity :math:`e`, defined in
+    Equation (7) of Ragozzine and Wolf (2009) [1]_ as:
+
+    .. math:: f_2(e)= (1-e^2)^{-5} \\left(1 + \\frac{3}{2}e^2 + \\frac{1}{8}e^4 \\right).
+
+    The Love number represents how centrally condensed the star is and is a fixed property of
+    the body. The lower the :math:`k_{2,\\star}`, the more centrally condensed the stellar
+    interior structure, which in turn leads to a slower precession rate.
+
+    References
+    ----------
+    .. [1] :cite:t:`Ragozzine2009`. https://doi.org/10.1088/0004-637X/698/2/1778
+
+    """
+    # derive parameters
+    a = get_semi_major_axis_from_period(P, M_s)
+    nu = 2 * np.pi / P
+
+    # calculate the eccentricity expansion
+    f = (1 - e ** 2) ** (-5) * (1 + (3 / 2) * e ** 2 + (1 / 8) * e ** 4)
+
+    # unit conversions
+    M_p *= M_earth      # earth masses to kg
+    M_s *= M_sun        # solar masses to kg
+    R_s *= R_sun        # solar radii to m
+    nu *= 1 / 86400     # 1/days to 1/s
+
+    # calculate precession rate in rad/E
+    wdot = (15 / 2) * k2_s * nu * f * (R_s / a) ** 5 * (M_p / M_s)  # rad/s
 
     wdot *= (86400 * P)  # convert rad/s to rad/E
 
@@ -1469,59 +1530,50 @@ def precession_tidal_star_k2(P, e, M_s, M_p, R_s, dwdE):
     return k2_s
 
 
-def precession_tidal_planet_k2(P, e, M_s, M_p, R_p, dwdE):
-    """Calculate a planet's Love number given a rate of apsidal precession driven by tides.
+def proper_motion_idot(mu, beta):
+    """Calculate the apparent rate of change of the inclination due to systemic proper motion.
 
-    Given an apsidal precession rate for a planetary orbit, this method returns the second-order
-    potential Love number of the planet :math:`k_{2,p}` under the assumption that the precession
-    is driven entirely by the tidal bulge of the planet. See the
-    :meth:`~orbdot.models.theory.precession_tidal_planet` docstring for a more detailed
-    description of the relevant equations, which are adopted from Ragozzine and Wolf (2009) [1]_.
+    This method returns the rate of the variation of the line-of-sight inclination of an orbit
+    due to systemic proper motion using Equation (3) from Rafikov (2009) [1]_.
 
     Parameters
     ----------
-    P : float
-        The orbital period in days.
-    e : float
-        The eccentricity of the orbit.
-    M_s : float
-        The host star mass in solar masses.
-    M_p : float
-        The planet mass in earth masses.
-    R_p : float
-        The planet radius in earth radii.
-    dwdE : float
-        The precession rate in radians per orbit.
+    mu : float
+        The proper motion of the system in mas/yr (milliarcseconds per year).
+    beta : float
+        The angle in radians between the proper motion vector and the angular momentum vector
+        projected onto the sky-plane.
 
     Returns
     -------
     float
-        The planet's potential Love number of the second order.
+        The apparent time derivative of the line-of-sight inclination in radians per year.
+
+    Notes
+    -----
+    The proper motion of a star-planet system alters its appearance on the sky-plane,
+    which causes an evolution of the line-of-sight inclination :math:`\\dot{i}_\\mu`. Rafikov
+    (2009) [1]_ derives a simple expression for this effect in terms of the magnitude of the
+    proper motion vector, :math:`\\mu = |\\vec{\\mu}|`:
+
+    .. math:: \\dot{i}_\\mu = -\\mu\\cos{\\beta}
+
+    where :math:`\\beta` is defined (in the coordinate system of [1]_) as the angle in the
+    sky-plane between the proper motion vector :math:`\\vec{\\mu}` and the projection of the
+    orbital angular momentum vector :math:`\\vec{L}`. Thus, the magnitude of the inclination
+    variation :math:`|\\dot{i}_\\mu|` is maximized when :math:`\\beta = 0^\\circ, 180^\\circ`.
 
     References
     ----------
-    .. [1] :cite:t:`Ragozzine2009`. https://doi.org/10.1088/0004-637X/698/2/1778
+    .. [1] :cite:t:`Rafikov2009`. https://doi.org/10.1088/0004-637X/700/2/965
 
     """
-    # derive parameters
-    a = get_semi_major_axis_from_period(P, M_s)
-    nu = 2 * np.pi / P
-
-    # calculate the eccentricity expansion
-    f = (1 - e ** 2) ** (-5) * (1 + (3 / 2) * e ** 2 + (1 / 8) * e ** 4)
-
     # unit conversions
-    M_p *= M_earth  # earth masses to kg
-    M_s *= M_sun  # solar masses to kg
-    R_p *= R_earth  # earth radii to m
-    nu *= 1 / 86400  # 1/days to 1/s
-    dwdt = dwdE / (86400 * P)  # convert rad/E to rad/s
+    beta *= np.pi / 180         # degrees to radians
+    mu *= 1 / (1000 * 206265)   # mas/yr to rad/yr
 
-    # compute and return the Love number
-    t1 = (15 / 2) * nu * f * (R_p / a) ** 5 * (M_s / M_p)  # rad/s
-    k2_p = dwdt * t1 ** (-1)
-
-    return k2_p
+    # return the time derivative of the inclination in rad/yr
+    return - mu * np.cos(beta)
 
 
 def proper_motion_wdot(mu, i, beta):
@@ -1571,52 +1623,6 @@ def proper_motion_wdot(mu, i, beta):
 
     # return the apparent precession rate in rad/yr
     return - mu * np.sin(beta) / np.sin(i)
-
-
-def proper_motion_idot(mu, beta):
-    """Calculate the apparent rate of change of the inclination due to systemic proper motion.
-
-    This method returns the rate of the variation of the line-of-sight inclination due to
-    systemic proper motion using Equation (3) from Rafikov (2009) [1]_.
-
-    Parameters
-    ----------
-    mu : float
-        The proper motion of the system in mas/yr (milliarcseconds per year).
-    beta : float
-        The angle in radians between the proper motion vector and the angular momentum vector
-        projected onto the sky-plane.
-
-    Returns
-    -------
-    float
-        The apparent time derivative of the line-of-sight inclination in radians per year.
-
-    Notes
-    -----
-    The proper motion of a star-planet system alters its appearance on the sky-plane,
-    which causes an evolution of the line-of-sight inclination :math:`\\dot{i}_\\mu`. Rafikov
-    (2009) [1]_ derives a simple expression for this effect in terms of the magnitude of the
-    proper motion vector, :math:`\\mu = |\\vec{\\mu}|`:
-
-    .. math:: \\dot{i}_\\mu = -\\mu\\cos{\\beta}
-
-    where :math:`\\beta` is defined (in the coordinate system of [1]_) as the angle in the
-    sky-plane between the proper motion vector :math:`\\vec{\\mu}` and the projection of the
-    orbital angular momentum vector :math:`\\vec{L}`. Thus, the magnitude of the inclination
-    variation :math:`|\\dot{i}_\\mu|` is maximized when :math:`\\beta = 0^\\circ, 180^\\circ`.
-
-    References
-    ----------
-    .. [1] :cite:t:`Rafikov2009`. https://doi.org/10.1088/0004-637X/700/2/965
-
-    """
-    # unit conversions
-    beta *= np.pi / 180         # degrees to radians
-    mu *= 1 / (1000 * 206265)   # mas/yr to rad/yr
-
-    # return the time derivative of the inclination in rad/yr
-    return - mu * np.cos(beta)
 
 
 def proper_motion_pdot(P, e, w, mu):

@@ -12,7 +12,7 @@ To create a :class:`~orbdot.star_planet.StarPlanet` instance, provide the path t
 
     from orbdot.star_planet import StarPlanet
 
-    wasp12 = StarPlanet('settings_files/WASP-12_settings.json')
+    wasp12 = StarPlanet('examples/settings_files/WASP-12_settings.json')
 
 Now, you have access to all the attributes and methods needed to study the orbital evolution of WASP-12 b. The most important :class:`~orbdot.star_planet.StarPlanet` attributes are listed below:
 
