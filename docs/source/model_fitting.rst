@@ -25,7 +25,7 @@ To run the model fitting routines, one of the following methods must be called o
  - :meth:`~orbdot.radial_velocity.RadialVelocity.run_rv_fit`
  - :meth:`~orbdot.transit_duration.TransitDuration.run_tdv_fit`
 
-These method calls require a list of free parameters and the ``model`` argument, which specifies the evolutionary model to be fit (default is ``"constant"``). The free parameters can be given in any order, but an error will be raised if they are not part of the physical model being fit. See the :ref:`model_parameters` section for more information on the model parameters. The optional ``suffix`` argument enables separate fits of the same model to be differentiated, such as ``suffix="_circular"`` or ``suffix="_eccentric"``. This is nicely illustrated in the :ref:`example-rv-trends` example.
+These method calls require a list of free parameters and the ``model`` argument, which specifies the evolutionary model to be fit (default is ``"constant"``). The free parameters can be given in any order, but an error will be raised if they are not part of the physical model being fit. See the :ref:`model_parameters` section for more information on the model parameters. The optional ``file_suffix`` argument enables separate fits of the same model to be differentiated, such as ``file_suffix="_circular"`` or ``file_suffix="_eccentric"``. This is nicely illustrated in the :ref:`example-rv-trends` example.
 
 TTV Model Fits
 --------------
@@ -41,17 +41,17 @@ TTV Data "Clipping"
 ^^^^^^^^^^^^^^^^^^^
 When fitting the transit and eclipse mid-times with the :meth:`~orbdot.transit_timing.TransitTiming.run_ttv_fit` method, there is an option to employ a sigma-clipping routine to remove outlying data points. This method was originally developed in :cite:t:`Hagey2022` to conservatively remove outliers in the transit mid-times for datasets with high variance. The algorithm operates by fitting the best-fit constant-period timing model, subtracting it from the data, and then removing any data point whose nominal value falls outside a 3-:math:`\sigma` range from the mean of the residuals. This process is repeated until no points fall outside the residuals, or until a maximum number of iterations has been reached.
 
-Providing the argument ``clip=True`` to the :meth:`~orbdot.transit_timing.TransitTiming.run_ttv_fit` method will run the :meth:`~orbdot.transit_timing.TransitTiming.clip` function before the selected model fit. Any subsequent model fits will use the cleaned dataset, so ``clip=True`` only needs to be specified once. For example,
+Providing the argument ``run_clip=True`` to the :meth:`~orbdot.transit_timing.TransitTiming.run_ttv_fit` method will run the :meth:`~orbdot.transit_timing.TransitTiming.clip` function before the selected model fit. Any subsequent model fits will use the cleaned dataset, so ``run_clip=True`` only needs to be specified once. For example,
 
 .. code-block:: python
 
-    wasp12.run_ttv_fit(['t0', 'P0', 'e0', 'w0'], model='constant', clip=True)
+    wasp12.run_ttv_fit(['t0', 'P0', 'e0', 'w0'], model='constant', run_clip=True)
     wasp12.run_ttv_fit(['t0', 'P0', 'PdE'], model='decay')
     wasp12.run_ttv_fit(['t0', 'P0', 'e0', 'w0', 'wdE'], model='precession')
 
 RV Model Fits
 -------------
-The radial velocity model fits are run by calling the :meth:`~orbdot.transit_timing.RadialVelocity.run_rv_fit` method on a :class:`~orbdot.star_planet.StarPlanet` object. The evolutionary model is again specified by the ``model`` argument, which must be either ``"constant"``, ``"decay"``, or ``"precession"``, and the free parameters are specified in a list of strings. The following code snippet shows an example call for each of the radial velocity models:
+The radial velocity model fits are run by calling the :meth:`~orbdot.radial_velocity.RadialVelocity.run_rv_fit` method on a :class:`~orbdot.star_planet.StarPlanet` object. The evolutionary model is again specified by the ``model`` argument, which must be either ``"constant"``, ``"decay"``, or ``"precession"``, and the free parameters are specified in a list of strings. The following code snippet shows an example call for each of the radial velocity models:
 
 .. code-block:: python
 
@@ -59,42 +59,41 @@ The radial velocity model fits are run by calling the :meth:`~orbdot.transit_tim
     wasp12.run_rv_fit(['t0', 'P0', 'PdE', 'K', 'v0', 'jit'], model='decay')
     wasp12.run_rv_fit(['t0', 'P0', 'e0', 'w0', 'wdE', 'K', 'v0', 'jit'], model='precession')
 
-Joint Fits
-----------
-Running a joint model fit is similar, but in this case the data types to be included must also be specified. For example, to fit the mid-times and radial velocities together, the arguments ``RV=True`` and ``TTV=True`` are given:
-
-.. code-block:: python
-
-    wasp12.run_joint_fit(['t0', 'P0', 'K', 'v0', 'dvdt', 'ddvdt', 'jit'], model='constant', RV=True, TTV=True)
-    wasp12.run_joint_fit(['t0', 'P0', 'PdE', 'K', 'v0', 'jit'], model='decay', RV=True, TTV=True)
-    wasp12.run_joint_fit(['t0', 'P0', 'e0', 'w0', 'wdE', 'K', 'v0', 'jit'], model='precession', RV=True, TTV=True)
-
 TDV Model Fits
 --------------
 .. attention::
 
     The transit duration fitting features of OrbDot have not been thoroughly tested and validated at this time. The methods are available to use, but the results should be treated with caution until this notice is removed.
 
+The transit duration model fits are run by calling the :meth:`~orbdot.transit_duration.TransitDuration.run_tdv_fit` method on a :class:`~orbdot.star_planet.StarPlanet` object. The evolutionary model is again specified by the ``model`` argument, which must be either ``"constant"``, ``"decay"``, or ``"precession"``, and the free parameters are specified in a list of strings. The following code snippet shows an example call for each of the transit duration models:
+
 .. code-block:: python
 
-    wasp12.run_tdv_fit(['t0', 'P0', 'e0', 'w0'], model='constant')
-    wasp12.run_tdv_fit(['t0', 'P0', 'e0', 'w0', 'PdE'], model='decay')
-    wasp12.run_tdv_fit(['t0', 'P0', 'e0', 'w0', 'wdE'], model='precession')
+    wasp12.run_tdv_fit(['P0', 'ecosw', 'esinw', 'i0'], model='constant')
+    wasp12.run_tdv_fit(['P0', 'PdE', 'i0'], model='decay')
+    wasp12.run_tdv_fit(['P0', 'e0', 'w0', 'wdE', 'i0'], model='precession')
 
-This documentation will be updated accordingly when the TDV fitting methods are complete.
+Joint Fits
+----------
+Running a joint model fit is similar, but in this case the data types to be included must also be specified. For example, to fit the mid-times and radial velocities together, the arguments ``RV=True`` and ``TTV=True`` are given:
+
+.. code-block:: python
+
+    wasp12.run_joint_fit(['t0', 'P0', 'K', 'v0', 'jit'], model='constant', RV=True, TTV=True)
+    wasp12.run_joint_fit(['t0', 'P0', 'PdE', 'K', 'v0', 'jit'], model='decay', RV=True, TTV=True)
+    wasp12.run_joint_fit(['t0', 'P0', 'e0', 'w0', 'wdE', 'K', 'v0', 'jit'], model='precession', RV=True, TTV=True)
 
 ------------
 
 Output Files
 ============
-After every model fit the following files are saved:
+At the end of every model fit, the following files are saved:
 
- 1. A convenient, easy-to-read summary of the best-fit parameter values and selected sampling statistics: ``"*_summary.txt"``
- 2. A complete collection of the model fit settings, results, and statistics: ``"*_results.json"``
- 3. A plot of the best-fit model and the data: ``"*_plot.png"``
- 4. A corner plot: ``"*_corner.png"``
- 5. The weighted posterior samples: ``"*_weighted_samples.txt"``
- 6. A set of 300 posterior samples for plotting: ``"*_random_samples.txt"``
+ 1. ``"*_summary.txt"``: a quick visual summary of the results
+ 2. ``"*_results.json"``: the entire model fitting results dictionary.
+ 3. ``"*_corner.png"``: a corner plot.
+ 4. ``"*_weighted_samples.txt"``: the weighted posterior samples.
+ 5. ``"*_random_samples.json"``: a random set of 300 posterior samples.
 
 The ``"*_summary.txt"`` File
 ----------------------------
@@ -106,18 +105,18 @@ This text file provides a concise overview of the results of the model fit in an
     -----
     Sampler: nestle
     Free parameters: ['t0' 'P0' 'PdE']
-    log(Z) = -104.4 ± 0.14
-    Run time (s): 6.36
+    log(Z) = -104.47 ± 0.14
+    Run time (s): 7.04
     Num live points: 1000
     Evidence tolerance: 0.01
-    Eff. samples per second: 729
+    Eff. samples per second: 663
 
     Results
     -------
-    t0 = 2456305.455808902 + 3.09208407998085e-05 - 3.068055957555771e-05
-    P0 = 1.0914201079360208 + 4.216883864316401e-08 - 4.308769985250649e-08
-    PdE = -1.0060233896628563e-09 + 6.983453717986182e-11 - 6.779901591341499e-11
-    dPdt (ms/yr) = -29.088417457932348 + 2.019213659783878 - 1.9603580775466223
+    t0 = 2456305.4558077552 + 3.379490226507187e-05 - 3.208918496966362e-05
+    P0 = 1.0914201076440608 + 4.156631039364811e-08 - 4.3833844109997244e-08
+    PdE = -1.00348670058712e-09 + 6.98096735732343e-11 - 6.878773061871802e-11
+    dPdt (ms/yr) = -29.015070989305705 + 2.0184947476459363 - 1.9889460278124174
 
     Fixed Parameters
     ----------------
@@ -148,7 +147,7 @@ The following table lists the keys of the ``*_results.json`` file dictionary:
    * - ``"model"``
      - ``str``
      - The model that was fit (``"ttv_constant"``, ``"joint_precession"``, etc.).
-   * - ``"suffix"``
+   * - ``"file_suffix"``
      - ``str``
      - The file suffix that was given to the model fitting run.
    * - ``"results_filename"``
@@ -353,6 +352,7 @@ The :meth:`~orbdot.analysis.Analyzer.orbital_decay_fit` method produces a summar
 
 .. code-block:: python
 
+    # run an analysis of the orbital decay model fit results
     analyzer.orbital_decay_fit()
 
 It calls the following methods from the theory module:
@@ -371,6 +371,7 @@ The :meth:`~orbdot.analysis.Analyzer.apsidal_precession_fit` method produces a s
 
 .. code-block:: python
 
+    # run an analysis of the apsidal precession model fit results
     analyzer.apsidal_precession_fit()
 
 It calls the following methods from the theory module:
@@ -625,26 +626,3 @@ The following attributes of the :class:`~orbdot.analysis.Analyzer` class may be 
    * - ``ddvdt``
      - ``float``
      - A second order radial velocity trend [m/s/day^2]
-
-.. code-block:: text
-
-    Attributes
-    ----------
-    res : dict
-        The parameters resulting from the model fit.
-    stats : dict
-        The statistical information related to the model fit.
-    sys : dict
-        System parameters of the planetary system.
-    save_dir : str
-        The directory where analysis results are saved.
-    model : str
-        The model used for the analysis.
-    file_prefix : str
-        The prefix for the output file name.
-    file_suffix : str
-        The suffix for the output file name.
-    outfile : str
-        The complete path of the output file.
-    tau : float or None
-        Time span of the radial velocity data in years.
