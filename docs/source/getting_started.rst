@@ -55,7 +55,7 @@ Now, you have access to all the attributes and methods needed to study the orbit
 
 The initialization of a StarPlanet object requires the following input files:
 
-1. :ref:`settings-file`, default is: ``"orbdot/defaults/default_fit_settings.json"``
+1. :ref:`settings-file`, default is: ``"orbdot/defaults/default_settings_file.json"``
 2. :ref:`info-file`, default is: ``"orbdot/defaults/default_info_file.json"``
 3. The :ref:`data-files`
 4. (optional) a file for plot settings, default is: ``"orbdot/defaults/default_plot_settings.json"``
@@ -94,12 +94,15 @@ For example,
 
 .. code-block:: json
 
-     {
-         "_comment1": "WASP-12b Settings",
-         "_comment2": "Input Files",
-         "main_save_dir": "results/",
-         "system_info_file": "settings_files/WASP-12_settings.json"
-     }
+    {
+      "_comment1": "WASP-12 b Settings",
+
+      "_comment2": "Input Files",
+
+          "main_save_dir": "results/",
+          "system_info_file": "info_files/WASP-12_info.json",
+          "plot_settings_file": "settings_files/WASP-12_plot_settings.json",
+    ...
 
 The structure of the next section depends on the type(s) of data you have. For each data type, the settings file should include a dictionary associated with the appropriate key: ``"RV_fit"``, ``"TTV_fit"``, or ``"TDV_fit"``. Each of these dictionaries has the following keys:
 
@@ -132,98 +135,127 @@ For example,
 
 .. code-block:: json
 
-     {
-         "_comment3": "Model Fits",
-         "TTV_fit": {
+      "_comment3": "Model Fits",
+
+           "TTV_fit": {
              "save_dir": "ttv_fits/",
-             "data_file": "data/WASP-12/WASP12b_mid_times.txt",
+             "data_file": "data/WASP-12b_mid_times.txt",
              "data_delimiter": " ",
              "sampler": "nestle",
              "n_live_points": 1000,
-             "evidence_tolerance": 0.1
-         }
-     }
+             "evidence_tolerance": 0.01
+           },
 
 If you want to fit multiple data types simultaneously, the ``"joint_fit"`` dictionary specifies the appropriate settings. For example,
 
 .. code-block:: json
 
-     {
-         "joint_fit": {
-             "save_dir": "joint_fits/",
-             "sampler": "nestle",
-             "n_live_points": 1000,
-             "evidence_tolerance": 0.1
-         }
-     }
+        "joint_fit": {
+         "save_dir": "joint_fits/",
+         "sampler": "nestle",
+         "n_live_points": 1000,
+         "evidence_tolerance": 0.1
+        },
 
 Finally, the ``"priors"`` key corresponds to a dictionary with key-value pairs that define the prior distributions. For more information on the structure and options for priors, see the :ref:`priors` section. Each value is a list of three elements, the first being prior type (``"uniform"``, ``"gaussian"``, or ``"log"``), and the subsequent elements defining the distribution. For example,
 
 .. code-block:: json
 
-     {
-         "prior": {
+      "_comment4": "Priors",
+
+           "prior": {
              "t0": ["gaussian", 2456305.4555, 0.01],
-             "P0": ["gaussian", 1.09142, 0.0001]
-         }
-     }
+             "P0": ["gaussian", 1.09142, 0.0001],
+             "e0": ["uniform", 0.0, 0.1],
+             "w0": ["uniform", 0.0, 6.2831853072],
+             "PdE": ["uniform", -1e-7, 0],
+             "wdE": ["uniform", 0.0, 0.01]
+           }
+    }
 
 Default Settings
 ^^^^^^^^^^^^^^^^
-Not all fields in the settings file need to be populated. A default settings file (``"orbdot/defaults/default_fit_settings.json"``) is merged with the user-provided one, maintaining consistency and providing reasonable uninformative priors on unconstrained parameters like :math:`e\cos{\omega}` and :math:`e\sin{\omega}`. If a key is provided by the user, that value overrides the default one.
+Not all fields in the settings file need to be populated. Whenever a :class:`~orbdot.star_planet.StarPlanet` object is created, the default settings file (``"orbdot/defaults/default_settings_file.json"``) is merged with the user-provided one to maintain consistency. If a key is provided by the user, that value overrides the default one.
 
 .. admonition:: Default Settings File
   :class: dropdown
 
   .. code-block:: json
 
-     {
-         "_comment1": "Settings",
-         "_comment2": "Input Files",
-         "main_save_dir": "results/",
-         "system_info_file": "defaults/system_info.json",
-         "plot_settings_file": "defaults/plot_settings.json",
-         "_comment3": "Model Fits",
-         "RV_fit": {
+    {"_comment0": "Settings",
+
+      "_comment1": "Input Files",
+
+          "main_save_dir": "results/",
+          "system_info_file": "defaults/default_info_file.json",
+          "plot_settings_file": "defaults/default_plot_settings.json",
+
+      "_comment2": "Model Fits",
+
+           "RV_fit": {
              "save_dir": "rv_fits/",
              "data_file": "None",
              "data_delimiter": " ",
              "sampler": "nestle",
              "n_live_points": 1000,
              "evidence_tolerance": 0.1
-         },
-         "TTV_fit": {
+           },
+
+           "TTV_fit": {
              "save_dir": "ttv_fits/",
              "data_file": "None",
              "data_delimiter": " ",
              "sampler": "nestle",
              "n_live_points": 1000,
              "evidence_tolerance": 0.01
-         },
-         "TDV_fit": {
+           },
+
+          "TDV_fit": {
              "save_dir": "tdv_fits/",
              "data_file": "None",
              "data_delimiter": " ",
              "sampler": "nestle",
              "n_live_points": 1000,
              "evidence_tolerance": 0.01
-         },
-         "joint_fit": {
+           },
+
+           "joint_fit": {
              "save_dir": "joint_fits/",
              "sampler": "nestle",
              "n_live_points": 1000,
              "evidence_tolerance": 0.1
-         },
-         "_comment4": "Priors",
-         "prior": {
+           },
+
+      "_comment3": "Priors",
+
+           "prior": {
+
              "t0": ["uniform", 2451545.0, 2460421.0],
              "P0": ["uniform", 0, 10],
              "e0": ["uniform", 0.0, 0.5],
-             "w0": ["uniform", 0, 2*np.pi],
-             "ecosw0": ["uniform", -0.5, 0.5],
-             "esinw0": ["uniform", -0.5, 0.5]
-         }
-     }
+             "w0": ["uniform", 0, 6.28319],
+             "i0": ["gaussian", 90, 5],
+             "O0": ["uniform", 0, 6.28319],
+
+             "ecosw": ["uniform", -0.5, 0.5],
+             "esinw": ["uniform", -0.5, 0.5],
+             "sq_ecosw": ["uniform", -0.5, 0.5],
+             "sq_esinw": ["uniform", -0.5, 0.5],
+
+             "PdE": ["uniform", -1e-7, 1e-7],
+             "wdE": ["uniform", 0, 0.1],
+             "edE": ["uniform", 0, 0.1],
+             "idE": ["uniform", 0, 1],
+             "OdE": ["uniform", 0, 0.1],
+
+             "K": ["uniform", 0, 500],
+             "v0": ["uniform", -100, 100],
+             "jit": ["log" ,-1, 2],
+             "dvdt": ["uniform", -1, 1],
+             "ddvdt": ["uniform", -1, 1],
+             "K_tide": ["uniform", 0, 100]
+           }
+    }
 
 ------------
 
@@ -231,11 +263,13 @@ Not all fields in the settings file need to be populated. A default settings fil
 
 Data Files
 ----------
-Once a :class:`~orbdot.star_planet.StarPlanet` instance is created, the data is accessed through the attributes ``ttv_data``, ``rv_data``, and/or ``tdv_data``. Each data type must be given to OrbDot in separate files. In all cases, the column containing the source of the measurements (e.g., a name, citation, or instrument) is important, as OrbDot recognizes and splits unique sources for plotting.
+Once a :class:`~orbdot.star_planet.StarPlanet` instance is created, the data is accessed through the attributes ``ttv_data``, ``rv_data``, or ``tdv_data``, depending on the data type(s) provided. Each data type must be given to OrbDot in separate files. In all cases, the column containing the source of the measurements (e.g., a name, citation, or instrument) is important, as OrbDot recognizes and splits unique sources for plotting.
 
 TTV Data
 ^^^^^^^^
-Transit and eclipse timing data files are read assuming that the columns are in the order: :code:`[Epoch, Time (BJD), Error (BJD), Source]`. The eclipse mid-times (also known as "occultations") are differentiated by a half orbit, so that transit and eclipse mid-times may be combined into a single data file and automatically separated for model fits and plotting. For example, the eclipse directly following transit number 100 has an epoch equal to 100.5.
+The transit and eclipse timing data files are read assuming that the columns are in the order: :code:`[Epoch, Time, Error, Source]`, though the column names are arbitrary. The mid-times and uncertainties must be given in Barycentric Julian Days (BJD).
+
+The eclipse mid-times (also known as "occultations") are differentiated by a half orbit, so that transit and eclipse mid-times may be combined into a single data file and automatically separated for model fits and plotting. For example, the eclipse directly following transit number 100 has an epoch equal to 100.5.
 
 The :class:`~orbdot.star_planet.StarPlanet` attribute ``ttv_data`` is a dictionary with the following keys:
 
@@ -248,23 +282,25 @@ The :class:`~orbdot.star_planet.StarPlanet` attribute ``ttv_data`` is a dictiona
    * - ``"bjd"``
      - Transit mid-times.
    * - ``"err"``
-     - Transit mid-time errors.
+     - Transit mid-time uncertainties.
    * - ``"src"``
-     - Source of transits.
+     - Source of transit mid-times.
    * - ``"epoch"``
-     - Orbit number of transits.
+     - Transit epochs.
    * - ``"bjd_ecl"``
      - Eclipse mid-times.
    * - ``"err_ecl"``
-     - Eclipse mid-time errors.
+     - Eclipse mid-time uncertainties.
    * - ``"src_ecl"``
-     - Source of eclipses.
+     - Source of eclipse mid-times.
    * - ``"epoch_ecl"``
-     - Orbit number of eclipses.
+     - Eclipse epochs.
 
 RV Data
 ^^^^^^^
-Radial velocity data files are read assuming that the columns are in the order: :code:`[Time (BJD), Velocity (m/s), Error (m/s), Source]`. The :class:`~orbdot.star_planet.StarPlanet` attribute ``rv_data`` is a dictionary with the following keys:
+Radial velocity data files are read assuming that the columns are in the order: :code:`[Time, Velocity, Error, Source]`, though the column names are arbitrary. The velocities must be given in meters per second, and the corresponding measurement times must be in Barycentric Julian Days (BJD).
+
+The :class:`~orbdot.star_planet.StarPlanet` attribute ``rv_data`` is a dictionary with the following keys:
 
 .. list-table::
    :header-rows: 1
@@ -295,7 +331,9 @@ For example, if there are measurements from two RV instruments identified by the
 
 TDV Data
 ^^^^^^^^
-Transit duration data files are read assuming that the columns are in the order: :code:`[Epoch, Duration (min), Error (min), Source]`. The :class:`~orbdot.star_planet.StarPlanet` attribute ``tdv_data`` is a dictionary with the following keys:
+Transit duration data files are read assuming that the columns are in the order: :code:`[Epoch, Duration (min), Error (min), Source]`, though the column names are arbitrary. The transit durations and the corresponding uncertainties must be given in minutes.
+
+The :class:`~orbdot.star_planet.StarPlanet` attribute ``tdv_data`` is a dictionary with the following keys:
 
 .. list-table::
    :header-rows: 1
@@ -304,13 +342,13 @@ Transit duration data files are read assuming that the columns are in the order:
    * - Key
      - Description
    * - ``"dur"``
-     - The transit durations in minutes.
+     - Transit durations in minutes.
    * - ``"err"``
-     - Errors on the transit durations in minutes.
+     - Transit duration uncertainties.
    * - ``"src"``
      - Source of transit durations.
    * - ``"epoch"``
-     - The epoch/orbit number of the observations.
+     - The transit epochs.
 
 ------------
 
@@ -318,13 +356,13 @@ Transit duration data files are read assuming that the columns are in the order:
 
 The System Info File
 --------------------
-The system information ``.json`` file holds important characteristics of the star-planet system. The individual entries serve one of three functions:
+The system information file contains important properties of the star-planet system. The individual entries serve one of three functions:
 
  1. To specify the fixed parameter values for model fitting (see :ref:`fixed_values`).
  2. For use in the :class:`~orbdot.analysis.Analyzer` class methods.
  3. Extra parameters that are made available to the :class:`~orbdot.analysis.Analyzer` for the user's convenience.
 
-The examples :ref:`example-wasp-12` and :ref:`example-rv-trends` may help you familiarize yourself with the function of this input file.
+The examples :ref:`example-wasp-12` and :ref:`example-rv-trends` may help familiarize the user with the use and structure of this file.
 
 Default Info File
 ^^^^^^^^^^^^^^^^^
@@ -346,42 +384,37 @@ The ``"orbdot/defaults/default_info_file.json"`` file, shown in the dropdown bel
           "mu [mas/yr]": null,
           "mu_RA [mas/yr]": null,
           "mu_DEC [mas/yr]": null,
-          "parallax [mas]": null,
           "distance [pc]": null,
           "rad_vel [km/s]": null,
-          "gaia_dr3_ID": null,
+          "age [Gyr]": null,
           "discovery_year": null,
 
-      "_comment2": "Star Characteristics",
+      "_comment2": "Star Properties",
 
-          "age [Gyr]": null,
           "M_s [M_sun]": null,
           "R_s [R_sun]": null,
           "k2_s": null,
-          "vsini [km/s]": null,
           "P_rot_s [days]": null,
 
-      "_comment3": "Planet Characteristics",
+      "_comment3": "Planet Properties",
 
           "planets": ["b"],
           "M_p [M_earth]": [null],
           "R_p [R_earth]": [null],
-          "P_rot_p [days]": [null],
           "k2_p": [null],
-          "lambda [deg]": [null],
-          "Psi [deg]": [null],
+          "P_rot_p [days]": [null],
 
-      "_comment4": "Fit Parameters",
+      "_comment4": "Model Parameters",
 
           "_comment4_1": "Orbital Elements",
-          "t0 [BJD_TDB]": [0.0],
-          "P [days]": [0.0],
+          "t0 [BJD_TDB]": [null],
+          "P [days]": [null],
           "e": [0.0],
           "w [rad]": [0.0],
           "i [deg]": [90.0],
           "O [rad]": [0.0],
 
-          "_comment4_2": "Time-Dependent",
+          "_comment4_2": "Time-Dependant",
           "PdE [days/E]": [0.0],
           "wdE [rad/E]": [0.0],
           "edE [/E]": [0.0],
@@ -393,7 +426,7 @@ The ``"orbdot/defaults/default_info_file.json"`` file, shown in the dropdown bel
           "v0 [m/s]": [0.0],
           "jit [m/s]": [0.0],
           "dvdt [m/s/day]": [0.0],
-          "ddvdt [m/s^2/day]": [0.0],
+          "ddvdt [m/s/day^2]": [0.0],
           "K_tide [m/s]": 0.0
     }
 

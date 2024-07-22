@@ -1,4 +1,4 @@
-Epoch BJD Err Source
+Epoch BJD Error Source
 -1640 2454515.52496 0.00043 "Yee et al. 2019 (compiled)"
 -1346 2454836.40340 0.00028 "Yee et al. 2019 (compiled)"
 -1342 2454840.76893 0.00062 "Yee et al. 2019 (compiled)"

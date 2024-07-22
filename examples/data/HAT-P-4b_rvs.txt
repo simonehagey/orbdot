@@ -1,4 +1,4 @@
-Time Velocity Err Source
+Time Velocity Error Source
 2454186.9827888 54.709 2.429 "Knutson et al. 2014"
 2454187.1099758 51.295 2.126 "Knutson et al. 2014"
 2454188.0435063 -72.774 1.444 "Knutson et al. 2014"

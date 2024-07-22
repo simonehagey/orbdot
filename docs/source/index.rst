@@ -63,18 +63,18 @@ Contents
    bibliography
 
 .. toctree::
-   :caption: Using OrbDot
-
-   getting_started
-   model_fitting
-   models
-
-.. toctree::
    :caption: Examples
    :maxdepth: 4
 
    example_wasp-12
    example_rv_trends
+
+.. toctree::
+   :caption: Using OrbDot
+
+   getting_started
+   model_fitting
+   models
 
 .. toctree::
    :caption: API
