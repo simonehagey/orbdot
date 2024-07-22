@@ -317,7 +317,7 @@ To compare two models, this method calculate the Bayes factor, denoted as:
     \log{B_{12}} = \log{\mathrm{Z}}_{1} - \log{\mathrm{Z}}_{2}
 
 where :math:`\log{\mathrm{Z}}` is the Bayesian evidence, defined such that a lower
-value signifies a superior fit to the observed data. The calculated Baye's factor is then
+value signifies a superior fit to the observed data. The calculated Bayes factor is then
 compared to the thresholds established by :cite:t:`KassRaftery1995`, tabulated below.
 
 .. table::
@@ -404,7 +404,6 @@ It calls the following methods from the theory module:
    orbdot.models.theory.proper_motion_pdot
    orbdot.models.theory.proper_motion_shklovskii
 
-
 5. Orbital Decay Predictions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 The :meth:`~orbdot.analysis.Analyzer.orbital_decay_predicted` method computes and summarizes orbital decay parameters predicted by theory, based on an empirical law for the stellar tidal quality factor.
@@ -423,7 +422,6 @@ It calls the following methods from the theory module:
    orbdot.models.theory.decay_timescale
    orbdot.models.theory.decay_energy_loss
    orbdot.models.theory.decay_angular_momentum_loss
-
 
 6. Apsidal Precession Predictions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -444,10 +442,9 @@ It calls the following methods from the theory module:
    orbdot.models.theory.precession_tidal_star
    orbdot.models.theory.precession_tidal_planet
 
-
 7. Companion Planet Analysis
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-The :meth:`~orbdot.analysis.Analyzer.unknown_companion` method produces a summary of constraints on a possible undetected, non-resonant companion planet given parameters derived from the given model fit.
+If there is a companion planet in the system, whether interior or exterior to the observed planet's orbit, its perturbations might cause measurable effects in the transit and radial velocity data. The :meth:`~orbdot.analysis.Analyzer.unknown_companion` method produces a summary of constraints on a possible undetected, non-resonant companion planet given parameters derived from the given model fit.
 
 .. code-block:: python
 
@@ -466,7 +463,7 @@ It calls the following methods from the theory module, depending on the type of 
 
 8. Resolved Binary Analysis
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-The :meth:`~orbdot.analysis.Analyzer.resolved_binary` method produces a summary of the expected observational effect(s) of a resolved companion star, i.e., one for which the angular separation is known.
+A bound stellar companion may induce measurable variations in radial velocity measurements of an exoplanet host star. The :meth:`~orbdot.analysis.Analyzer.resolved_binary` method produces a summary of the expected observational effect(s) of a resolved companion star, i.e., one for which the angular separation is known.
 
 .. code-block:: python
 
@@ -517,6 +514,9 @@ The following attributes of the :class:`~orbdot.analysis.Analyzer` class may be 
    * - **System Info**
      -
      -
+   * - ``star_name``
+     - ``str``
+     - Name of the host star
    * - ``RA``
      - ``str``
      - Right ascension of the system [hexidecimal]
@@ -547,12 +547,9 @@ The following attributes of the :class:`~orbdot.analysis.Analyzer` class may be 
    * -
      -
      -
-   * - **Star Info**
+   * - **Host Star Properties**
      -
      -
-   * - ``star_name``
-     - ``str``
-     - Name of the host star
    * - ``age``
      - ``float``
      - Age of the star [Gyr]
@@ -574,7 +571,7 @@ The following attributes of the :class:`~orbdot.analysis.Analyzer` class may be 
    * -
      -
      -
-   * - **Planet Info**
+   * - **Planet Properties**
      -
      -
    * - ``planet_name``
@@ -613,10 +610,10 @@ The following attributes of the :class:`~orbdot.analysis.Analyzer` class may be 
    * - ``i0``
      - ``float``
      - The line-of-sight inclination at time ``t0`` [deg]
-   * - ``dPdE``
+   * - ``PdE``
      - ``float``
      - A constant change of the orbital period [days/E]
-   * - ``dwdE``
+   * - ``wdE``
      - ``float``
      - A constant change of the argument of pericenter [rad/E]
    * - ``K``
@@ -639,10 +636,6 @@ The following attributes of the :class:`~orbdot.analysis.Analyzer` class may be 
         The statistical information related to the model fit.
     sys : dict
         System parameters of the planetary system.
-    star_name : str
-        The name of the star hosting the planet.
-    planet_name : str
-        The name of the planet being analyzed.
     save_dir : str
         The directory where analysis results are saved.
     model : str
@@ -653,11 +646,5 @@ The following attributes of the :class:`~orbdot.analysis.Analyzer` class may be 
         The suffix for the output file name.
     outfile : str
         The complete path of the output file.
-    ttv_data : dict or None
-        Transit timing variation data.
-    tdv_data : dict or None
-        Transit duration variation data.
-    rv_data : dict or None
-        Radial velocity data.
     tau : float or None
         Time span of the radial velocity data in years.

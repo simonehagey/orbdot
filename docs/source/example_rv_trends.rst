@@ -367,6 +367,10 @@ This time it is clear that the linear trend, with ``log(Z)=-150.7``, is a better
      - :math:`9.9^{\,+2.1}_{\,-1.6}`
      - :math:`9.6^{\,+1.9}_{\,-1.4}`
 
+The following plot displays the...
+
+.. image:: _static/rv_constant_plot_linear.png
+
 Interpretation
 --------------
 Now that the model fitting is complete, we will use the :class:`~orbdot.analysis.Analyzer` class to help interpret the results. Creating an instance of the :class:`~orbdot.analysis.Analyzer` class requires a :class:`~orbdot.star_planet.StarPlanet` object (ie. ``hatp4``) and the results of a model fit. It is for this reason that we had assigned the output of the model fits to the variables ``fit_circular``, ``fit_eccentric``, ``fit_linear``, and ``fit_quadratic``.
@@ -382,7 +386,7 @@ We can now call any relevant :class:`~orbdot.analysis.Analyzer` methods, the res
 
 Model Comparison
 ^^^^^^^^^^^^^^^^
-Calling the :meth:`~orbdot.analysis.Analyzer.model_comparison` method compares this model to the others by calculating the Baye's factor and evaluating the strength of the evidence with thresholds given by :cite:author:`KassRaftery1995`. The following code snippet calls this method three times, once for each alternative model:
+Calling the :meth:`~orbdot.analysis.Analyzer.model_comparison` method compares this model to the others by calculating the Bayes factor and evaluating the strength of the evidence with thresholds given by :cite:author:`KassRaftery1995`. The following code snippet calls this method three times, once for each alternative model:
 
 .. code-block:: python
 
@@ -456,6 +460,10 @@ The following table shows that these lower limits are in good agreement with :ci
      - :math:`\mathrm{AU}`
      - :math:`5-60`
      - :math:`>4.8`
+
+The following plot displays the...
+
+.. image:: _static/rv_constant_analysis_linear_rv_trend.png
 
 ------------
 
@@ -559,6 +567,10 @@ The following table compares the OrbDot results for the quadratic trend fit with
      - :math:`1.15^{\,+0.32}_{\,-0.29}`
      - :math:`X^{\,+X}_{\,-X}`
 
+The following plot displays the...
+
+.. image:: _static/rv_constant_plot_quadratic.png
+
 Interpretation
 --------------
 Now that the model fitting is complete, we will use the :class:`~orbdot.analysis.Analyzer` class to help interpret the results. The following code snippet creates an ``Analyzer`` object with the results of the quadratic trend fit:
@@ -629,23 +641,9 @@ Again note that Knutson didn't do it because they didn't have enough data at the
      - :math:`>32.9`
      - :math:`X^{\,+X}_{\,-X}`
 
-- Bonomo gets curvature trend
-    orbit is consistent with a circular orbit
-    K = 316.49 +/-0.6
-    dvdt = -0.0052 + 0.0017 - 0.0019 m/s/day
-    ddvdt = 2.26e-5 +/- 3.0e-6 m/s/day^2
-    jitter = 1.15 + 0.32 - 0.29
-    M_c sin(i) >= 3.0 M_jup
-    K_c >= 23.9
-    P >= 20.8
-- Knutson et al. (2014) got curvature trend
-    K = 314.4 +/- 3.2
-    orbit is consistent with a circular orbit
-    dvdt = -0.0147 + 0.0043 - 0.0045
-    ddvdt = ?
-    jitter: 9.7 + 2.2 - 1.6
-    M_c sin(i) = 0.7-125 M_jup
-    a_c = 3.0-28 au
+The following plot displays the...
+
+.. image:: _static/rv_constant_analysis_quadratic_rv_trend.png
 
 ------------
 
