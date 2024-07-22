@@ -54,7 +54,7 @@ def tdv_decay(P0, e0, w0, i0, PdE, E, M_s, R_s):
     """Orbital decay model for transit durations.
 
     This method calculates the expected transit duration for a single planet on an orbit with a
-    constant change in the period, using equation (58) from Kipping (2010) [1]_. Though the main
+    constant change in the period, using Equation 58 from Kipping (2010) [1]_. Though the main
     application of this model is for orbital decay, a positive period derivative is allowed.
 
     Parameters
@@ -143,7 +143,7 @@ def tdv_precession(P0, e0, w0, i0, wdE, E, M_s, R_s):
     """Apsidal precession model for transit durations.
 
     This method calculates the expected transit duration at the given epoch(s) for a single
-    planet on an elliptical orbit undergoing apsidal precession, using equation (54) from Kipping
+    planet on an elliptical orbit undergoing apsidal precession, using Equation 54 from Kipping
     (2010) [1]_.
 
     Parameters
@@ -230,7 +230,7 @@ def tdv_precession(P0, e0, w0, i0, wdE, E, M_s, R_s):
 def transit_duration(P0, e0, w0, i0, M_s, R_s):
     """Calculates the transit duration.
 
-    This method returns the expected transit duration using equation (15) from Kipping (2010) [1]_.
+    This method returns the expected transit duration using Equation 15 from Kipping (2010) [1]_.
 
     Parameters
     ----------

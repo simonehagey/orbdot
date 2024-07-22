@@ -992,7 +992,8 @@ class Analyzer:
 
         .. math::
             v_r = K[\\cos{(\\phi\\left(t\\right)+\\omega_p)}+e\\cos{\\omega_p}] + \\gamma_j +
-            \\dot{\\gamma} \\left(t-t_0\\right) + \\ddot{\\gamma} \\left(t-t_0\\right)^2
+            \\dot{\\gamma} \\left(t-t_0\\right) + \\frac{1}{2} \\ddot{\\gamma} \\left(
+            t-t_0\\right)^2
 
         where :math:`\\dot{\\gamma}` and :math:`\\ddot{\\gamma}` are first and second-order
         acceleration terms, respectively.
@@ -1001,8 +1002,8 @@ class Analyzer:
         :math:`\\gamma`, the residuals are only the long-term trend [1]_:
 
         .. math::
-            RV_c(t) = 0.5 \\ddot{\\gamma} (t - t_{\\mathrm{pivot}})^2 + \\dot{\\gamma} (t - t_{
-            \\mathrm{pivot}})
+            RV_c(t) = \\dot{\\gamma} \\left(t-t_0\\right) + \\frac{1}{2} \\ddot{\\gamma} \\left(
+            t-t_0\\right)^2
 
         In this case, :math:`\\ddot{\\gamma} = 0`.
 
@@ -1091,7 +1092,8 @@ class Analyzer:
 
         .. math::
             v_r = K[\\cos{(\\phi\\left(t\\right)+\\omega_p)}+e\\cos{\\omega_p}] + \\gamma_j +
-            \\dot{\\gamma} \\left(t-t_0\\right) + \\ddot{\\gamma} \\left(t-t_0\\right)^2
+            \\dot{\\gamma} \\left(t-t_0\\right) + \\frac{1}{2} \\ddot{\\gamma} \\left(
+            t-t_0\\right)^2
 
         where :math:`\\dot{\\gamma}` and :math:`\\ddot{\\gamma}` are first and second-order
         acceleration terms, respectively.
@@ -1100,8 +1102,8 @@ class Analyzer:
         :math:`\\gamma`, the residuals are only the long term trend [1]_:
 
         .. math::
-            RV_c(t) = 0.5 \\ddot{\\gamma} (t - t_{\\mathrm{pivot}})^2 + \\dot{\\gamma} (t - t_{
-            \\mathrm{pivot}})
+            RV_c(t) = \\dot{\\gamma} \\left(t-t_0\\right) + \\frac{1}{2} \\ddot{\\gamma} \\left(
+            t-t_0\\right)^2
 
         If both :math:`\\dot{\\gamma}` and :math:`\\ddot{\\gamma}` are nonzero, residuals are
         quadratic, but if :math:`\\ddot{\\gamma} = 0` they are linear. For the latter case,
