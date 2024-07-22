@@ -274,7 +274,7 @@ TTV Data
 ^^^^^^^^
 The transit and eclipse timing data files are read assuming that the columns are in the order: :code:`[Epoch, Time, Error, Source]`, though the column names are arbitrary. The mid-times and uncertainties must be given in Barycentric Julian Days (BJD).
 
-The transit and eclipse mid-times are combined in a single data file and automatically separated for model fits and plotting. The eclipse mid-times are differentiated by a half epoch number, for example, the eclipse directly following transit number 100 has an epoch value of 100.5.
+The transit and eclipse mid-times are combined in a single data file and automatically separated for model fits and plotting. The eclipse mid-times are differentiated by a half epoch number such that, for example, the eclipse directly following transit number 100 has an epoch value of 100.5.
 
 The :class:`~orbdot.star_planet.StarPlanet` attribute ``ttv_data`` is a dictionary with the following keys:
 
@@ -371,7 +371,9 @@ The examples :ref:`example-wasp-12` and :ref:`example-rv-trends` may help famili
 
 Default Info File
 ^^^^^^^^^^^^^^^^^
-The ``"orbdot/defaults/default_info_file.json"`` file, shown in the dropdown below, contains null entries that are automatically overridden by any keys that are in the user's info file.
+Whenever a :class:`~orbdot.star_planet.StarPlanet` object is created, the default settings file (``orbdot/defaults/default_settings_file.json``) is merged with the user-provided file to maintain consistency. Not all fields in the settings file need to be populated. If a key is provided by the user, that value overrides the default one.
+
+The default info file (``orbdot/defaults/default_info_file.json``) is merged with the user-provided file, as not all fields must be populated. If a key is provided by the user, that value overrides the default one.
 
 .. admonition:: Default Info File
   :class: dropdown
