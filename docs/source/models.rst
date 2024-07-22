@@ -4,33 +4,11 @@
 Theory
 ******
 
-.. _coordinate_system:
-
-Coordinate System
-=================
-It is critical to be consistent in the definition of the argument of pericenter :math:`\omega` when simultaneously fitting transit and eclipse mid-times and radial velocities. In the OrbDot coordinate system, the argument of pericenter is determined from the positive x-axis, such that a transit occurs when the true anomaly :math:`\phi` is equal to:
-
-.. math::
-    \phi_{\mathrm I}\,=\,\frac{\pi}{2} - \omega_{\mathrm p}
-
-and an eclipse occurs when:
-
-.. math::
-    \phi_{\mathrm II} = \frac{3\pi}{2} - \omega_{\mathrm p}
-
-The OrbDot models are written in a coordinate system in which the sky plane lies on the x-z plane and the y-axis points toward the observer along the line of sight.
-
-.. image:: _static/coordinate_system.png
-
-------------
-
 .. _model_parameters:
 
 Model Parameters
 ================
-To keep the use of this class clean and concise, there is a main set of "allowed" model parameters. In every model fit, the list of free parameters is compared to this set and the given order is recorded. This means that any number of free parameters can be provided in any order as long as they are part of the physical model(s) defined in the log-likelihoods.
-
-It is important for the user to familiarize themselves with the parameter symbols and definitions, which are described in the following table. Some of the parameters listed below are not currently implemented in the OrbDot models, but are planned for future integration. These parameters are indicated with a footnote [*].
+It is important for the user to be familiar with the symbols and definitions of the OrbDot parameter set, described in the table below. Some of these parameters are not currently implemented in the OrbDot models, but are planned for future integration. These are indicated with a footnote [*].
 
 **Orbital Elements**
 
@@ -44,27 +22,27 @@ It is important for the user to familiarize themselves with the parameter symbol
      - Description
    * - :math:`t_0`
      - ``t0``
-     - BJD
+     - :math:`\mathrm{BJD}_\mathrm{TDB}`
      - The reference transit mid-time.
    * - :math:`P_0`
      - ``P0``
-     - days
+     - :math:`\mathrm{days}`
      - The observed (sidereal) orbital period.
-   * - :math:`e`
+   * - :math:`e_0`
      - ``e0``
      -
      - The eccentricity of the orbit.
-   * - :math:`\omega_p`
+   * - :math:`\omega_0`
      - ``w0``
-     - radians
+     - :math:`\mathrm{rad}`
      - The argument of pericenter of the planet's orbit.
-   * - :math:`i`
+   * - :math:`i_0`
      - ``i0``
-     - degrees
+     - :math:`\mathrm{deg}`
      - The line-of-sight inclination of the orbit.
-   * - :math:`\Omega`
+   * - :math:`\Omega_0`
      - ``O0``
-     - radians
+     - :math:`\mathrm{rad}`
      - The longitude of the ascending node. [*]_
 
 **Coupled Parameters**
@@ -77,22 +55,22 @@ It is important for the user to familiarize themselves with the parameter symbol
      - Symbol
      - Unit
      - Description
-   * - :math:`e\,\cos{\,\omega_p}`
+   * - :math:`e_0\,\cos{\,\omega_0}`
      - ``ecosw``
      -
-     - The eccentricity :math:`e` multiplied by the cosine of :math:`\omega_p`.
-   * - :math:`e\,\sin{\,\omega_p}`
+     - The eccentricity :math:`e_0` multiplied by the cosine of :math:`\omega_0`.
+   * - :math:`e_0\,\sin{\,\omega_0}`
      - ``esinw``
      -
-     - the eccentricity :math:`e` multiplied by the sine of :math:`\omega_p`.
-   * - :math:`\sqrt{e}\,\cos{\,\omega_p}`
+     - the eccentricity :math:`e_0` multiplied by the sine of :math:`\omega_0`.
+   * - :math:`\sqrt{e_0}\,\cos{\,\omega_0}`
      - ``sq_ecosw``
      -
-     - The square root of :math:`e` multiplied by the cosine of :math:`\omega_p`.
-   * - :math:`\sqrt{e}\,\sin{\,\omega_p}`
+     - The square root of :math:`e_0` multiplied by the cosine of :math:`\omega_0`.
+   * - :math:`\sqrt{e_0}\,\sin{\,\omega_0}`
      - ``sq_esinw``
      -
-     - The square root of :math:`e` multiplied by the sine of :math:`\omega_p`.
+     - The square root of :math:`e_0` multiplied by the sine of :math:`\omega_0`.
 
 **Time-Dependent Parameters**
 
@@ -106,11 +84,11 @@ It is important for the user to familiarize themselves with the parameter symbol
       - Description
     * - :math:`\frac{dP}{dE}`
       - ``PdE``
-      - days :math:`E^{-1}`
+      - :math:`\mathrm{days}` :math:`E^{-1}`
       - A constant change of the orbital period.
     * - :math:`\frac{d \omega}{dE}`
       - ``wdE``
-      - rad :math:`E^{-1}`
+      - :math:`\mathrm{rad}` :math:`E^{-1}`
       - A constant change of the argument of pericenter.
     * - :math:`\frac{de}{dE}`
       - ``edE``
@@ -118,11 +96,11 @@ It is important for the user to familiarize themselves with the parameter symbol
       - A constant change of the orbital eccentricity. [*]_
     * - :math:`\frac{di}{dE}`
       - ``idE``
-      - deg :math:`E^{-1}`
+      - :math:`\mathrm{deg}` :math:`E^{-1}`
       - A constant change of the line-of-sight inclination. [*]_
     * - :math:`\frac{d \Omega}{dE}`
       - ``OdE``
-      - rad :math:`E^{-1}`
+      - :math:`\mathrm{rad}` :math:`E^{-1}`
       - A constant change of the long. of the ascending node. [*]_
 
 **Radial Velocity Parameters**
@@ -141,26 +119,48 @@ It is important for the user to familiarize themselves with the parameter symbol
      - The radial velocity semi-amplitude.
    * - :math:`\gamma_j`
      - ``v0``
-     - m :math:`{\mathrm s}^{-1}`
+     - :math:`\mathrm{m}` :math:`{\mathrm s}^{-1}`
      - An instrument specific systemic radial velocity.
    * - :math:`\sigma_j`
      - ``jit``
-     - m :math:`{\mathrm s}^{-1}`
+     - :math:`\mathrm{m}` :math:`{\mathrm s}^{-1}`
      - An instrument-specific radial velocity "jitter" term.
    * - :math:`\dot{\gamma}`
      - ``dvdt``
-     - m :math:`{\mathrm s}^{-1}` :math:`{\mathrm day}^{-1}`
+     - :math:`\mathrm{m}` :math:`{\mathrm s}^{-1}` :math:`{\mathrm day}^{-1}`
      - A linear radial velocity trend.
    * - :math:`\ddot{\gamma}`
      - ``ddvdt``
-     - m :math:`{\mathrm s}^{-1}` :math:`{\mathrm day}^{-2}`
+     - :math:`\mathrm{m}` :math:`{\mathrm s}^{-1}` :math:`{\mathrm day}^{-2}`
      - A second order radial velocity trend.
    * - :math:`K_{\mathrm{tide}}`
      - ``K_tide``
-     - m :math:`{\mathrm s}^{-1}`
+     - :math:`\mathrm{m}` :math:`{\mathrm s}^{-1}`
      - The amplitude of a tidal radial velocity signal from the star. [*]_
 
 .. [*] Not currently implemented in the OrbDot models.
+
+------------
+
+.. _coordinate_system:
+
+Coordinate System
+=================
+The OrbDot models are written in a coordinate system in which the sky plane lies on the x-z plane and the y-axis points toward the observer along the line of sight.
+
+It is critical to be consistent in the definition of the argument of pericenter :math:`\omega` when simultaneously fitting transit and eclipse mid-times and radial velocities. In the OrbDot coordinate system, the argument of pericenter is determined from the positive x-axis, such that a transit occurs when the true anomaly :math:`\phi` is equal to:
+
+.. math::
+    \phi_{\mathrm{I}}\,=\,\frac{\pi}{2} - \omega_p
+
+and an eclipse occurs when:
+
+.. math::
+    \phi_{\mathrm{II}} = \frac{3\pi}{2} - \omega_p
+
+where :math:`\omega_p` is the argument of pericenter of the planetary orbit.
+
+.. image:: _static/coordinate_system.png
 
 ------------
 
@@ -168,13 +168,13 @@ Transit and Eclipse Timing Models
 =================================
 OrbDot currently supports model fitting for three transit and/or eclipse timing models:
 
- 1. An unchanging orbit that is circular or eccentric (constant-period).
- 2. A constant evolution of the orbital period, :math:`\dot{P}` (orbital decay).
- 3. A constant evolution of the argument of pericenter, :math:`\dot{\omega}` (apsidal precession).
+ 1. An unchanging orbit that is circular or eccentric ("constant-period").
+ 2. A constant evolution of the orbital period, :math:`\dot{P}` ("orbital decay").
+ 3. A constant evolution of the argument of pericenter, :math:`\dot{\omega}` ("apsidal precession").
 
 Constant-Period
 ---------------
-For a planet on a circular orbit with a constant orbital period, we expect a linear increase in the center times of both transits :math:`t_{\mathrm{I}}` and eclipses :math:`t_{\mathrm{II}}`:
+For a planet on a circular, unchanging orbit, we expect a linear increase in the center times of both transits :math:`t_{\mathrm{I}}` and eclipses :math:`t_{\mathrm{II}}`, modeled as:
 
 .. math:: t_{\mathrm{I}} = t_0 + PE
 
@@ -195,12 +195,12 @@ The ``orbdot.models.ttv_models.ttv_constant()`` method implements this model:
 
 Orbital Decay
 -------------
-For a planet on a decaying circular orbit with a constant rate of orbital period change, the mid-times of the transits :math:`t_{\mathrm{I}}` and eclipses :math:`t_{\mathrm{II}}` are modeled by:
+For a planet on a decaying circular orbit with a constant rate of orbital period change, the mid-times of the transits :math:`t_{\mathrm{I}}` and eclipses :math:`t_{\mathrm{II}}` are modeled as:
 
 .. math:: t_{\mathrm{I}} = t_0 + PE + \frac{1}{2}\,\frac{dP}{dE}\,E^2
 .. math:: t_{\mathrm{II}} = t_0 + PE + \frac{P}{2} + \frac{1}{2}\,\frac{dP}{dE}\,E^2
 
-where :math:`t_0` is the reference transit time, :math:`P` is the orbital period, :math:`dP/dE` is the rate of change of the period in units of days per epoch, and :math:`E` is the epoch. If the orbit is eccentric, an offset of :math:`\frac{P_a e}{\pi}\,\cos{\omega_p}` is added to the eclipse times.
+where :math:`t_0` is the reference transit time, :math:`P` is the orbital period, :math:`dP/dE` is the rate of change of the period in units of days per epoch, and :math:`E` is the epoch. Though the main application of this model is for orbital decay, a positive period derivative is allowed.
 
 The ``orbdot.models.ttv_models.ttv_decay()`` method implements this model:
 
@@ -208,7 +208,7 @@ The ``orbdot.models.ttv_models.ttv_decay()`` method implements this model:
 
 Apsidal Precession
 ------------------
-For a planet on an elliptical orbit undergoing apsidal precession, the mid-times of the transits (:math:`t_{\mathrm{I}}`) and eclipses (:math:`t_{\mathrm{II}}`) are modeled as :cite:p:`Gimenez1995, Patra2017`:
+For a planet on an elliptical orbit undergoing apsidal precession, the mid-times of the transits :math:`t_{\mathrm{I}}` and eclipses :math:`t_{\mathrm{II}}` are modeled as :cite:p:`Gimenez1995, Patra2017`:
 
 .. math:: t_{\mathrm{I}} = t_0 + P_s E - \frac{e P_a}{\pi}\cos{\omega_p}
 .. math:: t_{\mathrm{II}} = t_0 + P_s E + \frac{P_a}{2} + \frac{eP_a}{\pi}\cos{\omega_p}
@@ -235,9 +235,9 @@ Radial Velocity Models
 ======================
 OrbDot currently supports model fitting for three radial velocity models:
 
- 1. An unchanging orbit that is circular or eccentric (constant-period).
- 2. A constant evolution of the orbital period, :math:`\dot{P}` (orbital decay).
- 3. A constant evolution of the argument of pericenter, :math:`\dot{\omega}` (apsidal precession).
+ 1. An unchanging orbit that is circular or eccentric ("constant-period").
+ 2. A constant evolution of the orbital period, :math:`\dot{P}` ("orbital decay").
+ 3. A constant evolution of the argument of pericenter, :math:`\dot{\omega}` ("apsidal precession").
 
 Background
 ----------
@@ -257,12 +257,12 @@ At any given time, the periodic signal depends on the planet's position in its o
 
 where :math:`\omega_\star` is the argument of pericenter of the star's orbit, defined as :math:`\omega_\star = \omega_p + \pi`, and :math:`t_0` is a transit mid-time. OrbDot requires the reference time to that of a transit so that the phase at any time :math:`t` can be determined by the knowledge that when :math:`t=t_0` the true anomaly is :math:`\phi_0 = \frac{\pi}{2} - \omega_p`.
 
-To avoid underestimating the uncertainties of the parameters in the RV model fit, OrbDot implements an instrument-dependent 'jitter' parameter instrument into the log likelihood (when ``jit`` is given as a free parameter), to account for systematic noise. These terms are added in quadrature with the individual measurement errors:
+To avoid underestimating the parameters uncertainties, OrbDot implements an instrument-specific "jitter" parameter to represent systematic noise. When ``jit`` is given as a free parameter, it is added in quadrature with the individual measurement errors:
 
 .. math::
-    \sigma = \sqrt{\sigma_i^2 + \sigma_j^2}
+    \sigma = \sqrt{\sigma_i^2 + \sigma_{jit}^2}
 
-where :math:`\sigma_j` is the individual measurement error and :math:`\sigma_j` is the instrument-specific jitter term.
+where :math:`\sigma_i` is the individual measurement error and :math:`\sigma_{jit}` is the instrument-dependent jitter term.
 
 Constant-Period
 ---------------
@@ -295,19 +295,19 @@ Transit Duration Models
 
 OrbDot currently supports model fitting for three transit duration models:
 
- 1. An unchanging orbit that is circular or eccentric (constant-period).
- 2. A constant evolution of the orbital period, :math:`\dot{P}` (orbital decay).
- 3. A constant evolution of the argument of pericenter, :math:`\dot{\omega}` (apsidal precession).
+ 1. An unchanging orbit that is circular or eccentric ("constant-period").
+ 2. A constant evolution of the orbital period, :math:`\dot{P}` ("orbital decay").
+ 3. A constant evolution of the argument of pericenter, :math:`\dot{\omega}` ("apsidal precession").
 
 Constant-Period
 ---------------
-The transit duration :math:`T` is calculated using equation (15) from :cite:t:`Kipping2010`:
+In general, the transit duration :math:`T` is calculated using equation (15) from :cite:t:`Kipping2010`:
 
 .. math::
     T = \frac{P}{\pi} \frac{\varrho_c^2}{\sqrt{1-e^2}}
     \arcsin \left(\frac{\sqrt{1-a_R^2 \varrho_c^2 \cos ^2 i}}{a_R \varrho_c \sin i}\right)
 
-where :math:`P` is the orbital period, :math:`\varrho_c` is the star-planet separation at mid-transit, :math:`e` is the orbit eccentricity, :math:`a_R` is the semimajor axis of the orbit in units of stellar radii, :math:`i` is the line-of-sight inclination of the orbit, and :math:`c` is the speed of light in a vacuum.
+where :math:`P` is the orbital period, :math:`e` is the orbit eccentricity, :math:`i` is the line-of-sight inclination of the orbit, :math:`a_R` is the semimajor axis of the orbit in units of stellar radii, :math:`\varrho_c` is the star-planet separation at mid-transit, and :math:`c` is the speed of light in a vacuum.
 
 The ``orbdot.models.tdv_models.tdv_constant()`` method implements the constant-period transit duration model:
 
@@ -323,14 +323,12 @@ For a planet on a decaying orbit, the change in transit duration over time can b
     \arcsin \left(\frac{\sqrt{1-b^2}}{a_R \varrho_{\mathrm{c}} \sin i}\right)\right)
     \left(\frac{1}{\sqrt{1-b^2}\sqrt{a_R^2\varrho_c^2-1}}\right)
 
-where :math:`\frac{dT}{da}` is the change in the transit duration with changing semi-major axis, :math:`b` is the impact parameter, and :math:`\frac{dT}{dE}` is the change in the transit duration per epoch.
-
-The relationship between these quantities is given by:
+where :math:`\frac{dT}{da}` is the change in the transit duration with changing semi-major axis and :math:`b` is the impact parameter. In this case, the change in the transit duration per epoch may be expressed as:
 
 .. math::
     \frac{dT}{dE} = \frac{dT}{da}\frac{da}{dP}\frac{dP}{dE}
 
-Hence, the transit duration as a function of epoch :math:`E` is:
+such that the transit duration as a function of epoch :math:`E` is:
 
 .. math::
     T(E) = T_0 + \frac{dT}{dE}\,E
@@ -342,21 +340,19 @@ The ``orbdot.models.tdv_models.tdv_decay()`` method implements the orbital decay
 
 Apsidal Precession
 ------------------
-For a planet on an elliptical orbit undergoing apsidal precession, the change in the argument of pericenter :math:`\omega` affects the transit duration. This relationship is captured by equation (54) from :cite:t:`Kipping2010`:
+For a planet on an elliptical orbit undergoing apsidal precession, the change in the argument of pericenter :math:`\omega_p` affects the transit duration. This relationship is captured by equation (54) from :cite:t:`Kipping2010`:
 
 .. math::
     \frac{dT}{d \omega} =  \frac{P}{\pi} \frac{e \varrho_{\mathrm{c}}^3 \cos\omega}{\left(1-e^2\right)^{3 / 2}}
     \left(\frac{1}{\sqrt{1-b^2} \sqrt{a_R^2 \varrho_c^2-1}}\right) \left (-2 \arcsin \left(\frac{\sqrt{1-b^2}}
     {a_R \varrho_c \sin i}\right)\right)
 
-where :math:`\frac{dT}{d \omega}` is the change in the transit duration with changing argument of pericenter.
-
-The change in transit duration per epoch :math:`E` is given by:
+where :math:`\frac{dT}{d \omega}` is the change in the transit duration with changing argument of pericenter and :math:`b` is the impact parameter. The change in the transit duration per epoch may be expressed as:
 
 .. math::
     \frac{dT}{dE} = \frac{dT}{d\omega}\frac{d\omega}{dE}
 
-Thus, the transit duration as a function of epoch :math:`E` is:
+such that the transit duration as a function of epoch :math:`E` is:
 
 .. math::
     T(E) = T_0 + \frac{dT}{dE}\,E

@@ -6,6 +6,13 @@ The first step to using OrbDot is to create an instance of the :class:`~orbdot.s
 
 Creating a StarPlanet Instance
 ------------------------------
+The initialization of a :class:`~orbdot.star_planet.StarPlanet` object requires the following input files:
+
+1. :ref:`settings-file`, default is: ``"orbdot/defaults/default_settings_file.json"``
+2. :ref:`info-file`, default is: ``"orbdot/defaults/default_info_file.json"``
+3. The :ref:`data-files`
+4. (optional) a file for plot settings, default is: ``"orbdot/defaults/default_plot_settings.json"``
+
 To create a :class:`~orbdot.star_planet.StarPlanet` instance, provide the path to a settings file as an argument. For example, to use the Hot Jupiter WASP-12 b:
 
 .. code-block:: python
@@ -14,7 +21,9 @@ To create a :class:`~orbdot.star_planet.StarPlanet` instance, provide the path t
 
     wasp12 = StarPlanet('examples/settings_files/WASP-12_settings.json')
 
-Now, you have access to all the attributes and methods needed to study the orbital evolution of WASP-12 b. The most important :class:`~orbdot.star_planet.StarPlanet` attributes are listed below:
+The object ``wasp12`` now has access to all of the attributes and methods needed to study the orbital evolution of WASP-12 b.
+
+The key :class:`~orbdot.star_planet.StarPlanet` attributes are:
 
 .. list-table::
    :header-rows: 1
@@ -30,7 +39,7 @@ Now, you have access to all the attributes and methods needed to study the orbit
      - The name of the planet.
    * - ``ttv_data``
      - ``dict``
-     - The transit and/or eclipse mid-time data.
+     - The transit and/or eclipse timing data.
    * - ``rv_data``
      - ``dict``
      - The radial velocity data.
@@ -43,22 +52,9 @@ Now, you have access to all the attributes and methods needed to study the orbit
    * - ``fixed``
      - ``dict``
      - The fixed parameter values.
-   * - ``sp_system_params``
+   * - ``sys_info``
      - ``dict``
      - A dictionary holding the system info file.
-   * - ``main_save_dir``
-     - ``str``
-     - The base path to save the output files.
-   * - ``plot_settings``
-     - ``dict``
-     - Various plot settings.
-
-The initialization of a StarPlanet object requires the following input files:
-
-1. :ref:`settings-file`, default is: ``"orbdot/defaults/default_settings_file.json"``
-2. :ref:`info-file`, default is: ``"orbdot/defaults/default_info_file.json"``
-3. The :ref:`data-files`
-4. (optional) a file for plot settings, default is: ``"orbdot/defaults/default_plot_settings.json"``
 
 ------------
 
@@ -269,7 +265,7 @@ TTV Data
 ^^^^^^^^
 The transit and eclipse timing data files are read assuming that the columns are in the order: :code:`[Epoch, Time, Error, Source]`, though the column names are arbitrary. The mid-times and uncertainties must be given in Barycentric Julian Days (BJD).
 
-The eclipse mid-times (also known as "occultations") are differentiated by a half orbit, so that transit and eclipse mid-times may be combined into a single data file and automatically separated for model fits and plotting. For example, the eclipse directly following transit number 100 has an epoch equal to 100.5.
+The eclipse mid-times (also known as "occultations") are differentiated by a half orbit, as the transit and eclipse mid-times are combined into a single data file and automatically separated for model fits and plotting. For example, the eclipse directly following transit number 100 has an epoch equal to 100.5.
 
 The :class:`~orbdot.star_planet.StarPlanet` attribute ``ttv_data`` is a dictionary with the following keys:
 
@@ -323,7 +319,7 @@ The :class:`~orbdot.star_planet.StarPlanet` attribute ``rv_data`` is a dictionar
    * - ``"src_tags"``
      - Tags assigned to each source.
    * - ``"src_order"``
-     - Order of sources.
+     - Order of the sources.
 
 It is critical to be consistent in naming the source of the radial velocity measurements, as the model parameters :math:`\gamma` and :math:`\sigma_{\mathrm{jit}}` are instrument-dependent. When these variables are included in a list of free parameters, OrbDot will replace them with a new identifier for each unique source, with a tag that corresponds to what was specified in the data file.
 
@@ -331,7 +327,7 @@ For example, if there are measurements from two RV instruments identified by the
 
 TDV Data
 ^^^^^^^^
-Transit duration data files are read assuming that the columns are in the order: :code:`[Epoch, Duration (min), Error (min), Source]`, though the column names are arbitrary. The transit durations and the corresponding uncertainties must be given in minutes.
+Transit duration data files are read assuming that the columns are in the order: :code:`[Epoch, Duration, Error, Source]`, though the column names are arbitrary. The transit durations and the corresponding uncertainties must be given in minutes.
 
 The :class:`~orbdot.star_planet.StarPlanet` attribute ``tdv_data`` is a dictionary with the following keys:
 
@@ -356,11 +352,11 @@ The :class:`~orbdot.star_planet.StarPlanet` attribute ``tdv_data`` is a dictiona
 
 The System Info File
 --------------------
-The system information file contains important properties of the star-planet system. The individual entries serve one of three functions:
+The system information file contains important properties of the star-planet system, with every entry serving at least one of the following applications:
 
- 1. To specify the fixed parameter values for model fitting (see :ref:`fixed_values`).
+ 1. To specify the :ref:`fixed parameter values <fixed_values>` for model fitting.
  2. For use in the :class:`~orbdot.analysis.Analyzer` class methods.
- 3. Extra parameters that are made available to the :class:`~orbdot.analysis.Analyzer` for the user's convenience.
+ 3. An optional parameter made available to the :class:`~orbdot.analysis.Analyzer` class for the user's convenience.
 
 The examples :ref:`example-wasp-12` and :ref:`example-rv-trends` may help familiarize the user with the use and structure of this file.
 
