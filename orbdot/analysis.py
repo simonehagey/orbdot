@@ -12,6 +12,7 @@ import orbdot.models.rv_models as rv
 from orbdot.models.tdv_models import transit_duration
 from matplotlib import pyplot as plt
 
+
 class Analyzer:
     """
     This class enables various computations related to the long-term variations of exoplanet orbits.
@@ -47,20 +48,26 @@ class Analyzer:
         # attempt to get TTV data from the planet instance
         try:
             self.ttv_data = planet.ttv_data
+
         except AttributeError:
+
             self.ttv_data = None
 
         # attempt to get TDV data from the planet instance
         try:
             self.tdv_data = planet.tdv_data
+
         except AttributeError:
+
             self.tdv_data = None
 
         # attempt to get RV data from the planet instance and determine the baseline
         try:
             self.rv_data = planet.rv_data
             self.tau = (max(self.rv_data['trv_all']) - min(self.rv_data['trv_all'])) / 365.25
+
         except AttributeError:
+
             self.rv_data = None
             self.tau = None
 
@@ -111,6 +118,7 @@ class Analyzer:
 
         # create a save directory if not found
         parent_dir = os.path.abspath(os.getcwd()) + '/'
+
         try:
             os.makedirs(os.path.join(parent_dir, self.save_dir))
 
@@ -122,11 +130,12 @@ class Analyzer:
 
         # create and initialize the output file with a header
         with open(self.outfile, 'w') as f:
+
             f.write('{} Analysis | model: \'{}\'\n\n'.format(self.planet_name, self.model))
 
             print('-' * 100)
-            print('Initializing {} ``Analyzer`` object for the \'{}\' model...'.format(self.planet_name,
-                                                                                   self.model))
+            print('Initializing {} ``Analyzer`` object for the \'{}\' model...'
+                  .format(self.planet_name, self.model))
             print('-' * 100)
             print(' ')
 
@@ -169,7 +178,7 @@ class Analyzer:
 
         with open(self.outfile, 'a') as f:
             str1 = 'Model Comparison\n'
-            str2 = '-' * 65 + '\n'
+            str2 = '-' * 75 + '\n'
             f.write(str1 + str2)
             if printout:
                 print(' ' + str1, str2)
@@ -247,6 +256,18 @@ class Analyzer:
         # define conversion from rad/E to deg/yr
         conv = (1 / self.P0) * 365.25 * (180 / np.pi)
 
+        for x in [self.M_s, self.R_s, self.M_p, self.R_p, self.P_rot_s, self.P_rot_p]:
+
+            if x is None:
+                print('\tWARNING: cannot execute ``apsidal_precession_fit()`` due to NULL values '
+                      'for one or more required parameters.\n\tPlease ensure the system info file '
+                      'has entries for the following keys: [\"{}\", \"{}\", \n\t \"{}\", \"{}\", '
+                      '\"{}\", \"{}\"] \n '.format("M_s [M_sun]", "R_s [R_sun]",
+                                                   "M_p [M_earth]", "R_p [R_earth]",
+                                                   "P_rot_s [days]", "P_rot_p [days]"))
+
+                return
+
         try:
 
             # open the output file in append mode
@@ -254,7 +275,7 @@ class Analyzer:
 
                 # write the header for this section
                 str1 = 'Apsidal Precession Model Fit\n'
-                str2 = '-' * 65 + '\n'
+                str2 = '-' * 75 + '\n'
                 f.write(str1 + str2)
                 if printout:
                     print(' ' + str1, str2)
@@ -359,6 +380,19 @@ class Analyzer:
         """
         print(' --> apsidal_precession_predicted()\n')
 
+        for x in [self.M_s, self.R_s, self.k2_s, self.P_rot_s,
+                  self.M_p, self.R_p, self.k2_p, self.P_rot_p]:
+
+            if x is None:
+                print('\tWARNING: cannot execute ``apsidal_precession_predicted()`` due to NULL '
+                      'values for one or more required parameters.\n\tPlease ensure the system '
+                      'info file has entries for the following keys: [\"{}\", \"{}\", \n\t \"{}\", '
+                      '\"{}\", \"{}\", \"{}\", \"{}\", \"{}\"] \n '
+                      .format("M_s [M_sun]", "R_s [R_sun]",  "M_p [M_earth]", "R_p [R_earth]",
+                              "k2_s", "k2_p", "P_rot_s [days]", "P_rot_p [days]"))
+
+                return
+
         # define a conversion factor
         conv = (1 / self.P0) * 365.25 * (180 / np.pi)
 
@@ -367,7 +401,7 @@ class Analyzer:
 
             # write the header for this section
             str1 = 'Predicted Apsidal Precession\n'
-            str2 = '-' * 65 + '\n'
+            str2 = '-' * 75 + '\n'
             f.write(str1 + str2)
             if printout:
                 print(' ' + str1, str2)
@@ -456,13 +490,23 @@ class Analyzer:
         """
         print(' --> orbital_decay_fit()\n')
 
+        for x in [self.M_s, self.R_s, self.M_p]:
+
+            if x is None:
+                print('\tWARNING: cannot execute ``orbital_decay_fit()`` due to NULL values '
+                      'for one or more required parameters.\n\tPlease ensure the system '
+                      'info file has entries for the following keys: [\"{}\", \"{}\", \"{}\"] \n '
+                      .format("M_s [M_sun]", "R_s [R_sun]", "M_p [M_earth]"))
+
+                return
+
         try:
             # open the output file in append mode
             with open(self.outfile, 'a') as f:
 
                 # write the header for this section
                 str1 = 'Orbital Decay Model Fit\n'
-                str2 = '-' * 65 + '\n'
+                str2 = '-' * 75 + '\n'
                 f.write(str1 + str2)
                 if printout:
                     print(' ' + str1, str2)
@@ -514,6 +558,7 @@ class Analyzer:
                     print(str1, str2)
 
         except IndexError:
+
             # handle when the results for an orbital decay model fit are not available
             print('\nERROR: results for an orbital decay model fit are not '
                   'available to this instance of the ``Analyzer`` class.')
@@ -539,12 +584,23 @@ class Analyzer:
         """
         print(' --> orbital_decay_predicted()\n')
 
+        for x in [self.M_s, self.R_s, self.M_p, self.P_rot_s]:
+
+            if x is None:
+
+                print('\tWARNING: cannot execute ``orbital_decay_predicted()`` due to NULL values '
+                      'for one or more required parameters.\n\tPlease ensure the system info file '
+                      'has entries for the following keys: [\"{}\", \"{}\",\n\t \"{}\", \"{}\"] \n '
+                      .format("M_s [M_sun]", "R_s [R_sun]", "M_p [M_earth]", "P_rot_s [days]"))
+
+                return
+
         # open the output file in append mode
         with open(self.outfile, 'a') as f:
 
             # write the header for this section
             str1 = 'Predicted Orbital Decay\n'
-            str2 = '-' * 65 + '\n'
+            str2 = '-' * 75 + '\n'
             f.write(str1 + str2)
             if printout:
                 print(' ' + str1, str2)
@@ -618,12 +674,23 @@ class Analyzer:
         """
         print(' --> proper_motion()\n')
 
+        for x in [self.mu, self.D, self.M_s, self.R_s]:
+
+            if x is None:
+
+                print('\tWARNING: cannot execute ``proper_motion()`` due to NULL values for one '
+                      'or more required parameters.\n\tPlease ensure the system info file has '
+                      'entries for the following keys: [\"{}\", \"{}\", \n\t \"{}\", \"{}\"] \n '
+                      .format("mu [mas/yr]", "distance [pc]", "M_s [M_sun]", "R_s [R_sun]"))
+
+                return
+
         # open the output file in append mode
         with open(self.outfile, 'a') as f:
 
             # write the header for this section
             str1 = 'Systemic Proper Motion Effects\n'
-            str2 = '-' * 65 + '\n'
+            str2 = '-' * 75 + '\n'
             f.write(str1 + str2)
             if printout:
                 print(' ' + str1, str2)
@@ -700,99 +767,109 @@ class Analyzer:
         """
         print(' --> visual_binary()\n')
 
+        for x in [self.D]:
+
+            if x is None:
+
+                print('\tWARNING: cannot execute ``resolved_binary()`` due to NULL values for one '
+                      'or more required parameters.\n\tPlease ensure the system info file has '
+                      'entries for the following keys: \"{}\" \n'.format("distance [pc]"))
+
+                return
+
         # open the output file in append mode
         with open(self.outfile, 'a') as f:
 
             # write the header for this section
             str1 = 'Resolved Stellar Companion\n'
-            str2 = '-' * 65 + '\n'
+            str2 = '-' * 75 + '\n'
             f.write(str1 + str2)
             if printout:
                 print(' ' + str1, str2)
 
-        if secondary_mass is not None:
+            if secondary_mass is not None:
 
-            # write the properties of the secondary star
-            str1 = ' * Properties of the secondary star:\n'
-            str2 = '\t  mass: M_B = {:.2f} solar masses\n'.format(secondary_mass)
-            str3 = '\t  separation: theta = {:.2f} arcseconds\n'.format(separation)
-            f.write(str1 + str2 + str3)
-            if printout:
-                print(str1, str2, str3)
-
-            # calculate the slope of the linear RV trend from the stellar companion
-            dvdt = m.resolved_binary_rv_trend_from_mass(separation, self.D, secondary_mass)
-            str1 = ' * Slope of the linear RV trend from the stellar companion:\n'
-            str2 = '\t  dv/dt = {:.2E} m/s/day\n'.format(dvdt)
-            f.write(str1 + str2)
-            if printout:
-                print(str1, str2)
-
-            # calculate the apparent orbital period derivative from the line-of-sight acceleration
-            Pdot = m.companion_doppler_pdot_from_rv_trend(self.P0, dvdt)
-            str1 = ' * Apparent orbital period derivative from the line-of-sight acceleration:\n'
-            str2 = '\t  dP/dt = {:.2E} ms/yr\n'.format(Pdot)
-            f.write(str1 + str2)
-            if printout:
-                print(str1, str2)
-
-        elif secondary_mass is None:
-
-            # check if the best-fit RV slope is non-zero
-            if self.dvdt != 0.0:
-
-                # calculate the minimum secondary mass given the best-fit RV slope
-                M_min = m.resolved_binary_mass_from_rv_trend(separation, self.D, self.dvdt)
-                str1 = ' * Minimum mass of the resolved binary given the best-fit RV slope ' \
-                       'of {} m/s/day:\n'
-                str2 = '\t  M_B = {:.2E} solar masses\n'.format(M_min)
-                f.write(str1 + str2)
-                if printout:
-                    print(str1, str2)
-
-                # get the apparent orbital period derivative from the linear RV trend
-                Pdot = m.companion_doppler_pdot_from_rv_trend(self.P0, self.dvdt)
-                str1 = ' * Apparent orbital period derivative induced by the line-of-sight ' \
-                       'acceleration:\n'
-                str2 = '\t  dP/dt = {:.2E} ms/yr\n\n'.format(Pdot)
-                f.write(str1 + str2)
-                if printout:
-                    print(str1, str2)
-
-            # check if the period derivative is nonzero
-            if self.PdE != 0.0:
-
-                str1 = ' * Best-fit orbital decay rate:\n'
-                str2 = '\t  dP/dE = {:.2E} + {:.2E} - {:.2E} rad/E\n'.format(self.res['PdE'][0],
-                                                                             self.res['PdE'][1],
-                                                                             self.res['PdE'][2])
-                str3 = '\t  dP/dt = {:.2f} + {:.2f} - {:.2f} ms/yr\n'.format(
-                    self.res['dPdt (ms/yr)'][0],
-                    self.res['dPdt (ms/yr)'][1],
-                    self.res['dPdt (ms/yr)'][2])
+                # write the properties of the secondary star
+                str1 = ' * Properties of the secondary star:\n'
+                str2 = '\t  mass: M_B = {:.2f} solar masses\n'.format(secondary_mass)
+                str3 = '\t  separation: theta = {:.2f} arcseconds\n'.format(separation)
                 f.write(str1 + str2 + str3)
                 if printout:
                     print(str1, str2, str3)
 
-                # convert the decay rate to an RV slope
-                conv = (365.25 * 24. * 3600. * 1e3) / self.P0
-                Pdot_obs = self.PdE * conv
-                dvdt_pred = m.companion_doppler_rv_trend_from_pdot(self.P0, Pdot_obs)
-                str1 = ' * RV slope (acceleration) that would account for ' \
-                       'the best-fit decay rate:\n'
-                str2 = '\t  dv/dt = {:.2E} m/s/day\n'.format(dvdt_pred)
+                # calculate the slope of the linear RV trend from the stellar companion
+                dvdt = m.resolved_binary_rv_trend_from_mass(separation, self.D, secondary_mass)
+                str1 = ' * Slope of the linear RV trend from the stellar companion:\n'
+                str2 = '\t  dv/dt = {:.2E} m/s/day\n'.format(dvdt)
                 f.write(str1 + str2)
                 if printout:
                     print(str1, str2)
 
-                # get the minimum mass of the companion planet that can account for the trend
-                M_min = m.resolved_binary_mass_from_rv_trend(separation, self.D, dvdt_pred)
-                str1 = ' * Minimum mass of the resolved binary that could cause ' \
-                       'the necessary acceleration:\n'
-                str2 = '\t  M_c > {:.2f} M_sun\n'.format(M_min)
+                # calculate the apparent period derivative from the line-of-sight acceleration
+                Pdot = m.companion_doppler_pdot_from_rv_trend(self.P0, dvdt)
+                str1 = ' * Apparent period derivative from the line-of-sight acceleration:\n'
+                str2 = '\t  dP/dt = {:.2E} ms/yr\n'.format(Pdot)
                 f.write(str1 + str2)
                 if printout:
                     print(str1, str2)
+
+            elif secondary_mass is None:
+
+                # check if the best-fit RV slope is non-zero
+                if self.dvdt != 0.0:
+
+                    # calculate the minimum secondary mass given the best-fit RV slope
+                    M_min = m.resolved_binary_mass_from_rv_trend(separation, self.D, self.dvdt)
+                    str1 = ' * Minimum mass of the resolved binary given the best-fit RV slope ' \
+                           'of {} m/s/day:\n'
+                    str2 = '\t  M_B = {:.2E} solar masses\n'.format(M_min)
+                    f.write(str1 + str2)
+                    if printout:
+                        print(str1, str2)
+
+                    # get the apparent orbital period derivative from the linear RV trend
+                    Pdot = m.companion_doppler_pdot_from_rv_trend(self.P0, self.dvdt)
+                    str1 = ' * Apparent orbital period derivative induced by the line-of-sight ' \
+                           'acceleration:\n'
+                    str2 = '\t  dP/dt = {:.2E} ms/yr\n\n'.format(Pdot)
+                    f.write(str1 + str2)
+                    if printout:
+                        print(str1, str2)
+
+                # check if the period derivative is nonzero
+                if self.PdE != 0.0:
+
+                    str1 = ' * Best-fit orbital decay rate:\n'
+                    str2 = '\t  dP/dE = {:.2E} + {:.2E} - {:.2E} rad/E\n'.format(self.res['PdE'][0],
+                                                                                 self.res['PdE'][1],
+                                                                                 self.res['PdE'][2])
+                    str3 = '\t  dP/dt = {:.2f} + {:.2f} - {:.2f} ms/yr\n'.format(
+                        self.res['dPdt (ms/yr)'][0],
+                        self.res['dPdt (ms/yr)'][1],
+                        self.res['dPdt (ms/yr)'][2])
+                    f.write(str1 + str2 + str3)
+                    if printout:
+                        print(str1, str2, str3)
+
+                    # convert the decay rate to an RV slope
+                    conv = (365.25 * 24. * 3600. * 1e3) / self.P0
+                    Pdot_obs = self.PdE * conv
+                    dvdt_pred = m.companion_doppler_rv_trend_from_pdot(self.P0, Pdot_obs)
+                    str1 = ' * RV slope (acceleration) that would account for ' \
+                           'the best-fit decay rate:\n'
+                    str2 = '\t  dv/dt = {:.2E} m/s/day\n'.format(dvdt_pred)
+                    f.write(str1 + str2)
+                    if printout:
+                        print(str1, str2)
+
+                    # get the minimum mass of the companion planet that can account for the trend
+                    M_min = m.resolved_binary_mass_from_rv_trend(separation, self.D, dvdt_pred)
+                    str1 = ' * Minimum mass of the resolved binary that could cause ' \
+                           'the necessary acceleration:\n'
+                    str2 = '\t  M_c > {:.2f} M_sun\n'.format(M_min)
+                    f.write(str1 + str2)
+                    if printout:
+                        print(str1, str2)
 
         return
 
@@ -816,12 +893,22 @@ class Analyzer:
         """
         print(' --> unknown_companion()\n')
 
+        for x in [self.M_s]:
+
+            if x is None:
+
+                print('\tWARNING: cannot execute ``unknown_companion()`` due to NULL values for '
+                      'one or more required parameters.\n\tPlease ensure the system info file has '
+                      'entries for the following keys: \"{}\" \n '.format("M_s [M_sun]"))
+
+                return
+
         # open the output file in append mode
         with open(self.outfile, 'a') as f:
 
             # write the header for this section
             str1 = 'Unknown Companion Planet\n'
-            str2 = '-' * 65 + '\n'
+            str2 = '-' * 75 + '\n'
             f.write(str1 + str2)
             if printout:
                 print(' ' + str1, str2)
@@ -848,7 +935,7 @@ class Analyzer:
                     str2 = '\t  P_c > {:.2f} years\n'.format(P_min / 365.25)
                     str5 = '\t  M_c > {:.2f} M_jup\n\n'.format(M_min / 317.906)
                     str3 = '\t  a_c > {:.2f} AU\n'.format(a_min / m.AU)
-                    str4 = '\t  K_c > {:.2f} m/s\n'.format(K_min)
+                    str4 = '\t  K_c > {:.2f} m/s\n\n'.format(K_min)
                     f.write(str1 + str2 + str3 + str4 + str5)
                     if printout:
                         print(str1, str2, str3, str4, str5)
@@ -922,13 +1009,15 @@ class Analyzer:
                            '(assuming P_min = 1.25 * baseline = {} days):\n'.format(P_min)
                     str2 = '\t  M_c > {:.2f} M_jup\n\n'.format(M_min / 317.906)
                     str3 = '\t  a_c > {:.2f} AU\n\n'.format(a_min)
-                    str4 = '\t  K_c > {:.2f} m/s\n\n'.format(K_min)
+                    str4 = '\t  K_c > {:.2f} m/s\n'.format(K_min)
                     f.write(str1 + str2 + str3 + str4)
                     if printout:
                         print(str1, str2, str3, str4)
 
                 except TypeError:
                     pass
+
+                f.write('\n')
 
             # check if there is an observed apsidal precession rate
             if self.wdE != 0.0:
