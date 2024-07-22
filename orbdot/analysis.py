@@ -7,11 +7,10 @@ with the results of any OrbDot fit.
 
 import os
 import numpy as np
-from matplotlib import pyplot as plt
 import orbdot.models.theory as m
 import orbdot.models.rv_models as rv
 from orbdot.models.tdv_models import transit_duration
-
+from matplotlib import pyplot as plt
 
 class Analyzer:
     """
@@ -149,7 +148,7 @@ class Analyzer:
         model_2_results : dict
             The dictionary returned by the alternative model fit.
         printout : bool, optional
-            An option to print the results to the console. Default is False.
+            An option to print the results to the console.
 
         Returns
         -------
@@ -230,7 +229,7 @@ class Analyzer:
         Parameters
         ----------
         printout : bool, optional
-            An option to print the results to the console. Default is False.
+            An option to print the results to the console.
 
         Returns
         -------
@@ -240,7 +239,7 @@ class Analyzer:
         Raises
         ------
         IndexError
-            If the results for an apsidal precession model fit are not available.
+            If the results of an apsidal precession model fit are not available.
 
         """
         print(' --> apsidal_precession_fit()\n')
@@ -350,7 +349,7 @@ class Analyzer:
         Parameters
         ----------
         printout : bool, optional
-            An option to print the results to the console. Default is False.
+            An option to print the results to the console.
 
         Returns
         -------
@@ -442,7 +441,7 @@ class Analyzer:
         Parameters
         ----------
         printout : bool, optional
-            An option to print the results to the console. Default is False.
+            An option to print the results to the console.
 
         Returns
         -------
@@ -452,7 +451,7 @@ class Analyzer:
         Raises
         ------
         IndexError
-            If the results for an orbital decay model fit are not available.
+            If the results of an orbital decay model fit are not available.
 
         """
         print(' --> orbital_decay_fit()\n')
@@ -530,7 +529,7 @@ class Analyzer:
         Parameters
         ----------
         printout : bool, optional
-            An option to print the results to the console. Default is False.
+            An option to print the results to the console.
 
         Returns
         -------
@@ -604,12 +603,12 @@ class Analyzer:
         """Calculates the expected TTVs and TDVs due to systemic proper motion.
 
         This method produces a concise summary of the apparent transit timing and duration
-        variations that are expected due to the systemic proper motion.
+        variations that are expected due to systemic proper motion.
 
         Parameters
         ----------
         printout : bool, optional
-            An option to print the results to the console. Default is False.
+            An option to print the results to the console.
 
         Returns
         -------
@@ -691,7 +690,7 @@ class Analyzer:
         secondary_mass : float, optional
             The mass of the stellar companion in solar masses.
         printout : bool, optional
-            An option to print the results to the console. Default is False.
+            An option to print the results to the console.
 
         Returns
         -------
@@ -803,11 +802,11 @@ class Analyzer:
         Parameters
         ----------
         a2_min : float, optional
-            Minimum semi-major axis of the companion's orbit in AU, default is 0.001.
+            Minimum semi-major axis of the companion's orbit in AU. Default is 0.001.
         a2_max : float, optional
-            Maximum semi-major axis of the companion's orbit in AU, default is 10.
+            Maximum semi-major axis of the companion's orbit in AU. Default is 10.
         printout : bool, optional
-            An option to print the results to the console. Default is False.
+            An option to print the results to the console.
 
         Returns
         -------
@@ -999,13 +998,13 @@ class Analyzer:
         acceleration terms, respectively.
 
         After subtracting the contribution from the planet and the systemic velocity
-        :math:`\\gamma`, the residuals are only the long-term trend [1]_.
+        :math:`\\gamma`, the residuals are only the long-term trend [1]_:
 
         .. math::
             RV_c(t) = 0.5 \\ddot{\\gamma} (t - t_{\\mathrm{pivot}})^2 + \\dot{\\gamma} (t - t_{
             \\mathrm{pivot}})
 
-        In this case the residuals follow a linear trend, so :math:`\\ddot{\\gamma} = 0`.
+        In this case, :math:`\\ddot{\\gamma} = 0`.
 
         """
         # define model parameters
@@ -1098,7 +1097,7 @@ class Analyzer:
         acceleration terms, respectively.
 
         After subtracting the contribution from the planet and the systemic velocity
-        :math:`\\gamma`, the residuals are only the long term trend [1]_.
+        :math:`\\gamma`, the residuals are only the long term trend [1]_:
 
         .. math::
             RV_c(t) = 0.5 \\ddot{\\gamma} (t - t_{\\mathrm{pivot}})^2 + \\dot{\\gamma} (t - t_{
@@ -1115,12 +1114,12 @@ class Analyzer:
 
         .. math::
             P_{\\mathrm{min}} =  4 \\times \\mathrm{max} \\left[|t_{\\mathrm{vertex}} - t_{
-            \\mathrm{min}}|, |t_{\\mathrm{max}} - t_{\\mathrm{vertex}}|\\right]
+            \\mathrm{min}}|, |t_{\\mathrm{vertex}} - t_{\\mathrm{max}}|\\right]
 
         where,
 
         .. math::
-            t_{\\mathrm{vertex}} = -\\frac{\\dot{\\gamma}}{(2 * \\ddot{\\gamma}}
+            t_{\\mathrm{vertex}} = -\\frac{\\dot{\\gamma}}{2 \\ddot{\\gamma}}
             + t_{\\mathrm{pivot}}
 
         References
