@@ -8,10 +8,10 @@ Creating a StarPlanet Instance
 ------------------------------
 The initialization of a :class:`~orbdot.star_planet.StarPlanet` object requires the following input files:
 
-1. :ref:`settings-file`, default is: ``"orbdot/defaults/default_settings_file.json"``
-2. :ref:`info-file`, default is: ``"orbdot/defaults/default_info_file.json"``
+1. :ref:`settings-file`, default is: ``orbdot/defaults/default_settings_file.json``
+2. :ref:`info-file`, default is: ``orbdot/defaults/default_info_file.json``
 3. The :ref:`data-files`
-4. (optional) a file for plot settings, default is: ``"orbdot/defaults/default_plot_settings.json"``
+4. (optional) a file for plot settings, default is: ``orbdot/defaults/default_plot_settings.json``
 
 To create a :class:`~orbdot.star_planet.StarPlanet` instance, provide the path to a settings file as an argument. For example, to use the Hot Jupiter WASP-12 b:
 
@@ -83,12 +83,12 @@ The first section of the settings file specifies important path names with the f
      - ``"orbdot/defaults/default_info_file.json"``
    * - ``"plot_settings_file"``
      - ``str``
-     - The path to a file with custom plot settings (optional).
+     - Path to a file of custom plot settings (optional).
      - ``"orbdot/defaults/default_plot_settings.json"``
 
 For example,
 
-.. code-block:: json
+.. code-block:: JSON
 
     {
       "_comment1": "WASP-12 b Settings",
@@ -129,8 +129,9 @@ The structure of the next section depends on the type(s) of data you have. For e
 
 For example,
 
-.. code-block:: json
+.. code-block:: JSON
 
+    ...
       "_comment3": "Model Fits",
 
            "TTV_fit": {
@@ -141,22 +142,26 @@ For example,
              "n_live_points": 1000,
              "evidence_tolerance": 0.01
            },
+    ...
 
 If you want to fit multiple data types simultaneously, the ``"joint_fit"`` dictionary specifies the appropriate settings. For example,
 
-.. code-block:: json
+.. code-block:: JSON
 
-        "joint_fit": {
-         "save_dir": "joint_fits/",
-         "sampler": "nestle",
-         "n_live_points": 1000,
-         "evidence_tolerance": 0.1
-        },
+    ...
+            "joint_fit": {
+             "save_dir": "joint_fits/",
+             "sampler": "nestle",
+             "n_live_points": 1000,
+             "evidence_tolerance": 0.1
+            },
+    ...
 
 Finally, the ``"priors"`` key corresponds to a dictionary with key-value pairs that define the prior distributions. For more information on the structure and options for priors, see the :ref:`priors` section. Each value is a list of three elements, the first being prior type (``"uniform"``, ``"gaussian"``, or ``"log"``), and the subsequent elements defining the distribution. For example,
 
-.. code-block:: json
+.. code-block:: JSON
 
+    ...
       "_comment4": "Priors",
 
            "prior": {
