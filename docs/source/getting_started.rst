@@ -13,7 +13,7 @@ The initialization of a :class:`~orbdot.star_planet.StarPlanet` object requires 
 3. The :ref:`data-files`
 4. (optional) a file for plot settings, default is: ``orbdot/defaults/default_plot_settings.json``
 
-To create a :class:`~orbdot.star_planet.StarPlanet` instance, provide the path to a settings file as an argument. For example, to use the Hot Jupiter WASP-12 b:
+To create a :class:`~orbdot.star_planet.StarPlanet` instance, provide the path to a settings file as an argument. For example, to study the Hot Jupiter WASP-12 b:
 
 .. code-block:: python
 
@@ -132,6 +132,7 @@ For example,
 .. code-block:: JSON
 
     ...
+
       "_comment3": "Model Fits",
 
            "TTV_fit": {
@@ -149,19 +150,22 @@ If you want to fit multiple data types simultaneously, the ``"joint_fit"`` dicti
 .. code-block:: JSON
 
     ...
+
             "joint_fit": {
              "save_dir": "joint_fits/",
              "sampler": "nestle",
              "n_live_points": 1000,
              "evidence_tolerance": 0.1
             },
+
     ...
 
-Finally, the ``"priors"`` key corresponds to a dictionary with key-value pairs that define the prior distributions. For more information on the structure and options for priors, see the :ref:`priors` section. Each value is a list of three elements, the first being prior type (``"uniform"``, ``"gaussian"``, or ``"log"``), and the subsequent elements defining the distribution. For example,
+Finally, the ``"priors"`` key corresponds to a dictionary with key-value pairs that define the prior distributions. For more information on the structure and options for priors, see :ref:`priors`. Each value is a list of three elements, the first being prior type (``"uniform"``, ``"gaussian"``, or ``"log"``), and the subsequent elements defining the distribution. For example,
 
 .. code-block:: JSON
 
     ...
+
       "_comment4": "Priors",
 
            "prior": {
@@ -176,7 +180,7 @@ Finally, the ``"priors"`` key corresponds to a dictionary with key-value pairs t
 
 Default Settings
 ^^^^^^^^^^^^^^^^
-Not all fields in the settings file need to be populated. Whenever a :class:`~orbdot.star_planet.StarPlanet` object is created, the default settings file (``"orbdot/defaults/default_settings_file.json"``) is merged with the user-provided one to maintain consistency. If a key is provided by the user, that value overrides the default one.
+Whenever a :class:`~orbdot.star_planet.StarPlanet` object is created, the default settings file (``orbdot/defaults/default_settings_file.json``) is merged with the user-provided file to maintain consistency. Not all fields in the settings file need to be populated. If a key is provided by the user, that value overrides the default one.
 
 .. admonition:: Default Settings File
   :class: dropdown
@@ -264,13 +268,13 @@ Not all fields in the settings file need to be populated. Whenever a :class:`~or
 
 Data Files
 ----------
-Once a :class:`~orbdot.star_planet.StarPlanet` instance is created, the data is accessed through the attributes ``ttv_data``, ``rv_data``, or ``tdv_data``, depending on the data type(s) provided. Each data type must be given to OrbDot in separate files. In all cases, the column containing the source of the measurements (e.g., a name, citation, or instrument) is important, as OrbDot recognizes and splits unique sources for plotting.
+Once a :class:`~orbdot.star_planet.StarPlanet` instance is created, the data is accessed through the attributes ``ttv_data``, ``rv_data``, or ``tdv_data``, depending on the data type(s) provided. Each data type must be given to OrbDot in separate files. In all cases, the column containing the source of the measurements (e.g. a name, citation, or instrument) is important, as OrbDot recognizes and splits unique sources for plotting.
 
 TTV Data
 ^^^^^^^^
 The transit and eclipse timing data files are read assuming that the columns are in the order: :code:`[Epoch, Time, Error, Source]`, though the column names are arbitrary. The mid-times and uncertainties must be given in Barycentric Julian Days (BJD).
 
-The eclipse mid-times (also known as "occultations") are differentiated by a half orbit, as the transit and eclipse mid-times are combined into a single data file and automatically separated for model fits and plotting. For example, the eclipse directly following transit number 100 has an epoch equal to 100.5.
+The transit and eclipse mid-times are combined in a single data file and automatically separated for model fits and plotting. The eclipse mid-times are differentiated by a half epoch number, for example, the eclipse directly following transit number 100 has an epoch value of 100.5.
 
 The :class:`~orbdot.star_planet.StarPlanet` attribute ``ttv_data`` is a dictionary with the following keys:
 
@@ -299,7 +303,11 @@ The :class:`~orbdot.star_planet.StarPlanet` attribute ``ttv_data`` is a dictiona
 
 RV Data
 ^^^^^^^
-Radial velocity data files are read assuming that the columns are in the order: :code:`[Time, Velocity, Error, Source]`, though the column names are arbitrary. The velocities must be given in meters per second, and the corresponding measurement times must be in Barycentric Julian Days (BJD).
+Radial velocity data files are read assuming that the columns are in the order: :code:`[Time, Velocity, Error, Source]`, though the column names are arbitrary. The velocities must be given in meters per second, and the corresponding measurement times in Barycentric Julian Days (BJD).
+
+It is critical to be consistent in naming the source of the radial velocity measurements, as the model parameters :math:`\gamma` and :math:`\sigma_{\mathrm{jit}}` are instrument-dependent. When these variables are included in a list of free parameters, OrbDot will replace them with a new identifier for each unique source, with a tag that corresponds to what was specified in the data file.
+
+For example, if there are measurements from two RV instruments identified by the strings ``"Doctor et al. (2012)"`` and ``"Who et al. (2022)"``, the free parameter ``"v0"`` will be replaced by ``"v0_Doc"`` and ``"v0_Who"``, and ``"jit"`` will be replaced by ``"jit_Doc"`` and ``"jit_Who"``.
 
 The :class:`~orbdot.star_planet.StarPlanet` attribute ``rv_data`` is a dictionary with the following keys:
 
@@ -325,10 +333,6 @@ The :class:`~orbdot.star_planet.StarPlanet` attribute ``rv_data`` is a dictionar
      - Tags assigned to each source.
    * - ``"src_order"``
      - Order of the sources.
-
-It is critical to be consistent in naming the source of the radial velocity measurements, as the model parameters :math:`\gamma` and :math:`\sigma_{\mathrm{jit}}` are instrument-dependent. When these variables are included in a list of free parameters, OrbDot will replace them with a new identifier for each unique source, with a tag that corresponds to what was specified in the data file.
-
-For example, if there are measurements from two RV instruments identified by the strings ``"Doctor et al. (2012)"`` and ``"Who et al. (2022)"``, the free parameter ``"v0"`` will be replaced by ``"v0_Doc"`` and ``"v0_Who"``, and ``"jit"`` will be replaced by ``"jit_Doc"`` and ``"jit_Who"``.
 
 TDV Data
 ^^^^^^^^

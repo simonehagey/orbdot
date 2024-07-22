@@ -346,11 +346,9 @@ def companion_precession(P, M2, P2, M_s):
         However the derivation of the above equation by :cite:author:`Heyl2007` [1]_ expects an
         integrand of the form :math:`(1 - m^2 \\sin^2 t)^{-1/2}`, which can be shown by expanding
         :math:`\\mathcal{ K}` and :math:`\\mathcal{E}`. To maintain consistency, the input for
-        the ` ``scipy.special.ellipe``
-        <https://docs.scipy.org/doc/scipy/reference/generated/scipy.special.ellipe.html>`_ and `
-        ``scipy.special.ellipk`` <https://docs.scipy.org/doc/scipy/reference/generated/scipy
-        .special.ellipk.html>`_ methods must but squared, ie. such that :math:`\\mathcal{K}(4
-        \\alpha/( \\alpha+1)^2)` and :math:`\\mathcal{E}(4 \\alpha/( \\alpha+1)^2)`.
+        the ``scipy.special.ellipe`` and ``scipy.special.ellipk`` methods must but squared,
+        ie. such that :math:`\\mathcal{K}(4 \\alpha/( \\alpha+1)^2)` and :math:`\\mathcal{E}(4
+        \\alpha/( \\alpha+1)^2)`.
 
     References
     ----------
@@ -435,11 +433,9 @@ def companion_mass_from_precession(P, P2, dwdE, M_s):
         However the derivation of the above equation by :cite:author:`Heyl2007` [1]_ expects an
         integrand of the form :math:`(1 - m^2 \\sin^2 t)^{-1/2}`, which can be shown by expanding
         :math:`\\mathcal{ K}` and :math:`\\mathcal{E}`. To maintain consistency, the input for
-        the ` ``scipy.special.ellipe``
-        <https://docs.scipy.org/doc/scipy/reference/generated/scipy.special.ellipe.html>`_ and `
-        ``scipy.special.ellipk`` <https://docs.scipy.org/doc/scipy/reference/generated/scipy
-        .special.ellipk.html>`_ methods must but squared, ie. such that :math:`\\mathcal{K}(4
-        \\alpha/( \\alpha+1)^2)` and :math:`\\mathcal{E}(4 \\alpha/( \\alpha+1)^2)`.
+        the ``scipy.special.ellipe`` and ``scipy.special.ellipk`` methods must but squared,
+        ie. such that :math:`\\mathcal{K}(4 \\alpha/( \\alpha+1)^2)` and :math:`\\mathcal{E}(4
+        \\alpha/( \\alpha+1)^2)`.
 
     References
     ----------

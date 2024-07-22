@@ -55,19 +55,19 @@ It is important for the user to be familiar with the symbols and definitions of 
      - Symbol
      - Unit
      - Description
-   * - :math:`e_0\,\cos{\,\omega_0}`
+   * - :math:`e_0\,\cos{\omega_0}`
      - ``ecosw``
      -
      - The eccentricity :math:`e_0` multiplied by the cosine of :math:`\omega_0`.
-   * - :math:`e_0\,\sin{\,\omega_0}`
+   * - :math:`e_0\,\sin{\omega_0}`
      - ``esinw``
      -
      - the eccentricity :math:`e_0` multiplied by the sine of :math:`\omega_0`.
-   * - :math:`\sqrt{e_0}\,\cos{\,\omega_0}`
+   * - :math:`\sqrt{e_0}\,\cos{\omega_0}`
      - ``sq_ecosw``
      -
      - The square root of :math:`e_0` multiplied by the cosine of :math:`\omega_0`.
-   * - :math:`\sqrt{e_0}\,\sin{\,\omega_0}`
+   * - :math:`\sqrt{e_0}\,\sin{\omega_0}`
      - ``sq_esinw``
      -
      - The square root of :math:`e_0` multiplied by the sine of :math:`\omega_0`.
@@ -291,7 +291,7 @@ Transit Duration Models
 =======================
 .. attention::
 
-   Under active development and testing.
+    The transit duration fitting features of OrbDot have not been thoroughly tested and validated at this time. The methods are available to use, but the results should be treated with caution until this notice is removed.
 
 OrbDot currently supports model fitting for three transit duration models:
 
@@ -307,7 +307,7 @@ In general, the transit duration :math:`T` is calculated using equation (15) fro
     T = \frac{P}{\pi} \frac{\varrho_c^2}{\sqrt{1-e^2}}
     \arcsin \left(\frac{\sqrt{1-a_R^2 \varrho_c^2 \cos ^2 i}}{a_R \varrho_c \sin i}\right)
 
-where :math:`P` is the orbital period, :math:`e` is the orbit eccentricity, :math:`i` is the line-of-sight inclination of the orbit, :math:`a_R` is the semimajor axis of the orbit in units of stellar radii, :math:`\varrho_c` is the star-planet separation at mid-transit, and :math:`c` is the speed of light in a vacuum.
+where :math:`P` is the orbital period, :math:`e` is the orbit eccentricity, :math:`i` is the line-of-sight inclination of the orbit, :math:`a_R` is the semi major axis in units of stellar radii, :math:`\varrho_c` is the star-planet separation at mid-transit, and :math:`c` is the speed of light in a vacuum.
 
 The ``orbdot.models.tdv_models.tdv_constant()`` method implements the constant-period transit duration model:
 

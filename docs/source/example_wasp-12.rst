@@ -141,11 +141,12 @@ The first part of the settings file specifies path names for the other input fil
 
     {"_comment1": "WASP-12 b Settings",
 
-      "_comment2": "Input Files",
+        "_comment2": "Input Files",
 
           "main_save_dir": "results/",
           "system_info_file": "info_files/WASP-12_info.json",
           "plot_settings_file": "settings_files/WASP-12_plot_settings.json",
+    ...
 
 The next section(s) of the file are specific to the model fitting. Because we are only fitting transit and eclipse mid-times in this example, we only need to provide an entry for the ``"TTV_fit"`` key. The value for ``"TTV_fit"`` is a dictionary that points to and describes the data file (``"data_file"`` and ``"data_delimiter"``), provides a sub-directory for saving the TTV model fit results (``"save_dir"``), and specifies the desired sampling package (``"sampler"``), number of live points (``"n_live_points"``) and evidence tolerance (``"evidence_tolerance"``).
 
@@ -153,16 +154,19 @@ In this case, the ``"nestle"`` sampler has been specified with 1000 live points 
 
 .. code-block:: JSON
 
-  "_comment3": "Model Fits",
+    ...
 
-       "TTV_fit": {
-         "save_dir": "ttv_fits/",
-         "data_file": "data/WASP-12b_mid_times.txt",
-         "data_delimiter": " ",
-         "sampler": "nestle",
-         "n_live_points": 1000,
-         "evidence_tolerance": 0.01
-       },
+        "_comment3": "Model Fits",
+
+           "TTV_fit": {
+             "save_dir": "ttv_fits/",
+             "data_file": "data/WASP-12b_mid_times.txt",
+             "data_delimiter": " ",
+             "sampler": "nestle",
+             "n_live_points": 1000,
+             "evidence_tolerance": 0.01
+           },
+    ...
 
 The remaining portion of the settings file is for the ``"prior"`` dictionary, which defines the :ref:`prior distributions <priors>` for the model parameters. We need only populate this with the parameters that are to be included in the model fits, which in this case are the reference transit mid-time ``"t0"``, orbital period ``"P0"``, eccentricity ``"e0"``, argument of pericentre ``"w0"``, orbital decay rate ``"PdE"``, and apsidal precession rate ``"wdE"``. If a model parameter is left out of the settings file, the default prior will be used, as specified in the file ``orbdot/defaults/default_info_file.json``. For more information on the available model parameters see :ref:`model_parameters`.
 
@@ -170,16 +174,18 @@ For WASP-12 b, we have chosen broad uniform prior distributions for ``"e0"``, ``
 
 .. code-block:: JSON
 
-    "_comment4": "Priors",
+    ...
 
-       "prior": {
-         "t0": ["gaussian", 2456305.4555, 0.01],
-         "P0": ["gaussian", 1.09142, 0.0001],
-         "e0": ["uniform", 0.0, 0.1],
-         "w0": ["uniform", 0.0, 6.2831853072],
-         "PdE": ["uniform", -1e-7, 0],
-         "wdE": ["uniform", 0.0, 0.01]
-       }
+        "_comment4": "Priors",
+
+           "prior": {
+             "t0": ["gaussian", 2456305.4555, 0.01],
+             "P0": ["gaussian", 1.09142, 0.0001],
+             "e0": ["uniform", 0.0, 0.1],
+             "w0": ["uniform", 0.0, 6.2831853072],
+             "PdE": ["uniform", -1e-7, 0],
+             "wdE": ["uniform", 0.0, 0.01]
+           }
 
 ------------
 
@@ -420,13 +426,13 @@ Now the analysis file looks like this:
     WASP-12b Analysis | model: 'ttv_decay'
 
     Model Comparison
-    -----------------------------------------------------------------
+    ---------------------------------------------------------------------------
      * Decisive evidence for Model 1 vs. Model 2  (B = 2.93e+43)
           Model 1: 'ttv_decay', logZ = -104.47
           Model 2: 'ttv_constant', logZ = -204.56
 
     Model Comparison
-    -----------------------------------------------------------------
+    ---------------------------------------------------------------------------
      * Decisive evidence for Model 1 vs. Model 2  (B = 1.33e+05)
           Model 1: 'ttv_decay', logZ = -104.47
           Model 2: 'ttv_precession', logZ = -116.27
@@ -447,7 +453,7 @@ This appends the following summary to the ``analysis/ttv_decay_analysis.txt`` fi
 .. code-block:: text
 
     Orbital Decay Model Fit
-    -----------------------------------------------------------------
+    ---------------------------------------------------------------------------
      * Best-fit orbital decay rate:
           dP/dE = -1.00E-09 + 6.98E-11 - 6.88E-11 days/E
           dP/dt = -29.02 + 2.02 - 1.99 ms/yr
@@ -490,4 +496,4 @@ We see that the best-fit orbital decay model yields a stellar tidal quality fact
 
 Conclusion
 ==========
-In this example, we have learned how to use OrbDot for fitting transit and eclipse timing models by analyzing the WASP-12 b mid-times provided in "The Orbit of WASP-12b is Decaying" by :cite:t:`Yee2020`. The full script for this example is saved in the file ``examples/example_wasp-12.py`` and can be run without modifications. We have seen that the results of the OrbDot model fitting are in excellent agreement with the results of :cite:t:`Yee2020`, which they provide in Table 6 of the paper.
+In this example, we have learned how to use OrbDot for fitting transit and eclipse timing models by analyzing the WASP-12 b mid-times provided in "The Orbit of WASP-12b is Decaying" by :cite:t:`Yee2020`. The full script for this example is saved in the file ``examples/example_wasp12.py`` and can be run without modifications. We have seen that the results of the OrbDot model fitting are in excellent agreement with the results of :cite:t:`Yee2020`, which they provide in Table 6 of the paper.
