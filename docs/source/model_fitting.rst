@@ -3,7 +3,9 @@
 **************
 Model Fitting
 **************
-If you haven't seen the :ref:`getting-started` page, it is the best place to start. In short, we need to initialize the :class:`~orbdot.star_planet.StarPlanet` class for the exoplanet-of-study. Continuing to use WASP-12 b as an example, the following code snippet demonstrates the creation of a :class:`~orbdot.star_planet.StarPlanet` object:
+Before reading through all of this, you should read :ref:`getting-started` and check out the examples.
+
+In short, we need to initialize the :class:`~orbdot.star_planet.StarPlanet` class for the exoplanet-of-study. Continuing to use WASP-12 b as an example, the following code snippet demonstrates the creation of a :class:`~orbdot.star_planet.StarPlanet` object:
 
 .. code-block:: python
 
@@ -18,36 +20,37 @@ See :ref:`settings-file` section for a description of the settings file and othe
 
 Running Model Fits
 ==================
-To run the model fitting routines, one of the following methods must be called on the :class:`~orbdot.star_planet.StarPlanet` object, depending on the type of data to be fit:
+To run the model fitting routines, one of the following methods must be called on the :class:`~orbdot.star_planet.StarPlanet` object, depending on the type of data to be fit: :meth:`~orbdot.joint_fit.JointFit.run_joint_fit`, :meth:`~orbdot.transit_timing.TransitTiming.run_ttv_fit`, :meth:`~orbdot.radial_velocity.RadialVelocity.run_rv_fit`, and :meth:`~orbdot.transit_duration.TransitDuration.run_tdv_fit`
 
- - :meth:`~orbdot.joint_fit.JointFit.run_joint_fit`
- - :meth:`~orbdot.transit_timing.TransitTiming.run_ttv_fit`
- - :meth:`~orbdot.radial_velocity.RadialVelocity.run_rv_fit`
- - :meth:`~orbdot.transit_duration.TransitDuration.run_tdv_fit`
+These methods require a list of free parameters and the ``model`` argument, which specifies the evolutionary model to be fit (default is ``"constant"``). The free parameters can be given in any order, but an error will be raised if they are not part of the physical model being fit. See the :ref:`model_parameters` section for more information on the model parameters.
 
-These method calls require a list of free parameters and the ``model`` argument, which specifies the evolutionary model to be fit (default is ``"constant"``). The free parameters can be given in any order, but an error will be raised if they are not part of the physical model being fit. See the :ref:`model_parameters` section for more information on the model parameters. The optional ``file_suffix`` argument enables separate fits of the same model to be differentiated, such as ``file_suffix="_circular"`` or ``file_suffix="_eccentric"``. This is nicely illustrated in the :ref:`example-rv-trends` example.
+The optional ``file_suffix`` argument enables separate fits of the same model to be differentiated, such as ``file_suffix="_circular"`` or ``file_suffix="_eccentric"``. This is nicely illustrated in the :ref:`example-rv-trends` example.
 
 TTV Model Fits
 --------------
-The transit and eclipse timing model fits are run by calling the :meth:`~orbdot.transit_timing.TransitTiming.run_ttv_fit` method on a :class:`~orbdot.star_planet.StarPlanet` object. The evolutionary model, specified by the ``model`` argument, must be either ``"constant"``, ``"decay"``, or ``"precession"``, and the free parameters are specified in a list of strings. The following code snippet shows an example call for each of the three models:
+The transit and eclipse timing fits are run by calling the :meth:`~orbdot.transit_timing.TransitTiming.run_ttv_fit` method on a :class:`~orbdot.star_planet.StarPlanet` object. The evolutionary model, specified by the ``model`` argument, must be either ``"constant"``, ``"decay"``, or ``"precession"``, and the free parameters are given as a list of strings.
+
+The following code snippet shows an example call for each of the three models:
 
 .. code-block:: python
 
-    wasp12.run_ttv_fit(['t0', 'P0', 'e0', 'w0'], model='constant')
+    wasp12.run_ttv_fit(['t0', 'P0'], model='constant')
     wasp12.run_ttv_fit(['t0', 'P0', 'PdE'], model='decay')
     wasp12.run_ttv_fit(['t0', 'P0', 'e0', 'w0', 'wdE'], model='precession')
 
 TTV Data "Clipping"
 ^^^^^^^^^^^^^^^^^^^
-When fitting the transit and eclipse mid-times with the :meth:`~orbdot.transit_timing.TransitTiming.run_ttv_fit` method, there is an option to employ a sigma-clipping routine to remove outlying data points. This method was originally developed in :cite:t:`Hagey2022` to conservatively remove outliers in the transit mid-times for datasets with high variance. The algorithm operates by fitting the best-fit constant-period timing model, subtracting it from the data, and then removing any data point whose nominal value falls outside a 3-:math:`\sigma` range from the mean of the residuals. This process is repeated until no points fall outside the residuals, or until a maximum number of iterations has been reached.
+When fitting the transit and eclipse mid-times with the :meth:`~orbdot.transit_timing.TransitTiming.run_ttv_fit` method, there is an option to employ a sigma-clipping routine to remove outliers in the transit mid-times, which may be useful for datasets with high variance :cite:p:`Hagey2022`.
 
-Providing the argument ``run_clip=True`` to the :meth:`~orbdot.transit_timing.TransitTiming.run_ttv_fit` method will run the :meth:`~orbdot.transit_timing.TransitTiming.clip` function before the selected model fit. Any subsequent model fits will use the cleaned dataset, so ``run_clip=True`` only needs to be specified once. For example,
+Giving the argument ``run_clip=True`` runs the :meth:`~orbdot.transit_timing.TransitTiming.clip` method before the model fit. Any subsequent model fits will use the cleaned dataset, so ``run_clip=True`` only needs to be specified once. For example,
 
 .. code-block:: python
 
-    wasp12.run_ttv_fit(['t0', 'P0', 'e0', 'w0'], model='constant', run_clip=True)
+    wasp12.run_ttv_fit(['t0', 'P0'], model='constant', run_clip=True)
     wasp12.run_ttv_fit(['t0', 'P0', 'PdE'], model='decay')
     wasp12.run_ttv_fit(['t0', 'P0', 'e0', 'w0', 'wdE'], model='precession')
+
+The algorithm operates by fitting the best-fit constant-period timing model, subtracting it from the data, and then removing any data point whose nominal value falls outside a 3-:math:`\sigma` range from the mean of the residuals. This process is repeated until no points fall outside the residuals, or until a maximum number of iterations has been reached.
 
 RV Model Fits
 -------------
@@ -55,7 +58,7 @@ The radial velocity model fits are run by calling the :meth:`~orbdot.radial_velo
 
 .. code-block:: python
 
-    wasp12.run_rv_fit(['t0', 'P0', 'ecosw', 'esinw', 'K', 'v0', 'jit'], model='constant')
+    wasp12.run_rv_fit(['t0', 'P0', 'K', 'v0', 'jit'], model='constant')
     wasp12.run_rv_fit(['t0', 'P0', 'PdE', 'K', 'v0', 'jit'], model='decay')
     wasp12.run_rv_fit(['t0', 'P0', 'e0', 'w0', 'wdE', 'K', 'v0', 'jit'], model='precession')
 
@@ -71,7 +74,7 @@ The transit duration model fits are run by calling the :meth:`~orbdot.transit_du
 
     wasp12.run_tdv_fit(['P0', 'ecosw', 'esinw', 'i0'], model='constant')
     wasp12.run_tdv_fit(['P0', 'PdE', 'i0'], model='decay')
-    wasp12.run_tdv_fit(['P0', 'e0', 'w0', 'wdE', 'i0'], model='precession')
+    wasp12.run_tdv_fit(['P0', 'e0', 'w0', 'i0', 'wdE'], model='precession')
 
 Joint Fits
 ----------
@@ -159,7 +162,7 @@ The following table lists the keys of the ``*_results.json`` file dictionary:
 
 The ``"params"`` key is particularly useful, as it contains a dictionary with key-value pairs representing the best-fit parameter values and their 68% confidence intervals. Each value is a list of three elements: the best-fit value, the upper uncertainty, and the lower uncertainty.
 
-The following code snippet shows how to access these parameters after a model fit has been done:
+The following code snippet shows how to access these parameters after a model fit is complete:
 
 .. code-block:: python
 

@@ -27,23 +27,23 @@ It is important for the user to be familiar with the symbols and definitions of 
    * - :math:`P_0`
      - ``P0``
      - :math:`\mathrm{days}`
-     - The observed (sidereal) orbital period.
+     - The observed orbital period at :math:`t_0`.
    * - :math:`e_0`
      - ``e0``
      -
-     - The eccentricity of the orbit.
+     - The eccentricity of the orbit at :math:`t_0`.
    * - :math:`\omega_0`
      - ``w0``
      - :math:`\mathrm{rad}`
-     - The argument of pericenter of the planet's orbit.
+     - The argument of pericenter of the planet's orbit at :math:`t_0`.
    * - :math:`i_0`
      - ``i0``
      - :math:`\mathrm{deg}`
-     - The line-of-sight inclination of the orbit.
+     - The line-of-sight inclination of the orbit at :math:`t_0`.
    * - :math:`\Omega_0`
      - ``O0``
      - :math:`\mathrm{rad}`
-     - The longitude of the ascending node. [*]_
+     - The longitude of the ascending node at :math:`t_0`. [*]_
 
 **Coupled Parameters**
 
@@ -55,11 +55,11 @@ It is important for the user to be familiar with the symbols and definitions of 
      - Symbol
      - Unit
      - Description
-   * - :math:`e_0\,\cos{\omega_0}`
+   * - :math:`e_0 \cos{\omega_0}`
      - ``ecosw``
      -
      - The eccentricity :math:`e_0` multiplied by the cosine of :math:`\omega_0`.
-   * - :math:`e_0\,\sin{\omega_0}`
+   * - :math:`e_0 \sin{\omega_0}`
      - ``esinw``
      -
      - the eccentricity :math:`e_0` multiplied by the sine of :math:`\omega_0`.

@@ -55,14 +55,9 @@ def companion_doppler_pdot_from_rv_trend(P, dvdt):
         \\dot{P}_{\\mathrm{RV}} = 105.3 \\mathrm{\\,ms\\,yr^{-1}}\\left(\\frac{P}{\\mathrm{
         day}}\\right)\\left(\\frac{\\dot{\\gamma}}{\\mathrm{m\\,s^{-1}\\,day^{-1}}}\\right)
 
-    which is derived from,
-
-    .. math::
-        \\dot{P}_{\\mathrm{RV}} = \\frac{\\dot{v}_r P}{c}
-
     where :math:`\\dot{P}_{\\mathrm{RV}}` is the time derivative of the observed orbital period,
-    :math:`\\dot{v}_r` is the linear radial velocity trend, :math:`P` is the orbital period of
-    the transiting planet, and :math:`c` is the speed of light in a vacuum.
+    :math:`\\dot{\\gamma}` is the linear radial velocity trend, and :math:`P` is the orbital
+    period of the transiting planet.
 
     References
     ----------
@@ -102,13 +97,9 @@ def companion_doppler_rv_trend_from_pdot(P, dPdt):
         \\dot{\\gamma} = \\frac{\\dot{P}_{\\mathrm{RV}}}{105.3 \\mathrm{\\,ms\\,yr^{-1}}}
         \\left(\\frac{\\mathrm{day}}{P}\\right)
 
-    which is derived from:
-
-    .. math:: \\dot{\\gamma} = \\frac{\\dot{P}_{\\mathrm{RV}} c}{P}
-
-    where :math:`\\dot{\\gamma}` is the linear radial velocity trend, :math:`\\dot{P}_{\\mathrm{
-    RV}}` is the time derivative of the observed orbital period, :math:`P` is the orbital period of
-    the transiting planet, and :math:`c` is the speed of light in a vacuum.
+    where :math:`\\dot{P}_{\\mathrm{RV}}` is the time derivative of the observed orbital period,
+    :math:`\\dot{\\gamma}` is the linear radial velocity trend, and :math:`P` is the orbital
+    period of the transiting planet.
 
     References
     ----------
@@ -156,13 +147,12 @@ def companion_mass_from_rv_trend(tau, dvdt, M_s):
     where :math:`\\tau` is the time span of the observations in years, :math:`\\dot{\\gamma}` is
     the linear radial velocity trend, and :math:`M_\\star` is the mass of the host star.
 
-    As a means of constraining the absolute minimum possible companion mass, the above
-    equation was derived with the assumption that the companion's orbit has an eccentricity of 0.5,
-    an argument of pericenter that is exactly 90 degrees, and a period that is 1.25 times the time
-    span of the observations. In this case, the observed linear trend in the radial velocity
-    model is effectively a section of the sawtooth-like curve of the companion planet (see
-    Figure 1 of [1]_), for which the semi-amplitude can be approximated as half of
-    the baseline multiplied by the acceleration (:math:`K_c = 0.5 * \\tau * \\frac{dv}{dt}`).
+    The above equation assumes that the companion's orbit has an eccentricity of 0.5, an argument
+    of pericenter that is exactly :math:`90` degrees, and a period that is :math:`1.25\\times`
+    the timespan of the observations. In this scenario, the observed linear trend in the radial
+    velocity model is a segment of the sawtooth-like curve of the companion planet (see Figure 1
+    of [1]_), for which the semi-amplitude can be approximated as half of the baseline multiplied
+    by the acceleration, :math:`K_c = 0.5 \\tau \\dot{\\gamma}`.
 
     References
     ----------
@@ -224,11 +214,11 @@ def companion_rv_trend_from_mass(tau, M_c, M_s):
     the companion planet, and :math:`M_\\star` is the mass of the host star.
 
     The above equation assumes that the companion's orbit has an eccentricity of 0.5, an argument
-    of pericenter that is exactly 90 degrees, and a period that is :math:`1.25\\times` times the
-    timespan of the observations. In this scenario, the observed linear trend in the radial
+    of pericenter that is exactly :math:`90` degrees, and a period that is :math:`1.25\\times`
+    the timespan of the observations. In this scenario, the observed linear trend in the radial
     velocity model is a segment of the sawtooth-like curve of the companion planet (see Figure 1
     of [1]_), for which the semi-amplitude can be approximated as half of the baseline multiplied
-    by the acceleration, ie. :math:`K_c = 0.5 \\tau \\dot{\\gamma}`.
+    by the acceleration, :math:`K_c = 0.5 \\tau \\dot{\\gamma}`.
 
     References
     ----------
@@ -968,7 +958,7 @@ def precession_gr(P, e, M_s):
     This method applies the lowest order of the relativistic contribution to apsidal precession,
     given in Equation (12) of Ragozzine and Wolf (2009) [1]_ as:
 
-    .. math:: \\dot{\\omega}_{\\mathrm{GR}} = \\frac{3 n G M_{\\star}}{a c^2(1 - e^2)}
+    .. math:: \\dot{\\omega}_{\\mathrm{GR}} = \\frac{3 G M_{\\star} n}{a c^2(1 - e^2)}
 
     where :math:`G` is the gravitational constant, :math:`c` is the speed of light in a vacuum,
     :math:`M_{\\star}` is the host star mass, :math:`a` is the planet's semi-major axis,
