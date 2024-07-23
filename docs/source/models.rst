@@ -8,7 +8,7 @@ Theory
 
 Model Parameters
 ================
-It is important for the user to be familiar with the symbols and definitions of the OrbDot parameter set, described in the table below. Some of these parameters are not currently implemented in the OrbDot models, but are planned for future integration. These are indicated with a footnote [*].
+It is important for the user to be familiar with the symbols and definitions of the OrbDot parameter set, listed in the table below. Some of these parameters are not currently implemented in the OrbDot models, but are planned for future integration. These are indicated with a footnote [*].
 
 **Orbital Elements**
 
@@ -106,7 +106,7 @@ It is important for the user to be familiar with the symbols and definitions of 
 **Radial Velocity Parameters**
 
  .. list-table::
-   :header-rows: 2
+   :header-rows: 1
    :widths: 20 15 25 70
 
    * - Parameter
@@ -120,23 +120,23 @@ It is important for the user to be familiar with the symbols and definitions of 
    * - :math:`\gamma_j`
      - ``v0``
      - :math:`\mathrm{m}` :math:`{\mathrm s}^{-1}`
-     - An instrument specific systemic radial velocity.
+     - An instrument-dependant systemic radial velocity.
    * - :math:`\sigma_j`
      - ``jit``
      - :math:`\mathrm{m}` :math:`{\mathrm s}^{-1}`
-     - An instrument-specific radial velocity "jitter" term.
+     - An instrument-dependant "jitter" term.
    * - :math:`\dot{\gamma}`
      - ``dvdt``
-     - :math:`\mathrm{m}` :math:`{\mathrm s}^{-1}` :math:`{\mathrm day}^{-1}`
-     - A linear radial velocity trend.
+     - :math:`\mathrm{m}` :math:`{\mathrm s}^{-1}` :math:`{\mathrm{day}}^{-1}`
+     - A first-order acceleration term.
    * - :math:`\ddot{\gamma}`
      - ``ddvdt``
-     - :math:`\mathrm{m}` :math:`{\mathrm s}^{-1}` :math:`{\mathrm day}^{-2}`
-     - A second order radial velocity trend.
+     - :math:`\mathrm{m}` :math:`{\mathrm s}^{-1}` :math:`{\mathrm{day}}^{-2}`
+     - A second-order acceleration term.
    * - :math:`K_{\mathrm{tide}}`
      - ``K_tide``
      - :math:`\mathrm{m}` :math:`{\mathrm s}^{-1}`
-     - The amplitude of a tidal radial velocity signal from the star. [*]_
+     - The semi-amplitude of a stellar tidal radial velocity signal. [*]_
 
 .. [*] Not currently implemented in the OrbDot models.
 
@@ -148,7 +148,7 @@ Coordinate System
 =================
 The OrbDot models are written in a coordinate system in which the sky plane lies on the x-z plane and the y-axis points toward the observer along the line of sight.
 
-It is critical to be consistent in the definition of the argument of pericenter :math:`\omega` when simultaneously fitting transit and eclipse mid-times and radial velocities. In the OrbDot coordinate system, the argument of pericenter is determined from the positive x-axis, such that a transit occurs when the true anomaly :math:`\phi` is equal to:
+It is critical to be consistent in the definition of the argument of pericenter when simultaneously fitting transit and eclipse mid-times and radial velocities. In the OrbDot coordinate system, the argument of pericenter is determined from the positive x-axis, such that a transit occurs when the true anomaly :math:`\phi` is equal to:
 
 .. math::
     \phi_{\mathrm{I}}\,=\,\frac{\pi}{2} - \omega_p
@@ -161,6 +161,7 @@ and an eclipse occurs when:
 where :math:`\omega_p` is the argument of pericenter of the planetary orbit.
 
 .. image:: _static/coordinate_system.png
+    :width: 600
 
 ------------
 
@@ -220,7 +221,7 @@ where :math:`t_0` is the reference transit time, :math:`e` is the orbit eccentri
 
 where :math:`\omega_0` is the value of :math:`\omega_p` at time :math:`t_0`.
 
-In the equations above, :math:`P_a` represents the anomalistic orbital period, i.e., the elapsed time between subsequent pericenter passages, which characterizes the osculating orbit. :math:`P_s` is the sidereal period, representing the observed orbital period of the system, and is related to the anomalistic period by:
+In the equations above, :math:`P_a` represents the anomalistic orbital period, i.e. the elapsed time between subsequent pericenter passages, which characterizes the osculating orbit. :math:`P_s` is the sidereal period, representing the observed orbital period of the system, and is related to the anomalistic period by:
 
 .. math::
     P_s = P_a\left(1-\frac{d\omega/{dE}}{2\pi}\right)
@@ -249,20 +250,20 @@ Many exoplanet host stars exhibit noticeable periodic radial velocity (RV) varia
 
 where :math:`M_p` is the planet mass, :math:`M_{\star}` is the star mass, :math:`i` is the line-of-sight inclination of the orbit, and :math:`G` is the universal gravitational constant.
 
-At any given time, the periodic signal depends on the planet's position in its orbit, defined by the true anomaly :math:`\phi`, and the systemic velocity along the line-of-sight, denoted as :math:`\gamma`. When RV observations from multiple instruments are combined, it is standard practice to fit :math:`\gamma` individually for each source to account for instrumental variations. Additionally, we consider first and second-order acceleration terms, :math:`\dot{\gamma}` and :math:`\ddot{\gamma}` respectively, to accommodate potential perturbations from an outer, non-resonant companion planet with an orbital period longer than the observational baseline. The total observed radial velocity signal is:
+At any given time, the periodic signal depends on the planet's position in its orbit, defined by the true anomaly :math:`\phi`, and the systemic velocity along the line-of-sight, denoted as :math:`\gamma`. When RV observations from multiple instruments are combined, it is standard practice to fit :math:`\gamma` individually for each source to account for instrumental variations. Additionally, we consider first and second-order acceleration terms, :math:`\dot{\gamma}` and :math:`\ddot{\gamma}` respectively, to accommodate potential perturbations from an outer, non-resonant companion planet with an orbital period longer than the observational baseline. Thus, the total observed radial velocity signal is:
 
 .. math::
     v_r = K[\cos{(\phi\left(t\right)+\omega_p)}+e\cos{\omega_p}] + \gamma_j
     + \dot{\gamma} \left(t-t_0\right) + \frac{1}{2} \ddot{\gamma}\left(t-t_0\right)^2
 
-where :math:`\omega_\star` is the argument of pericenter of the star's orbit, defined as :math:`\omega_\star = \omega_p + \pi`, and :math:`t_0` is a transit mid-time. OrbDot requires the reference time to that of a transit so that the phase at any time :math:`t` can be determined by the knowledge that when :math:`t=t_0` the true anomaly is :math:`\phi_0 = \frac{\pi}{2} - \omega_p`.
+where :math:`\omega_p` is the argument of pericenter of the planet's orbit and :math:`t_0` is the mid-time of a reference transit.
 
-To avoid underestimating the parameters uncertainties, OrbDot implements an instrument-specific "jitter" parameter to represent systematic noise. When ``jit`` is given as a free parameter, it is added in quadrature with the individual measurement errors:
+To avoid underestimating uncertainties, OrbDot implements an instrument-dependant "jitter" parameter to account for systematic noise. When ``"jit"`` is given as a free parameter, it is added in quadrature with the individual measurement errors:
 
 .. math::
     \sigma = \sqrt{\sigma_i^2 + \sigma_{jit}^2}
 
-where :math:`\sigma_i` is the individual measurement error and :math:`\sigma_{jit}` is the instrument-dependent jitter term.
+where :math:`\sigma_i` is the measurement error and :math:`\sigma_{jit}` is the instrument-dependent jitter term.
 
 Constant-Period
 ---------------
@@ -316,7 +317,7 @@ The ``orbdot.models.tdv_models.tdv_constant()`` method implements the constant-p
 
 Orbital Decay
 -------------
-For a planet on a decaying orbit, the change in transit duration over time can be modeled. As the orbit decays, the semi major axis decreases, leading to changes in the transit duration. This relationship is captured by equation (58) from :cite:t:`Kipping2010`:
+For a planet on a decaying orbit, the change in transit duration over time is captured by equation (58) from :cite:t:`Kipping2010`:
 
 .. math::
     \frac{dT}{da} = \frac{P}{\pi} \frac{\varrho_c^2}{a\sqrt{1-e^2}}\left(\frac{3}{2}
@@ -347,7 +348,7 @@ For a planet on an elliptical orbit undergoing apsidal precession, the change in
     \left(\frac{1}{\sqrt{1-b^2} \sqrt{a_R^2 \varrho_c^2-1}}\right) \left (-2 \arcsin \left(\frac{\sqrt{1-b^2}}
     {a_R \varrho_c \sin i}\right)\right)
 
-where :math:`\frac{dT}{d \omega}` is the change in the transit duration with changing argument of pericenter and :math:`b` is the impact parameter. The change in the transit duration per epoch may be expressed as:
+where :math:`\frac{dT}{d \omega}` is the change in the transit duration with changing argument of pericenter, and :math:`b` is the impact parameter. The change in the transit duration per epoch may be expressed as:
 
 .. math::
     \frac{dT}{dE} = \frac{dT}{d\omega}\frac{d\omega}{dE}
@@ -368,13 +369,13 @@ The ``orbdot.models.tdv_models.tdv_precession()`` method implements the apsidal 
 
 The ``theory`` Module
 =====================
-The :py:mod:`~orbdot.models.theory` module provides several analytical models for investigating long-term variations in planetary orbits and their causes. Some of these models are used in the :class:`~orbdot.analysis.Analyzer` class (see :ref:`interpreting-results`). The key methods of this class are listed below, organized by subject.
+The :py:mod:`~orbdot.models.theory` module provides several analytical models for investigating long-term variations in planetary orbits and their causes, many of which are used in the :class:`~orbdot.analysis.Analyzer` class (see :ref:`interpreting-results`). The key methods of this class are listed below, organized by subject.
 
 .. _orbital_decay_theory:
 
 Equilibrium Tides
 -----------------
-Due to the close proximity of Hot Jupiters (HJs) to their host stars, significant tidal bulges—an ellipsoidal distortion—are raised in both the planet and the star. In the case of orbital decay, the planet's orbital rate is faster than the star's rotational rate. As a result, the star's tidal bulge lags behind the HJ, creating a net torque that spins up the star at the expense of the planet's orbital angular momentum :cite:p:`levrard2009, Matsumura2010`. The tidal forces raised by the misaligned tidal bulges are known as "equilibrium tides" and are believed to be the most significant process governing the future evolution of HJ orbits :cite:p:`Ma2021, Barker2020`.
+Due to the close proximity of Hot Jupiters (HJs) to their host stars, significant tidal bulges—an ellipsoidal distortion—are raised in both the planet and the star. In the case of orbital decay, the planet's orbital rate is faster than the star's rotational rate, causing the star's tidal bulge to lag behind that of the planet. This lag raises a net torque that spins up the star, but at the expense of the planet's orbital angular momentum :cite:p:`levrard2009, Matsumura2010`. The tidal forces raised by the misaligned tidal bulges are known as "equilibrium tides" and are believed to be the most significant process governing the future evolution of HJ orbits :cite:p:`Ma2021, Barker2020`.
 
 The following OrbDot functions are relevant to these effects:
 
@@ -391,7 +392,9 @@ The following OrbDot functions are relevant to these effects:
 
 Apsidal Precession
 ------------------
-Apsidal precession is the gradual increase of the argument of pericenter of a planet's orbit :math:`\omega_p` over time, meaning the line connecting the pericenter and apocenter of the orbit rotates through :math:`2\pi` in one precession period. This can result from several factors, including general relativistic effects, perturbations from other planets, and gravitational moments arising from both the host star's rotation and planetary tidal bulges.
+Apsidal precession is the gradual increase of the argument of pericenter of a planet's orbit :math:`\omega_p` over time, meaning the line connecting the pericenter and apocenter of the orbit rotates through :math:`2\pi` in one precession period.
+
+This can result from several factors, including general relativistic effects, perturbations from other planets, and gravitational moments arising from both the host star's rotation and planetary tidal bulges.
 
 The following OrbDot functions are relevant to these effects:
 
@@ -424,7 +427,9 @@ Transit Variations
 
 Proper Motion
 -------------
-Proper motion is the movement of a star through space with respect to the reference frame of the Solar System. This motion is partially constrained with measurements of the proper motion on the sky-plane, :math:`\mu`, and the radial velocity, :math:`v_r`. The proper motion of an exoplanet host star changes the orientation of the orbit in the sky-plane, inducing an apparent variation of the line-of-sight inclination :math:`i` and argument of pericenter :math:`\omega_p`. These variations may cause measurable changes in the observed transit signatures.
+Proper motion is the movement of a star through space with respect to the reference frame of the Solar System. This motion is partially constrained with measurements of the proper motion on the sky-plane, :math:`\mu`, and the radial velocity, :math:`v_r`.
+
+The proper motion of an exoplanet host star changes the orientation of the orbit in the sky-plane, inducing an apparent variation of the line-of-sight inclination :math:`i` and argument of pericenter :math:`\omega_p`. These variations may cause measurable changes in the observed transit signatures.
 
 The following OrbDot functions are relevant to these effects:
 

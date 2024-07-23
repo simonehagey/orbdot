@@ -501,9 +501,7 @@ def decay_pdot_from_quality_factor(P, M_s, M_p, R_s, Q_star):
 
     where :math:`M_\\star` is the host star mass, :math:`M_p` is the planet mass,
     :math:`R_\\star` is the host star radius, :math:`a` is the orbital semi-major axis,
-    and :math:`Q_\\star^{'} ` is the star's "modified" tidal quality factor.
-
-    The modified tidal quality factor is defined as:
+    and :math:`Q_\\star^{'}` is the star's "modified" tidal quality factor, defined as:
 
     .. math:: Q_\\star^{'} = \\frac{3}{2} \\frac{Q_\\star}{k_{2,\\star}}
 
@@ -561,7 +559,7 @@ def decay_quality_factor_from_pdot(P, dPdE, M_s, M_p, R_s):
     -----
     Assuming that equilibrium tides dominate the evolution of a planet's orbit, the rate of
     orbital decay depends on the efficiency of tidal energy dissipation within the star,
-    which is parameterized by the tidal quality factor. In the constant-phase lag model for
+    which is parameterized by the tidal quality factor :math:`Q`. In the constant-phase lag model for
     equilibrium tides, the modified stellar tidal quality factor is [1]_:
 
     .. math::
@@ -576,9 +574,9 @@ def decay_quality_factor_from_pdot(P, dPdE, M_s, M_p, R_s):
 
     .. math:: Q_\\star^{'} = \\frac{3}{2} \\frac{Q_\\star}{k_{2,\\star}}
 
-    where :math:`Q_\\star` is the tidal quality factor and :math:`k_{2,\\star}` is the second-order
-    potential Love number [2]_. The theoretical upper limit is :math:`k_{2,\\star}=3/2`, that of a
-    uniform density sphere, in which case :math:`Q_\\star^{'} = Q_\\star`.
+    where :math:`k_{2,\\star}` is the second-order potential Love number [2]_. The theoretical
+    upper limit is :math:`k_{2,\\star}=3/2`, that of a uniform density sphere, in which case
+    :math:`Q_\\star^{'} = Q_\\star`.
 
     References
     ----------
@@ -605,8 +603,8 @@ def decay_empirical_quality_factor(P_orb, P_rot_s):
     """Calculate the modified stellar tidal quality factor from an empirical law.
 
     This method calculates the tidal forcing period of a star-planet system and uses it to
-    estimate the host star's modified tidal quality factor with an empirical law derived
-    by Penev et al. (2018) [1]_.
+    estimate the star's modified tidal quality factor with an empirical law derived by Penev et
+    al. (2018) [1]_.
 
     Parameters
     ----------
@@ -910,18 +908,19 @@ def get_pdot_from_wdot(P, e, w, dwdE):
 
     Notes
     -----
-    For transiting exoplanets, apsidal precession causes the sidereal period, i.e., the length of
+    For transiting exoplanets, apsidal precession causes the sidereal period, i.e. the length of
     time between transits, to vary over time. Because apsidal precession periods are typically
-    far greater than observational baselines available at this time, this effect yields an
-    *apparent* constant time derivative :math:`\\dot{P}`. Equation (17) of Rafikov (2009) [1]_
-    expresses this as:
+    far greater than observational baselines, this effect yields an *apparent* time derivative
+    :math:`\\dot{P}`.
+
+    Equation (17) of Rafikov (2009) [1]_ expresses this as:
 
     .. math::
         \\dot{P} = \\frac{4\\pi\\left(\\dot{\\omega}\\right)^2 e\\cos\\omega}{
-        \\eta^2}\\frac{\\left(1-e^2\\right)^{3/2}}{(1+e\\sin\\omega)^3}
+        n^2}\\frac{\\left(1-e^2\\right)^{3/2}}{(1+e\\sin\\omega)^3}
 
-    where :math:`e` is the orbit eccentricity, :math:`\\omega` is the argument of pericenter,
-    :math:`\\dot{\\omega}` is the apsidal precession rate, and :math:`\\eta = 2\\pi/P` is the
+    where :math:`e` is the orbit eccentricity, :math:`\\omega_p` is the argument of pericenter,
+    :math:`\\dot{\\omega}` is the apsidal precession rate, and :math:`n = 2\\pi/P` is the
     orbital mean motion.
 
     References
@@ -969,11 +968,11 @@ def precession_gr(P, e, M_s):
     This method applies the lowest order of the relativistic contribution to apsidal precession,
     given in Equation (12) of Ragozzine and Wolf (2009) [1]_ as:
 
-    .. math:: \\dot{\\omega}_{\\mathrm{GR}} = \\frac{3 \\eta G M_{\\star}}{a c^2(1 - e^2)}
+    .. math:: \\dot{\\omega}_{\\mathrm{GR}} = \\frac{3 n G M_{\\star}}{a c^2(1 - e^2)}
 
     where :math:`G` is the gravitational constant, :math:`c` is the speed of light in a vacuum,
     :math:`M_{\\star}` is the host star mass, :math:`a` is the planet's semi-major axis,
-    :math:`e` is the eccentricity, and :math:`\\eta = 2\\pi/P` is the mean motion.
+    :math:`e` is the eccentricity, and :math:`n = 2\\pi/P` is the mean motion.
 
     References
     ----------
@@ -1029,27 +1028,23 @@ def precession_rotational_planet(P, e, M_s, M_p, R_p, k2_p, P_rot_p):
     Notes
     -----
     The rotation of a fluid body raises an oblate distortion (i.e., flattening) that perturbs the
-    gravitational potential, driving apsidal precession. The rate of the apsidal precession that is
+    gravitational potential, driving apsidal precession. The rate of the apsidal precession
     induced by a planet's rotational bulge is given in Equation (10) of Ragozzine and Wolf (2009)
     [1]_ as:
 
     .. math::
-        \\dot{\\omega}_{\\mathrm{rot,p}} = \\frac{\\eta {R_p}^5 k_{2,p} {\\dot{\\theta}_p}^2}{2
+        \\dot{\\omega}_{\\mathrm{rot,p}} = \\frac{n {R_p}^5 k_{2,p} {\\dot{\\theta}_p}^2}{2
         a^2 G M_p} g_2(e)
 
-    where :math:`\\dot{\\theta}_p` is the rotation speed of the planet, :math:`k_{2,p}` is its
-    second-order potential Love number, :math:`G` is the gravitational constant, :math:`\\eta =
+    where :math:`\\dot{\\theta}_p` is the rotational velocity of the planet, :math:`k_{2,p}` is its
+    second-order potential Love number, :math:`G` is the gravitational constant, :math:`n =
     2\\pi/P` is the orbital mean motion, :math:`a` is the semi-major axis, and :math:`M_p` and
     :math:`R_p` are the planet mass and radius, respectively.
 
-    The parameter :math:`g_2(e)` represents an expansion in eccentricity :math:`e`, defined in
+    The function :math:`g_2(e)` represents an expansion in eccentricity :math:`e`, defined in
     Equation (11) of Ragozzine and Wolf (2009) [1]_ as:
 
     .. math:: g_2(e) = (1-e^2)^{-2}
-
-    The Love number represents how centrally condensed the planet is and is a fixed property of
-    the body [2]_. The lower the :math:`k_{2,p}`, the more centrally condensed the planetary
-    interior structure, which in turn leads to a slower precession rate.
 
     References
     ----------
@@ -1167,27 +1162,23 @@ def precession_rotational_star(P, e, M_s, R_s, k2_s, P_rot_s):
     Notes
     -----
     The rotation of a fluid body raises an oblate distortion (i.e., flattening) that perturbs the
-    gravitational potential, driving apsidal precession. The rate of the apsidal precession that is
+    gravitational potential, driving apsidal precession. The rate of the apsidal precession
     induced by a star's rotational bulge is given in Equation (10) of Ragozzine and Wolf (2009)
     [1]_ as:
 
     .. math::
-        \\dot{\\omega}_{\\mathrm{rot,\\star}} = \\frac{\\eta {R_\\star}^5 k_{2,\\star} {\\dot{
+        \\dot{\\omega}_{\\mathrm{rot,\\star}} = \\frac{n {R_\\star}^5 k_{2,\\star} {\\dot{
         \\theta}_\\star}^2}{2 a^2 G M_\\star} g_2(e)
 
-    where :math:`\\dot{\\theta}_\\star` is the rotation speed of the star, :math:`k_{2,\\star}` is
-    its second-order potential Love number, :math:`G` is the gravitational constant, :math:`a` is
-    the semi-major axis of the orbit, :math:`\\eta = 2\\pi/P` is the mean motion,
+    where :math:`\\dot{\\theta}_\\star` is the rotational velocity of the star, :math:`k_{2,
+    \\star}` is its second-order potential Love number, :math:`G` is the gravitational constant,
+    :math:`a` is the semi-major axis of the orbit, :math:`n = 2\\pi/P` is the mean motion,
     and :math:`M_\\star` and :math:`R_\\star` are the stellar mass and radius, respectively.
 
     The parameter :math:`g_2(e)` represents an expansion in eccentricity :math:`e`, defined in
     Equation (11) of Ragozzine and Wolf (2009) [1]_ as:
 
     .. math:: g_2(e) = (1-e^2)^{-2}
-
-    The Love number represents how centrally condensed the star is and is a fixed property of
-    the body [2]_. The lower the :math:`k_{2,\\star}`, the more centrally condensed the star's
-    interior structure, which in turn leads to a slower precession rate.
 
     References
     ----------
@@ -1307,10 +1298,10 @@ def precession_tidal_planet(P, e, M_s, M_p, R_p, k2_p):
     as:
 
     .. math::
-        \\dot{\\omega}_{\\mathrm{tide,p}} = \\frac{15}{2}k_{2,p} \\eta \\left(\\frac{R_p}{
+        \\dot{\\omega}_{\\mathrm{tide,p}} = \\frac{15}{2}k_{2,p} n \\left(\\frac{R_p}{
         a}\\right)^5\\left(\\frac{M_\\star}{M_p}\\right)f_2(e)
 
-    where :math:`k_{2,p}` is the planet's second-order potential Love number, :math:`\\eta =
+    where :math:`k_{2,p}` is the planet's second-order potential Love number, :math:`n =
     2\\pi/P` is the orbital mean motion, :math:`a` is the semi-major axis, :math:`M_\\star` is
     the host star mass, and :math:`M_p` and :math:`R_p` are the planet mass and radius.
 
@@ -1318,10 +1309,6 @@ def precession_tidal_planet(P, e, M_s, M_p, R_p, k2_p):
     Equation (7) of Ragozzine and Wolf (2009) [1]_ as:
 
     .. math:: f_2(e)= (1-e^2)^{-5} \\left(1 + \\frac{3}{2}e^2 + \\frac{1}{8}e^4 \\right).
-
-    The Love number represents how centrally condensed the planet is and is a fixed property of
-    the body [2]_. The lower the :math:`k_{2,p}`, the more centrally condensed the planetary
-    interior structure, which in turn leads to a slower precession rate.
 
     References
     ----------
@@ -1439,10 +1426,10 @@ def precession_tidal_star(P, e, M_s, M_p, R_s, k2_s):
     as:
 
     .. math::
-        \\dot{\\omega}_{\\mathrm{tide,\\star}} = \\frac{15}{2}k_{2,\\star} \\eta \\left(\\frac{
+        \\dot{\\omega}_{\\mathrm{tide,\\star}} = \\frac{15}{2}k_{2,\\star} n \\left(\\frac{
         R_\\star}{a}\\right)^5\\left(\\frac{M_p}{M_\\star}\\right)f_2(e)
 
-    where :math:`k_{2,\\star}` is the star's second-order potential Love number, :math:`\\eta =
+    where :math:`k_{2,\\star}` is the star's second-order potential Love number, :math:`n =
     2\\pi/P` is the orbital mean motion, :math:`a` is the semi-major axis, :math:`M_p` is the
     planet mass, and :math:`M_\\star` and :math:`R_\\star` are the stellar mass and radius.
 
@@ -1450,10 +1437,6 @@ def precession_tidal_star(P, e, M_s, M_p, R_s, k2_s):
     Equation (7) of Ragozzine and Wolf (2009) [1]_ as:
 
     .. math:: f_2(e)= (1-e^2)^{-5} \\left(1 + \\frac{3}{2}e^2 + \\frac{1}{8}e^4 \\right).
-
-    The Love number represents how centrally condensed the star is and is a fixed property of
-    the body. The lower the :math:`k_{2,\\star}`, the more centrally condensed the stellar
-    interior structure, which in turn leads to a slower precession rate.
 
     References
     ----------
@@ -1564,10 +1547,10 @@ def proper_motion_idot(mu, beta):
 
     .. math:: \\dot{i}_\\mu = -\\mu\\cos{\\beta}
 
-    where :math:`\\beta` is defined (in the coordinate system of [1]_) as the angle in the
-    sky-plane between the proper motion vector :math:`\\vec{\\mu}` and the projection of the
-    orbital angular momentum vector :math:`\\vec{L}`. Thus, the magnitude of the inclination
-    variation :math:`|\\dot{i}_\\mu|` is maximized when :math:`\\beta = 0^\\circ, 180^\\circ`.
+    where :math:`\\beta` is defined as the angle in the sky-plane between the proper motion
+    vector :math:`\\vec{\\mu}` and the projection of the orbital angular momentum vector
+    :math:`\\vec{L}`. Thus, the magnitude of the inclination variation :math:`|\\dot{i}_\\mu|` is
+    maximized when :math:`\\beta = 0^\\circ, 180^\\circ`.
 
     References
     ----------
@@ -1612,10 +1595,10 @@ def proper_motion_wdot(mu, i, beta):
 
     .. math:: \\dot{\\omega}_\\mu = -\\mu\\frac{\\sin{\\beta}}{\\sin{i}}
 
-    where :math:`\\beta` is defined (in the coordinate system of [1]_) as the angle in the
-    sky-plane between the proper motion vector :math:`\\vec{\\mu}` and the projection of the orbital
-    angular momentum vector :math:`\\vec{L}`. The magnitude of the apparent precession rate
-    :math:`|\\dot{\\omega}_\\mu|` is maximized when :math:`\\beta = 90^\\circ, 270^\\circ`.
+    where :math:`\\beta` is defined as the angle in the sky-plane between the proper motion
+    vector :math:`\\vec{\\mu}` and the projection of the orbital angular momentum vector
+    :math:`\\vec{L}`. The magnitude of the apparent precession rate :math:`|\\dot{\\omega}_\\mu|`
+    is maximized when :math:`\\beta = 90^\\circ, 270^\\circ`.
 
     References
     ----------
@@ -1658,16 +1641,16 @@ def proper_motion_pdot(P, e, w, mu):
     -----
     The systemic proper motion of a transiting star-planet system can have a significant
     influence on the observed period between transits due to the *apparent* apsidal precession
-    :math:`\\dot{\\omega}_{\\mu}`. The following expression from Rafikov (2009) assumes a constant
-    change in the observed period, denoted :math:`\\dot{P}_{\\omega,\\mu}`:
+    :math:`\\dot{\\omega}_{\\mu}`. The following expression from Rafikov (2009) [1]_ assumes a
+    constant change in the observed period, denoted :math:`\\dot{P}_{\\omega,\\mu}`:
 
     .. math::
-        \\dot{P}_{\\omega,\\mu} = -\\frac{2\\pi}{\\eta^2} \\frac{(1-e^2)^{3/2}}{(1+e\\sin{
+        \\dot{P}_{\\omega,\\mu} = -\\frac{2\\pi}{n^2} \\frac{(1-e^2)^{3/2}}{(1+e\\sin{
         \\omega})^2} \\times \\left[\\ddot{\\omega}_{\\mu}-2(\\dot{\\omega}_{\\mu})^2\\frac{
         e\\cos{\\omega}}{1+e\\sin{\\omega}}\\right]
 
     where :math:`e` is the orbit eccentricity, :math:`\\omega` is the argument of pericenter,
-    :math:`\\eta` is the orbital mean motion, :math:`\\dot{\\omega}_{\\mu}` is the apparent
+    :math:`n` is the orbital mean motion, :math:`\\dot{\\omega}_{\\mu}` is the apparent
     precession rate, and :math:`\\ddot{\\omega}_{\\mu}` is the time derivative of the latter.
 
     Rafikov [1]_ suggests that for transiting systems the following approximation is valid:
@@ -1737,20 +1720,20 @@ def proper_motion_tdot(P, e, w, i, T, wdot_pm, idot_pm, M_s, R_s):
     influence on the observed transit duration, :math:`T`, due to a combination of the proper
     motion-induced variation of the line-of-sight inclination :math:`\\dot{i}_\\mu`, as well as
     the *apparent* apsidal precession :math:`\\dot{\\omega}_{\\mu}`. The transit duration
-    variation (TDV) :math:`\\dot{T}_{tr,\\mu}` is governed by the followingn expression [1]_:
+    variation (TDV) is governed by the followingn expression [1]_:
 
     .. math::
-        \\dot{T}_{\\mu} = - \\frac{T}{1 + e\\sin{\\omega}} \\times \\left[e\\dot{\\omega}_{
-        \\mu}\\cos{\\omega} - g \\left(\\dot{i}_{\\mu}\\sin{i} + \\dot{\\omega}_{\\mu}\\cos{
-        i}\\frac{e\\cos{\\omega}}{1+e\\sin{\\omega}}\\right)\\right]
+        \\dot{T}_{\\mu} = - \\frac{T}{1 + e\\sin{\\omega_p}} \\times \\left[e\\dot{\\omega}_{
+        \\mu}\\cos{\\omega_p} - g \\left(\\dot{i}_{\\mu}\\sin{i} + \\dot{\\omega}_{\\mu}\\cos{
+        i}\\frac{e\\cos{\\omega_p}}{1+e\\sin{\\omega_p}}\\right)\\right]
 
     where,
 
     .. math:: g = \\frac{a}{R_\\star}\\frac{b}{1 - b^2}
 
-    and where :math:`e` is the orbit eccentricity, :math:`\\omega` is the argument of pericenter,
+    and where :math:`e` is the orbit eccentricity, :math:`\\omega_p` is the argument of pericenter,
     :math:`b` is the impact parameter, :math:`a` is the semi-major axis, and :math:`R_\\star` is
-    the radius of the host star.
+    the host star radius.
 
     References
     ----------
@@ -1799,10 +1782,13 @@ def proper_motion_shklovskii(P, mu, D):
 
     Notes
     -----
-    As a star-planet system moves through space, the radial component of its velocity :math:`v_r`
-    varies in time as a result of the nonzero transverse velocity component :math:`v_t = \\mu D`,
-    where :math:`D` is the distance to the system and :math:`\\mu = |\\vec{\\mu}|` is the
-    magnitude of the proper motion vector.
+    As a star-planet system moves through space, the radial component of its velocity, :math:`v_r`,
+    varies in time as a result of the nonzero transverse velocity component:
+
+    .. math:: v_t = \\mu D
+
+    where :math:`D` is the distance to the system in parsecs and :math:`\\mu = |\\vec{\\mu}|` is
+    the magnitude of the proper motion vector.
 
     Consequently, the radial velocity component is time-dependent, which leads to a secular
     variation in the observed period between transits, denoted :math:`\\dot{P}_{ \\mathrm{Shk}}`.
@@ -1832,11 +1818,10 @@ def resolved_binary_rv_trend_from_mass(theta, D, M_B):
     """Calculate a minimum RV trend (acceleration) given properties of a resolved stellar companion.
 
     This method returns the minimum possible acceleration, induced by a bound stellar companion,
-    that may be observed in radial velocity observations of the primary. The secondary star (ie.
-    the 'companion') must have been resolved through imaging or astrometric measurements such
-    that the angular separation is known. This uses equation (6) from Torres (1999) [1]_,
-    under the assumption that the radial velocity trend is due entirely to the gravitational
-    influence of the secondary.
+    that may be observed in radial velocity observations of the primary. The secondary star must
+    have been resolved through imaging or astrometric measurements such that the angular
+    separation is known. This uses equation (6) from Torres (1999) [1]_, under the assumption
+    that the radial velocity trend is due entirely to the gravitational influence of the secondary.
 
     Parameters
     ----------
@@ -1879,7 +1864,7 @@ def resolved_binary_rv_trend_from_mass(theta, D, M_B):
     # calculate the minimum value of the unknown component 'Phi'
     Phi = 3 * np.sqrt(3) / 2
 
-    # calculate the expected linear RV trend (m/s/yr)
+    # calculate the expected linear RV trend in m/s/yr
     dvdt = M_B / (5.341e-6 * (D * theta) ** 2 * Phi)
 
     # return the slope in m/s/day
@@ -1924,7 +1909,7 @@ def resolved_binary_mass_from_rv_trend(theta, D, dvdt):
 
     The parameter :math:`\\Phi` is a function of the eccentricity, longitude of pericenter,
     and inclination of the companion's orbit. Assuming these parameters are unconstrained, this
-    method uses the minimum value :math:``\\Phi = \\frac{3\\sqrt{3}}{2}`` to determine the minimum
+    method uses the minimum value :math:`\\Phi = \\frac{3\\sqrt{3}}{2}` to determine the minimum
     companion mass.
 
     References

@@ -371,8 +371,6 @@ The examples :ref:`example-wasp-12` and :ref:`example-rv-trends` may help famili
 
 Default Info File
 ^^^^^^^^^^^^^^^^^
-Whenever a :class:`~orbdot.star_planet.StarPlanet` object is created, the default settings file (``orbdot/defaults/default_settings_file.json``) is merged with the user-provided file to maintain consistency. Not all fields in the settings file need to be populated. If a key is provided by the user, that value overrides the default one.
-
 The default info file (``orbdot/defaults/default_info_file.json``) is merged with the user-provided file, as not all fields must be populated. If a key is provided by the user, that value overrides the default one.
 
 .. admonition:: Default Info File
@@ -438,4 +436,4 @@ The default info file (``orbdot/defaults/default_info_file.json``) is merged wit
     }
 
 Note:
- The planet characteristics are given as a list so that the user may have a single info file for a system with multiple planets. When creating a :class:`~orbdot.star_planet.StarPlanet` object, the argument ``planet_num`` indicates the index that corresponds to the planet you want to study, with the default being ``0``.
+ The planet properties are given as a list so that the user may have a single info file for a system with multiple planets. When creating a :class:`~orbdot.star_planet.StarPlanet` object, the argument ``planet_num`` indicates the index that corresponds to the planet you want to study, with the default being ``0``.

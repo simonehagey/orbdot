@@ -50,9 +50,9 @@ def rv_constant(t0, P0, e0, w0, K, v0, dvdt, ddvdt, t):
      In the OrbDot coordinate system, we know that the true anomaly at the transit mid-time is:
 
      .. math::
-            \\phi_0 = \\frac{\\pi}{2} - \\omega
+            \\phi_0 = \\frac{\\pi}{2} - \\omega_p
 
-     where :math:`\\omega` is the argument of pericenter of the planetary orbit. The eccentric
+     where :math:`\\omega_p` is the argument of pericenter of the planetary orbit. The eccentric
      anomaly may then be calculated by:
 
      .. math::
@@ -181,7 +181,7 @@ def rv_decay(t0, P0, e0, w0, K, v0, dvdt, ddvdt, PdE, t):
      rate-of-change is constant, the period at any epoch :math:`E` is:
 
      .. math::
-            P = P_0 + \\frac{dP}{dE}\\,E
+            P\\left(E\\right) = P_0 + \\frac{dP}{dE}\\,E
 
      where :math:`E` is calculated by rounding the result of the following equation to an
      integer value:
@@ -195,12 +195,12 @@ def rv_decay(t0, P0, e0, w0, K, v0, dvdt, ddvdt, PdE, t):
      calculated relative to the most recent transit mid-time:
 
      .. math::
-            t_{\\mathrm{I}} = t_0 + P_0 E + \\frac{1}{2}\\frac{dP}{dE}\\,E^2
+            t_{\\mathrm{I}} = t_0 + PE + \\frac{1}{2}\\frac{dP}{dE}\\,E^2
 
      In the OrbDot coordinate system, we know that the true anomaly at the transit mid-time is:
 
      .. math::
-            \\phi_{\\mathrm{I}} = \\frac{\\pi}{2} - \\omega
+            \\phi_{\\mathrm{I}} = \\frac{\\pi}{2} - \\omega_p
 
      The eccentric anomaly may then be calculated by:
 
@@ -348,12 +348,12 @@ def rv_precession(t0, P0, e0, w0, K, v0, dvdt, ddvdt, wdE, t):
      must be calculated relative to the most recent transit mid-time:
 
      .. math::
-            t_{\\mathrm{I}} = t_0 + P_s E - \\frac{e P_a}{\\pi}\\cos{\\omega}
+            t_{\\mathrm{I}} = t_0 + P_s E - \\frac{e P_a}{\\pi}\\cos{\\omega_p}
 
      In the OrbDot coordinate system, we know that the true anomaly at the transit mid-time is:
 
      .. math::
-            \\phi_{\\mathrm{I}} = \\frac{\\pi}{2} - \\omega
+            \\phi_{\\mathrm{I}} = \\frac{\\pi}{2} - \\omega_p
 
      The eccentric anomaly may then be calculated by:
 
