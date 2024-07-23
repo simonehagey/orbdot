@@ -3,7 +3,7 @@
 **************
 Model Fitting
 **************
-Before reading this section, it is recommended to go through the :ref:`getting-started` page and check out the examples :ref:`example-wasp-12` and :ref:`example-rv-trends`.
+Before reading this section, it is recommended to go through the :ref:`getting-started` page and check out the :ref:`example-wasp-12` and :ref:`example-rv-trends` examples.
 
 To begin, a :class:`~orbdot.star_planet.StarPlanet` object is created that represents the star-planet system. The following code snippet, using WASP-12 b as an example, demonstrates the creation of a :class:`~orbdot.star_planet.StarPlanet` object:
 
@@ -20,7 +20,7 @@ See :ref:`settings-file` for a description of the contents and structure of the 
 
 Running Model Fits
 ==================
-To run the model fitting routines, one of the following methods is called on the :class:`~orbdot.star_planet.StarPlanet` object: :meth:`~orbdot.joint_fit.JointFit.run_joint_fit`, :meth:`~orbdot.transit_timing.TransitTiming.run_ttv_fit`, :meth:`~orbdot.radial_velocity.RadialVelocity.run_rv_fit`, and :meth:`~orbdot.transit_duration.TransitDuration.run_tdv_fit`.
+To run the model fitting routines, one of the following methods is called on the :class:`~orbdot.star_planet.StarPlanet` object: :meth:`~orbdot.joint_fit.JointFit.run_joint_fit`, :meth:`~orbdot.transit_timing.TransitTiming.run_ttv_fit`, :meth:`~orbdot.radial_velocity.RadialVelocity.run_rv_fit`, or :meth:`~orbdot.transit_duration.TransitDuration.run_tdv_fit`.
 
 These methods have three key arguments in common:
 
@@ -32,13 +32,13 @@ These methods have three key arguments in common:
    * - ``free_params``
      - The free parameters for the model fit, formatted as a list of strings in any order.
    * - ``model``
-     - The evolutionary model, must be ``"constant"``, ``"decay"``, or ``"precession"``. Default is ``"constant"``.
+     - The evolutionary model, must be ``"constant"``, ``"decay"``, or ``"precession"``.
    * - ``file_suffix``
-     - An optional string appended to the end of the output file names.
+     - An optional string that is appended to the output file names.
 
 The free parameters (``free_params``) can be given in any order, but an error will be raised if they are not part of the physical model. See :ref:`model_parameters` for more information on the model parameters and their symbols.
 
-The ``model`` argument specifies the evolutionary model to be fit, and must be either ``"constant"`` for the constant-period model, ``"decay"`` for orbital decay, or ``"precession"`` for apsidal precession. The default argument is ``"constant"``. See :ref:`models` for more information.
+The ``model`` argument specifies the evolutionary model to be fit, and must be either ``"constant"`` for the constant-period model, ``"decay"`` for orbital decay, or ``"precession"`` for apsidal precession. The default argument is ``"constant"``. See the :ref:`models` section for more information about the models.
 
 The optional ``file_suffix`` argument enables separate fits of the same model to be differentiated. This functionality is nicely illustrated in :ref:`example-rv-trends`, which uses, for example, the arguments ``file_suffix="_circular"`` and ``file_suffix="_eccentric"``.
 
@@ -54,9 +54,9 @@ The transit and eclipse timing fits are run by calling the :meth:`~orbdot.transi
 
 TTV "clipping"
 ^^^^^^^^^^^^^^
-When fitting transit mid-times there is an option to employ a sigma-clipping routine to remove outliers in the transit mid-times, which may be useful for data sets with high variance :cite:p:`Hagey2022`.
+When fitting transit mid-times, there is an option to run a sigma-clipping routine to remove outliers in the transit mid-times, which may be useful for data with high variance :cite:p:`Hagey2022`.
 
-Providing the argument ``sigma_clip=True`` runs the :meth:`~orbdot.transit_timing.TransitTiming.clip` method before the specified TTV model fit. Any subsequent model fits will use the cleaned data, so ``sigma_clip=True`` should only be specified once. For example,
+Passing ``sigma_clip=True`` to the :meth:`~orbdot.transit_timing.TransitTiming.run_ttv_fit` method runs the :meth:`~orbdot.transit_timing.TransitTiming.clip` method before the specified TTV model fit. Any subsequent model fits will use the cleaned data, so ``sigma_clip=True`` should only be specified once. For example,
 
 .. code-block:: python
 
@@ -87,12 +87,12 @@ The transit duration model fits are run by calling the :meth:`~orbdot.transit_du
 .. code-block:: python
 
     wasp12.run_tdv_fit(['P0', 'ecosw', 'esinw', 'i0'], model='constant')
-    wasp12.run_tdv_fit(['P0', 'PdE', 'i0'], model='decay')
+    wasp12.run_tdv_fit(['P0', 'i0', 'PdE'], model='decay')
     wasp12.run_tdv_fit(['P0', 'e0', 'w0', 'i0', 'wdE'], model='precession')
 
 Joint Fits
 ----------
-Running a joint model fit is similar to all of the above, but in this case the data types must be specified with at least two of the following arguments:
+Running a joint model fit is similar, but in this case the data types must be specified with at least two of the following arguments:
 
  - ``TTV=True`` includes the transit and/or eclipse mid-times.
  - ``RV=True`` includes the radial velocities.
@@ -140,7 +140,7 @@ Priors
 ======
 OrbDot currently supports three different prior distributions, the bounds of which are defined in the ``"priors"`` dictionary of the :ref:`settings file <settings-file>`.
 
-For all model parameters, the ``"priors"`` dictionary key is identical to its associated symbol defined in the :ref:`model_parameters` section. Each corresponding value is a list of three elements, the first being the type of prior (``"uniform"``, ``"gaussian"``, or ``"log"``), and the subsequent elements defining the distribution, illustrated in the table below.
+The keys of ``"priors"`` are identical to the parameter symbols that are defined in the :ref:`model_parameters` section. Every value is a list of three elements, the first being the type of prior (``"uniform"``, ``"gaussian"``, or ``"log"``), and the subsequent elements defining the distribution. This structure is illustrated in the following table:
 
 .. list-table::
    :header-rows: 1
@@ -158,7 +158,7 @@ For all model parameters, the ``"priors"`` dictionary key is identical to its as
      - ``["uniform", min, max]``
      - ``["uniform", -2, 1]``
 
-The built-in priors are defined in the ``defaults/default_fit_settings.json`` file. However, in general, the user should provide them explicitly in the :ref:`settings file <settings-file>`. For example,
+There are default priors defined in the ``defaults/default_fit_settings.json`` file, but the user should, in general, specify them explicitly in the :ref:`settings file <settings-file>`. For example,
 
 .. code-block:: JSON
 
@@ -232,7 +232,7 @@ The ``"*_results.json"`` File
 -----------------------------
 This file stores a comprehensive summary of the model fit settings and results in a ``.json`` format. It ensures that critical information about the model fit is not lost, but it is not designed for easy reading. Rather, the ``"*_summary.txt"`` file serves to quickly convey the results and should typically be examined first.
 
-The following table lists the keys of the ``*_results.json`` file dictionary:
+The following table lists the keys of the ``*_results.json`` file:
 
 .. list-table::
    :header-rows: 1
@@ -262,7 +262,7 @@ The following table lists the keys of the ``*_results.json`` file dictionary:
      - ``str``
      - The path to the ``"*_random_samples.txt"`` file (recorded for the plotting functions).
 
-The ``"stats"`` dictionary records various model fit statistics and settings in the following keys:
+The ``"stats"`` dictionary records various model fit statistics and settings with the following keys:
 
 .. list-table::
    :header-rows: 0
@@ -292,9 +292,9 @@ The ``"stats"`` dictionary records various model fit statistics and settings in 
      - ``float``
      - The effective samples per second.
 
-The ``"params"`` dictionary is particularly useful, as it contains a dictionary with key-value pairs representing the best-fit parameter values and their 68% confidence intervals. The keys match the parameter symbols (see :ref:`model_parameters`), and each value is a list of three elements: the best-fit value, the upper uncertainty, and the lower uncertainty.
+The ``"params"`` dictionary contains key-value pairs that store the best-fit parameter values and their 68% confidence intervals. The keys match the parameter symbols (see :ref:`model_parameters`), and each value is a list of three elements: [the best-fit value, the upper uncertainty, and the lower uncertainty].
 
-The following code snippet demonstrates how to access the best-fit parameters after a model fit is complete:
+The following code snippet demonstrates how to access the best-fit parameters after a model fit:
 
 .. code-block:: python
 
@@ -305,9 +305,9 @@ The following code snippet demonstrates how to access the best-fit parameters af
     t0_best, t0_upper_err, t0_lower_err = ttv_fit['params']['t0']
     P0_best, P0_upper_err, P0_lower_err = ttv_fit['params']['P0']
 
-If the free parameters include ``"ecosw"`` and ``"esinw"`` or ``"sq_ecosw"`` and ``"sq_esinw"``, the derived eccentricity ``"e0"`` and argument of pericenter ``"w0"`` are also included.
+If the free parameters include ``"ecosw"`` and ``"esinw"`` or ``"sq_ecosw"`` and ``"sq_esinw"``, the derived eccentricity ``"e0"`` and argument of pericenter ``"w0"`` can be accessed the same way.
 
-The entire set of OrbDot :ref:`parameters <model_parameters>` are included in the ``"params"`` dictionary for completeness, even if they are not part of the physical model, to ensure that no information is lost or overlooked. If a parameter was not allowed to vary in the model fit, its fixed value is recorded.
+The entire set of OrbDot :ref:`parameters <model_parameters>` are included in the ``"params"`` dictionary for completeness, even if they are not part of the physical model, to ensure that no information is lost or overlooked. If a parameter was not allowed to vary in the model fit, its fixed value is given.
 
 ------------
 

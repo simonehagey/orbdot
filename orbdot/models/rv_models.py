@@ -100,10 +100,10 @@ def rv_constant(t0, P0, e0, w0, K, v0, dvdt, ddvdt, t):
      Thus, the total radial velocity signal at time :math:`t` is:
 
      .. math::
-            v_r = K[\\cos{(\\phi+\\omega_p)}+e\\cos{\\omega_p}] + \\gamma_j + \\dot{\\gamma}
+            v_r = K[\\cos{(\\phi+\\omega_p)}+e\\cos{\\omega_p}] + \\gamma_i + \\dot{\\gamma}
             \\left(t-t_0\\right) + \\frac{1}{2} \\ddot{\\gamma} \\left(t-t_0\\right)^2
 
-     where :math:`K` is the semi-amplitude of the planetary signal, :math:`\\gamma_j` is the
+     where :math:`K` is the semi-amplitude of the planetary signal, :math:`\\gamma_i` is the
      systemic radial velocity, and :math:`\\dot{ \\gamma}` and :math:`\\ddot{\\gamma}` are first
      and second-order acceleration terms, respectively.
 
@@ -252,10 +252,10 @@ def rv_decay(t0, P0, e0, w0, K, v0, dvdt, ddvdt, PdE, t):
      Thus, the total radial velocity signal at time :math:`t` is:
 
      .. math::
-            v_r = K[\\cos{(\\phi+\\omega_p)}+e\\cos{\\omega_p}] + \\gamma_j + \\dot{\\gamma}
+            v_r = K[\\cos{(\\phi+\\omega_p)}+e\\cos{\\omega_p}] + \\gamma_i + \\dot{\\gamma}
             \\left(t-t_0\\right) + \\frac{1}{2} \\ddot{\\gamma} \\left(t-t_0\\right)^2
 
-     where :math:`K` is the semi-amplitude of the planetary signal, :math:`\\gamma_j` is the
+     where :math:`K` is the semi-amplitude of the planetary signal, :math:`\\gamma_i` is the
      systemic radial velocity, and :math:`\\dot{ \\gamma}` and :math:`\\ddot{\\gamma}` are first
      and second-order acceleration terms, respectively.
 
@@ -405,15 +405,14 @@ def rv_precession(t0, P0, e0, w0, K, v0, dvdt, ddvdt, wdE, t):
      Thus, the total radial velocity signal at time :math:`t` is:
 
      .. math::
-            v_r = K[\\cos{(\\phi\\left(t\\right)+\\omega_p)}+e\\cos{\\omega_p}] + \\gamma_j +
-            \\dot{\\gamma} \\left(t-t_0\\right) + \\frac{1}{2} \\ddot{\\gamma} \\left(
-            t-t_0\\right)^2
+            v_r = K[\\cos{(\\phi+\\omega_p)}+e\\cos{\\omega_p}] + \\gamma_i + \\dot{\\gamma}
+            \\left(t-t_0\\right) + \\frac{1}{2} \\ddot{\\gamma} \\left(t-t_0\\right)^2
 
       where,
 
-      .. math:: \\omega_p\\left(E\\right)=w_0 + \\frac{d\\omega}{dE}\\,E
+      .. math:: \\omega_p\\left(E\\right) = w_0 + \\frac{d\\omega}{dE}\\,E
 
-      and where :math:`K` is the semi-amplitude of the planetary signal, :math:`\\gamma_j` is the
+      and where :math:`K` is the semi-amplitude of the planetary signal, :math:`\\gamma_i` is the
       systemic radial velocity, and :math:`\\dot{ \\gamma}` and :math:`\\ddot{\\gamma}` are first
       and second-order acceleration terms, respectively.
 

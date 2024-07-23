@@ -148,12 +148,12 @@ It is important for the user to be familiar with the symbols and definitions of 
 
 Coordinate System
 =================
-The OrbDot models are defined for a coordinate system in which the sky plane lies on the x-z plane and the y-axis points toward the observer along the line of sight.
+The OrbDot models are defined for a coordinate system in which the sky plane lies on the x-z plane, and the y-axis points toward the observer along the line of sight.
 
 .. image:: _static/coordinate_system.png
     :width: 800
 
-It is critical to be consistent in the definition of the argument of pericenter when simultaneously fitting transit and eclipse mid-times and radial velocities. In the OrbDot coordinate system, the argument of pericenter is determined from the positive x-axis, such that a transit occurs when the true anomaly :math:`\phi` is equal to:
+It is critical to be consistent in the definition of the argument of pericenter when simultaneously fitting transit mid-times, eclipse mid-times and radial velocities. In the OrbDot coordinate system, the argument of pericenter is measured from the positive x-axis, such that a transit occurs when the true anomaly :math:`\phi` is equal to:
 
 .. math::
     \phi_{\mathrm{I}}\,=\,\frac{\pi}{2} - \omega_p
@@ -254,10 +254,10 @@ where :math:`M_p` is the planet mass, :math:`M_{\star}` is the star mass, :math:
 
 At any given time, the star's radial velocity depends on the planet's position in its orbit, defined by the true anomaly :math:`\phi`, and the systemic velocity along the line-of-sight, denoted as :math:`\gamma`. When measurements from multiple instruments are combined, it is standard practice to fit the systemic velocity individually for each source to account for instrumental variations, denoted :math:`\gamma_i`.
 
-The OrbDot models also include first and second-order acceleration terms, :math:`\dot{\gamma}` and :math:`\ddot{\gamma}` respectively, to accommodate potential perturbations from an outer, non-resonant companion planet with an orbital period longer than the observational baseline.nThus, the total observed radial velocity signal is:
+The OrbDot models also include first and second-order acceleration terms, :math:`\dot{\gamma}` and :math:`\ddot{\gamma}` respectively, to accommodate potential perturbations from an outer, non-resonant companion planet with an orbital period longer than the observational baseline. Thus, the total observed radial velocity signal is:
 
 .. math::
-    v_r = K[\cos{(\phi\left(t\right)+\omega_p)}+e\cos{\omega_p}] + \gamma_j
+    v_r = K[\cos{(\phi\left(t\right)+\omega_p)}+e\cos{\omega_p}] + \gamma_i
     + \dot{\gamma} \left(t-t_0\right) + \frac{1}{2} \ddot{\gamma}\left(t-t_0\right)^2
 
 where :math:`\omega_p` is the argument of pericenter of the planet's orbit and :math:`t_0` is the mid-time of a reference transit.
@@ -398,9 +398,7 @@ The following OrbDot functions are relevant to these effects:
 
 Apsidal Precession
 ------------------
-Apsidal precession is the gradual increase of the argument of pericenter of a planet's orbit :math:`\omega_p`, meaning the line that connects the pericenter and apocenter of the orbit rotates through :math:`2\pi` in one precession period.
-
-This effect may result from several factors, including general relativistic effects, perturbations from other planets, and gravitational moments arising from both the host star's rotation and planetary tidal bulges.
+Apsidal precession is the gradual increase of the argument of pericenter of a planet's orbit :math:`\omega_p`, meaning the line that connects the pericenter and apocenter of the orbit rotates through :math:`2\pi` in one precession period. This effect may result from several factors, including general relativistic effects, perturbations from other planets, and gravitational moments arising from both the host star's rotation and planetary tidal bulges.
 
 The following OrbDot functions are relevant to these effects:
 
@@ -470,9 +468,7 @@ Companion-Induced Precession
 
 Resolved Stellar Binary
 -----------------------
-If there is a bound stellar companion to a transiting exoplanet's host star, it may induce measurable secular variations in the radial velocity data.
-
-If such a companion has been observed and the angular separation is known, either from imaging or astrometric measurements, the following OrbDot functions may be used either to estimate its mass or, if the mass is known, its effect on the measured radial velocities:
+If there is a bound stellar companion to a transiting exoplanet's host star, it may induce measurable secular variations in the radial velocity data. If such a companion has been observed and the angular separation is known, either from imaging or astrometric measurements, the following OrbDot functions may be used:
 
 .. autofunction:: orbdot.models.theory.resolved_binary_mass_from_rv_trend
 .. autofunction:: orbdot.models.theory.resolved_binary_rv_trend_from_mass

@@ -3,17 +3,17 @@
 ********************************
 Long-Term Radial Velocity Trends
 ********************************
-This example demonstrates an OrbDot reproduction of the radial velocity analyses of the Hot Jupiter host stars HAT-P-4 and HAT-P-22 from *"The GAPS Programme with HARPS-N at TNG XIV"* by :cite:t:`Bonomo2017` and *"Friends of Hot Jupiters I"* by :cite:t:`Knutson2014`.
+This example demonstrates an OrbDot reproduction of results from *"The GAPS Programme with HARPS-N at TNG XIV"* by :cite:t:`Bonomo2017` and *"Friends of Hot Jupiters I"* by :cite:t:`Knutson2014` of the analyses of Hot Jupiter host stars HAT-P-4 and HAT-P-22.
 
 In both studies, the authors detect a statistically significant linear trend in the radial velocity measurements of HAT-P-4. For HAT-P-22, :cite:author:`Bonomo2017` measure a significant quadratic trend when combining their data with that of :cite:author:`Knutson2014`. In both cases, these long-term trends are suggestive of an outer planetary companion.
 
-Using compiled radial velocity measurements of HAT-P-4 and HAT-P-22 from :cite:author:`Bonomo2017` and :cite:author:`Knutson2014`, this example fits various models to the data, compares the Bayesian evidences, and uses OrbDot's :class:`~orbdot.analysis.Analyzer` class to and constrain properties of the possible outer companion.
+Using compiled radial velocity measurements of HAT-P-4 and HAT-P-22 from :cite:author:`Bonomo2017` and :cite:author:`Knutson2014`, this example runs various model fits, compares the Bayesian evidences, and uses OrbDot's :class:`~orbdot.analysis.Analyzer` class to constrain properties of a possible outer companion.
 
-There are two Python scripts for this example, saved as ``examples/example_hatp4.py`` and ``examples/example_hatp22.py``, that can be run without modifications.
+There are two Python scripts for this example that can be run without modifications, saved as ``examples/example_hatp4.py`` and ``examples/example_hatp22.py``.
 
 Setup
 =====
-Before running the model fits, we need to compile the radial velocity measurements into a single :ref:`data file <data-files>` for each host star, populate their star-planet :ref:`info files <info-file>`, and create a :ref:`settings files <settings-file>` for each analysis.
+Before running the model fits, we need to compile the radial velocity measurements into a single :ref:`data file <data-files>` for each host star, populate their star-planet :ref:`info files <info-file>`, and create the :ref:`settings files <settings-file>`.
 
 Data
 ----
@@ -218,7 +218,9 @@ The first part of the settings file specifies the path name for the system infor
           "system_info_file": "info_files/HAT-P-4_info.json",
     ...
 
-The next section(s) of the files are specific to the model fitting. Because we are only fitting radial velocity data in this example, we only need to provide an entry for the ``"RV_fit"`` key. The value for ``"RV_fit"`` is a dictionary that points to and describes the data file (``"data_file"`` and ``"data_delimiter"``), provides a sub-directory for saving the RV model fit results (``"save_dir"``), and specifies the desired sampling package (``"sampler"``), number of live points (``"n_live_points"``) and evidence tolerance (``"evidence_tolerance"``).
+The next sections are specific to the model fitting. As we are only fitting radial velocity data in this example, we only need to provide an entry for the ``"RV_fit"`` key.
+
+The value associated with ``"RV_fit"`` is a dictionary that points to and describes the data file (``"data_file"`` and ``"data_delimiter"``), provides a sub-directory for saving the RV model fit results (``"save_dir"``), and specifies the desired sampling package (``"sampler"``), number of live points (``"n_live_points"``) and evidence tolerance (``"evidence_tolerance"``).
 
 For this example, the ``"nestle"`` sampler has been specified with 1000 live points and an evidence tolerance of 0.01, which should balance well-converged results with a short run-time. For example,
 
@@ -238,7 +240,7 @@ For this example, the ``"nestle"`` sampler has been specified with 1000 live poi
            },
     ...
 
-The remaining portion of the settings file is for the ``"prior"`` dictionary, which defines the :ref:`prior distributions <priors>` for the model parameters. We need only populate this with the parameters that are to be included in the model fits, which in this case are the reference transit mid-time ``"t0"``, orbital period ``"P0"``, RV semi-amplitude ``"K"``, systemic velocity ``"v0"``, jitter ``"jit"``, first-order acceleration term ``"dvdt"``, second-order acceleration term ``"ddvdt"``, and the coupled parameters ``"ecosw"`` and ``"esinw"``.
+The remaining portion of the settings file defines the ``"prior"`` dictionary, which defines the :ref:`prior distributions <priors>` for the model parameters. We need only populate this with the parameters that are to be included in the model fits, which in this case are the reference transit mid-time ``"t0"``, orbital period ``"P0"``, RV semi-amplitude ``"K"``, systemic velocity ``"v0"``, jitter parameter ``"jit"``, the first-order acceleration term ``"dvdt"``, the second-order acceleration term ``"ddvdt"``, and the coupled parameters ``"ecosw"`` and ``"esinw"``.
 
 .. code-block:: JSON
 
@@ -285,7 +287,7 @@ Model Fits
 ----------
 To run the model fitting routines, the :meth:`~orbdot.radial_velocity.RadialVelocity.run_rv_fit` method is called with the free parameters given in a list of strings. In this example we are not considering a secular evolution of the orbit of HAT-P-4 b, so we may ignore the ``model`` argument, for which the default is already ``"constant"``.
 
-The following code snippet fits the radial velocity data to both circular and eccentric orbit models, without including any long-term trends (Models 1 and 2). Notice how the ``file_suffix`` argument is used to differentiate the fits, which is needed as they both apply the stable-orbit model (i.e. ``model="constant"``):
+The following code snippet fits the radial velocity data to both circular and eccentric orbit models, without including any long-term trends (Models 1 and 2):
 
 .. code-block:: python
 
@@ -294,6 +296,8 @@ The following code snippet fits the radial velocity data to both circular and ec
 
     # run an RV model fit of an eccentric orbit
     fit_eccentric = hatp4.run_rv_fit(['t0', 'P0', 'K', 'v0', 'jit', 'ecosw', 'esinw'], file_suffix='_eccentric')
+
+Notice how the ``file_suffix`` argument is used to differentiate the fits, which is necessary because they both apply the stable-orbit model (i.e. ``model="constant"``)
 
 Once the model fits are complete, the output files are found in the directory that was given in the settings file, in this case: ``examples/results/HAT-P-4/rv_fits/``. The dropdown menus below show the contents of the ``*_summary.txt`` files, which provide a convenient summary of the results.
 
@@ -365,11 +369,11 @@ Once the model fits are complete, the output files are found in the directory th
         dvdt = 0.0
         ddvdt = 0.0
 
-The best-fit parameter values are shown with uncertainties derived from the 68% confidence intervals, as well as some other useful information about the model fit. Notice how the instrument-dependent free parameters, ``"v0"`` and ``"jit"``, were automatically split into different variables for each data source.
+The best-fit parameter values are shown, with uncertainties derived from the 68% confidence intervals, as well as other useful information about the model fit. Notice how the instrument-dependent free parameters, ``"v0"`` and ``"jit"``, were automatically split into different variables for each data source.
 
 Though the Bayesian evidences for the two models, ``log(Z) = -161.6`` and ``log(Z) = -161.7``, are indistinguishable, the result of the eccentric orbit fit are consistent with that of a circular orbit. This finding is consistent with the results from both :cite:author:`Bonomo2017` and :cite:author:`Knutson2014`.
 
-Hence, we will focus on the circular orbit model for HAT-P-4 b, but this time including the long-term linear and quadratic trends (Models 3 and 4) with the ``"dvdt"`` and ``"ddvdt"`` parameters:
+Next, we will focus on the circular orbit model for HAT-P-4 b, this time including the long-term linear and quadratic trends with the ``"dvdt"`` and ``"ddvdt"`` parameters (Models 3 and 4):
 
 .. code-block:: python
 
@@ -443,7 +447,7 @@ Hence, we will focus on the circular orbit model for HAT-P-4 b, but this time in
         e0 = 0.0
         w0 = 0.0
 
-This time it is clear that the linear trend, with ``log(Z) = -150.66``, is a better fit to the data than a quadratic trend, which has ``log(Z) = -154.42``. We will quantify this further in the next section. The following table compares the OrbDot results for the best-fit linear trend model with those of :cite:author:`Bonomo2017` and :cite:author:`Knutson2014`:
+This time it is clear that the linear trend, with ``log(Z) = -150.66``, is a better fit to the data than a quadratic trend, which has ``log(Z) = -154.42``. We will quantify this further in the next section. The following table compares the OrbDot results for the best model with those of :cite:author:`Bonomo2017` and :cite:author:`Knutson2014`:
 
 .. list-table::
    :header-rows: 1
@@ -478,9 +482,9 @@ The following image displays the RV plot that is automatically generated during 
 
 Interpretation
 --------------
-Now that the model fitting is complete, we will use the :class:`~orbdot.analysis.Analyzer` class to help interpret the results. Creating an instance of the :class:`~orbdot.analysis.Analyzer` class requires the :class:`~orbdot.star_planet.StarPlanet` object (``hatp4``) and the results of a model fit. It is for this reason that we assigned the output of the model fits to the variables ``fit_circular``, ``fit_eccentric``, ``fit_linear``, and ``fit_quadratic``, above.
+Now that the model fitting is complete, we will use the :class:`~orbdot.analysis.Analyzer` class to help interpret the results. Creating an instance of the :class:`~orbdot.analysis.Analyzer` class requires the :class:`~orbdot.star_planet.StarPlanet` object and the results of a model fit. It is for this reason that we assigned the output of the model fits to the variables ``fit_circular``, ``fit_eccentric``, ``fit_linear``, and ``fit_quadratic``.
 
-The following code snippet creates an ``Analyzer`` object with the results of the linear trend fit:
+The following code snippet creates an ``Analyzer`` object with the results of the linear trend model fit:
 
 .. code-block:: python
 
@@ -491,7 +495,7 @@ We can now call any relevant :class:`~orbdot.analysis.Analyzer` methods, the res
 
 Model Comparison
 ^^^^^^^^^^^^^^^^
-Calling the :meth:`~orbdot.analysis.Analyzer.model_comparison` method compares the best-fit linear trend model to the other model fits by calculating the Bayes factor and evaluating the strength of the evidence with thresholds given by :cite:author:`KassRaftery1995`.
+Calling the :meth:`~orbdot.analysis.Analyzer.model_comparison` method compares the best-fit linear trend model to the others by calculating the Bayes factors and evaluating the strength of the evidence with thresholds given by :cite:t:`KassRaftery1995`.
 
 The following code snippet calls this method three times, once for each alternative model:
 
@@ -526,11 +530,11 @@ Now the analysis file looks like this:
           Model 1: 'rv_constant_linear', logZ = -150.66
           Model 2: 'rv_constant_quadratic', logZ = -154.42
 
-These comparisons confirm there is strong evidence supporting the model of a circular orbit for HAT-P-4 b with a long-term linear trend.
+These comparisons confirm that there is strong evidence supporting the model of a circular orbit for HAT-P-4 b with a long-term linear trend.
 
 Outer Companion Constraints
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-The final step of this example is to call the :meth:`~orbdot.analysis.Analyzer.unknown_companion` method, which will use the best-fit results to constrain the mass and orbit of an outer companion that could induce the acceleration needed to account for the linear trend:
+The final step of the HAT-P-4 analysis is to call the :meth:`~orbdot.analysis.Analyzer.unknown_companion` method, which will use the best-fit results to constrain the mass and orbit of an outer companion that could induce the acceleration needed to account for the linear trend:
 
 .. code-block:: python
 
@@ -552,7 +556,7 @@ This appends the following summary to the output file:
      * Apparent orbital period derivative induced by the line-of-sight acceleration:
           dP/dt = 7.21E+00 ms/yr
 
-The following table shows that these lower limits are compatible with the findings of :cite:author:`Knutson2014`. It is important to note that upper limits cannot be obtained from radial velocity data alone, and that :cite:author:`Knutson2014` performed additional analyses of AO imaging for this purpose.
+The following table shows that these lower limits are compatible with the findings of :cite:author:`Knutson2014`. The :cite:author:`Bonomo2017` study did not report these constraints, instead citing :cite:author:`Knutson2014` and noting that their best-fit parameters agree. It is important to note that upper limits cannot be obtained from radial velocity data alone, and that :cite:author:`Knutson2014` performed additional analyses of AO imaging for this purpose.
 
 .. list-table::
    :header-rows: 1
@@ -570,18 +574,16 @@ The following table shows that these lower limits are compatible with the findin
      - :math:`5-60`
      - :math:`>4.8`
 
-The :cite:author:`Bonomo2017` study did not report these constraints, instead citing :cite:author:`Knutson2014` and noting that their best-fit parameters agree.
-
 The following image displays a plot of the best-fit linear trend over the RV residuals, which is automatically generated by the :meth:`~orbdot.analysis.Analyzer.unknown_companion` method. It is saved in the file: ``examples/results/HAT-P-4/analysis/rv_constant_analysis_linear_rv_trend.png``.
 
 .. image:: _static/rv_constant_analysis_linear_rv_trend.png
-    :width: 800
+    :width: 700
 
 ------------
 
 HAT-P-22 b
 ==========
-In the second part of this example, we will study the radial velocities of the Hot Jupiter host star HAT-P-22, for which :cite:author:`Bonomo2017` found strong evidence of a long-term quadratic trend when combining their data with that of :cite:author:`Knutson2014`. At the time of the :cite:author:`Knutson2014` study, the observational baseline was not long enough to detect curvature in the data.
+We will now study the radial velocities of the Hot Jupiter host star HAT-P-22, for which :cite:author:`Bonomo2017` found strong evidence of a long-term quadratic trend when combining their data with that of :cite:author:`Knutson2014`. At the time of the :cite:author:`Knutson2014` study, the observational baseline was not long enough to detect curvature in the data.
 
 As this analysis follows the same procedure as above, we will move through it more quickly. Same as before, the first step is to create an instance of :class:`~orbdot.star_planet.StarPlanet` that represents HAT-P-22 b:
 
@@ -595,7 +597,7 @@ As this analysis follows the same procedure as above, we will move through it mo
 
 Model Fits
 ----------
-The following code snippet fits the HAT-P-22 radial velocity data to the circular and eccentric orbit models without long-term trends (Models 1 and 2):
+The following code snippet fits the HAT-P-22 radial velocity data to the circular and eccentric orbit models, without including long-term trends (Models 1 and 2):
 
 .. code-block:: python
 
@@ -677,7 +679,7 @@ Once the model fits are complete, the output files are found in the directory: `
 
 The Bayesian evidence implies that the circular orbit model, with ``log(Z) = -196.3``, is a better fit to the data than an eccentric orbit, which has ``log(Z) = -199.54``. These findings agree with the results from the :cite:author:`Bonomo2017` and :cite:author:`Knutson2014` studies.
 
-Hence, we will focus on the circular orbit model for HAT-P-22 b, this time including the long-term linear and quadratic trends (Models 3 and 4) with the ``"dvdt"`` and ``"ddvdt"`` parameters:
+Next, we will focus on the circular orbit model for HAT-P-22 b, this time including the long-term linear and quadratic trends with the ``"dvdt"`` and ``"ddvdt"`` parameters (Models 3 and 4):
 
 .. code-block:: python
 
@@ -751,7 +753,7 @@ Hence, we will focus on the circular orbit model for HAT-P-22 b, this time inclu
         e0 = 0.0
         w0 = 0.0
 
-These results show that the quadratic trend model, with ``log(Z) = -176.67``, is a far better fit to the data than the linear trend model, which has``log(Z) = -193.41``. The following table compares the OrbDot results for the best-fit quadratic trend model with those of :cite:author:`Bonomo2017`:
+These results show that the quadratic trend model, with ``log(Z) = -176.67``, is a far better fit to the data than the linear trend model, which has ``log(Z) = -193.41``. The following table compares the OrbDot results for the quadratic model with those of :cite:author:`Bonomo2017`:
 
 .. list-table::
    :header-rows: 1
@@ -768,7 +770,7 @@ These results show that the quadratic trend model, with ``log(Z) = -176.67``, is
      - :math:`\mathrm{m \, s^{-1} \, days^{-1}}`
      - :math:`-0.0328 \pm 0.0064`
      - :math:`-0.0353^{\,+0.0053}_{\,-0.0059}`
-   * - :math:`\ddot{\\gamma}`
+   * - :math:`\ddot{\gamma}`
      - :math:`\mathrm{m \, s^{-1} \, days^{-2}}`
      - :math:`2.26 \times 10^{-5} \pm 0.30 \times 10^{-5}`
      - :math:`2.29 \times 10^{-5} \pm 0.32 \times 10^{-5}`
@@ -828,7 +830,7 @@ Now the analysis file looks like this:
           Model 1: 'rv_constant_quadratic', logZ = -176.67
           Model 2: 'rv_constant_linear', logZ = -193.41
 
-These comparisons confirm that the evidence supporting the model of a circular orbit for HAT-P-22 b with a long-term quadratic trend is decisive.
+These comparisons confirm that the evidence supporting the model of a circular orbit with a long-term quadratic trend is decisive.
 
 Outer Companion Constraints
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -854,7 +856,7 @@ This appends the following summary to the ``analysis/rv_constant_analysis_quadra
           K_c > 31.77 m/s
           M_c > 2.87 M_jup
 
-The following table shows that these lower limits are in excellent agreement with the results from :cite:author:`Bonomo2017`:
+The following table demonstrates that these values are in excellent agreement with the results from :cite:author:`Bonomo2017`:
 
 .. list-table::
    :header-rows: 1
@@ -879,7 +881,7 @@ The following table shows that these lower limits are in excellent agreement wit
 The following image displays a plot of the best-fit quadratic trend over the RV residuals, which is automatically generated by the :meth:`~orbdot.analysis.Analyzer.unknown_companion` method. It is saved in the file: ``examples/results/HAT-P-22/analysis/rv_constant_analysis_quadratic_rv_trend.png``.
 
 .. image:: _static/rv_constant_analysis_quadratic_rv_trend.png
-    :width: 800
+    :width: 700
 
 ------------
 
