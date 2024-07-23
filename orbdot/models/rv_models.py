@@ -43,11 +43,15 @@ def rv_constant(t0, P0, e0, w0, K, v0, dvdt, ddvdt, t):
 
     Notes
     -----
+    .. tip::
+        In this model, the orbital elements do not evolve, which means that
+        :math:`\\omega_p=\\omega_0`, :math:`e=e_0`, and :math:`P=P_0`.
+
     The following steps outline the implementation of this method:
 
     1. **Calculate the true anomaly, eccentric anomaly, and mean anomaly at mid-transit.**
 
-     In the OrbDot coordinate system, we know that the true anomaly at the transit mid-time is:
+     In the OrbDot coordinate system, we know that the true anomaly at the transit center is:
 
      .. math::
             \\phi_0 = \\frac{\\pi}{2} - \\omega_p
@@ -83,7 +87,7 @@ def rv_constant(t0, P0, e0, w0, K, v0, dvdt, ddvdt, t):
 
      allowing for the eccentric anomaly to be determined by solving Kepler's equation:
 
-     .. math:: \\mathrm{E} = \\mathrm{M} + e \\sin \\mathrm{E}
+     .. math:: \\mathrm{M} = \\mathrm{E} - e \\sin \\mathrm{E}
 
      Finally, the true anomaly at time :math:`t` is determined by:
 
@@ -96,7 +100,7 @@ def rv_constant(t0, P0, e0, w0, K, v0, dvdt, ddvdt, t):
      Thus, the total radial velocity signal at time :math:`t` is:
 
      .. math::
-            v_r = K[\\cos{(\\phi(t)+\\omega_p)}+e\\cos{\\omega_p}] + \\gamma_j + \\dot{\\gamma}
+            v_r = K[\\cos{(\\phi+\\omega_p)}+e\\cos{\\omega_p}] + \\gamma_j + \\dot{\\gamma}
             \\left(t-t_0\\right) + \\frac{1}{2} \\ddot{\\gamma} \\left(t-t_0\\right)^2
 
      where :math:`K` is the semi-amplitude of the planetary signal, :math:`\\gamma_j` is the
@@ -173,6 +177,10 @@ def rv_decay(t0, P0, e0, w0, K, v0, dvdt, ddvdt, PdE, t):
 
     Notes
     -----
+    .. tip::
+        In this model, the eccentricity and argument of pericenter do not evolve, which means that
+        :math:`\\omega_p=\\omega_0` and :math:`e=e_0`.
+
     The following steps outline the implementation of this method:
 
     1. **Calculate the orbital period at the given time.**
@@ -183,13 +191,13 @@ def rv_decay(t0, P0, e0, w0, K, v0, dvdt, ddvdt, PdE, t):
      .. math::
             P\\left(E\\right) = P_0 + \\frac{dP}{dE}\\,E
 
-     where :math:`E` is calculated by rounding the result of the following equation to an
+     where :math:`E` is determined by rounding the result of the following equation to an
      integer value:
 
      .. math::
             E = \\frac{(t - t_0)}{P_0}
 
-    2. **Determine the latest time of pericenter passage.**
+    2. **Calculate the latest time of pericenter passage.**
 
      As the orbit shrinks, the relative time of pericenter passage will evolve, so it must be
      calculated relative to the most recent transit mid-time:
@@ -197,7 +205,7 @@ def rv_decay(t0, P0, e0, w0, K, v0, dvdt, ddvdt, PdE, t):
      .. math::
             t_{\\mathrm{I}} = t_0 + PE + \\frac{1}{2}\\frac{dP}{dE}\\,E^2
 
-     In the OrbDot coordinate system, we know that the true anomaly at the transit mid-time is:
+     In the OrbDot coordinate system, we know that the true anomaly at the transit center is:
 
      .. math::
             \\phi_{\\mathrm{I}} = \\frac{\\pi}{2} - \\omega_p
@@ -231,7 +239,7 @@ def rv_decay(t0, P0, e0, w0, K, v0, dvdt, ddvdt, PdE, t):
      allowing for the eccentric anomaly to be determined by solving Kepler's equation:
 
      .. math::
-            \\mathrm{E} = \\mathrm{M} + e \\sin \\mathrm{E}
+            \\mathrm{M} = \\mathrm{E} - e \\sin \\mathrm{E}
 
      Finally, the true anomaly at time :math:`t` is determined by:
 
@@ -244,7 +252,7 @@ def rv_decay(t0, P0, e0, w0, K, v0, dvdt, ddvdt, PdE, t):
      Thus, the total radial velocity signal at time :math:`t` is:
 
      .. math::
-            v_r = K[\\cos{(\\phi(t)+\\omega_p)}+e\\cos{\\omega_p}] + \\gamma_j + \\dot{\\gamma}
+            v_r = K[\\cos{(\\phi+\\omega_p)}+e\\cos{\\omega_p}] + \\gamma_j + \\dot{\\gamma}
             \\left(t-t_0\\right) + \\frac{1}{2} \\ddot{\\gamma} \\left(t-t_0\\right)^2
 
      where :math:`K` is the semi-amplitude of the planetary signal, :math:`\\gamma_j` is the
@@ -334,15 +342,15 @@ def rv_precession(t0, P0, e0, w0, K, v0, dvdt, ddvdt, wdE, t):
      :math:`E` it is:
 
      .. math::
-            \\omega\\left(E\\right) = \\omega_0 + \\frac{d\\omega}{dE}\\,E.
+            \\omega_p\\left(E\\right) = \\omega_0 + \\frac{d\\omega}{dE}\\,E.
 
-     where :math:`E` is calculated by rounding the result of the following equation to an
+     where :math:`E` is determined by rounding the result of the following equation to an
      integer value:
 
      .. math::
             E = \\frac{(t - t_0)}{P_0}
 
-    2. **Determine the latest time of pericenter passage.**
+    2. **Calculate the latest time of pericenter passage.**
 
      As the orbit is precessing, the relative time of pericenter passage will evolve and
      must be calculated relative to the most recent transit mid-time:
@@ -350,10 +358,10 @@ def rv_precession(t0, P0, e0, w0, K, v0, dvdt, ddvdt, wdE, t):
      .. math::
             t_{\\mathrm{I}} = t_0 + P_s E - \\frac{e P_a}{\\pi}\\cos{\\omega_p}
 
-     In the OrbDot coordinate system, we know that the true anomaly at the transit mid-time is:
+     In the OrbDot coordinate system, we know that the true anomaly at the transit center is:
 
      .. math::
-            \\phi_{\\mathrm{I}} = \\frac{\\pi}{2} - \\omega_p
+            \\phi_{\\mathrm{I}} = \\frac{\\pi}{2} - \\omega_p\\left(E\\right)
 
      The eccentric anomaly may then be calculated by:
 
@@ -397,13 +405,17 @@ def rv_precession(t0, P0, e0, w0, K, v0, dvdt, ddvdt, wdE, t):
      Thus, the total radial velocity signal at time :math:`t` is:
 
      .. math::
-            v_r = K[\\cos{(\\phi(t)+\\omega_p)}+e\\cos{\\omega_p}] + \\gamma_j +
+            v_r = K[\\cos{(\\phi\\left(t\\right)+\\omega_p)}+e\\cos{\\omega_p}] + \\gamma_j +
             \\dot{\\gamma} \\left(t-t_0\\right) + \\frac{1}{2} \\ddot{\\gamma} \\left(
             t-t_0\\right)^2
 
-     where :math:`K` is the semi-amplitude of the planetary signal, :math:`\\gamma_j` is the
-     systemic radial velocity, and :math:`\\dot{ \\gamma}` and :math:`\\ddot{\\gamma}` are first
-     and second-order acceleration terms, respectively.
+      where,
+
+      .. math:: \\omega_p\\left(E\\right)=w_0 + \\frac{d\\omega}{dE}\\,E
+
+      and where :math:`K` is the semi-amplitude of the planetary signal, :math:`\\gamma_j` is the
+      systemic radial velocity, and :math:`\\dot{ \\gamma}` and :math:`\\ddot{\\gamma}` are first
+      and second-order acceleration terms, respectively.
 
     """
     # determine the epoch of the most recent transit

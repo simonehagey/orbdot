@@ -45,11 +45,10 @@ def companion_doppler_pdot_from_rv_trend(P, dvdt):
 
     Notes
     -----
-    When radial velocity data of a transiting exoplanet's host star show a linear trend (i.e.,
-    acceleration), and assuming this trend is a real effect, the Doppler effect can cause the
-    observed period between transits to vary. This change in the transit period is produced by
-    the line-of-sight acceleration of the system. Equation (6) from Bouma et al. (2020) [1]_
-    expresses the expected period derivative in very convenient units:
+    When radial velocity data of a transiting exoplanet's host star show a linear trend,
+    and assuming this trend is a real effect, the Doppler effect can cause the observed period
+    between transits to vary. Equation (6) from Bouma et al. (2020) [1]_ expresses the expected
+    period derivative in convenient units:
 
     .. math::
         \\dot{P}_{\\mathrm{RV}} = 105.3 \\mathrm{\\,ms\\,yr^{-1}}\\left(\\frac{P}{\\mathrm{
@@ -147,12 +146,12 @@ def companion_mass_from_rv_trend(tau, dvdt, M_s):
     where :math:`\\tau` is the time span of the observations in years, :math:`\\dot{\\gamma}` is
     the linear radial velocity trend, and :math:`M_\\star` is the mass of the host star.
 
-    The above equation assumes that the companion's orbit has an eccentricity of 0.5, an argument
-    of pericenter that is exactly :math:`90` degrees, and a period that is :math:`1.25\\times`
-    the timespan of the observations. In this scenario, the observed linear trend in the radial
-    velocity model is a segment of the sawtooth-like curve of the companion planet (see Figure 1
-    of [1]_), for which the semi-amplitude can be approximated as half of the baseline multiplied
-    by the acceleration, :math:`K_c = 0.5 \\tau \\dot{\\gamma}`.
+    The above equation assumes that the companion's orbit has an eccentricity of :math:`e=0.5`,
+    an argument of pericenter that is exactly :math:`90` degrees, and a period that is
+    :math:`1.25\\times` the timespan of the observations. In this scenario, the observed linear
+    trend manifests as a segment of the sawtooth-like RV curve of the companion planet (see
+    Figure 1 of [1]_), for which the semi-amplitude can be approximated as half of the baseline
+    multiplied by the acceleration, i.e. :math:`K_c = 0.5 \\, \\tau \\, \\dot{\\gamma}`.
 
     References
     ----------
@@ -213,12 +212,12 @@ def companion_rv_trend_from_mass(tau, M_c, M_s):
     where :math:`\\tau` is the time span of the observations in years, :math:`M_c` is the mass of
     the companion planet, and :math:`M_\\star` is the mass of the host star.
 
-    The above equation assumes that the companion's orbit has an eccentricity of 0.5, an argument
-    of pericenter that is exactly :math:`90` degrees, and a period that is :math:`1.25\\times`
-    the timespan of the observations. In this scenario, the observed linear trend in the radial
-    velocity model is a segment of the sawtooth-like curve of the companion planet (see Figure 1
-    of [1]_), for which the semi-amplitude can be approximated as half of the baseline multiplied
-    by the acceleration, :math:`K_c = 0.5 \\tau \\dot{\\gamma}`.
+    The above equation assumes that the companion's orbit has an eccentricity of :math:`e=0.5`,
+    an argument of pericenter that is exactly :math:`90` degrees, and a period that is
+    :math:`1.25\\times` the timespan of the observations. In this scenario, the observed linear
+    trend manifests as a segment of the sawtooth-like RV curve of the companion planet (see
+    Figure 1 of [1]_), for which the semi-amplitude can be approximated as half of the baseline
+    multiplied by the acceleration, i.e. :math:`K_c = 0.5 \\, \\tau \\, \\dot{\\gamma}`.
 
     References
     ----------
@@ -236,12 +235,14 @@ def companion_rv_trend_from_mass(tau, M_c, M_s):
 def companion_from_quadratic_rv(P_min, t_pivot, dvdt, ddvdt, M_s):
     """Constrain properties of the orbit of an outer companion given a quadratic RV trend.
 
-    Given first and second order acceleration terms that describe a quadratic radial velocity
-    trend, :math:`\\dot{\\gamma}` and :math:`\\ddot{\\gamma}`, this method follows the formulation
-    from Kipping et al. (2011) [1]_ (see Equations 1, 3, and 4) to constrain properties of a
-    possible outer companion. It requires a minimum possible orbital period of the companion,
-    which should be informed by the timespan of the radial velocity measurements (see the
-    :meth:`~orbdot.analysis.Analyzer.rv_trend_quadratic` method from the
+    Given the first and second-order acceleration terms, :math:`\\dot{\\gamma}` and :math:`\\ddot{
+    \\gamma}`, that parameterize a long-term, quadratic radial velocity trend, this method follows
+    the formulation from Kipping et al. (2011) [1]_ (see Equations 1, 3, and 4) to constrain
+    properties of a possible outer companion.
+
+    This method requires an estimate of minimum possible orbital period of the companion,
+    which is constrained by the timespan of the radial velocity measurements. This is determined
+    by the :meth:`~orbdot.analysis.Analyzer.rv_trend_quadratic` method from the
     :class:`~orbdot.analysis.Analyzer` class).
 
     Parameters
@@ -249,9 +250,7 @@ def companion_from_quadratic_rv(P_min, t_pivot, dvdt, ddvdt, M_s):
     P_min : float
         The minimum orbital period of the companion in days.
     t_pivot : float
-        The "pivot" point in days. This is often fixed as the mean time of the RV observations,
-        but in the case of OrbDot joint fitting it is the reference mid-time of the transiting
-        planet :math:`t_0`.
+        The "pivot" point, defined as the reference mid-time of the transiting planet.
     dvdt : float
         First-order acceleration term in m/s/day.
     ddvdt : float
@@ -262,9 +261,9 @@ def companion_from_quadratic_rv(P_min, t_pivot, dvdt, ddvdt, M_s):
     Returns
     -------
     tuple
-        A tuple with the following elements: 1) the minimum possible companion period in days,
-        2) the corresponding lower limit on the RV semi-amplitude in m/s, 3) the companion mass in
-        Earth masses, and 4) the time when the outer companion RV signal is at a minimum.
+        A tuple with the following elements: 1) the minimum companion period in days,
+        2) the corresponding lower limit on the RV semi-amplitude, 3) the companion mass in
+        Earth masses, and 4) the time at which the companion RV signal is at a minimum.
 
     References
     ----------
@@ -290,12 +289,12 @@ def companion_precession(P, M2, P2, M_s):
     """
     Calculates the rate of apsidal precession driven by a nonresonant planetary companion.
 
-    This method returns the rate of apsidal precession expected to be induced by a nonresonant
-    companion planet in the system, calculated using equation (8) from Heyl and Gladman (2007) [1]_.
+    This method returns the expected rate of apsidal precession due to a nonresonant companion
+    planet, calculated using equation (8) from Heyl and Gladman (2007) [1]_.
 
-    This method is valid for a companion planet that is either interior or exterior to the
-    observed (i.e., transiting) planet, but it assumes that the companion mass is much less than
-    that of the host star.
+    It is valid for a companion planet that is either interior or exterior to the observed (i.e.
+    transiting) planet, but it assumes that the companion mass is much less than that of the host
+    star.
 
     Parameters
     ----------
@@ -315,30 +314,30 @@ def companion_precession(P, M2, P2, M_s):
 
     Notes
     -----
-    This method enables the exploration of the scenario in which a nonresonant companion in the
-    system is driving apsidal precession of a transiting planet. It assumes that the companion
-    object is on a circular, coplanar, and nonresonant orbit, and that its mass is far less than
-    the host star. In the formulation of Heyl and Gladman (2007) [1]_, the induced precession
-    rate in arcseconds per year is:
+    This method applies to the scenario in which a nonresonant companion in the system is driving
+    apsidal precession of a transiting planet. It assumes that the companion object is on a
+    circular, coplanar, and nonresonant orbit, and that its mass is far less than the host star.
+
+    In the formulation of Heyl and Gladman (2007) [1]_, the induced precession rate in arcseconds
+    per year is:
 
     .. math::
-        \\delta \\varpi = \\frac{m_2}{M_\\star} \\frac{\\alpha}{(\\alpha+1)(\\alpha-1)^2}\\left[
+        \\dot{\\omega} = \\frac{m_2}{M_\\star} \\frac{\\alpha}{(\\alpha+1)(\\alpha-1)^2}\\left[
         \\left(\\alpha^2+1\\right) \\mathcal{E}\\left(\\frac{2 \\alpha^{1 / 2}}{\\alpha+1}\\right)
         -(\\alpha-1)^2 \\mathcal{K}\\left(\\frac{2 \\alpha^{1/2}}{\\alpha+1}\\right)\\right]
 
-    where :math:`m_2` is the mass of the perturbing planet, :math:`\\alpha = a_1/a_2` is the
+    where :math:`m_2` is the mass of the perturbing planet, :math:`\\alpha = a/a_c` is the
     semi-major axis ratio, and :math:`\\mathcal{K}` and :math:`\\mathcal{E}` are the complete
     elliptic integrals of the first and second kind, respectively.
 
     .. important::
         The ``scipy`` implementation of the complete elliptic integrals :math:`\\mathcal{K}` and
         :math:`\\mathcal{E}` expect an integrand of the form :math:`(1 - m \\sin^2 t)^{ -1/2}`.
-        However the derivation of the above equation by :cite:author:`Heyl2007` [1]_ expects an
-        integrand of the form :math:`(1 - m^2 \\sin^2 t)^{-1/2}`, which can be shown by expanding
-        :math:`\\mathcal{ K}` and :math:`\\mathcal{E}`. To maintain consistency, the input for
-        the ``scipy.special.ellipe`` and ``scipy.special.ellipk`` methods must but squared,
-        ie. such that :math:`\\mathcal{K}(4 \\alpha/( \\alpha+1)^2)` and :math:`\\mathcal{E}(4
-        \\alpha/( \\alpha+1)^2)`.
+        However, the derivation of the equation above expects an integrand of the form :math:`(1
+        - m^2 \\sin^2 t)^{-1/2}` [1]_, which can be shown by expanding :math:`\\mathcal{ K}` and
+        :math:`\\mathcal{E}`. To maintain consistency, the input for the ``scipy.special.ellipe``
+        and ``scipy.special.ellipk`` methods must but squared, ie. such that :math:`\\mathcal{K}(
+        4 \\alpha/( \\alpha+1)^2)` and :math:`\\mathcal{E}(4 \\alpha/( \\alpha+1)^2)`.
 
     References
     ----------
@@ -402,30 +401,30 @@ def companion_mass_from_precession(P, P2, dwdE, M_s):
 
     Notes
     -----
-    This method enables the exploration of the scenario in which a nonresonant companion in the
-    system is driving apsidal precession of a transiting planet. It assumes that the companion
-    object is on a circular, coplanar, and nonresonant orbit, and that its mass is far less than
-    the host star. In the formulation of Heyl and Gladman (2007) [1]_, the mass of the companion
-    planet can be calculated from the precession rate as:
+    This method applies to the scenario in which a nonresonant companion in the system is driving
+    apsidal precession of a transiting planet. It assumes that the companion object is on a
+    circular, coplanar, and nonresonant orbit, and that its mass is far less than the host star.
+
+    In the formulation of Heyl and Gladman (2007) [1]_, the mass of the companion planet can be
+    determined from the measured precession rate by:
 
     .. math::
-        m_2 = \\delta \\varpi \\frac{M_\\star (\\alpha+1)(\\alpha-1)^2}{\\alpha \\left[
+        m_2 = \\dot{\\omega} \\frac{M_\\star (\\alpha+1)(\\alpha-1)^2}{\\alpha \\left[
         \\left(\\alpha^2+1\\right) \\mathcal{E}\\left(\\frac{2 \\alpha^{1 / 2}}{\\alpha+1}\\right)
         - (\\alpha-1)^2 \\mathcal{K}\\left(\\frac{2 \\alpha^{1/2}}{\\alpha+1}\\right)\\right]}
 
-    where :math:`\\delta \\varpi` is the observed precession rate, :math:`\\alpha = a_1/a_2` is
+    where :math:`\\dot{\\omega}` is the observed precession rate, :math:`\\alpha = a/a_c` is
     the semimajor axis ratio, and :math:`\\mathcal{K}` and :math:`\\mathcal{E}` are the complete
     elliptic integrals of the first and second kind, respectively.
 
     .. important::
         The ``scipy`` implementation of the complete elliptic integrals :math:`\\mathcal{K}` and
         :math:`\\mathcal{E}` expect an integrand of the form :math:`(1 - m \\sin^2 t)^{ -1/2}`.
-        However the derivation of the above equation by :cite:author:`Heyl2007` [1]_ expects an
-        integrand of the form :math:`(1 - m^2 \\sin^2 t)^{-1/2}`, which can be shown by expanding
-        :math:`\\mathcal{ K}` and :math:`\\mathcal{E}`. To maintain consistency, the input for
-        the ``scipy.special.ellipe`` and ``scipy.special.ellipk`` methods must but squared,
-        ie. such that :math:`\\mathcal{K}(4 \\alpha/( \\alpha+1)^2)` and :math:`\\mathcal{E}(4
-        \\alpha/( \\alpha+1)^2)`.
+        However, the derivation of the equation above expects an integrand of the form :math:`(1
+        - m^2 \\sin^2 t)^{-1/2}` [1]_, which can be shown by expanding :math:`\\mathcal{ K}` and
+        :math:`\\mathcal{E}`. To maintain consistency, the input for the ``scipy.special.ellipe``
+        and ``scipy.special.ellipk`` methods must but squared, ie. such that :math:`\\mathcal{K}(
+        4 \\alpha/( \\alpha+1)^2)` and :math:`\\mathcal{E}(4 \\alpha/( \\alpha+1)^2)`.
 
     References
     ----------
@@ -623,17 +622,16 @@ def decay_empirical_quality_factor(P_orb, P_rot_s):
     Penev et al. (2018) [1]_:
 
     .. math::
-        Q^{'}_\\star = \\max\\left(\\frac{10^6}{(P_{\\mathrm{tide}}/\\mathrm{day})^{3.1}},
+        Q^{'}_\\star = \\max\\left(\\frac{10^6}{(P_{\\mathrm{tide}}/\\mathrm{day})^{3.1}}, \\,
         10^5\\right)
 
-    where :math:`P_{\\mathrm{tide}}` is the tidal forcing period of the star-planet system,
-    defined as:
+    where :math:`P_{\\mathrm{tide}}` is the tidal forcing period of the system, defined as:
 
     .. math::
         P_{\\mathrm{tide}} = \\frac{1}{2\\left(P_{\\mathrm{orb}}^{-1} - P_{\\mathrm{rot}}^{
         -1}\\right)}
 
-    and where :math:`P_{\\mathrm{orb}}` is the planet's orbital period and :math:`P_{\\mathrm{rot}}`
+    where :math:`P_{\\mathrm{orb}}` is the planet's orbital period and :math:`P_{\\mathrm{rot}}`
     is the rotational period of the host star.
 
     References
@@ -675,7 +673,7 @@ def decay_timescale(P, dPdE):
     .. math:: \\tau = \\frac{P_0}{|\\dot{P}_{\\mathrm{decay}}|}
 
     where :math:`\\dot{P}_{\\mathrm{decay}}` is the orbital decay rate, and :math:`P_0` is the
-    initial orbital period.
+    observed orbital period.
 
     """
     # convert days/orbit to days/yr
@@ -703,7 +701,7 @@ def decay_energy_loss(P, dPdE, M_s, M_p):
     M_s : float
         Mass of the host star in solar masses.
     M_p : float
-        Mass of the planet in Earth masses.
+        Mass of the planet in earth masses.
 
     Returns
     -------
@@ -759,7 +757,7 @@ def decay_angular_momentum_loss(P, dPdE, M_s, M_p):
     M_s : float
         Host star mass in solar masses.
     M_p : float
-        Planet mass in Earth masses.
+        Planet mass in earth masses.
 
     Returns
     -------
@@ -797,140 +795,6 @@ def decay_angular_momentum_loss(P, dPdE, M_s, M_p):
 
     # return the rate of angular momentum loss in kg m^2 / s^2
     return dLdt
-
-
-def get_tdot_from_wdot(P, e, w, i, T, dwdE, M_s, R_s):
-    """Calculate the expected transit duration variation (TDV) due to apsidal precession.
-
-    This method determines the expected TDV signal for apsidal precession in general, independent
-    of the physical mechanism. It uses Equation (9) from Rafikov (2009) [1]_, assuming there is
-    no change in the line-of-sight inclination over time.
-
-    Parameters
-    ----------
-    P : float
-        The orbital period in days.
-    e : float
-        The eccentricity of the orbit.
-    w : float
-        The argument of pericenter in radians.
-    i : float
-        The line-of-sight inclination in degrees.
-    T : float
-        The transit duration in minutes.
-    dwdE : float
-        The precession rate in radians per epoch.
-    M_s : float
-        The host star mass in solar masses.
-    R_s : float
-        The host star radius in solar radii.
-
-    Returns
-    -------
-    float
-        The time derivative of the transit duration in milliseconds per year (ms/yr).
-
-    Notes
-    -----
-    For transiting exoplanets, apsidal precession causes the duration of the transits :math:`T`
-    to vary over time. Assuming that the line-of-sight inclination :math:`i` of the orbit is
-    constant, the expected transit duration variation (TDV) is given by [1]_:
-
-    .. math::
-        \\dot{T} = -\\frac{T}{1 + e\\sin{\\omega}} \\left[e\\dot{\\omega}\\cos{\\omega} -
-        g \\dot{\\omega}\\cos{i}\\frac{e\\cos{\\omega}}{1+e\\sin{\\omega}}\\right]
-
-    where,
-
-    .. math:: g = \\frac{a}{R_\\star}\\frac{b}{1 - b^2}
-
-    and where :math:`e` is the orbit eccentricity, :math:`\\omega` is the argument of pericenter,
-    :math:`\\dot{\\omega}` is the apsidal precession rate, :math:`b` is the impact parameter,
-    :math:`a` is the semi-major axis, and :math:`R_\\star` is the radius of the host star.
-
-    References
-    ----------
-    .. [1] :cite:t:`Rafikov2009`. https://doi.org/10.1088/0004-637X/700/2/965
-
-    """
-    # unit conversions
-    i *= np.pi / 180     # degrees to radians
-    R_s *= R_sun         # solar radii to m
-    T *= 60 * 1000       # minutes to ms
-    wdot = dwdE * (1 / P) * 365.25   # rad/E to rad/yr
-
-    # derive parameters
-    a = get_semi_major_axis_from_period(P, M_s)
-    b = (a / R_s) * np.cos(i) * (1 - e ** 2) / (1 + e * np.sin(w))
-    g = (a / R_s) * b / (1 - b ** 2)
-
-    # calculate the transit duration variation
-    t1 = - T / (1 + e * np.sin(w))
-    t2 = e * wdot * np.cos(w)
-    t3 = - g * (wdot * np.cos(i) * e * np.cos(w)/(1 + e * np.sin(w)))
-
-    # return the TDV rate in ms/yr
-    return t1 * (t2 + t3)
-
-
-def get_pdot_from_wdot(P, e, w, dwdE):
-    """Calculate the apparent time derivative of the orbital period due to apsidal precession.
-
-    This method determines the apparent time derivative of the orbital period due to apsidal
-    precession in general, independent of the physical mechanism. It uses Equation (17) from
-    Rafikov (2009) [1]_.
-
-    Parameters
-    ----------
-    P : float
-        The orbital period in days.
-    e : float
-        The eccentricity of the orbit.
-    w : float
-        The argument of pericenter in radians.
-    dwdE : float
-        The precession rate in radians per epoch.
-
-    Returns
-    -------
-    float
-        The time derivative of the orbital period in milliseconds per year (ms/yr).
-
-    Notes
-    -----
-    For transiting exoplanets, apsidal precession causes the sidereal period, i.e. the length of
-    time between transits, to vary over time. Because apsidal precession periods are typically
-    far greater than observational baselines, this effect yields an *apparent* time derivative
-    :math:`\\dot{P}`.
-
-    Equation (17) of Rafikov (2009) [1]_ expresses this as:
-
-    .. math::
-        \\dot{P} = \\frac{4\\pi\\left(\\dot{\\omega}\\right)^2 e\\cos\\omega}{
-        n^2}\\frac{\\left(1-e^2\\right)^{3/2}}{(1+e\\sin\\omega)^3}
-
-    where :math:`e` is the orbit eccentricity, :math:`\\omega_p` is the argument of pericenter,
-    :math:`\\dot{\\omega}` is the apsidal precession rate, and :math:`n = 2\\pi/P` is the
-    orbital mean motion.
-
-    References
-    ----------
-    .. [1] :cite:t:`Rafikov2009`. https://doi.org/10.1088/0004-637X/700/2/965
-
-    """
-    # derive parameters
-    nu = 2 * np.pi / P
-
-    # unit conversions
-    dwdt = dwdE * (1 / P) * 365.25   # rad/E to rad/yr
-
-    # calculate the apparent period derivative
-    t1 = e * np.cos(w) * (1 - e ** 2) ** (3 / 2) / (1 + e * np.sin(w)) ** 3
-    t2 = 4 * np.pi * (dwdt / nu) ** 2
-    pdot = t1 * t2   # days^2/yr^2
-
-    # return the apparent period derivative in ms/yr
-    return pdot * (1 / 365.25) * 8.64e+7
 
 
 def precession_gr(P, e, M_s):
@@ -1281,10 +1145,10 @@ def precession_tidal_planet(P, e, M_s, M_p, R_p, k2_p):
 
     Notes
     -----
-    The host star of a massive, close-in planet may raise a significant "tidal bulge" on the host
-    star, an ellipsoidal distortion caused by the varying gravitational force experienced across
+    The host star of a massive, close-in planet may raise a significant "tidal bulge" on the
+    planet, an ellipsoidal distortion caused by the varying gravitational force experienced across
     the extent of the body, driving apsidal precession. The rate of apsidal precession that is
-    induced by the star's tidal bulge is given in Equation (6) of Ragozzine and Wolf (2009) [1]_
+    induced by the planet's tidal bulge is given in Equation (6) of Ragozzine and Wolf (2009) [1]_
     as:
 
     .. math::
@@ -1509,6 +1373,140 @@ def precession_tidal_star_k2(P, e, M_s, M_p, R_s, dwdE):
     return k2_s
 
 
+def get_pdot_from_wdot(P, e, w, dwdE):
+    """Calculate the apparent time derivative of the orbital period due to apsidal precession.
+
+    This method determines the apparent time derivative of the orbital period due to apsidal
+    precession in general, independent of the physical mechanism. It uses Equation (17) from
+    Rafikov (2009) [1]_.
+
+    Parameters
+    ----------
+    P : float
+        The orbital period in days.
+    e : float
+        The eccentricity of the orbit.
+    w : float
+        The argument of pericenter in radians.
+    dwdE : float
+        The precession rate in radians per epoch.
+
+    Returns
+    -------
+    float
+        The time derivative of the orbital period in milliseconds per year (ms/yr).
+
+    Notes
+    -----
+    For transiting exoplanets, apsidal precession causes the sidereal period, i.e. the length of
+    time between transits, to vary over time. Because apsidal precession periods are typically
+    far greater than observational baselines, this effect yields an *apparent* time derivative
+    :math:`\\dot{P}`.
+
+    Equation (17) of Rafikov (2009) [1]_ expresses this as:
+
+    .. math::
+        \\dot{P} = \\frac{4\\pi\\left(\\dot{\\omega}\\right)^2 e\\cos\\omega_p}{
+        n^2}\\frac{\\left(1-e^2\\right)^{3/2}}{(1+e\\sin\\omega_p)^3}
+
+    where :math:`e` is the orbit eccentricity, :math:`\\omega_p` is the argument of pericenter,
+    :math:`\\dot{\\omega}` is the apsidal precession rate, and :math:`n = 2\\pi/P` is the
+    orbital mean motion.
+
+    References
+    ----------
+    .. [1] :cite:t:`Rafikov2009`. https://doi.org/10.1088/0004-637X/700/2/965
+
+    """
+    # derive parameters
+    nu = 2 * np.pi / P
+
+    # unit conversions
+    dwdt = dwdE * (1 / P) * 365.25   # rad/E to rad/yr
+
+    # calculate the apparent period derivative
+    t1 = e * np.cos(w) * (1 - e ** 2) ** (3 / 2) / (1 + e * np.sin(w)) ** 3
+    t2 = 4 * np.pi * (dwdt / nu) ** 2
+    pdot = t1 * t2   # days^2/yr^2
+
+    # return the apparent period derivative in ms/yr
+    return pdot * (1 / 365.25) * 8.64e+7
+
+
+def get_tdot_from_wdot(P, e, w, i, T, dwdE, M_s, R_s):
+    """Calculate the expected transit duration variation (TDV) due to apsidal precession.
+
+    This method determines the expected TDV signal for apsidal precession in general, independent
+    of the physical mechanism. It uses Equation (9) from Rafikov (2009) [1]_, assuming there is
+    no change in the line-of-sight inclination over time.
+
+    Parameters
+    ----------
+    P : float
+        The orbital period in days.
+    e : float
+        The eccentricity of the orbit.
+    w : float
+        The argument of pericenter in radians.
+    i : float
+        The line-of-sight inclination in degrees.
+    T : float
+        The transit duration in minutes.
+    dwdE : float
+        The precession rate in radians per epoch.
+    M_s : float
+        The host star mass in solar masses.
+    R_s : float
+        The host star radius in solar radii.
+
+    Returns
+    -------
+    float
+        The time derivative of the transit duration in milliseconds per year (ms/yr).
+
+    Notes
+    -----
+    For transiting exoplanets, apsidal precession causes the duration of the transits :math:`T`
+    to vary over time. Assuming that the line-of-sight inclination :math:`i` of the orbit is
+    constant, the expected transit duration variation (TDV) is given by [1]_:
+
+    .. math::
+        \\dot{T} = -\\frac{T}{1 + e\\sin{\\omega_p}} \\left[e \\, \\dot{\\omega}\\cos{\\omega_p} -
+        g \\, \\dot{\\omega}\\cos{i}\\frac{e\\cos{\\omega_p}}{1+e\\sin{\\omega_p}}\\right]
+
+    where,
+
+    .. math:: g = \\frac{a}{R_\\star}\\frac{b}{1 - b^2}
+
+    and where :math:`e` is the orbit eccentricity, :math:`\\omega_p` is the argument of pericenter,
+    :math:`\\dot{\\omega}` is the apsidal precession rate, :math:`b` is the impact parameter,
+    :math:`a` is the semi-major axis, and :math:`R_\\star` is the radius of the host star.
+
+    References
+    ----------
+    .. [1] :cite:t:`Rafikov2009`. https://doi.org/10.1088/0004-637X/700/2/965
+
+    """
+    # unit conversions
+    i *= np.pi / 180     # degrees to radians
+    R_s *= R_sun         # solar radii to m
+    T *= 60 * 1000       # minutes to ms
+    wdot = dwdE * (1 / P) * 365.25   # rad/E to rad/yr
+
+    # derive parameters
+    a = get_semi_major_axis_from_period(P, M_s)
+    b = (a / R_s) * np.cos(i) * (1 - e ** 2) / (1 + e * np.sin(w))
+    g = (a / R_s) * b / (1 - b ** 2)
+
+    # calculate the transit duration variation
+    t1 = - T / (1 + e * np.sin(w))
+    t2 = e * wdot * np.cos(w)
+    t3 = - g * (wdot * np.cos(i) * e * np.cos(w)/(1 + e * np.sin(w)))
+
+    # return the TDV rate in ms/yr
+    return t1 * (t2 + t3)
+
+
 def proper_motion_idot(mu, beta):
     """Calculate the apparent rate of change of the inclination due to systemic proper motion.
 
@@ -1636,10 +1634,10 @@ def proper_motion_pdot(P, e, w, mu):
 
     .. math::
         \\dot{P}_{\\omega,\\mu} = -\\frac{2\\pi}{n^2} \\frac{(1-e^2)^{3/2}}{(1+e\\sin{
-        \\omega})^2} \\times \\left[\\ddot{\\omega}_{\\mu}-2(\\dot{\\omega}_{\\mu})^2\\frac{
-        e\\cos{\\omega}}{1+e\\sin{\\omega}}\\right]
+        \\omega_p})^2} \\times \\left[\\ddot{\\omega}_{\\mu}-2(\\dot{\\omega}_{\\mu})^2\\frac{
+        e\\cos{\\omega_p}}{1+e\\sin{\\omega_p}}\\right]
 
-    where :math:`e` is the orbit eccentricity, :math:`\\omega` is the argument of pericenter,
+    where :math:`e` is the orbit eccentricity, :math:`\\omega_p` is the argument of pericenter,
     :math:`n` is the orbital mean motion, :math:`\\dot{\\omega}_{\\mu}` is the apparent
     precession rate, and :math:`\\ddot{\\omega}_{\\mu}` is the time derivative of the latter.
 
@@ -1706,11 +1704,12 @@ def proper_motion_tdot(P, e, w, i, T, wdot_pm, idot_pm, M_s, R_s):
 
     Notes
     -----
+
     The systemic proper motion of a transiting star-planet system can have a significant
-    influence on the observed transit duration, :math:`T`, due to a combination of the proper
-    motion-induced variation of the line-of-sight inclination :math:`\\dot{i}_\\mu`, as well as
-    the *apparent* apsidal precession :math:`\\dot{\\omega}_{\\mu}`. The transit duration
-    variation (TDV) is governed by the followingn expression [1]_:
+    influence on the observed transit duration, :math:`T`, due to the proper motion-induced
+    variation of the line-of-sight inclination :math:`\\dot{i}_\\mu` and the *apparent* apsidal
+    precession :math:`\\dot{\\omega}_{\\mu}`. The transit duration variation (TDV) is governed by
+    the following expression [1]_:
 
     .. math::
         \\dot{T}_{\\mu} = - \\frac{T}{1 + e\\sin{\\omega_p}} \\times \\left[e\\dot{\\omega}_{
@@ -1810,8 +1809,12 @@ def resolved_binary_rv_trend_from_mass(theta, D, M_B):
     This method returns the minimum possible acceleration, induced by a bound stellar companion,
     that may be observed in radial velocity observations of the primary. The secondary star must
     have been resolved through imaging or astrometric measurements such that the angular
-    separation is known. This uses equation (6) from Torres (1999) [1]_, under the assumption
-    that the radial velocity trend is due entirely to the gravitational influence of the secondary.
+    separation is known.
+
+    It uses Equation (6) from Torres (1999) [1]_ to estimate a lower limit for the mass of the
+    secondary object, under the assumption that the radial velocity trend is due entirely to its
+    gravitational influence. In the derivation of this equation, the author makes no assumptions
+    about the mass or brightness of the secondary [1]_.
 
     Parameters
     ----------
@@ -1831,10 +1834,10 @@ def resolved_binary_rv_trend_from_mass(theta, D, M_B):
     -----
     Given the angular separation of a known companion object, the distance to the system, and the
     mass of the companion, this method uses Equation (6) from Torres et al. (1999) [1]_ to estimate
-    the minimum possible acceleration in radial velocity observations:
+    the minimum acceleration that could be measured in radial velocity data:
 
     .. math::
-        \\left|\\frac{d(R V)}{d t}\\right| = \\frac{M_B}{5.341 \\times 10^{-6}(D \\rho)^2 \\Phi}
+        \\left|\\dot{\\gamma}\\right| = \\frac{M_B}{5.341 \\times 10^{-6}(D \\rho)^2 \\Phi}
 
     where :math:`\\rho` is the angular separation of the binary in arcseconds, :math:`D` is the
     distance to the system in parsecs, and :math:`M_B` is the mass of the stellar companion in
@@ -1842,9 +1845,9 @@ def resolved_binary_rv_trend_from_mass(theta, D, M_B):
     or brightness of the secondary [1]_.
 
     The parameter :math:`\\Phi` is a function of the eccentricity, longitude of pericenter,
-    and inclination of the companion's orbit. Assuming these parameters are unconstrained, this
-    method uses the minimum value :math:`\\Phi = \\frac{3\\sqrt{3}}{2}` to determine the minimum
-    companion mass.
+    and inclination of the companion's orbit. Assuming that these parameters are unconstrained,
+    this method uses the minimum value :math:`\\Phi = \\frac{3\\sqrt{3}}{2}` to determine the
+    minimum companion mass.
 
     References
     ----------
@@ -1866,9 +1869,12 @@ def resolved_binary_mass_from_rv_trend(theta, D, dvdt):
 
     This method applies to the case where an acceleration has been observed in radial velocity
     observations of a star, and there is a known secondary object for which an angular separation
-    has been measured. It uses Equation (6) from Torres (1999) [1]_ to estimate a lower limit for
-    the mass of the secondary object, under the assumption that the radial velocity trend is due
-    entirely to its gravitational influence.
+    has been measured.
+
+    It uses Equation (6) from Torres (1999) [1]_ to estimate a lower limit for the mass of the
+    secondary object, under the assumption that the radial velocity trend is due entirely to its
+    gravitational influence. In the derivation of this equation, the author makes no assumptions
+    about the mass or brightness of the secondary [1]_.
 
     Parameters
     ----------
@@ -1890,17 +1896,16 @@ def resolved_binary_mass_from_rv_trend(theta, D, dvdt):
     measured acceleration in radial velocity observations, this method uses Equation (6) from
     Torres (1999) [1]_ to estimate the minimum mass of the companion:
 
-    .. math:: M_B = 5.341 \\times 10^{-6}(D \\rho)^2\\left|\\frac{d(R V)}{d t}\\right| \\Phi
+    .. math:: M_B = 5.341 \\times 10^{-6}(D \\rho)^2\\left|\\dot{\\gamma}\\right| \\Phi
 
     where :math:`\\rho` is the angular separation of the binary in arcseconds, :math:`D` is the
-    distance to the system in parsecs, and :math:`\\frac{d(R V)}{d t}` is the measured radial
-    acceleration. In the derivation of this equation, the author makes no assumptions about the
-    mass or brightness of the secondary [1]_.
+    distance to the system in parsecs, and :math:`\\dot{\\gamma}` is the measured radial
+    acceleration.
 
     The parameter :math:`\\Phi` is a function of the eccentricity, longitude of pericenter,
-    and inclination of the companion's orbit. Assuming these parameters are unconstrained, this
-    method uses the minimum value :math:`\\Phi = \\frac{3\\sqrt{3}}{2}` to determine the minimum
-    companion mass.
+    and inclination of the companion's orbit. Assuming that these parameters are unconstrained,
+    this method uses the minimum value :math:`\\Phi = \\frac{3\\sqrt{3}}{2}` to determine the
+    minimum companion mass.
 
     References
     ----------
