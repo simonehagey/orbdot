@@ -5,7 +5,7 @@ Model Fitting
 **************
 Before reading this section, it is recommended to go through the :ref:`getting-started` page and check out the examples :ref:`example-wasp-12` and :ref:`example-rv-trends`.
 
-To start, a :class:`~orbdot.star_planet.StarPlanet` object must be created that represents the star-planet system. The following code snippet, continuing to use WASP-12 b as an example, demonstrates the creation of a :class:`~orbdot.star_planet.StarPlanet` object:
+To begin, a :class:`~orbdot.star_planet.StarPlanet` object is created that represents the star-planet system. The following code snippet, using WASP-12 b as an example, demonstrates the creation of a :class:`~orbdot.star_planet.StarPlanet` object:
 
 .. code-block:: python
 
@@ -22,7 +22,7 @@ Running Model Fits
 ==================
 To run the model fitting routines, one of the following methods is called on the :class:`~orbdot.star_planet.StarPlanet` object: :meth:`~orbdot.joint_fit.JointFit.run_joint_fit`, :meth:`~orbdot.transit_timing.TransitTiming.run_ttv_fit`, :meth:`~orbdot.radial_velocity.RadialVelocity.run_rv_fit`, and :meth:`~orbdot.transit_duration.TransitDuration.run_tdv_fit`.
 
-These methods all have three critical arguments, listed in the following table:
+These methods have three key arguments in common:
 
 .. list-table::
    :header-rows: 1
@@ -30,15 +30,15 @@ These methods all have three critical arguments, listed in the following table:
    * - Argument
      - Description
    * - ``free_params``
-     - The list of free parameters for the model fit, formatted as strings in any order.
+     - The free parameters for the model fit, formatted as a list of strings in any order.
    * - ``model``
      - The evolutionary model, must be ``"constant"``, ``"decay"``, or ``"precession"``. Default is ``"constant"``.
    * - ``file_suffix``
-     - A string appended to the end of the output file names.
+     - An optional string appended to the end of the output file names.
 
-The free parameters (``free_params``) can be given in any order, but an error will be raised if they are not part of the physical model. See :ref:`model_parameters` for more information on the model parameters.
+The free parameters (``free_params``) can be given in any order, but an error will be raised if they are not part of the physical model. See :ref:`model_parameters` for more information on the model parameters and their symbols.
 
-The ``model`` argument specifies the evolutionary model to be fit, and must be one of: ``"constant"`` for the constant-period model, ``"decay"`` for orbital decay, or ``"precession"`` for apsidal precession. The default argument is ``"constant"``. See :ref:`models` for more detail.
+The ``model`` argument specifies the evolutionary model to be fit, and must be either ``"constant"`` for the constant-period model, ``"decay"`` for orbital decay, or ``"precession"`` for apsidal precession. The default argument is ``"constant"``. See :ref:`models` for more information.
 
 The optional ``file_suffix`` argument enables separate fits of the same model to be differentiated. This functionality is nicely illustrated in :ref:`example-rv-trends`, which uses, for example, the arguments ``file_suffix="_circular"`` and ``file_suffix="_eccentric"``.
 
@@ -52,11 +52,11 @@ The transit and eclipse timing fits are run by calling the :meth:`~orbdot.transi
     wasp12.run_ttv_fit(['t0', 'P0', 'PdE'], model='decay')
     wasp12.run_ttv_fit(['t0', 'P0', 'e0', 'w0', 'wdE'], model='precession')
 
-TTV Data "Clipping"
-^^^^^^^^^^^^^^^^^^^
-When fitting the transit and eclipse mid-times with the :meth:`~orbdot.transit_timing.TransitTiming.run_ttv_fit` method, there is an option to employ a sigma-clipping routine to remove outliers in the transit mid-times, which may be useful for datasets with high variance :cite:p:`Hagey2022`.
+TTV "clipping"
+^^^^^^^^^^^^^^
+When fitting transit mid-times there is an option to employ a sigma-clipping routine to remove outliers in the transit mid-times, which may be useful for data sets with high variance :cite:p:`Hagey2022`.
 
-Giving the argument ``sigma_clip=True`` runs the :meth:`~orbdot.transit_timing.TransitTiming.clip` method before the requested model fit. Any subsequent model fits will use the cleaned dataset, so ``sigma_clip=True`` only needs to be specified once. For example,
+Providing the argument ``sigma_clip=True`` runs the :meth:`~orbdot.transit_timing.TransitTiming.clip` method before the specified TTV model fit. Any subsequent model fits will use the cleaned data, so ``sigma_clip=True`` should only be specified once. For example,
 
 .. code-block:: python
 
@@ -64,7 +64,7 @@ Giving the argument ``sigma_clip=True`` runs the :meth:`~orbdot.transit_timing.T
     wasp12.run_ttv_fit(['t0', 'P0', 'PdE'], model='decay')
     wasp12.run_ttv_fit(['t0', 'P0', 'e0', 'w0', 'wdE'], model='precession')
 
-The algorithm operates by finding the best-fit transit timing model, subtracting it from the data, and then removing any data point whose nominal value falls outside a 3-:math:`\sigma` range from the mean of the residuals. This process is repeated until no points fall outside the residuals, or until a maximum number of iterations has been reached.
+The :meth:`~orbdot.transit_timing.TransitTiming.clip` method operates by determining the best-fit transit timing model, subtracting it from the data, and then removing any data point with a nominal value that falls outside of a 3-:math:`\sigma` range from the mean of the residuals. This process is repeated until no points fall outside the residuals, or until a maximum number of iterations has been reached.
 
 RV Model Fits
 -------------
@@ -92,9 +92,13 @@ The transit duration model fits are run by calling the :meth:`~orbdot.transit_du
 
 Joint Fits
 ----------
-Running a joint model fit is similar to all of the above, but in this case the data types must be specified with the additional arguments: ``TTV=True`` to include transit and/or eclipse mid-times, ``RV=True`` to include radial velocities, and/or ``TDV=True`` to include transit durations. All three arguments have a default value of ``False``.
+Running a joint model fit is similar to all of the above, but in this case the data types must be specified with at least two of the following arguments:
 
-The following code snippet runs a joint fit of the transit/eclipse timing (TTV) and radial velocity (RV) data types to each of the three evolutionary models:
+ - ``TTV=True`` includes the transit and/or eclipse mid-times.
+ - ``RV=True`` includes the radial velocities.
+ - ``TDV=True`` includes the transit durations.
+
+The following code snippet runs a joint fit of the mid-times and radial velocities for each of the three evolutionary models:
 
 .. code-block:: python
 
@@ -104,19 +108,101 @@ The following code snippet runs a joint fit of the transit/eclipse timing (TTV) 
 
 ------------
 
+.. _fixed_values:
+
+Fixed Parameter Values
+======================
+The "fixed" values are assigned to any parameter that is not allowed to vary in a model fit. They are taken from the star-planet :ref:`system info file <info-file>`, but may be updated at any time by calling the :meth:`~orbdot.star_planet.StarPlanet.update_default` method. For example,
+
+.. code-block:: python
+
+    wasp12.update_default('P0', 3.14)
+
+This is particularly useful for updating the fixed values in-between model fits. For example, the following code snippet runs a constant-period timing model fit, updates the fixed parameter values with the best-fit results, and then runs a radial velocity model fit:
+
+.. code-block:: python
+
+    # run the constant-period transit/eclipse timing model fit
+    ttv_fit = wasp12.run_ttv_fit(['t0', 'P0'], model='constant')
+
+    # update the default values for 'P0' and 't0'
+    wasp12.update_default('P0', ttv_fit['params']['P0'][0])
+    wasp12.update_default('t0', ttv_fit['params']['t0'][0])
+
+    # run the radial velocity model fit with 'P0' and 't0' fixed
+    wasp12.run_rv_fit(['K', 'v0', 'jit'], model='constant')
+
+------------
+
+.. _priors:
+
+Priors
+======
+OrbDot currently supports three different prior distributions, the bounds of which are defined in the ``"priors"`` dictionary of the :ref:`settings file <settings-file>`.
+
+For all model parameters, the ``"priors"`` dictionary key is identical to its associated symbol defined in the :ref:`model_parameters` section. Each corresponding value is a list of three elements, the first being the type of prior (``"uniform"``, ``"gaussian"``, or ``"log"``), and the subsequent elements defining the distribution, illustrated in the table below.
+
+.. list-table::
+   :header-rows: 1
+
+   * - Prior Type
+     - Required Format
+     - Example
+   * - Gaussian
+     - ``["gaussian", mean, std]``
+     - ``["gaussian", 2456305.5, 0.1]``
+   * - Uniform
+     - ``["uniform", min, max]``
+     - ``["uniform", -100, 100]``
+   * - Log-Uniform
+     - ``["uniform", min, max]``
+     - ``["uniform", -2, 1]``
+
+The built-in priors are defined in the ``defaults/default_fit_settings.json`` file. However, in general, the user should provide them explicitly in the :ref:`settings file <settings-file>`. For example,
+
+.. code-block:: JSON
+
+     ...
+          "prior": {
+             "t0": ["gaussian", 2456305.4555, 0.01],
+             "P0": ["gaussian", 1.09142, 0.0001],
+             "PdE": ["uniform", -1e-7, 0],
+           }
+     }
+
+Like the fixed values, the priors may be updated at any time by calling the :meth:`~orbdot.star_planet.StarPlanet.update_prior` method. This is particularly useful for updating the priors in-between model fits. For example, the following code snippet runs a constant-period timing model fit, updates the priors with the best-fit results, and then runs a radial velocity model fit:
+
+.. code-block:: python
+
+    # run the constant-period transit/eclipse timing model fit
+    ttv_fit = wasp12.run_ttv_fit(['t0', 'P0'], model='constant')
+
+    # extract the best-fit results, structured as [value, upper_unc, lower_unc]
+    t0_best = ttv_fit['params']['t0']
+    P0_best = ttv_fit['params']['P0']
+
+    # update the priors for 'P0' and 't0'
+    wasp12.update_prior('P0', ['gaussian', P0_best[0], P0_best[1]])
+    wasp12.update_prior('t0', ['gaussian', t0_best[0], t0_best[1]])
+
+    # run the radial velocity model fit with 'P0' and 't0' as free parameters
+    wasp12.run_rv_fit(['t0', 'P0', 'K', 'v0', 'jit'], model='constant')
+
+------------
+
 Output Files
 ============
 At the end of every model fit, the following files are saved:
 
  1. ``"*_summary.txt"``: a quick visual summary of the results
- 2. ``"*_results.json"``: the entire model fitting results dictionary.
- 3. ``"*_corner.png"``: a corner plot.
- 4. ``"*_weighted_samples.txt"``: the weighted posterior samples.
- 5. ``"*_random_samples.json"``: a random set of 300 posterior samples.
+ 2. ``"*_results.json"``: the entire model fitting results dictionary
+ 3. ``"*_corner.png"``: a corner plot
+ 4. ``"*_weighted_samples.txt"``: the weighted posterior samples
+ 5. ``"*_random_samples.json"``: a random set of 300 posterior samples
 
 The ``"*_summary.txt"`` File
 ----------------------------
-This text file provides a concise overview of the results of the model fit in an easy-to-read format. For example, the following output is from a fit of the orbital decay timing model to WASP-12 b transit and eclipse mid-times (see the :ref:`WASP-12 b example <example-wasp-12>` for more):
+This file provides a concise overview of the results of the model fit in an easy-to-read text format. For example, the following output is from a fit of the orbital decay model to the transit and eclipse mid-times of WASP-12 b (see the :ref:`WASP-12 b example <example-wasp-12>` for more):
 
 .. code-block:: text
 
@@ -144,7 +230,7 @@ This text file provides a concise overview of the results of the model fit in an
 
 The ``"*_results.json"`` File
 -----------------------------
-This file contains all of the information necessary to recall the settings and results of a model fit. This file is not typically opened directly, as it is not designed for easy reading. Instead, the ``"*_summary.txt"`` file serves to quickly convey the results, while this file ensures no information is lost.
+This file stores a comprehensive summary of the model fit settings and results in a ``.json`` format. It ensures that critical information about the model fit is not lost, but it is not designed for easy reading. Rather, the ``"*_summary.txt"`` file serves to quickly convey the results and should typically be examined first.
 
 The following table lists the keys of the ``*_results.json`` file dictionary:
 
@@ -176,30 +262,9 @@ The following table lists the keys of the ``*_results.json`` file dictionary:
      - ``str``
      - The path to the ``"*_random_samples.txt"`` file (recorded for the plotting functions).
 
-``"params"``
+The ``"stats"`` dictionary records various model fit statistics and settings in the following keys:
 
- The ``"params"`` dictionary is particularly useful, as it contains a dictionary with key-value pairs representing the best-fit parameter values and their 68% confidence intervals. The keys match the parameter symbols (see :ref:`model_parameters`) and each value is a list of three elements: the best-fit value, the upper uncertainty, and the lower uncertainty.
-
- If the free parameters included ``"ecosw"`` and ``"esinw"``, or ``"sq_ecosw"`` and ``"sq_esinw"``, the derived eccentricity ``"e0"`` and argument of pericenter ``"w0"`` are recorded.
-
- The following code snippet demonstrates how to access the best-fit parameters after a model fit is complete:
-
- .. code-block:: python
-
-    # run the constant-period timing model fit
-    ttv_fit = wasp12.run_ttv_fit(['t0', 'P0'], model='constant')
-
-    # extract the best-fit parameter values and their uncertainties
-    t0_best, t0_upper_err, t0_lower_err = ttv_fit['params']['t0']
-    P0_best, P0_upper_err, P0_lower_err = ttv_fit['params']['P0']
-
- The entire set of OrbDot parameters (see :ref:`model_parameters`) are included in the ``*_results.json`` file for completeness, even if they are not part of the physical model, to ensure that no information is lost or overlooked. If a parameter was not allowed to vary in the model fit, its fixed value is recorded in ``"params"``. The ``*_summary.txt`` file is more concise and typically more useful for quick reference.
-
-``"stats"``
-
- The ``"stats"`` dictionary records various model fit statistics and settings in the following keys:
-
- .. list-table::
+.. list-table::
    :header-rows: 0
 
    * - ``"logZ"``
@@ -227,85 +292,22 @@ The following table lists the keys of the ``*_results.json`` file dictionary:
      - ``float``
      - The effective samples per second.
 
-------------
+The ``"params"`` dictionary is particularly useful, as it contains a dictionary with key-value pairs representing the best-fit parameter values and their 68% confidence intervals. The keys match the parameter symbols (see :ref:`model_parameters`), and each value is a list of three elements: the best-fit value, the upper uncertainty, and the lower uncertainty.
 
-.. _fixed_values:
-
-Fixed Parameter Values
-======================
-The "fixed" values are assigned to any parameter that is not allowed to vary in a model fit. They are taken from the star-planet :ref:`system info file <info-file>`, but may be updated at any time by calling the :meth:`~orbdot.star_planet.StarPlanet.update_default` method:
+The following code snippet demonstrates how to access the best-fit parameters after a model fit is complete:
 
 .. code-block:: python
 
-    wasp12.update_default('P0', 3.14)
-
-This is particularly useful for updating the fixed values in-between model fits. For example, the following code snippet runs a constant-period timing model fit, updates the fixed parameter values with the best-fit results, and then runs a radial velocity model fit.
-
-.. code-block:: python
-
-    # run the constant-period transit/eclipse timing model fit
+    # run the constant-period timing model fit
     ttv_fit = wasp12.run_ttv_fit(['t0', 'P0'], model='constant')
 
-    # update the default values for 'P0' and 't0'
-    wasp12.update_default('P0', ttv_fit['params']['P0'][0])
-    wasp12.update_default('t0', ttv_fit['params']['t0'][0])
+    # extract the best-fit parameter values and their uncertainties
+    t0_best, t0_upper_err, t0_lower_err = ttv_fit['params']['t0']
+    P0_best, P0_upper_err, P0_lower_err = ttv_fit['params']['P0']
 
-    # run the radial velocity model fit with 'P0' and 't0' fixed
-    wasp12.run_rv_fit(['K', 'v0', 'jit'], model='constant')
+If the free parameters include ``"ecosw"`` and ``"esinw"`` or ``"sq_ecosw"`` and ``"sq_esinw"``, the derived eccentricity ``"e0"`` and argument of pericenter ``"w0"`` are also included.
 
-------------
-
-.. _priors:
-
-Priors
-======
-OrbDot currently supports three different prior distributions, the bounds of which are defined in the ``"priors"`` dictionary of the :ref:`settings file <settings-file>`. For all model parameters, the ``"priors"`` dictionary key is identical to its associated symbol defined in the :ref:`model_parameters` section. Each corresponding value is a list of three elements, the first being the type of prior (``"uniform"``, ``"gaussian"``, or ``"log"``), and the subsequent elements defining the distribution, illustrated in the table below.
-
-.. list-table::
-   :header-rows: 1
-
-   * - Prior Type
-     - Required Format
-     - Example
-   * - Gaussian
-     - ``["gaussian", mean, std]``
-     - ``["gaussian", 2456305.5, 0.1]``
-   * - Uniform
-     - ``["uniform", min, max]``
-     - ``["uniform", -100, 100]``
-   * - Log-Uniform
-     - ``["uniform", min, max]``
-     - ``["uniform", -2, 1]``
-
-The built-in priors are defined in the ``defaults/default_fit_settings.json`` file. However, in general, the user should provide them explicitly in the :ref:`settings file <settings-file>`. For example,
-
-.. code-block:: JSON
-
-     ...
-          "prior": {
-             "t0": ["gaussian", 2456305.4555, 0.01],
-             "P0": ["gaussian", 1.09142, 0.0001],
-             "PdE": ["uniform", -1e-7, 0],
-           }
-     }
-
-Like the fixed values, the priors may be updated at any time by calling the :meth:`~orbdot.star_planet.StarPlanet.update_prior` method. This is particularly useful for updating the priors in-between model fits. For example, the following code snippet runs a constant-period timing model fit, updates the priors with the best-fit results, and then runs a radial velocity model fit.
-
-.. code-block:: python
-
-    # run the constant-period transit/eclipse timing model fit
-    ttv_fit = wasp12.run_ttv_fit(['t0', 'P0'], model='constant')
-
-    # extract the best-fit results, structured as [value, upper_unc, lower_unc]
-    t0_best = ttv_fit['params']['t0']
-    P0_best = ttv_fit['params']['P0']
-
-    # update the priors for 'P0' and 't0'
-    wasp12.update_prior('P0', ['gaussian', P0_best[0], P0_best[1]])
-    wasp12.update_prior('t0', ['gaussian', t0_best[0], t0_best[1]])
-
-    # run the radial velocity model fit with 'P0' and 't0' as free parameters
-    wasp12.run_rv_fit(['t0', 'P0', 'K', 'v0', 'jit'], model='constant')
+The entire set of OrbDot :ref:`parameters <model_parameters>` are included in the ``"params"`` dictionary for completeness, even if they are not part of the physical model, to ensure that no information is lost or overlooked. If a parameter was not allowed to vary in the model fit, its fixed value is recorded.
 
 ------------
 
@@ -338,17 +340,15 @@ or loaded from a preexisting file:
     # initialize the Analyzer class
     analyzer = Analyzer(wasp12, decay_fit)
 
-As soon as an :class:`~orbdot.analysis.Analyzer` object is created, a file is created for recording the output of any methods that are called.
-
-For example, the code snippet above generates the file: ``results/WASP-12/analysis/ttv_decay_analysis.txt``.
+As soon as an :class:`~orbdot.analysis.Analyzer` object is created, a file is created for recording the output of any methods that are called. For example, the code snippet above generates the file: ``results/WASP-12/analysis/ttv_decay_analysis.txt``.
 
 ``Analyzer`` Methods
 --------------------
-The following sections summarize key :class:`~orbdot.analysis.Analyzer` methods, the output of which are appended to the ``*_analysis.txt`` file described above.
+The following sections summarize the main :class:`~orbdot.analysis.Analyzer` methods, the output of which are appended to the ``*_analysis.txt`` file described above.
 
 1. Model Comparison
 ^^^^^^^^^^^^^^^^^^^
-The :meth:`~orbdot.analysis.Analyzer.model_comparison` method compares the Bayesian evidence for the model fit given to :class:`~orbdot.analysis.Analyzer` with that of a different model. To compare the two models, the Bayes factor is calculated as:
+The :meth:`~orbdot.analysis.Analyzer.model_comparison` method compares the Bayesian evidence for the model fit with that of a different model. To compare the two models, the Bayes factor is calculated as:
 
 .. math::
 
@@ -357,22 +357,22 @@ The :meth:`~orbdot.analysis.Analyzer.model_comparison` method compares the Bayes
 where :math:`\log{\mathrm{Z}}` is the Bayesian evidence, which is defined such that a lower magnitude signifies a superior fit to the observed data. The Bayes factor is then compared to the thresholds established by :cite:t:`KassRaftery1995`, tabulated below.
 
 .. table::
-  :width: 80%
-  :align: center
+    :width: 80%
+    :align: center
 
-    +----------------------------------+---------------------------------------------------+
-    | Condition                        | Evidence for Model 1 (Model 1)                    |
-    +==================================+===================================================+
-    | :math:`B_{12} \leq 1`            | Model 1 is not supported over Model 2             |
-    +----------------------------------+---------------------------------------------------+
-    | :math:`1 < B_{12} \leq 3`        | Evidence for Model 1 barely worth mentioning      |
-    +----------------------------------+---------------------------------------------------+
-    | :math:`3 < B_{12} \leq 20`       | Positive evidence for Model 1                     |
-    +----------------------------------+---------------------------------------------------+
-    | :math:`20 < B_{12} \leq 150`     | Strong evidence for Model 1                       |
-    +----------------------------------+---------------------------------------------------+
-    | :math:`150 < B_{12}`             | Very strong evidence for Model 1                  |
-    +----------------------------------+---------------------------------------------------+
+        +----------------------------------+---------------------------------------------------+
+        | Condition                        | Evidence for Model 1 (Model 1)                    |
+        +==================================+===================================================+
+        | :math:`B_{12} \leq 1`            | Model 1 is not supported over Model 2             |
+        +----------------------------------+---------------------------------------------------+
+        | :math:`1 < B_{12} \leq 3`        | Evidence for Model 1 barely worth mentioning      |
+        +----------------------------------+---------------------------------------------------+
+        | :math:`3 < B_{12} \leq 20`       | Positive evidence for Model 1                     |
+        +----------------------------------+---------------------------------------------------+
+        | :math:`20 < B_{12} \leq 150`     | Strong evidence for Model 1                       |
+        +----------------------------------+---------------------------------------------------+
+        | :math:`150 < B_{12}`             | Very strong evidence for Model 1                  |
+        +----------------------------------+---------------------------------------------------+
 
 The following code snippet calls this method after running a different TTV model fit:
 
@@ -410,7 +410,7 @@ It calls the following methods from the :ref:`theory module <theory_module>`:
 
 3. Apsidal Precession Model Fit
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-The :meth:`~orbdot.analysis.Analyzer.apsidal_precession_fit` method produces a summary of various values derived from interpreting the results of an apsidal precession model fit in the context of physical models.
+The :meth:`~orbdot.analysis.Analyzer.apsidal_precession_fit` method produces a summary of various values derived from interpreting the results of an apsidal precession model fit in the context of general relativistic effects, rotation, and tides.
 
 .. code-block:: python
 
