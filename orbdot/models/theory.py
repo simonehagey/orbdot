@@ -249,7 +249,7 @@ def companion_from_quadratic_rv(P_min, t_pivot, dvdt, ddvdt, M_s):
     This method requires an estimate of minimum possible orbital period of the companion,
     which is constrained by the timespan of the radial velocity measurements. This is determined
     by the :meth:`~orbdot.analysis.Analyzer.rv_trend_quadratic` method from the
-    :class:`~orbdot.analysis.Analyzer` class).
+    :class:`~orbdot.analysis.Analyzer` class.
 
     Parameters
     ----------
@@ -333,7 +333,7 @@ def companion_precession(P, M2, P2, M_s):
         -(\\alpha-1)^2 \\mathcal{K}\\left(\\frac{2 \\alpha^{1/2}}{\\alpha+1}\\right)\\right]
 
     where :math:`m_2` is the mass of the perturbing planet, :math:`\\alpha = a/a_2` is the
-    semi-major axis ratio, and :math:`\\mathcal{K}` and :math:`\\mathcal{E}` are the complete
+    semi major axis ratio, and :math:`\\mathcal{K}` and :math:`\\mathcal{E}` are the complete
     elliptic integrals of the first and second kind, respectively.
 
     .. important::
@@ -495,7 +495,7 @@ def decay_pdot_from_quality_factor(P, M_s, M_p, R_s, Q_star):
         M_\\star}\\right)\\left(\\frac{R_\\star}{a}\\right)^5
 
     where :math:`M_\\star` is the host star mass, :math:`M_p` is the planet mass,
-    :math:`R_\\star` is the host star radius, :math:`a` is the orbital semi-major axis,
+    :math:`R_\\star` is the host star radius, :math:`a` is the orbital semi major axis,
     and :math:`Q_\\star^{'}` is the star's "modified" tidal quality factor, defined as:
 
     .. math:: Q_\\star^{'} = \\frac{3}{2} \\frac{Q_\\star}{k_{2,\\star}}
@@ -562,7 +562,7 @@ def decay_quality_factor_from_pdot(P, dPdE, M_s, M_p, R_s):
         M_\\star}\\right)\\left(\\frac{R_\\star}{a}\\right)^5
 
     where :math:`M_\\star` is the host star mass, :math:`M_p` is the planet mass,
-    :math:`R_\\star` is the host star radius, :math:`a` is the orbital semi-major axis,
+    :math:`R_\\star` is the host star radius, :math:`a` is the orbital semi major axis,
     and :math:`\\dot{P}_{\\mathrm{decay}}` is the orbital decay rate.
 
     The modified tidal quality factor is defined as:
@@ -831,7 +831,7 @@ def precession_gr(P, e, M_s):
     .. math:: \\dot{\\omega}_{\\mathrm{GR}} = \\frac{3 G M_{\\star} n}{a c^2(1 - e^2)}
 
     where :math:`G` is the gravitational constant, :math:`c` is the speed of light in a vacuum,
-    :math:`M_{\\star}` is the host star mass, :math:`a` is the planet's semi-major axis,
+    :math:`M_{\\star}` is the host star mass, :math:`a` is the planet's semi major axis,
     :math:`e` is the eccentricity, and :math:`n = 2\\pi/P` is the mean motion.
 
     References
@@ -898,7 +898,7 @@ def precession_rotational_planet(P, e, M_s, M_p, R_p, k2_p, P_rot_p):
 
     where :math:`\\dot{\\theta}_p` is the rotational velocity of the planet, :math:`k_{2,p}` is its
     second-order potential Love number, :math:`G` is the gravitational constant, :math:`n =
-    2\\pi/P` is the orbital mean motion, :math:`a` is the semi-major axis, and :math:`M_p` and
+    2\\pi/P` is the orbit mean motion, :math:`a` is the semi major axis, and :math:`M_p` and
     :math:`R_p` are the planet mass and radius, respectively.
 
     The function :math:`g_2(e)` represents an expansion in eccentricity :math:`e`, defined in
@@ -1032,7 +1032,7 @@ def precession_rotational_star(P, e, M_s, R_s, k2_s, P_rot_s):
 
     where :math:`\\dot{\\theta}_\\star` is the rotational velocity of the star, :math:`k_{2,
     \\star}` is its second-order potential Love number, :math:`G` is the gravitational constant,
-    :math:`a` is the semi-major axis of the orbit, :math:`n = 2\\pi/P` is the mean motion,
+    :math:`a` is the semi major axis of the orbit, :math:`n = 2\\pi/P` is the mean motion,
     and :math:`M_\\star` and :math:`R_\\star` are the stellar mass and radius, respectively.
 
     The parameter :math:`g_2(e)` represents an expansion in eccentricity :math:`e`, defined in
@@ -1162,7 +1162,7 @@ def precession_tidal_planet(P, e, M_s, M_p, R_p, k2_p):
         a}\\right)^5\\left(\\frac{M_\\star}{M_p}\\right)f_2(e)
 
     where :math:`k_{2,p}` is the planet's second-order potential Love number, :math:`n =
-    2\\pi/P` is the orbital mean motion, :math:`a` is the semi-major axis, :math:`M_\\star` is
+    2\\pi/P` is the orbit mean motion, :math:`a` is the semi major axis, :math:`M_\\star` is
     the host star mass, and :math:`M_p` and :math:`R_p` are the planet mass and radius.
 
     The parameter :math:`f_2(e)` represents an expansion in eccentricity :math:`e`, defined in
@@ -1290,7 +1290,7 @@ def precession_tidal_star(P, e, M_s, M_p, R_s, k2_s):
         R_\\star}{a}\\right)^5\\left(\\frac{M_p}{M_\\star}\\right)f_2(e)
 
     where :math:`k_{2,\\star}` is the star's second-order potential Love number, :math:`n =
-    2\\pi/P` is the orbital mean motion, :math:`a` is the semi-major axis, :math:`M_p` is the
+    2\\pi/P` is the orbit mean motion, :math:`a` is the semi major axis, :math:`M_p` is the
     planet mass, and :math:`M_\\star` and :math:`R_\\star` are the stellar mass and radius.
 
     The parameter :math:`f_2(e)` represents an expansion in eccentricity :math:`e`, defined in
@@ -1417,7 +1417,7 @@ def get_pdot_from_wdot(P, e, w, dwdE):
 
     where :math:`e` is the orbit eccentricity, :math:`\\omega_p` is the argument of pericenter,
     :math:`\\dot{\\omega}` is the apsidal precession rate, and :math:`n = 2\\pi/P` is the
-    orbital mean motion.
+    orbit mean motion.
 
     References
     ----------
@@ -1486,7 +1486,7 @@ def get_tdot_from_wdot(P, e, w, i, T, dwdE, M_s, R_s):
 
     and where :math:`e` is the orbit eccentricity, :math:`\\omega_p` is the argument of pericenter,
     :math:`\\dot{\\omega}` is the apsidal precession rate, :math:`b` is the impact parameter,
-    :math:`a` is the semi-major axis, and :math:`R_\\star` is the radius of the host star.
+    :math:`a` is the semi major axis, and :math:`R_\\star` is the radius of the host star.
 
     References
     ----------
@@ -1517,7 +1517,7 @@ def proper_motion_idot(mu, beta):
     """Calculate the apparent rate of change of the inclination due to systemic proper motion.
 
     This method returns the rate of the variation of the line-of-sight inclination of an orbit
-    due to systemic proper motion using Equation (3) from Rafikov (2009) [1]_.
+    due to systemic proper motion, using Equation (3) from Rafikov (2009) [1]_.
 
     Parameters
     ----------
@@ -1563,7 +1563,7 @@ def proper_motion_wdot(mu, i, beta):
     """Calculate the rate of the apparent apsidal precession due to systemic proper motion.
 
     This method returns the rate of the apparent apsidal precession induced by systemic proper
-    motion using Equation (4) from Rafikov (2009) [1]_.
+    motion, using Equation (4) from Rafikov (2009) [1]_.
 
     Parameters
     ----------
@@ -1644,7 +1644,7 @@ def proper_motion_pdot(P, e, w, mu):
         e\\cos{\\omega_p}}{1+e\\sin{\\omega_p}}\\right]
 
     where :math:`e` is the orbit eccentricity, :math:`\\omega_p` is the argument of pericenter,
-    :math:`n` is the orbital mean motion, :math:`\\dot{\\omega}_{\\mu}` is the apparent
+    :math:`n` is the orbit mean motion, :math:`\\dot{\\omega}_{\\mu}` is the apparent
     precession rate, and :math:`\\ddot{\\omega}_{\\mu}` is the time derivative of the latter.
 
     Rafikov [1]_ posits that for transiting systems the following approximation is valid:
@@ -1706,7 +1706,7 @@ def proper_motion_tdot(P, e, w, i, T, wdot_pm, idot_pm, M_s, R_s):
     Returns
     -------
     float
-        A constant time derivative of the transit duration in milliseconds per year (ms/yr).
+        A constant time derivative of the transit duration in milliseconds per year.
 
     Notes
     -----
@@ -1727,7 +1727,7 @@ def proper_motion_tdot(P, e, w, i, T, wdot_pm, idot_pm, M_s, R_s):
     .. math:: g = \\frac{a}{R_\\star}\\frac{b}{1 - b^2}
 
     and where :math:`e` is the orbit eccentricity, :math:`\\omega_p` is the argument of pericenter,
-    :math:`b` is the impact parameter, :math:`a` is the semi-major axis, and :math:`R_\\star` is
+    :math:`b` is the impact parameter, :math:`a` is the semi major axis, and :math:`R_\\star` is
     the host star radius.
 
     References
@@ -1844,8 +1844,8 @@ def resolved_binary_mass_from_rv_trend(theta, D, dvdt):
     .. math:: M_B = 5.341 \\times 10^{-6}(D \\rho)^2\\left|\\dot{\\gamma}\\right| \\Phi
 
     where :math:`\\rho` is the angular separation of the binary in arcseconds, :math:`D` is the
-    distance to the system in parsecs, and :math:`\\dot{\\gamma}` is the measured first-order radial
-    acceleration.
+    distance to the system in parsecs, and :math:`\\dot{\\gamma}` is the first-order radial
+    acceleration term.
 
     The parameter :math:`\\Phi` is a function of the eccentricity, longitude of pericenter,
     and inclination of the companion's orbit. Assuming that these parameters are unconstrained,
@@ -1872,11 +1872,9 @@ def resolved_binary_rv_trend_from_mass(theta, D, M_B):
 
     This method returns the minimum possible acceleration, induced by a bound stellar companion,
     that may be observed in radial velocity observations of the primary. The secondary star must
-    have been resolved through imaging or astrometric measurements such that the angular
-    separation is known.
-
-    It uses Equation (6) from Torres (1999) [1]_, which makes no assumptions about the mass or
-    brightness of the secondary [1]_.
+    have been resolved through imaging or astrometric measurements, such that the angular
+    separation is known. It uses Equation (6) from Torres (1999) [1]_, which makes no assumptions
+    about the mass or brightness of the secondary [1]_.
 
     Parameters
     ----------

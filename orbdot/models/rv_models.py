@@ -230,8 +230,8 @@ def rv_decay(t0, P0, e0, w0, K, v0, dvdt, ddvdt, PdE, t):
 
     3. **Calculate the true anomaly of the planet at the given time.**
 
-     With the time of pericenter passage, the mean anomaly may be calculated at any time
-     :math:`t`:
+     With the time of latest pericenter passage, the planet's mean anomaly at time :math:`t` may
+     be calculated by:
 
      .. math::
             \\mathrm{M} = n \\left(t - t_p\\right)
@@ -356,8 +356,8 @@ def rv_precession(t0, P0, e0, w0, K, v0, dvdt, ddvdt, wdE, t):
 
     2. **Calculate the latest time of pericenter passage.**
 
-     As the orbit is precessing, the relative time of pericenter passage will evolve and
-     must be calculated relative to the most recent transit mid-time:
+     As the orbit is precessing, the time of pericenter passage must be calculated relative to
+     the most recent transit mid-time:
 
      .. math::
             t_{\\mathrm{I}} = t_0 + P_s E - \\frac{e P_a}{\\pi}\\cos{\\omega_p}
@@ -387,8 +387,8 @@ def rv_precession(t0, P0, e0, w0, K, v0, dvdt, ddvdt, wdE, t):
 
     3. **Calculate the true anomaly of the planet at the given time.**
 
-     With the time of latest pericenter passage, the planet's mean anomaly may be calculated at any
-     time :math:`t`:
+     With the time of latest pericenter passage, the planet's mean anomaly at time :math:`t` may
+     be calculated by:
 
      .. math::
             \\mathrm{M} = n \\left(t - t_p\\right)

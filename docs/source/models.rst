@@ -119,14 +119,14 @@ It is important for the user to be familiar with the symbols and definitions of 
      - ``K``
      - m :math:`{\mathrm s}^{-1}`
      - The radial velocity semi-amplitude.
-   * - :math:`\gamma_j`
+   * - :math:`\gamma_i`
      - ``v0``
      - :math:`\mathrm{m}` :math:`{\mathrm s}^{-1}`
-     - The instrument-dependant systemic radial velocity.
-   * - :math:`\sigma_i`
+     - The systemic radial velocity (instrument-dependant).
+   * - :math:`\sigma_j`
      - ``jit``
      - :math:`\mathrm{m}` :math:`{\mathrm s}^{-1}`
-     - An instrument-dependant "jitter" term.
+     - The "jitter" uncertainty term (instrument-dependant).
    * - :math:`\dot{\gamma}`
      - ``dvdt``
      - :math:`\mathrm{m}` :math:`{\mathrm s}^{-1}` :math:`{\mathrm{day}}^{-1}`
@@ -254,7 +254,7 @@ where :math:`M_p` is the planet mass, :math:`M_{\star}` is the star mass, :math:
 
 At any given time, the star's radial velocity depends on the planet's position in its orbit, defined by the true anomaly :math:`\phi`, and the systemic velocity along the line-of-sight, denoted as :math:`\gamma`. When measurements from multiple instruments are combined, it is standard practice to fit the systemic velocity individually for each source to account for instrumental variations, denoted :math:`\gamma_i`.
 
-The OrbDot models also include first and second-order acceleration terms, :math:`\dot{\gamma}` and :math:`\ddot{\gamma}` respectively, to accommodate potential perturbations from an outer, non-resonant companion planet with an orbital period longer than the observational baseline. Thus, the total observed radial velocity signal is:
+The OrbDot radial velocity models also include first and second-order acceleration terms, :math:`\dot{\gamma}` and :math:`\ddot{\gamma}` respectively, to accommodate potential perturbations from an outer, non-resonant companion planet with an orbital period longer than the observational baseline. The total observed radial velocity signal is:
 
 .. math::
     v_r = K[\cos{(\phi\left(t\right)+\omega_p)}+e\cos{\omega_p}] + \gamma_i
@@ -262,7 +262,7 @@ The OrbDot models also include first and second-order acceleration terms, :math:
 
 where :math:`\omega_p` is the argument of pericenter of the planet's orbit and :math:`t_0` is the mid-time of a reference transit.
 
-To avoid underestimating uncertainties, the radial velocity models include an instrument-dependant "jitter" parameter to represent systematic noise. When ``"jit"`` is given as a free parameter, it is added in quadrature with the individual measurement errors:
+To avoid underestimating uncertainties, the radial velocity model fits include an instrument-dependant "jitter" parameter that represents systematic noise. When ``"jit"`` is given as a free parameter, it is added in quadrature with the individual measurement errors in the log-likelihood:
 
 .. math::
     \sigma = \sqrt{\sigma_i^2 + \sigma_{j}^2}
@@ -312,7 +312,7 @@ In general, the transit duration :math:`T` is calculated using equation (15) fro
     T = \frac{P}{\pi} \frac{\varrho_c^2}{\sqrt{1-e^2}}
     \arcsin \left(\frac{\sqrt{1-a_R^2 \varrho_c^2 \cos ^2 i}}{a_R \varrho_c \sin i}\right)
 
-where :math:`P` is the orbital period, :math:`e` is the orbit eccentricity, :math:`i` is the line-of-sight inclination of the orbit, :math:`a_R` is the semi major axis in units of stellar radii, :math:`\varrho_c` is the star-planet separation at mid-transit, and :math:`c` is the speed of light in a vacuum.
+where :math:`P` is the orbital period, :math:`e` is the orbit eccentricity, :math:`i` is the line-of-sight inclination of the orbit, :math:`a_R` is the semi major axis in units of stellar radii, and :math:`\varrho_c` is the star-planet separation at mid-transit.
 
 The ``orbdot.models.tdv_models.tdv_constant()`` method implements the constant-period transit duration model:
 
@@ -348,11 +348,11 @@ Apsidal Precession
 For a planet on an elliptical orbit undergoing apsidal precession, the change in the argument of pericenter :math:`\omega_p` affects the transit duration. This relationship is captured by equation (54) from :cite:t:`Kipping2010`:
 
 .. math::
-    \frac{dT}{d \omega} =  \frac{P}{\pi} \frac{e \varrho_{\mathrm{c}}^3 \cos\omega}{\left(1-e^2\right)^{3 / 2}}
+    \frac{dT}{d \omega} =  \frac{P}{\pi} \frac{\varrho_{\mathrm{c}}^3 e \cos\omega}{\left(1-e^2\right)^{3 / 2}}
     \left(\frac{1}{\sqrt{1-b^2} \sqrt{a_R^2 \varrho_c^2-1}} - 2 \arcsin \left(\frac{\sqrt{1-b^2}}
     {a_R \varrho_c \sin i}\right)\right)
 
-where :math:`\frac{dT}{d \omega}` is the change in the transit duration with changing argument of pericenter, and :math:`b` is the impact parameter. The change in the transit duration per epoch may be expressed as:
+where :math:`\frac{dT}{d \omega}` is the change in the transit duration with changing argument of pericenter and :math:`b` is the impact parameter. The change in the transit duration per epoch may be expressed as:
 
 .. math::
     \frac{dT}{dE} = \frac{dT}{d\omega}\frac{d\omega}{dE}
