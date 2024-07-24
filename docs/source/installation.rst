@@ -6,9 +6,13 @@ Installation
 
 To install the OrbDot package, you have a few options depending on your environment and preferences.
 
-Using Package Managers
-----------------------
-The recommended way to install the stable version of OrbDot is using `pip <http://www.pip-installer.org/>`_
+Using `pip <http://www.pip-installer.org/>`_
+--------------------------------------------
+
+.. important::
+    OrbDot is not yet available to pip! Coming soon...
+
+The recommended way to install the stable version of ``orbdot`` is using ``pip``:
 
 .. code-block:: bash
 
@@ -18,7 +22,7 @@ This will download and install the latest release of OrbDot and its dependencies
 
 Using a Local Copy
 ------------------
-You can also install OrbDot directly from a local copy of the source code.
+You can also install it directly from a local copy of the source code.
 
 First, clone the repository:
 
@@ -46,7 +50,7 @@ If the first model fit begins to run, you're good to go.
 
 Dependencies
 ------------
-OrbDot requires Python 3.9 or higher. The package depends on the following libraries:
+OrbDot requires Python 3.9 or higher and depends on the following libraries:
 
 - `numpy <https://github.com/numpy/numpy>`_
 - `scipy <https://github.com/scipy/scipy>`_
@@ -61,6 +65,6 @@ and one of:
   for `MultiNest <https://github.com/JohannesBuchner/MultiNest>`_.
 
 .. note::
-    When using the nested sampling methods the user may choose between two packages: ``Nestle`` and ``PyMultiNest``. The latter is generally faster and more robust, but it can be tricky to install, and thus it is not a requirement to use this code.
+    When using the nested sampling methods the user may choose between two packages: Nestle and PyMultiNest. The latter is generally faster and more robust, but it can be tricky to install, and thus it is not a requirement to use this code.
 
-    ``Nestle`` is included in the ``requirements.txt`` file, and will be installed automatically. If you wish to use ``PyMultiNest``, you will have to follow their installation instructions `here <https://johannesbuchner.github.io/PyMultiNest/install.html>`_.
+    Nestle is included in the ``requirements.txt`` file and will be installed automatically. In order to use PyMultiNest, you will have to follow their installation instructions `here <https://johannesbuchner.github.io/PyMultiNest/install.html>`_.
