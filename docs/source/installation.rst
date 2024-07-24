@@ -4,7 +4,7 @@
 Installation
 ************
 
-To install the OrbDot package, you have a few options depending on your environment and preferences.
+To install the OrbDot package, you have different options depending on your environment and preferences.
 
 Using `pip <http://www.pip-installer.org/>`_
 --------------------------------------------
@@ -12,13 +12,13 @@ Using `pip <http://www.pip-installer.org/>`_
 .. important::
     OrbDot is not yet available to pip! Coming soon...
 
-The recommended way to install the stable version of ``orbdot`` is using ``pip``:
+The recommended way to install the stable version of OrbDot is using ``pip``:
 
 .. code-block:: bash
 
     pip install orbdot
 
-This will download and install the latest release of OrbDot and its dependencies.
+This will download and install the latest release and its dependencies.
 
 Using a Local Copy
 ------------------
