@@ -94,9 +94,9 @@ Joint Fits
 ----------
 Running a joint model fit is similar, but in this case the data types must be specified with at least two of the following arguments:
 
- - ``TTV=True`` includes the transit and/or eclipse mid-times.
- - ``RV=True`` includes the radial velocities.
- - ``TDV=True`` includes the transit durations.
+ - ``TTV=True``: includes the transit and/or eclipse mid-times.
+ - ``RV=True``: includes the radial velocities.
+ - ``TDV=True``: includes the transit durations.
 
 The following code snippet runs a joint fit of the mid-times and radial velocities for each of the three evolutionary models:
 
@@ -138,9 +138,9 @@ This is particularly useful for updating the fixed values in-between model fits.
 
 Priors
 ======
-OrbDot currently supports three different prior distributions, the bounds of which are defined in the ``"priors"`` dictionary of the :ref:`settings file <settings-file>`.
+OrbDot currently supports three different prior distributions, the bounds of which are defined in the ``"prior"`` dictionary of the :ref:`settings file <settings-file>`.
 
-The keys of ``"priors"`` are identical to the parameter symbols that are defined in the :ref:`model_parameters` section. Every value is a list of three elements, the first being the type of prior (``"uniform"``, ``"gaussian"``, or ``"log"``), and the subsequent elements defining the distribution. This structure is illustrated in the following table:
+The keys of ``"prior"`` are identical to the parameter symbols that are defined in the :ref:`model_parameters` section. Every value is a list of three elements, the first being the type of prior (``"uniform"``, ``"gaussian"``, or ``"log"``), and the subsequent elements defining the distribution. This structure is illustrated in the following table:
 
 .. list-table::
    :header-rows: 1
@@ -155,8 +155,8 @@ The keys of ``"priors"`` are identical to the parameter symbols that are defined
      - ``["uniform", min, max]``
      - ``["uniform", -100, 100]``
    * - Log-Uniform
-     - ``["uniform", min, max]``
-     - ``["uniform", -2, 1]``
+     - ``["log", min, max]``
+     - ``["log", -2, 1]``
 
 There are default priors defined in the ``defaults/default_fit_settings.json`` file, but the user should, in general, specify them explicitly in the :ref:`settings file <settings-file>`. For example,
 
@@ -230,7 +230,7 @@ This file provides a concise overview of the results of the model fit in an easy
 
 The ``"*_results.json"`` File
 -----------------------------
-This file stores a comprehensive summary of the model fit settings and results in a ``.json`` format. It ensures that critical information about the model fit is not lost, but it is not designed for easy reading. Rather, the ``"*_summary.txt"`` file serves to quickly convey the results and should typically be examined first.
+This file stores a comprehensive summary of the model fit results and settings in ``.json`` format. It ensures that critical information about the model fit is not lost, but it is not designed for easy reading. Rather, the ``"*_summary.txt"`` file serves to quickly convey the results and should typically be examined first.
 
 The following table lists the keys of the ``*_results.json`` file:
 
@@ -292,7 +292,7 @@ The ``"stats"`` dictionary records various model fit statistics and settings wit
      - ``float``
      - The effective samples per second.
 
-The ``"params"`` dictionary contains key-value pairs that store the best-fit parameter values and their 68% confidence intervals. The keys match the parameter symbols (see :ref:`model_parameters`), and each value is a list of three elements: [the best-fit value, the upper uncertainty, and the lower uncertainty].
+The ``"params"`` dictionary contains key-value pairs that store the best-fit parameter values and their 68% confidence intervals. The keys match the parameter symbols (see :ref:`model_parameters`), and each value is a list of three elements: [best-fit value, upper uncertainty, lower uncertainty].
 
 The following code snippet demonstrates how to access the best-fit parameters after a model fit:
 
@@ -340,7 +340,7 @@ or loaded from a preexisting file:
     # initialize the Analyzer class
     analyzer = Analyzer(wasp12, decay_fit)
 
-As soon as an :class:`~orbdot.analysis.Analyzer` object is created, a file is created for recording the output of any methods that are called. For example, the code snippet above generates the file: ``results/WASP-12/analysis/ttv_decay_analysis.txt``.
+As soon as an :class:`~orbdot.analysis.Analyzer` object is created, a text file is generated for recording the output of any methods that are called. For example, the code snippet above generates the file: ``results/WASP-12/analysis/ttv_decay_analysis.txt``.
 
 ``Analyzer`` Methods
 --------------------
@@ -354,11 +354,9 @@ The :meth:`~orbdot.analysis.Analyzer.model_comparison` method compares the Bayes
 
     \log{B_{12}} = \log{\mathrm{Z}}_{1} - \log{\mathrm{Z}}_{2}
 
-where :math:`\log{\mathrm{Z}}` is the Bayesian evidence, which is defined such that a lower magnitude signifies a superior fit to the observed data. The Bayes factor is then compared to the thresholds established by :cite:t:`KassRaftery1995`, tabulated below.
+where :math:`\log{\mathrm{Z}}` is the Bayesian evidence, which is defined such that a lower magnitude signifies a superior fit to the observed data. The Bayes factor is then compared to the thresholds established by :cite:t:`KassRaftery1995`, tabulated below:
 
 .. table::
-    :width: 80%
-    :align: center
 
         +----------------------------------+---------------------------------------------------+
         | Condition                        | Evidence for Model 1 (Model 1)                    |
@@ -374,7 +372,7 @@ where :math:`\log{\mathrm{Z}}` is the Bayesian evidence, which is defined such t
         | :math:`150 < B_{12}`             | Very strong evidence for Model 1                  |
         +----------------------------------+---------------------------------------------------+
 
-The following code snippet calls this method after running a different TTV model fit:
+The following code snippet calls this method after running two different TTV model fits:
 
 .. code-block:: python
 
@@ -451,7 +449,7 @@ It calls the following methods from the :ref:`theory module <theory_module>`:
 
 5. Orbital Decay Predictions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-The :meth:`~orbdot.analysis.Analyzer.orbital_decay_predicted` method calculates and summarizes various orbital decay parameters that are predicted by theory, using on an empirical law for the host star's modified tidal quality factor.
+The :meth:`~orbdot.analysis.Analyzer.orbital_decay_predicted` method calculates and summarizes various orbital decay parameters that are predicted by theory, using an empirical law for the host star's modified tidal quality factor.
 
 .. code-block:: python
 
@@ -491,9 +489,7 @@ It calls the following methods from the :ref:`theory module <theory_module>`:
 
 7. Companion Planet Analysis
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-If there is a companion planet in the system, whether interior or exterior to the observed planet's orbit, it could induce perturbations that cause measurable variations in transit and radial velocity observations.
-
-The :meth:`~orbdot.analysis.Analyzer.unknown_companion` method derives constraints on a possible companion planet's orbit and mass with the best-fit model.
+The :meth:`~orbdot.analysis.Analyzer.unknown_companion` method derives constraints on a possible companion planet's orbit and mass from the best-fit model. If there is a companion planet in the system, whether interior or exterior to the observed planet's orbit, it may induce perturbations that cause measurable variations in transit and radial velocity observations.
 
 .. code-block:: python
 
@@ -533,7 +529,7 @@ It calls the following methods from the :ref:`theory module <theory_module>`:
 
 ``Analyzer`` Attributes
 -----------------------
-The following table summarizes various :class:`~orbdot.analysis.Analyzer` class attributes that are useful for writing custom scripts and functions with OrbDot. For the model parameters, the best-fit results are used for those that were allowed to vary in the model fit, and the remaining parameters are assigned values from the :ref:`fixed values <fixed_values>` dictionary.
+The following table summarizes various :class:`~orbdot.analysis.Analyzer` class attributes that are useful for writing custom scripts and functions with OrbDot. For the model parameters, the best-fit results are used if any given parameter was allowed to vary in the model fit. The remaining parameters are assigned values from the :ref:`fixed values <fixed_values>` dictionary.
 
 .. list-table::
    :widths: 30 15 80
@@ -574,7 +570,7 @@ The following table summarizes various :class:`~orbdot.analysis.Analyzer` class 
      - Declination coordinate [hexidecimal]
    * - ``mu``
      - ``float``
-     - The systemic proper motion of the system [mas/yr]
+     - The systemic proper motion [mas/yr]
    * - ``mu_RA``
      - ``float``
      - The right ascension component of the proper motion [mas/yr]
