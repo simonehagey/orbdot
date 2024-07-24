@@ -6,9 +6,9 @@ Installation
 
 To install the OrbDot package, you have a few options depending on your environment and preferences.
 
-Using pip
----------
-The easiest way to install OrbDot is via pip. You can install the package directly from PyPI (Python Package Index) by running:
+Using Package Managers
+----------------------
+The recommended way to install the stable version of OrbDot is using `pip <http://www.pip-installer.org/>`_
 
 .. code-block:: bash
 
@@ -18,35 +18,41 @@ This will download and install the latest release of OrbDot and its dependencies
 
 Using a Local Copy
 ------------------
-If you have a local copy of the OrbDot source code or you want to contribute to the development, you can install it directly from the source. First, clone the repository:
+You can also install OrbDot directly from a local copy of the source code.
+
+First, clone the repository:
 
 .. code-block:: bash
 
     git clone https://github.com/simonehagey/orbdot.git
 
-Navigate into the project directory:
+Next, navigate into the project directory and install the package with the ``setup.py`` file:
 
 .. code-block:: bash
 
     cd orbdot
+    python setup.py install
 
-Then, install the package using:
+Test the Installation
+---------------------
+To ensure that the installation worked, navigate to the ``examples/`` directory and run the ``example_wasp12.py`` script:
 
 .. code-block:: bash
 
-    pip ???
+    cd orbdot/examples
+    python example_wasp12.py
 
-This will allow you to make changes to the code and see them reflected immediately without needing to reinstall.
+If the first model fit begins to run, you're good to go.
 
 Dependencies
 ------------
 OrbDot requires Python 3.9 or higher. The package depends on the following libraries:
 
-- `corner <https://github.com/dfm/corner.py>`_
-- `matplotlib <https://github.com/matplotlib/matplotlib>`_
 - `numpy <https://github.com/numpy/numpy>`_
 - `scipy <https://github.com/scipy/scipy>`_
+- `matplotlib <https://github.com/matplotlib/matplotlib>`_
 - `astropy <https://github.com/astropy/astropy>`_
+- `corner <https://github.com/dfm/corner.py>`_
 
 and one of:
 
@@ -55,4 +61,6 @@ and one of:
   for `MultiNest <https://github.com/JohannesBuchner/MultiNest>`_.
 
 .. note::
-    To perform the nested sampling methods the user may choose between two packages: ``Nestle`` and ``PyMultiNest``. ``PyMultiNest`` is generally faster and more robust, but it can be tricky to install, thus it is not a requirement to use this code. ``Nestle`` is included in the ``requirements.txt`` file.
+    When using the nested sampling methods the user may choose between two packages: ``Nestle`` and ``PyMultiNest``. The latter is generally faster and more robust, but it can be tricky to install, and thus it is not a requirement to use this code.
+
+    ``Nestle`` is included in the ``requirements.txt`` file, and will be installed automatically. If you wish to use ``PyMultiNest``, you will have to follow their installation instructions `here <https://johannesbuchner.github.io/PyMultiNest/install.html>`_.
