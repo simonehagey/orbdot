@@ -327,6 +327,10 @@ def rv_precession(t0, P0, e0, w0, K, v0, dvdt, ddvdt, wdE, t):
 
     Notes
     -----
+    .. tip::
+        In this model, the eccentricity and orbital period not evolve, which means that
+        :math:`e=e_0` and :math:`P_s=P_0`, where :math:`P_s` is the sidereal period.
+
     The following steps outline the implementation of this method:
 
     1. **Calculate the anomalistic period and argument of pericenter.**
@@ -348,7 +352,7 @@ def rv_precession(t0, P0, e0, w0, K, v0, dvdt, ddvdt, wdE, t):
      integer value:
 
      .. math::
-            E = \\frac{(t - t_0)}{P_0}
+            E = \\frac{(t - t_0)}{P_s}
 
     2. **Calculate the latest time of pericenter passage.**
 
@@ -379,7 +383,7 @@ def rv_precession(t0, P0, e0, w0, K, v0, dvdt, ddvdt, wdE, t):
      .. math::
             \\mathrm{M}_{\\mathrm{I}} = n \\left(t_{\\mathrm{I}} - t_p\\right)
 
-     where :math:`n = 2 \\pi/P` is the mean motion.
+     where :math:`n = 2 \\pi/P_a` is the mean motion.
 
     3. **Calculate the true anomaly of the planet at the given time.**
 
@@ -408,13 +412,13 @@ def rv_precession(t0, P0, e0, w0, K, v0, dvdt, ddvdt, wdE, t):
             v_r = K[\\cos{(\\phi+\\omega_p)}+e\\cos{\\omega_p}] + \\gamma_i + \\dot{\\gamma}
             \\left(t-t_0\\right) + \\frac{1}{2} \\ddot{\\gamma} \\left(t-t_0\\right)^2
 
-      where,
+     where,
 
-      .. math:: \\omega_p\\left(E\\right) = w_0 + \\frac{d\\omega}{dE}\\,E
+     .. math:: \\omega_p\\left(E\\right) = w_0 + \\frac{d\\omega}{dE}\\,E
 
-      and where :math:`K` is the semi-amplitude of the planetary signal, :math:`\\gamma_i` is the
-      systemic radial velocity, and :math:`\\dot{ \\gamma}` and :math:`\\ddot{\\gamma}` are first
-      and second-order acceleration terms, respectively.
+     and where :math:`K` is the semi-amplitude of the planetary signal, :math:`\\gamma_i` is the
+     systemic radial velocity, and :math:`\\dot{ \\gamma}` and :math:`\\ddot{\\gamma}` are first
+     and second-order acceleration terms, respectively.
 
     """
     # determine the epoch of the most recent transit

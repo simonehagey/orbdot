@@ -12,7 +12,7 @@ It is important for the user to be familiar with the symbols and definitions of 
 
 **Orbital Elements**
 
- Note: the orbital elements are defined as their value at time :math:`t=t_0`.
+ Note: the orbital elements are defined at time :math:`t=t_0`.
 
  .. list-table::
    :header-rows: 1
@@ -64,7 +64,7 @@ It is important for the user to be familiar with the symbols and definitions of 
    * - :math:`e_0 \sin{\omega_0}`
      - ``esinw``
      -
-     - the eccentricity :math:`e_0` multiplied by the sine of :math:`\omega_0`.
+     - The eccentricity :math:`e_0` multiplied by the sine of :math:`\omega_0`.
    * - :math:`\sqrt{e_0}\,\cos{\omega_0}`
      - ``sq_ecosw``
      -
@@ -95,7 +95,7 @@ It is important for the user to be familiar with the symbols and definitions of 
     * - :math:`\frac{de}{dE}`
       - ``edE``
       - :math:`E^{-1}`
-      - A constant change of the orbital eccentricity. [*]_
+      - A constant change of the eccentricity. [*]_
     * - :math:`\frac{di}{dE}`
       - ``idE``
       - :math:`\mathrm{deg}` :math:`E^{-1}`
@@ -122,8 +122,8 @@ It is important for the user to be familiar with the symbols and definitions of 
    * - :math:`\gamma_j`
      - ``v0``
      - :math:`\mathrm{m}` :math:`{\mathrm s}^{-1}`
-     - An instrument-dependant systemic radial velocity.
-   * - :math:`\sigma_j`
+     - The instrument-dependant systemic radial velocity.
+   * - :math:`\sigma_i`
      - ``jit``
      - :math:`\mathrm{m}` :math:`{\mathrm s}^{-1}`
      - An instrument-dependant "jitter" term.
@@ -151,9 +151,9 @@ Coordinate System
 The OrbDot models are defined for a coordinate system in which the sky plane lies on the x-z plane, and the y-axis points toward the observer along the line of sight.
 
 .. image:: _static/coordinate_system.png
-    :width: 800
+    :width: 700
 
-It is critical to be consistent in the definition of the argument of pericenter when simultaneously fitting transit mid-times, eclipse mid-times and radial velocities. In the OrbDot coordinate system, the argument of pericenter is measured from the positive x-axis, such that a transit occurs when the true anomaly :math:`\phi` is equal to:
+It is critical to maintain consistency in the definition of the argument of pericenter when simultaneously fitting transit mid-times, eclipse mid-times and radial velocities. In the OrbDot coordinate system, the argument of pericenter is measured from the positive x-axis, such that a transit occurs when the true anomaly :math:`\phi` is equal to:
 
 .. math::
     \phi_{\mathrm{I}}\,=\,\frac{\pi}{2} - \omega_p
@@ -163,13 +163,13 @@ and an eclipse occurs when:
 .. math::
     \phi_{\mathrm{II}} = \frac{3\pi}{2} - \omega_p
 
-where :math:`\omega_p` is the argument of pericenter of the planetary orbit.
+where :math:`\omega_p` is the argument of pericenter of the planet's orbit.
 
 ------------
 
 Transit and Eclipse Timing Models
 =================================
-OrbDot currently supports model fitting for three transit and/or eclipse timing models:
+OrbDot currently supports model fitting for three transit and eclipse timing models:
 
  1. An unchanging orbit that is circular or eccentric, i.e. "constant-period".
  2. A constant evolution of the orbital period, i.e. "orbital decay".
@@ -447,13 +447,13 @@ The following OrbDot functions are relevant to these effects:
 
 Companion Planets
 -----------------
-If there is a companion planet in the system, whether interior or exterior to the observed planet's orbit, its perturbations might cause measurable effects in the transit and radial velocity data. The following OrbDot functions are relevant to these effects:
+If there is a companion planet in the system, whether interior or exterior to the observed planet's orbit, it may cause perturbations that result in measurable effects in the transit and radial velocity data. The following OrbDot functions are relevant to these effects:
 
 Long-Term Radial Velocity Trends
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. autofunction:: orbdot.models.theory.companion_rv_trend_from_mass
 .. autofunction:: orbdot.models.theory.companion_mass_from_rv_trend
+.. autofunction:: orbdot.models.theory.companion_rv_trend_from_mass
 .. autofunction:: orbdot.models.theory.companion_doppler_pdot_from_rv_trend
 .. autofunction:: orbdot.models.theory.companion_doppler_rv_trend_from_pdot
 .. autofunction:: orbdot.models.theory.companion_from_quadratic_rv
@@ -468,7 +468,7 @@ Companion-Induced Precession
 
 Resolved Stellar Binary
 -----------------------
-If there is a bound stellar companion to a transiting exoplanet's host star, it may induce measurable secular variations in the radial velocity data. If such a companion has been observed and the angular separation is known, either from imaging or astrometric measurements, the following OrbDot functions may be used:
+If there is a bound stellar companion to a transiting exoplanet's host star, it may induce measurable secular variations in the data. If such a companion has been observed and the angular separation is known, either from imaging or astrometric measurements, the following OrbDot functions may be used:
 
 .. autofunction:: orbdot.models.theory.resolved_binary_mass_from_rv_trend
 .. autofunction:: orbdot.models.theory.resolved_binary_rv_trend_from_mass

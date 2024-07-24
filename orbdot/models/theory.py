@@ -27,16 +27,17 @@ M_sun = 1.9885e30      # solar mass = 1,988,500 x 10^30 kg
 def companion_doppler_pdot_from_rv_trend(P, dvdt):
     """Calculate the apparent variation of an orbital period due to a line-of-sight acceleration.
 
-    This method returns the time derivative of the observed orbital period due to the Doppler
-    effect induced by an acceleration along the line-of-sight (i.e. a linear RV trend). It uses
-    equation (6) from Bouma et al. (2020) [1]_, which is derived in convenient units.
+    This method returns the time derivative of the observed orbital period of a transiting
+    exoplanet due to the Doppler effect induced by an acceleration along the line-of-sight (i.e.
+    a linear RV trend). It uses equation (6) from Bouma et al. (2020) [1]_, which is derived in
+    convenient units.
 
     Parameters
     ----------
     P : float
         The orbital period in days.
     dvdt : float
-        The linear radial velocity trend in m/s/day.
+        The first-order radial acceleration term in m/s/day.
 
     Returns
     -------
@@ -54,9 +55,9 @@ def companion_doppler_pdot_from_rv_trend(P, dvdt):
         \\dot{P}_{\\mathrm{RV}} = 105.3 \\mathrm{\\,ms\\,yr^{-1}}\\left(\\frac{P}{\\mathrm{
         day}}\\right)\\left(\\frac{\\dot{\\gamma}}{\\mathrm{m\\,s^{-1}\\,day^{-1}}}\\right)
 
-    where :math:`\\dot{P}_{\\mathrm{RV}}` is the time derivative of the observed orbital period,
-    :math:`\\dot{\\gamma}` is the linear radial velocity trend, and :math:`P` is the orbital
-    period of the transiting planet.
+    where :math:`P` is the orbital period of the transiting planet, :math:`\\dot{P}_{\\mathrm{
+    RV}}` is the time derivative of the period, and :math:`\\dot{\\gamma}` is the first-order RV
+    acceleration term.
 
     References
     ----------
@@ -69,9 +70,10 @@ def companion_doppler_pdot_from_rv_trend(P, dvdt):
 def companion_doppler_rv_trend_from_pdot(P, dPdt):
     """Calculate the line-of-sight acceleration given the apparent variation of an orbital period.
 
-    This method returns the linear radial velocity trend (acceleration) that corresponds to a given
-    time derivative of the observed orbital period due to the Doppler effect. It uses equation (6)
-    from Bouma et al. (2020) [1]_, which is derived in convenient units.
+    This method returns the slope of the linear radial velocity trend (acceleration) that
+    corresponds to a given time derivative of the observed orbital period, assuming that the
+    latter is a due to the Doppler effect. It uses equation (6) from Bouma et al. (2020) [1]_,
+    which is derived in convenient units.
 
     Parameters
     ----------
@@ -83,22 +85,22 @@ def companion_doppler_rv_trend_from_pdot(P, dPdt):
     Returns
     -------
     float
-        The linear radial velocity trend (acceleration) in m/s/day.
+        The first-order radial acceleration term in m/s/day.
 
     Notes
     -----
     For a transiting exoplanet, if a variation in the observed period between transits is measured,
     it may be due to the Doppler effect induced by a line-of-sight acceleration. Assuming this
     trend is a real effect, Equation (6) from Bouma et al. (2020) [1]_ can be used to determine
-    the corresponding radial velocity trend from the period derivative:
+    the corresponding slope of the linear radial velocity trend from the period derivative:
 
     .. math::
         \\dot{\\gamma} = \\frac{\\dot{P}_{\\mathrm{RV}}}{105.3 \\mathrm{\\,ms\\,yr^{-1}}}
         \\left(\\frac{\\mathrm{day}}{P}\\right)
 
-    where :math:`\\dot{P}_{\\mathrm{RV}}` is the time derivative of the observed orbital period,
-    :math:`\\dot{\\gamma}` is the linear radial velocity trend, and :math:`P` is the orbital
-    period of the transiting planet.
+    where :math:`P` is the orbital period of the transiting planet, :math:`\\dot{P}_{\\mathrm{
+    RV}}` is the time derivative of the period, and :math:`\\dot{\\gamma}` is the first-order RV
+    acceleration term.
 
     References
     ----------
@@ -111,17 +113,19 @@ def companion_doppler_rv_trend_from_pdot(P, dPdt):
 def companion_mass_from_rv_trend(tau, dvdt, M_s):
     """Calculate the minimum mass of an outer companion given the slope of a linear RV trend.
 
-    This method computes the minimum mass for an unseen outer companion planet given a linear
-    trend in radial velocity data (i.e., an acceleration). While this approach to determining
-    the minimum companion mass was originally described in Feng et al. (2015) [1]_ (see Eq. 1),
-    this method implements the version given by equation (8) in Bouma et al. (2020) [2]_.
+    Given a measured linear trend in radial velocity data (acceleration), this method calculates
+    the minimum mass of an unseen outer companion planet that could cause such an acceleration.
+
+    While this approach was originally described in equation (1) of Feng et al. (2015) [1]_,
+    this method implements a version given by equation (8) in Bouma et al. (2020) [ 2]_,
+    which is derived in more convenient units.
 
     Parameters
     ----------
     tau : float
         The time span of the observations in years.
     dvdt : float
-        The linear radial velocity trend in m/s/day.
+        The first-order acceleration term in in m/s/day.
     M_s : float
         The mass of the host star in solar masses.
 
@@ -132,11 +136,9 @@ def companion_mass_from_rv_trend(tau, dvdt, M_s):
 
     Notes
     -----
-    Given a measured acceleration in radial velocity observations and the time span over which
-    there are RV measurements, this method calculates the minimum mass of an outer companion that
-    could induce such an acceleration. While this approach to determining the minimum companion
-    mass was originally described in Feng et al. (2015) [1]_ (see Equation 1), this method
-    implements the version given by equation (8) in Bouma et al. (2020) [2]_:
+    Given a measured acceleration in radial velocity measurements and the time span over which
+    there are RV data available, this method calculates the minimum mass of an outer companion
+    that could induce such an acceleration, using equation (8) from Bouma et al. (2020) [1]_:
 
     .. math::
         M_{c} \\approx 5.99 M_{\\mathrm{Jup}}\\left(\\frac{\\tau}{\\mathrm{yr}}\\right)^{
@@ -144,11 +146,11 @@ def companion_mass_from_rv_trend(tau, dvdt, M_s):
         \\frac{M_{\\star}}{M_{\\odot}}\\right)^{2 / 3}
 
     where :math:`\\tau` is the time span of the observations in years, :math:`\\dot{\\gamma}` is
-    the linear radial velocity trend, and :math:`M_\\star` is the mass of the host star.
+    the first-order acceleration term, and :math:`M_\\star` is the mass of the host star.
 
     The above equation assumes that the companion's orbit has an eccentricity of :math:`e=0.5`,
     an argument of pericenter that is exactly :math:`90` degrees, and a period that is
-    :math:`1.25\\times` the timespan of the observations. In this scenario, the observed linear
+    :math:`1.25\\times` the time span of the observations. In this scenario, the observed linear
     trend manifests as a segment of the sawtooth-like RV curve of the companion planet (see
     Figure 1 of [1]_), for which the semi-amplitude can be approximated as half of the baseline
     multiplied by the acceleration, i.e. :math:`K_c = 0.5 \\, \\tau \\, \\dot{\\gamma}`.
@@ -178,11 +180,15 @@ def companion_mass_from_rv_trend(tau, dvdt, M_s):
 
 
 def companion_rv_trend_from_mass(tau, M_c, M_s):
-    """Calculate the slope of a radial velocity trend given a lower limit on the companion mass.
+    """Calculate the slope of a linear radial velocity trend given an estimate of a companion mass.
 
-    This method computes the expected linear radial velocity trend (i.e., acceleration) induced
-    by an unseen outer companion planet given its minimum mass. This is calculated using equation
-    (8) from Bouma et al. (2020) [1]_, which was adapted from Feng et al. (2015) [2]_.
+    This method computes the expected slope of a linear radial velocity trend (acceleration)
+    induced by an unseen outer companion planet with an orbital period that is far longer than
+    the observational baseline. It requires an estimate of the companion mass.
+
+    While this approach was originally described in equation (1) of Feng et al. (2015) [1]_,
+    this method implements a version given by equation (8) in Bouma et al. (2020) [ 2]_,
+    which is derived in more convenient units.
 
     Parameters
     ----------
@@ -196,13 +202,13 @@ def companion_rv_trend_from_mass(tau, M_c, M_s):
     Returns
     -------
     float
-        The linear radial velocity trend in m/s/day.
+        The first-order acceleration term in in m/s/day.
 
     Notes
     -----
     Given a companion planet's mass, the time span over which radial velocity measurements have
-    been taken, and the mass of the host star, this method calculates the expected linear trend
-    in the radial velocity data using equation (8) from Bouma et al. (2020) [1]_:
+    been taken, and the mass of the host star, this method calculates the slope of the expected
+    linear trend in the radial velocity data using equation (8) from Bouma et al. (2020) [1]_:
 
     .. math::
         \\dot{\\gamma} \\approx \\frac{M_c}{5.99 M_{\\mathrm{Jup}}} \\left(\\frac{\\mathrm{yr}}{
@@ -214,7 +220,7 @@ def companion_rv_trend_from_mass(tau, M_c, M_s):
 
     The above equation assumes that the companion's orbit has an eccentricity of :math:`e=0.5`,
     an argument of pericenter that is exactly :math:`90` degrees, and a period that is
-    :math:`1.25\\times` the timespan of the observations. In this scenario, the observed linear
+    :math:`1.25\\times` the time span of the observations. In this scenario, the observed linear
     trend manifests as a segment of the sawtooth-like RV curve of the companion planet (see
     Figure 1 of [1]_), for which the semi-amplitude can be approximated as half of the baseline
     multiplied by the acceleration, i.e. :math:`K_c = 0.5 \\, \\tau \\, \\dot{\\gamma}`.
@@ -235,9 +241,9 @@ def companion_rv_trend_from_mass(tau, M_c, M_s):
 def companion_from_quadratic_rv(P_min, t_pivot, dvdt, ddvdt, M_s):
     """Constrain properties of the orbit of an outer companion given a quadratic RV trend.
 
-    Given the first and second-order acceleration terms, :math:`\\dot{\\gamma}` and :math:`\\ddot{
-    \\gamma}`, that parameterize a long-term, quadratic radial velocity trend, this method follows
-    the formulation from Kipping et al. (2011) [1]_ (see Equations 1, 3, and 4) to constrain
+    Given the first and second-order acceleration terms that parameterize a long-term, quadratic
+    radial velocity trend, :math:`\\dot{\\gamma}` and :math:`\\ddot{\\gamma}`, this method
+    follows the derivations of Kipping et al. (2011) [1]_ (equations 1, 3, and 4) to constrain
     properties of a possible outer companion.
 
     This method requires an estimate of minimum possible orbital period of the companion,
@@ -326,17 +332,17 @@ def companion_precession(P, M2, P2, M_s):
         \\left(\\alpha^2+1\\right) \\mathcal{E}\\left(\\frac{2 \\alpha^{1 / 2}}{\\alpha+1}\\right)
         -(\\alpha-1)^2 \\mathcal{K}\\left(\\frac{2 \\alpha^{1/2}}{\\alpha+1}\\right)\\right]
 
-    where :math:`m_2` is the mass of the perturbing planet, :math:`\\alpha = a/a_c` is the
+    where :math:`m_2` is the mass of the perturbing planet, :math:`\\alpha = a/a_2` is the
     semi-major axis ratio, and :math:`\\mathcal{K}` and :math:`\\mathcal{E}` are the complete
     elliptic integrals of the first and second kind, respectively.
 
     .. important::
         The ``scipy`` implementation of the complete elliptic integrals :math:`\\mathcal{K}` and
-        :math:`\\mathcal{E}` expect an integrand of the form :math:`(1 - m \\sin^2 t)^{ -1/2}`.
+        :math:`\\mathcal{E}` expect an integrand of the form :math:`(1 - m \\sin^2 t)^{-1/2}`.
         However, the derivation of the equation above expects an integrand of the form :math:`(1
-        - m^2 \\sin^2 t)^{-1/2}` [1]_, which can be shown by expanding :math:`\\mathcal{ K}` and
-        :math:`\\mathcal{E}`. To maintain consistency, the input for the ``scipy.special.ellipe``
-        and ``scipy.special.ellipk`` methods must but squared, ie. such that :math:`\\mathcal{K}(
+        - m^2 \\sin^2 t)^{-1/2}` [1]_, which can be shown by expanding :math:`\\mathcal{K}` and
+        :math:`\\mathcal{E}`. To maintain consistency, the input for the ``scipy.special.ellipk``
+        and ``scipy.special.ellipe`` methods must but squared, ie. such that :math:`\\mathcal{K}(
         4 \\alpha/( \\alpha+1)^2)` and :math:`\\mathcal{E}(4 \\alpha/( \\alpha+1)^2)`.
 
     References
@@ -413,17 +419,17 @@ def companion_mass_from_precession(P, P2, dwdE, M_s):
         \\left(\\alpha^2+1\\right) \\mathcal{E}\\left(\\frac{2 \\alpha^{1 / 2}}{\\alpha+1}\\right)
         - (\\alpha-1)^2 \\mathcal{K}\\left(\\frac{2 \\alpha^{1/2}}{\\alpha+1}\\right)\\right]}
 
-    where :math:`\\dot{\\omega}` is the observed precession rate, :math:`\\alpha = a/a_c` is
-    the semimajor axis ratio, and :math:`\\mathcal{K}` and :math:`\\mathcal{E}` are the complete
+    where :math:`\\dot{\\omega}` is the observed precession rate, :math:`\\alpha = a/a_2` is
+    the semi major axis ratio, and :math:`\\mathcal{K}` and :math:`\\mathcal{E}` are the complete
     elliptic integrals of the first and second kind, respectively.
 
     .. important::
         The ``scipy`` implementation of the complete elliptic integrals :math:`\\mathcal{K}` and
-        :math:`\\mathcal{E}` expect an integrand of the form :math:`(1 - m \\sin^2 t)^{ -1/2}`.
+        :math:`\\mathcal{E}` expect an integrand of the form :math:`(1 - m \\sin^2 t)^{-1/2}`.
         However, the derivation of the equation above expects an integrand of the form :math:`(1
-        - m^2 \\sin^2 t)^{-1/2}` [1]_, which can be shown by expanding :math:`\\mathcal{ K}` and
-        :math:`\\mathcal{E}`. To maintain consistency, the input for the ``scipy.special.ellipe``
-        and ``scipy.special.ellipk`` methods must but squared, ie. such that :math:`\\mathcal{K}(
+        - m^2 \\sin^2 t)^{-1/2}` [1]_, which can be shown by expanding :math:`\\mathcal{K}` and
+        :math:`\\mathcal{E}`. To maintain consistency, the input for the ``scipy.special.ellipk``
+        and ``scipy.special.ellipe`` methods must but squared, ie. such that :math:`\\mathcal{K}(
         4 \\alpha/( \\alpha+1)^2)` and :math:`\\mathcal{E}(4 \\alpha/( \\alpha+1)^2)`.
 
     References
@@ -548,8 +554,8 @@ def decay_quality_factor_from_pdot(P, dPdE, M_s, M_p, R_s):
     -----
     Assuming that equilibrium tides dominate the evolution of a planet's orbit, the rate of
     orbital decay depends on the efficiency of tidal energy dissipation within the star,
-    which is parameterized by the tidal quality factor :math:`Q`. In the constant-phase lag model for
-    equilibrium tides, the modified stellar tidal quality factor is [1]_:
+    which is parameterized by the tidal quality factor :math:`Q`. In the constant-phase lag model
+    for equilibrium tides, the modified stellar tidal quality factor is [1]_:
 
     .. math::
         Q_\\star^{'} = -\\frac{27\\pi}{2\\dot{P}_{\\mathrm{decay}}}\\left(\\frac{M_p}{
@@ -1629,8 +1635,8 @@ def proper_motion_pdot(P, e, w, mu):
     -----
     The systemic proper motion of a transiting star-planet system can have a significant
     influence on the observed period between transits due to the *apparent* apsidal precession
-    :math:`\\dot{\\omega}_{\\mu}`. The following expression from Rafikov (2009) [1]_ assumes a
-    constant change in the observed period, denoted :math:`\\dot{P}_{\\omega,\\mu}`:
+    :math:`\\dot{\\omega}_{\\mu}`. This manifests as a constant change in the observed period,
+    which Rafikov (2009) [1]_ expresses as:
 
     .. math::
         \\dot{P}_{\\omega,\\mu} = -\\frac{2\\pi}{n^2} \\frac{(1-e^2)^{3/2}}{(1+e\\sin{
@@ -1641,7 +1647,7 @@ def proper_motion_pdot(P, e, w, mu):
     :math:`n` is the orbital mean motion, :math:`\\dot{\\omega}_{\\mu}` is the apparent
     precession rate, and :math:`\\ddot{\\omega}_{\\mu}` is the time derivative of the latter.
 
-    Rafikov [1]_ suggests that for transiting systems the following approximation is valid:
+    Rafikov [1]_ posits that for transiting systems the following approximation is valid:
 
     .. math:: \\ddot{\\omega}_{\\mu} \\sim \\mu^2 \\sim (\\dot{\\omega}_{\\mu})^2
 
@@ -1803,18 +1809,74 @@ def proper_motion_shklovskii(P, mu, D):
     return pdot
 
 
+def resolved_binary_mass_from_rv_trend(theta, D, dvdt):
+    """Calculate the minimum mass of a resolved secondary star given a measured radial acceleration.
+
+    This method applies to the case where an acceleration has been observed in radial velocity
+    observations of a star, and there is a known secondary object for which an angular separation
+    has been measured.
+
+    It uses Equation (6) from Torres (1999) [1]_ to estimate a lower limit for the mass of the
+    secondary object, under the assumption that the radial velocity trend is due entirely to its
+    gravitational influence. In the derivation of this equation, the author makes no assumptions
+    about the mass or brightness of the secondary [1]_.
+
+    Parameters
+    ----------
+    theta : float
+        The angular separation of the binary in arcseconds.
+    D : float
+        The distance to the system in parsecs.
+    dvdt : float
+        The first-order RV acceleration term in m/s/day.
+
+    Returns
+    -------
+    float
+        The mass of the secondary star in solar masses.
+
+    Notes
+    -----
+    Given the angular separation of a known companion object, the distance to the system, and a
+    measured acceleration in radial velocity observations, this method uses Equation (6) from
+    Torres (1999) [1]_ to estimate the minimum mass of the companion:
+
+    .. math:: M_B = 5.341 \\times 10^{-6}(D \\rho)^2\\left|\\dot{\\gamma}\\right| \\Phi
+
+    where :math:`\\rho` is the angular separation of the binary in arcseconds, :math:`D` is the
+    distance to the system in parsecs, and :math:`\\dot{\\gamma}` is the measured first-order radial
+    acceleration.
+
+    The parameter :math:`\\Phi` is a function of the eccentricity, longitude of pericenter,
+    and inclination of the companion's orbit. Assuming that these parameters are unconstrained,
+    this method uses the minimum value :math:`\\Phi = \\frac{3\\sqrt{3}}{2}` to determine the
+    minimum companion mass.
+
+    References
+    ----------
+    .. [1] :cite:t:`Torres1999`. https://doi.org/10.1086/316313.
+
+    """
+    # convert the slope from m/s/day to ms/s/yr
+    dvdt *= 365.25
+
+    # calculate the minimum value of the unknown component 'Phi'
+    Phi = 3 * np.sqrt(3) / 2
+
+    # return the mass of the resolved companion star in solar masses
+    return 5.341e-6 * (D * theta) ** 2 * dvdt * Phi
+
+
 def resolved_binary_rv_trend_from_mass(theta, D, M_B):
-    """Calculate a minimum RV trend (acceleration) given properties of a resolved stellar companion.
+    """Calculate the slope of a linear RV trend given properties of a resolved stellar companion.
 
     This method returns the minimum possible acceleration, induced by a bound stellar companion,
     that may be observed in radial velocity observations of the primary. The secondary star must
     have been resolved through imaging or astrometric measurements such that the angular
     separation is known.
 
-    It uses Equation (6) from Torres (1999) [1]_ to estimate a lower limit for the mass of the
-    secondary object, under the assumption that the radial velocity trend is due entirely to its
-    gravitational influence. In the derivation of this equation, the author makes no assumptions
-    about the mass or brightness of the secondary [1]_.
+    It uses Equation (6) from Torres (1999) [1]_, which makes no assumptions about the mass or
+    brightness of the secondary [1]_.
 
     Parameters
     ----------
@@ -1828,13 +1890,13 @@ def resolved_binary_rv_trend_from_mass(theta, D, M_B):
     Returns
     -------
     float
-        The predicted linear RV trend (acceleration) in m/s/day.
+        The first-order radial acceleration term in m/s/day.
 
     Notes
     -----
-    Given the angular separation of a known companion object, the distance to the system, and the
-    mass of the companion, this method uses Equation (6) from Torres et al. (1999) [1]_ to estimate
-    the minimum acceleration that could be measured in radial velocity data:
+    Given the angular separation of a known companion, the distance to the system, and the mass
+    of the companion, this method uses Equation (6) from Torres et al. (1999) [1]_ to estimate
+    the acceleration that could be measured in radial velocity data:
 
     .. math::
         \\left|\\dot{\\gamma}\\right| = \\frac{M_B}{5.341 \\times 10^{-6}(D \\rho)^2 \\Phi}
@@ -1862,64 +1924,6 @@ def resolved_binary_rv_trend_from_mass(theta, D, M_B):
 
     # return the slope in m/s/day
     return dvdt / 365.25
-
-
-def resolved_binary_mass_from_rv_trend(theta, D, dvdt):
-    """Calculate the minimum mass of a resolved secondary star given a measured radial acceleration.
-
-    This method applies to the case where an acceleration has been observed in radial velocity
-    observations of a star, and there is a known secondary object for which an angular separation
-    has been measured.
-
-    It uses Equation (6) from Torres (1999) [1]_ to estimate a lower limit for the mass of the
-    secondary object, under the assumption that the radial velocity trend is due entirely to its
-    gravitational influence. In the derivation of this equation, the author makes no assumptions
-    about the mass or brightness of the secondary [1]_.
-
-    Parameters
-    ----------
-    theta : float
-        The angular separation of the binary in arcseconds.
-    D : float
-        The distance to the system in parsecs.
-    dvdt : float
-        The observed linear RV trend (acceleration) in m/s/day.
-
-    Returns
-    -------
-    float
-        The mass of the secondary star in solar masses.
-
-    Notes
-    -----
-    Given the angular separation of a known companion object, the distance to the system, and a
-    measured acceleration in radial velocity observations, this method uses Equation (6) from
-    Torres (1999) [1]_ to estimate the minimum mass of the companion:
-
-    .. math:: M_B = 5.341 \\times 10^{-6}(D \\rho)^2\\left|\\dot{\\gamma}\\right| \\Phi
-
-    where :math:`\\rho` is the angular separation of the binary in arcseconds, :math:`D` is the
-    distance to the system in parsecs, and :math:`\\dot{\\gamma}` is the measured radial
-    acceleration.
-
-    The parameter :math:`\\Phi` is a function of the eccentricity, longitude of pericenter,
-    and inclination of the companion's orbit. Assuming that these parameters are unconstrained,
-    this method uses the minimum value :math:`\\Phi = \\frac{3\\sqrt{3}}{2}` to determine the
-    minimum companion mass.
-
-    References
-    ----------
-    .. [1] :cite:t:`Torres1999`. https://doi.org/10.1086/316313.
-
-    """
-    # convert the slope from m/s/day to ms/s/yr
-    dvdt *= 365.25
-
-    # calculate the minimum value of the unknown component 'Phi'
-    Phi = 3 * np.sqrt(3) / 2
-
-    # return the mass of the resolved companion star in solar masses
-    return 5.341e-6 * (D * theta) ** 2 * dvdt * Phi
 
 
 def get_semi_major_axis_from_period(P, M_s):
