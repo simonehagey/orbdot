@@ -79,20 +79,3 @@ Contents
 
    api
 
-------------
-
-* :ref:`genindex`
-* :ref:`modindex`
-
-------------
-
-Changelog
----------
-
-.. include:: ../HISTORY.rst
-
-------------
-
-:Authors: Simone R. Hagey
-:Version: 1.0 of 2024/06
-:Dedication: To Cabbage.
