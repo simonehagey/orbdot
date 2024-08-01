@@ -3,7 +3,7 @@
 ======
 OrbDot
 ======
-:Author: Simone Hage
+:Author: Simone R. Hagey
 :Version: 1.0.0
 
 |Documentation|
