@@ -68,6 +68,7 @@ Contents
 .. toctree::
    :caption: Using OrbDot
 
+   README <readme>
    getting_started
    model_fitting
    models
