@@ -117,7 +117,7 @@ def companion_mass_from_rv_trend(tau, dvdt, M_s):
     the minimum mass of an unseen outer companion planet that could cause such an acceleration.
 
     While this approach was originally described in equation (1) of Feng et al. (2015) [1]_,
-    this method implements a version given by equation (8) in Bouma et al. (2020) [ 2]_,
+    this method implements a version given by equation (8) in Bouma et al. (2020) [2]_,
     which is derived in more convenient units.
 
     Parameters
@@ -138,7 +138,7 @@ def companion_mass_from_rv_trend(tau, dvdt, M_s):
     -----
     Given a measured acceleration in radial velocity measurements and the time span over which
     there are RV data available, this method calculates the minimum mass of an outer companion
-    that could induce such an acceleration, using equation (8) from Bouma et al. (2020) [1]_:
+    that could induce such an acceleration, using equation (8) from Bouma et al. (2020) [2]_:
 
     .. math::
         M_{c} \\approx 5.99 M_{\\mathrm{Jup}}\\left(\\frac{\\tau}{\\mathrm{yr}}\\right)^{
@@ -208,7 +208,7 @@ def companion_rv_trend_from_mass(tau, M_c, M_s):
     -----
     Given a companion planet's mass, the time span over which radial velocity measurements have
     been taken, and the mass of the host star, this method calculates the slope of the expected
-    linear trend in the radial velocity data using equation (8) from Bouma et al. (2020) [1]_:
+    linear trend in the radial velocity data using equation (8) from Bouma et al. (2020) [2]_:
 
     .. math::
         \\dot{\\gamma} \\approx \\frac{M_c}{5.99 M_{\\mathrm{Jup}}} \\left(\\frac{\\mathrm{yr}}{
@@ -324,8 +324,8 @@ def companion_precession(P, M2, P2, M_s):
     apsidal precession of a transiting planet. It assumes that the companion object is on a
     circular, coplanar, and nonresonant orbit, and that its mass is far less than the host star.
 
-    In the formulation of Heyl and Gladman (2007) [1]_, the induced precession rate in arcseconds
-    per year is:
+    In the formulation of Heyl and Gladman (2007) [1]_, the induced precession rate in radians
+    per orbit:
 
     .. math::
         \\dot{\\omega} = \\frac{m_2}{M_\\star} \\frac{\\alpha}{(\\alpha+1)(\\alpha-1)^2}\\left[
@@ -363,16 +363,8 @@ def companion_precession(P, M2, P2, M_s):
 
     # calculate the rate of apsidal precession
     t1 = alpha / ((alpha + 1) * (alpha - 1) ** 2)
-
-    # exterior orbit
-    if alpha < 1.0:
-        t2 = (alpha ** 2 + 1) * sci.ellipe(2 * alpha ** (1/2) / (alpha + 1))
-        t3 = (alpha - 1) ** 2 * sci.ellipk(2 * alpha ** (1/2) / (alpha + 1))
-
-    # interior orbit
-    else:
-        t2 = (alpha ** 2 + 1) * sci.ellipe(4 * alpha / (alpha + 1) ** 2)
-        t3 = (alpha - 1) ** 2 * sci.ellipk(4 * alpha / (alpha + 1) ** 2)
+    t2 = (alpha ** 2 + 1) * sci.ellipe(4 * alpha / (alpha + 1) ** 2)
+    t3 = (alpha - 1) ** 2 * sci.ellipk(4 * alpha / (alpha + 1) ** 2)
 
     dwdE = (M2 / M_s) * t1 * (t2 - t3)
 
@@ -1864,7 +1856,7 @@ def resolved_binary_mass_from_rv_trend(theta, D, dvdt):
     Phi = 3 * np.sqrt(3) / 2
 
     # return the mass of the resolved companion star in solar masses
-    return 5.341e-6 * (D * theta) ** 2 * dvdt * Phi
+    return 5.341e-6 * (D * theta) ** 2 * np.abs(dvdt) * Phi
 
 
 def resolved_binary_rv_trend_from_mass(theta, D, M_B):
