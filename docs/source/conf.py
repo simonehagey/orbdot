@@ -2,12 +2,6 @@ import os
 import sys
 
 
-project = 'orbdot'
-copyright = '2024, Simone R. Hagey'
-author = 'Simone R. Hagey'
-version = '0.1.0'
-release = '0.1.0'
-
 sys.path.insert(0, os.path.abspath('../..'))
 
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.napoleon',

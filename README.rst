@@ -1,5 +1,11 @@
 |OrbDot Logo|
 
+======
+OrbDot
+======
+:Author: Simone R. Hagey
+:Version: 1.0.0
+
 |Documentation|
 
 .. |OrbDot Logo| image:: https://github.com/simonehagey/orbdot/blob/main/docs/source/_static/orbdot_logo.png?raw=true

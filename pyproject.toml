@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "orbdot"
+dynamic = ["version"]
+maintainers = [
+    { name="Simone R. Hagey", email="shagey@phas.ubc.ca" },
+]
+authors = [
+    { name="Simone R. Hagey", email="shagey@phas.ubc.ca" },
+]
+description = "A set of tools for studying secular evolution of exoplanet orbits."
+readme = "README.rst"
+license = {file = "LICENSE"}
+requires-python = ">=3.6"
+dependencies = [
+    "astropy",
+    "corner",
+    "matplotlib",
+    "nestle",
+    "numpy",
+    "scipy",
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Science/Research",
+    "Natural Language :: English",
+    "Topic :: Scientific/Engineering :: Astronomy",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/simonehagey/orbdot"
+"Bug Tracker" = "https://github.com/simonehagey/orbdot/issues"
+"Documentation" = "https://anesthetic.readthedocs.io/en/latest/"
+"JOSS paper" = "add JOSS paper link"
+
+[project.optional-dependencies]
+docs = ["sphinx>=4.2.0", "sphinx_rtd_theme>=1.2.2", "sphinx-copybutton",
+        "sphinx-autodoc-typehints", "numpydoc"]
+test = ["pytest", "pytest-cov"]
+
+[tool.setuptools.dynamic]
+version = {attr = "anesthetic.__version__.__version__"}
