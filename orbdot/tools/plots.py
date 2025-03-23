@@ -498,7 +498,7 @@ def make_ttv_plot(plot_settings, outfile, suffix=''):
 
     # finish plot
     plt.xlabel('Epoch')
-    ax1.set_ylabel('Timing Deviation (minutes)')
+    ax1.set_ylabel('Timing Deviation (min)')
 
     plt.xlim(epochs_full[0], epochs_full[-1])
     plt.ylim(plot_settings['TTV_PLOT']['y_axis_limits'][0],
@@ -518,7 +518,7 @@ def make_ttv_plot(plot_settings, outfile, suffix=''):
 
     try:
         ax2.set_title('{}'.format(plot_settings['TTV_PLOT']['title']) + ' Eclipses')
-        ax2.set_ylabel('Timing Deviation (minutes)')
+        ax2.set_ylabel('Timing Deviation (min)')
         legend2 = ax2.legend()
         for line in legend2.get_lines():
             line.set_linewidth(6)
@@ -598,11 +598,13 @@ def make_rv_plots(plot_settings, outfile, suffix='', model='constant'):
 
     # start subplots
     fig = plt.figure()
+
     gs = gridspec.GridSpec(2, 2, height_ratios=[2, 1], width_ratios=[4, 5], figure=fig)
     ax1 = fig.add_subplot(gs[0, 0])
     ax2 = fig.add_subplot(gs[1, 0], sharex=ax1)
     plt.setp(ax1.get_xticklabels(), visible=False)
     ax3 = fig.add_subplot(gs[:, 1])
+    fig.subplots_adjust(wspace=0.25)
 
     if model == 'constant':
         CONSTANT = True
@@ -792,7 +794,7 @@ def make_rv_plots(plot_settings, outfile, suffix='', model='constant'):
             x_fold_s = sorted(x_fold_s)
 
             ax3.plot(x_fold_s, y_fold_s, label='_',
-                     color='lightgrey', linestyle='-', linewidth=s_lw, alpha=s_alpha)
+                     color='lightgrey', linestyle='-', linewidth=s_lw, alpha=s_alpha, zorder=0)
 
         elif DECAY:
             times_s = np.arange(s_orb[i][0], s_orb[i][0] + s_orb[i][1], 0.01)
@@ -993,27 +995,46 @@ def make_rv_plots(plot_settings, outfile, suffix='', model='constant'):
     ax1.axvline(x=0, linestyle='-', color='grey', linewidth=0.5)
     ax2.axvline(x=0, linestyle='-', color='grey', linewidth=0.5)
 
-    # calculate the true anomaly, eccentric anomaly, and mean anomaly at t0
-    f_t0 = (np.pi / 2 - res['w0'][0]) % (2 * np.pi)
-    E_t0 = (2 * np.arctan(np.sqrt((1 - res['e0'][0]) / (1 + res['e0'][0])) * np.tan(f_t0 / 2))) %\
-           (2 * np.pi)
-    M_t0 = E_t0 - res['e0'][0] * np.sin(E_t0)
-    ax3.axvline(x=M_t0, linestyle='--', color='dimgrey', linewidth=1)
-    ax3.text(M_t0 - 0.15, min(y_fold), 'transits', fontsize=11, rotation=90)
+    if plot_settings["RV_PLOT"]['show_transit_line'] == 'True':
+        f_t0 = (np.pi / 2 - res['w0'][0]) % (2 * np.pi)
+        E_t0 = (2 * np.arctan(np.sqrt((1 - res['e0'][0]) /
+                                      (1 + res['e0'][0]))
+                              * np.tan(f_t0 / 2))) % (2 * np.pi)
+        M_t0 = E_t0 - res['e0'][0] * np.sin(E_t0)
 
-    # add text for t0 date
-    t = Time([str(res['t0'][0])], format='jd', scale='tdb')
-    ax2.text(.99, .01, 't$_0$ = ' + t.to_value('iso', subfmt='date')[0],
-             ha='right', va='bottom', transform=ax2.transAxes, fontsize=11)
+        ax3.axvline(x=M_t0, linestyle='--', color='dimgrey', linewidth=1)
+        ax3.text(M_t0 - 0.22, - (res['K'][0] + 3**res['K'][2]), 'Transit', rotation=90,
+                 fontsize=plot_settings["RV_PLOT"]['show_transit_line_fontsize'])
+
+    if plot_settings["RV_PLOT"]['y_limits_ax1'] != 'None':
+        ax1.set_ylim(plot_settings["RV_PLOT"]['y_limits_ax1'][0],
+                     plot_settings["RV_PLOT"]['y_limits_ax1'][1])
+
+    if plot_settings["RV_PLOT"]['y_limits_ax2'] != 'None':
+        ax2.set_ylim(plot_settings["RV_PLOT"]['y_limits_ax2'][0],
+                     plot_settings["RV_PLOT"]['y_limits_ax2'][1])
+
+    if plot_settings["RV_PLOT"]['y_limits_ax3'] != 'None':
+        ax3.set_ylim(plot_settings["RV_PLOT"]['y_limits_ax3'][0],
+                     plot_settings["RV_PLOT"]['y_limits_ax3'][1])
+
+    if plot_settings["RV_PLOT"]['show_t0_line'] == 'True':
+        # add text for t0 date
+        t = Time([str(res['t0'][0])], format='jd', scale='tdb')
+        ax2.text(0.99, .01, 't$_0$=' + t.to_value('iso', subfmt='date')[0],
+                 ha='right', va='bottom', transform=ax2.transAxes,
+                 fontsize=plot_settings["RV_PLOT"]['show_t0_line_fontsize'])
 
     # finish plots
-    labels = ['$0$', r'$\pi/4$', r'$\pi/2$', r'$3\pi/4$', r'$\pi$',
-              r'$5\pi/4$', r'$3\pi/2$', r'$7\pi/4$', r'$2\pi$']
+    labels = ['0', r'$\pi$/4', r'$\pi$/2', r'3$\pi$/4', r'$\pi$',
+              r'5$\pi$/4', r'3$\pi$/2', r'7$\pi$/4', r'2$\pi$']
     ax3.set_xticks(np.arange(0, 2 * np.pi + 0.01, np.pi / 4))
     ax3.set_xticklabels(labels)
     ax3.set_xlim(0, 2 * np.pi)
 
-    plt.suptitle(plot_settings['RV_PLOT']['title'], fontsize=18)
+    plt.suptitle(plot_settings['RV_PLOT']['title'],
+                 fontsize=plot_settings['RV_PLOT']['title_fontsize'])
+
     ax1.set_title('All Time')
     ax1.set_ylabel('Radial Velocity (m/s)')
     ax2.set_ylabel('Residuals (m/s)')
@@ -1354,7 +1375,8 @@ def read_random_samples(data_file, delim='\t'):
     return orbital_elements, time_dependent, radial_velocity
 
 
-def periodogram(data_file, outfile, min_period=3, max_period=100000.0, num=1000000):
+def periodogram(data_file, outfile, min_period=3, max_period=100000.0, num=1000000,
+                peak_distance=100000, peak_power=0.4):
     """Generates a periodogram from the residuals of an RV model fit.
 
     Note
@@ -1373,6 +1395,10 @@ def periodogram(data_file, outfile, min_period=3, max_period=100000.0, num=10000
         The maximum period in days.
     num : int
         The number of frequencies in between those of ``min_period`` and ``max_period``.
+    peak_distance : float
+        Limit of distance between peaks to be labelled.
+    peak_power : float
+        Label peaks above this cutoff in power.
 
     Returns
     -------
@@ -1390,21 +1416,21 @@ def periodogram(data_file, outfile, min_period=3, max_period=100000.0, num=10000
     velocities = data['rvs_all']
     errors = data['err_all']
 
+    errors = np.ones(np.shape(velocities)) * np.std(velocities)
+
     frequency = np.linspace(1 / max_period, 1 / min_period, num)
     power = LombScargle(times, velocities, errors).power(frequency)
-    mask = sci.find_peaks(power, distance=100000, prominence=0.4)[0]
+    mask = sci.find_peaks(power, distance=peak_distance, prominence=peak_power)[0]
 
     best_freq = np.array([f for _, f in sorted(zip(power[mask], frequency[mask]), reverse=True)])
     best_power = sorted(power[mask], reverse=True)
     best_period = 1 / best_freq
 
-    figure_params = {'figure.figsize': [10, 7], 'font.family': 'serif',
+    figure_params = {'figure.figsize': [10, 6.5], 'font.family': 'serif',
                      'xtick.direction': 'in', 'ytick.direction': 'in',
-                     'xtick.labelsize': 12, 'ytick.labelsize': 12,
-                     'axes.labelsize': 13, 'axes.titlesize': 16,
-                     'legend.fontsize': 12, 'legend.labelspacing': 0.9,
-                     'legend.framealpha': 1., 'legend.borderpad': 0.7,
-                     'legend.loc': 'upper right'}
+                     'xtick.labelsize': 15, 'ytick.labelsize': 15,
+                     'xtick.major.pad': 7, 'ytick.major.pad': 8,
+                     'axes.labelsize': 19, 'axes.labelpad': 12}
 
     plt.rcParams.update(figure_params)
 
@@ -1412,20 +1438,20 @@ def periodogram(data_file, outfile, min_period=3, max_period=100000.0, num=10000
     ax1 = fig.add_subplot(111)
     ax2 = ax1.twiny()
 
-    ax1.plot(frequency, power, color='cornflowerblue')
-    ax1.scatter(frequency[mask], power[mask], color='firebrick')
+    ax1.plot(frequency, power, color='dimgrey', zorder=0, linewidth=1.5)
+    ax1.scatter(frequency[mask], power[mask], color='firebrick', zorder=1, s=30)
 
     print('best orbital periods:')
     for i, p in enumerate(best_period):
-        print("     %.1f d, power = %.3f" % (p, best_power[i]))
+        print("     %.3f d, power = %.3f" % (p, best_power[i]))
         plt.text(best_freq[i] + 0.01 * best_freq[i],
                  best_power[i] + 0.03 * best_power[i],
-                 '%.0f days' % best_period[i], fontsize=12)
+                 '%.0f d' % best_period[i], fontsize=16)
 
-    ax1.set_ylabel('Power')
+    ax1.set_ylabel('Power', fontsize=21)
     ax1.set_xlabel(r'Frequency [days$^{-1}$]')
     ax2.set_xlabel('Period [days]')
-    ax1.set_ylim(0, best_power[0] + 0.1)
+    ax1.set_ylim(0.01, best_power[0] + 0.1)
     new_tick_locations = np.linspace(1 / max_period, 1 / min_period, num=10)
     ax2.set_xlim(ax1.get_xlim())
     ax2.set_xticks(new_tick_locations)
