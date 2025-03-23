@@ -16,6 +16,10 @@ OrbDot
 
 Welcome to OrbDot!
 ==================
+
+.. note::
+    OrbDot version 1.0.0 is coming soon!
+
 OrbDot is a Python package designed for studying the secular (long-term) evolution of exoplanet orbits in an observational context. Powered by nested sampling algorithms, it facilitates the model fitting of any combination of transit and eclipse mid-times, radial velocities, and transit durations. In addition to model fitting, it can facilitate the interpretation of model fit results by generating reports on model comparisons, derived tidal decay parameters, predicted precession rates, implications for planetary companions, and more.
 
 The documentation, including examples, are hosted on `Read the Docs <https://orbdot.readthedocs.io/>`__.
