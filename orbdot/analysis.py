@@ -696,21 +696,25 @@ class Analyzer:
                 print(' ' + str1, str2)
 
             # calculate the apparent apsidal precession rate due to proper motion
-            wdot_pm_min = m.proper_motion_idot(self.mu, 90)
-            wdot_pm_max = m.proper_motion_idot(self.mu, 180)
+            wdot_pm_max = m.proper_motion_wdot(self.mu, self.i0, 90)
+            wdot_pm_min = m.proper_motion_wdot(self.mu, self.i0, 180)
             str1 = ' * Apparent apsidal precession rate due to proper motion:\n'
-            str2 = '\t  maximum: dw/dt = {:.2E} rad/yr\n'.format(wdot_pm_max)
-            str3 = '\t  minimum: dw/dt = {:.2E} rad/yr\n'.format(wdot_pm_min)
+            str2 = '\t  maximum: |dw/dt| = {:.3E} rad/yr = {:.3E} rad/E\n'\
+                .format(np.abs(wdot_pm_max), np.abs(wdot_pm_max) * self.P0 / 365.25)
+            str3 = '\t  minimum: |dw/dt| = {:.3E} rad/yr = {:.3E} rad/E\n'\
+                .format(np.abs(wdot_pm_min), np.abs(wdot_pm_min) * self.P0 / 365.25)
             f.write(str1 + str2 + str3)
             if printout:
                 print(str1, str2, str3)
 
             # calculate the apparent rate of change of the inclination due to proper motion
-            idot_pm_max = m.proper_motion_wdot(self.mu, self.i0, 90)
-            idot_pm_min = m.proper_motion_wdot(self.mu, self.i0, 180)
+            idot_pm_max = m.proper_motion_idot(self.mu, 180)
+            idot_pm_min = m.proper_motion_idot(self.mu, 90)
             str1 = ' * Apparent rate of change of the inclination due to proper motion:\n'
-            str2 = '\t  maximum: di/dt = {:.2E} rad/yr\n'.format(idot_pm_max)
-            str3 = '\t  minimum: di/dt = {:.2E} rad/yr\n'.format(idot_pm_min)
+            str2 = '\t  maximum: |di/dt| = {:.3E} rad/yr = {:.3E} deg/E\n'\
+                .format(np.abs(idot_pm_max), np.abs(idot_pm_max) * (180 / np.pi) * self.P0 / 365.25)
+            str3 = '\t  minimum: |di/dt| = {:.3E} rad/yr = {:.3E} deg/E\n'\
+                .format(np.abs(idot_pm_min), np.abs(idot_pm_min) * (180 / np.pi) * self.P0 / 365.25)
             f.write(str1 + str2 + str3)
             if printout:
                 print(str1, str2, str3)
@@ -722,9 +726,14 @@ class Analyzer:
             tdot_min = m.proper_motion_tdot(self.P0, self.e0, self.w0, self.i0, T,
                                             wdot_pm_max, idot_pm_min, self.M_s, self.R_s)
 
+            if np.abs(tdot_max) < np.abs(tdot_min):
+                c = tdot_max * 1
+                tdot_max = tdot_min
+                tdot_min = c
+
             str1 = ' * Transit duration variation due to proper motion:\n'
-            str2 = '\t  maximum: dT/dt = {:.2E} ms/yr\n'.format(tdot_max)
-            str3 = '\t  minimum: dT/dt = {:.2E} ms/yr\n'.format(tdot_min)
+            str2 = '\t  maximum: |dT/dt| = {:.2E} ms/yr\n'.format(np.abs(tdot_max))
+            str3 = '\t  minimum: |dT/dt| = {:.2E} ms/yr\n'.format(np.abs(tdot_min))
             f.write(str1 + str2 + str3)
             if printout:
                 print(str1, str2, str3)
@@ -873,15 +882,17 @@ class Analyzer:
 
         return
 
-    def unknown_companion(self, a2_min=0.001, a2_max=10, printout=False):
+    def unknown_companion(self, p2_min=0.5, p2_max=10, p2_nout=10, printout=False):
         """Calculates and summarizes observable effects and properties of a nonresonant companion.
 
         Parameters
         ----------
-        a2_min : float, optional
-            Minimum semi-major axis of the companion's orbit in AU. Default is 0.001.
-        a2_max : float, optional
-            Maximum semi-major axis of the companion's orbit in AU. Default is 10.
+        p2_min : float, optional
+            For precession analysis, the minimum companion period in days. Default is 0.5.
+        p2_max : float, optional
+            For precession analysis, the minimum companion period in days. Default is 10.
+        p2_nout : int, optional
+            Number of companion period values to assess in precession analysis. Default is 10.
         printout : bool, optional
             An option to print the results to the console.
 
@@ -933,9 +944,9 @@ class Analyzer:
                     str1 = ' * Constraints on the mass and orbit of an ' \
                            'outer companion from a quadratic RV:\n'
                     str2 = '\t  P_c > {:.2f} years\n'.format(P_min / 365.25)
-                    str5 = '\t  M_c > {:.2f} M_jup\n\n'.format(M_min / 317.906)
-                    str3 = '\t  a_c > {:.2f} AU\n'.format(a_min / m.AU)
-                    str4 = '\t  K_c > {:.2f} m/s\n\n'.format(K_min)
+                    str3 = '\t  M_c > {:.2f} M_jup\n'.format(M_min / 317.906)
+                    str4 = '\t  a_c > {:.2f} AU\n'.format(a_min / m.AU)
+                    str5 = '\t  K_c > {:.2f} m/s\n\n'.format(np.abs(K_min))
                     f.write(str1 + str2 + str3 + str4 + str5)
                     if printout:
                         print(str1, str2, str3, str4, str5)
@@ -955,10 +966,10 @@ class Analyzer:
                     self.rv_trend_linear()
 
                     str1 = ' * Minimum outer companion mass from slope ' \
-                           '(assuming P_min = 1.25 * baseline = {:.2f} days):\n'.format(P_min)
+                           '(assuming P_min = 1.25 * baseline = {:.2f} years):\n'.format(P_min)
                     str2 = '\t  M_c > {:.2f} M_jup\n'.format(M_min / 317.906)
                     str3 = '\t  a_c > {:.2f} AU\n'.format(a_min)
-                    str4 = '\t  K_c > {:.2f} m/s\n'.format(K_min)
+                    str4 = '\t  K_c > {:.2f} m/s\n'.format(np.abs(K_min))
                     f.write(str1 + str2 + str3 + str4)
                     if printout:
                         print(str1, str2, str3, str4)
@@ -1006,10 +1017,10 @@ class Analyzer:
                     M_min, P_min, a_min, K_min = \
                         m.companion_mass_from_rv_trend(self.tau, dvdt_pred, self.M_s)
                     str1 = ' * Minimum outer companion mass to induce the acceleration ' \
-                           '(assuming P_min = 1.25 * baseline = {} days):\n'.format(P_min)
-                    str2 = '\t  M_c > {:.2f} M_jup\n\n'.format(M_min / 317.906)
-                    str3 = '\t  a_c > {:.2f} AU\n\n'.format(a_min)
-                    str4 = '\t  K_c > {:.2f} m/s\n'.format(K_min)
+                           '(assuming P_min = 1.25 * baseline = {:.2f} years):\n'.format(P_min)
+                    str2 = '\t  M_c > {:.2f} M_jup\n'.format(M_min / 317.906)
+                    str3 = '\t  a_c > {:.2f} AU\n'.format(a_min)
+                    str4 = '\t  K_c > {:.2f} m/s\n'.format(np.abs(K_min))
                     f.write(str1 + str2 + str3 + str4)
                     if printout:
                         print(str1, str2, str3, str4)
@@ -1036,31 +1047,31 @@ class Analyzer:
                 if printout:
                     print(str1, str2, str3)
 
-                # calculate the necessary companion mass over a range of separations
-                separations = np.arange(a2_min, a2_max, 0.001)
-                masses = []
-                for a2 in separations:
-                    masses.append(m.companion_mass_from_precession(self.P0, a2,
-                                                                   self.wdE, self.M_s))
+                # calculate the resulting companion mass over a range of orbital periods
+                companion_periods = np.linspace(p2_min, p2_max, p2_nout)
+                companion_masses = []
+                for pp2 in companion_periods:
+                    companion_masses.append(m.companion_mass_from_precession(self.P0, pp2,
+                                                                             self.wdE, self.M_s))
 
-                masses = np.array(masses)
+                companion_masses = np.array(companion_masses)
 
-                # print the resulting companion mass for specific semi-major axis values
-                au_print = [0.001, 0.0025, 0.005, 0.0075, 0.01, 0.025, 0.05, 0.1, 0.5, 1, 5]
+                # # print the resulting companion mass for specific semi-major axis values
+                # au_print = [0.001, 0.0025, 0.005, 0.0075, 0.01, 0.025, 0.05, 0.1, 0.5, 1, 5]
 
-                str1 = ' * Companion mass needed to account for the precession:\n'
-                f.write(str1)
+                str1 = ' * Companion mass needed to account for the precession:'
+                f.write(str1+'\n')
                 if printout:
                     print(str1)
 
-                for i, a in enumerate(au_print):
+                for i, pp2 in enumerate(companion_periods):
+                    M2 = companion_masses[i] * m.M_earth
+                    a2 = m.get_semi_major_axis_from_period(pp2, self.M_s)
+                    str1 = '\t  - P2 = {:.2f} days, a2 = {:.4f} au:  ' \
+                           'm2 = {:.3f} M_earth = {:.4f} M_jup = {:.4f} M_sun' \
+                           .format(pp2, a2 / m.AU, M2 / m.M_earth, M2 / m.M_jup, M2 / m.M_sun)
 
-                    M = m.companion_mass_from_precession(self.P0, a, self.wdE, self.M_s)
-                    str1 = '\t  - a2 = {:.4f} au: ' \
-                           'M_comp = {:.4f} M_earth = {:.4f} M_jup = {:.4f} M_sun\n' \
-                        .format(a, M, M * 0.00314558, M * 3.0027e-6)
-
-                    f.write(str1)
+                    f.write(str1+'\n')
                     if printout:
                         print(str1)
 
@@ -1068,7 +1079,7 @@ class Analyzer:
                 print(' ')
 
                 # return the calculated masses and separations
-                return np.column_stack((separations, masses))
+                return np.column_stack((companion_periods, companion_masses))
 
         return
 

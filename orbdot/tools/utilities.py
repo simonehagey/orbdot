@@ -248,11 +248,11 @@ def merge_dictionaries(default_file, user_file):
         user_file = default_file
 
     # load default settings
-    with open(default_file, 'r') as df:
+    with open(str(default_file), 'r') as df:
         default_settings = json.load(df)
 
     # load user-defined settings
-    with open(user_file, 'r') as uf:
+    with open(str(user_file), 'r') as uf:
         user_settings = json.load(uf)
 
     # create a copy of default settings to store the merged settings
@@ -307,35 +307,33 @@ def assign_default_values(system_info, planet_number):
     If the eccentricity ``"e0"`` is zero, the argument of pericenter ``"w0"`` is zeroed.
 
     """
-    vals = {
+    names = ['t0 [BJD_TDB]', 'P [days]',
+             'e', 'w [rad]',
+             'i [deg]', 'O [rad]',
+             'PdE [days/E]', 'wdE [rad/E]',
+             'edE [/E]', 'idE [deg/E]', 'OdE [rad/E]',
+             'K [m/s]', 'v0 [m/s]', 'jit [m/s]',
+             'dvdt [m/s/day]', 'ddvdt [m/s/day^2]', 'K_tide [m/s]']
 
-        # orbital elements
-        't0': system_info['t0 [BJD_TDB]'][planet_number],
-        'P0': system_info['P [days]'][planet_number],
-        'e0': system_info['e'][planet_number],
-        'w0': system_info['w [rad]'][planet_number],
-        'i0': system_info['i [deg]'][planet_number],
-        'O0': system_info['O [rad]'][planet_number],
+    params = ['t0', 'P0', 'e0', 'w0', 'i0', 'O0',            # orbital elements
+              'PdE', 'wdE', 'edE', 'idE', 'OdE',             # time-dependent parameters
+              'K', 'v0', 'jit', 'dvdt', 'ddvdt', 'K_tide']   # radial velocity
 
-        # time-dependent parameters
-        'PdE': system_info['PdE [days/E]'][planet_number],
-        'wdE': system_info['wdE [rad/E]'][planet_number],
-        'edE': system_info['edE [/E]'][planet_number],
-        'idE': system_info['idE [deg/E]'][planet_number],
-        'OdE': system_info['OdE [rad/E]'][planet_number],
+    vals = {}
+    for i, p in enumerate(params):
 
-        # radial velocity parameters
-        'K': system_info['K [m/s]'][planet_number],
-        'v0': 0.0,
-        'jit': 0.0,
-        'dvdt': system_info['dvdt [m/s/day]'][planet_number],
-        'ddvdt': system_info['ddvdt [m/s/day^2]'][planet_number],
-        'K_tide': system_info['K_tide [m/s]']
-    }
+        try:
+            vals[p] = system_info[names[i]][planet_number]
+
+        except IndexError:
+
+            vals[p] = float('nan')
+            print('WARNING: \'{}\' list index out of range for planet number {}, '
+                  'default value set to 0.0\n'.format(p, planet_number))
 
     # for a circular orbit set 'w0'=0
     if vals['e0'] == 0:
-        vals['w0'] = 0
+        vals['w0'] = 0.0
 
     return vals
 
