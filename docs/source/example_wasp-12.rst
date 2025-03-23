@@ -15,7 +15,10 @@ Before running the model fits, we need to save the transit and eclipse mid-times
 
 Data
 ----
-The transit mid-times are taken from Table 5 of :cite:author:`Yee2020`, and saved in the file: ``examples/data/WASP-12_mid_times.txt``. Note that the eclipse mid-times, listed at the end of the file, are specified by a half-orbit (0.5) in the ``Epoch`` column, which is required for OrbDot to treat them separately from the transit mid-times.
+The transit mid-times are taken from Table 5 of :cite:author:`Yee2020`, and saved in the file: ``examples/data/WASP-12_mid_times.txt``.
+
+.. important::
+    Note that the eclipse mid-times, listed at the end of the file, are specified by a half-orbit (0.5) in the ``Epoch`` column, which is required for OrbDot to treat them separately from the transit mid-times.
 
 The authors clarify that the eclipse mid-times provided in the table have not been corrected for the light-travel time across the extent of the orbit, so we have accounted for that by subtracting :math:`2a/c = 22.9 \, \mathrm{s}`. Additionally, to simplify the appearance of the plots, the ``Source`` column has been modified to reflect only whether the measurement was compiled by the authors (``"Yee et al. 2019 (compiled)"``) or if it is a new observation that they provide (``"Yee et al. 2019"``).
 
@@ -168,9 +171,11 @@ In this case, the ``"nestle"`` sampler has been specified with 1000 live points 
            },
     ...
 
+first number is the centre and the next is sigma. Uniform is between the values
+
 The remaining portion of the settings file is for the ``"prior"`` dictionary, which defines the :ref:`prior distributions <priors>` for the model parameters. We need only populate this with the parameters that are to be included in the model fits, which in this case are the reference transit mid-time ``"t0"``, orbital period ``"P0"``, eccentricity ``"e0"``, argument of pericentre ``"w0"``, orbital decay rate ``"PdE"``, and apsidal precession rate ``"wdE"``. If a model parameter is left out of the settings file, the default prior will be used, as specified in the file ``orbdot/defaults/default_info_file.json``. For more information on the available model parameters see :ref:`model_parameters`.
 
-For WASP-12 b, we have chosen broad uniform prior distributions for ``"e0"``, ``"w0"``, ``"PdE"``, and ``"wdE"``, and Gaussian distributions for ``"t0"`` and ``"P0"`` that are centered on the known orbit.
+For WASP-12 b, we have chosen broad uniform prior distributions for ``"e0"``, ``"w0"``, ``"PdE"``, and ``"wdE"``, and Gaussian distributions for ``"t0"`` and ``"P0"`` that are centered on the known orbit. In the case of Gaussian priors, the first value represents the mean and the second the standard deviation. For uniform priors, the first and second values correspond to the minimum and maximum limits, respectively.
 
 .. code-block:: JSON
 
@@ -239,7 +244,7 @@ Once the fit is complete, the output files can be found in the directory that wa
         e0 = 0.0
         w0 = 0.0
 
-This shows us that it took 3.58 seconds to run the model fit and that the Bayesian evidence (``log(Z)``) for the is -204.6. The best-fit parameter values are also shown, with the uncertainties derived from the 68% confidence intervals. The following table compares these results with those of :cite:author:`Yee2020`, and we see that they agree.
+This shows us that it took 3.58 seconds to run the model fit and that the Bayesian evidence (``log(Z)``) for the is -204.6. The best-fit parameter values are also shown, with the uncertainties derived from the 68% credible intervals. The following table compares these results with those of :cite:author:`Yee2020`, and we see that they agree.
 
 .. list-table::
    :header-rows: 1
@@ -405,7 +410,7 @@ The following code snippet creates an ``Analyzer`` object with the results of th
     # create an 'Analyzer' instance for the orbital decay results
     analyzer = Analyzer(wasp12, fit_d)
 
-We can now call any relevant :class:`~orbdot.analysis.Analyzer` methods, the result of which will appear in the file: ``analysis/ttv_decay_analysis.txt``.
+We can now call relevant :class:`~orbdot.analysis.Analyzer` methods, the result of which will appear in the file: ``analysis/ttv_decay_analysis.txt``.
 
 Model Comparison
 ----------------

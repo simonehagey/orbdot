@@ -118,7 +118,7 @@ The "fixed" values are assigned to any parameter that is not allowed to vary in 
 
     wasp12.update_default('P0', 3.14)
 
-This is particularly useful for updating the fixed values in-between model fits. For example, the following code snippet runs a constant-period timing model fit, updates the fixed parameter values with the best-fit results, and then runs a radial velocity model fit:
+This is particularly useful for updating the fixed values between model fits. For example, the following code snippet runs a constant-period timing model fit, updates the fixed parameter values with the best-fit results, and then runs a radial velocity model fit:
 
 .. code-block:: python
 
@@ -245,7 +245,7 @@ The following table lists the keys of the ``*_results.json`` file:
      - A dictionary containing various model fit statistics and settings.
    * - ``"params"``
      - ``dict``
-     - A dictionary containing the best-fit parameters and their 68% confidence intervals.
+     - A dictionary containing the best-fit parameters and their 68% credible intervals.
    * - ``"prior"``
      - ``dict``
      - The dictionary of prior distributions from the :ref:`settings file <settings_file>`.
@@ -292,7 +292,7 @@ The ``"stats"`` dictionary records various model fit statistics and settings wit
      - ``float``
      - The effective samples per second.
 
-The ``"params"`` dictionary contains key-value pairs that store the best-fit parameter values and their 68% confidence intervals. The keys match the parameter symbols (see :ref:`model_parameters`), and each value is a list of three elements: [best-fit value, upper uncertainty, lower uncertainty].
+The ``"params"`` dictionary contains key-value pairs that store the best-fit parameter values and their 68% credible intervals. The keys match the parameter symbols (see :ref:`model_parameters`), and each value is a list of three elements: [best-fit value, upper uncertainty, lower uncertainty].
 
 The following code snippet demonstrates how to access the best-fit parameters after a model fit:
 
