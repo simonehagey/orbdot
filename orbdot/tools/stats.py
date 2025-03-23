@@ -8,8 +8,8 @@ import numpy as np
 import orbdot.tools.utilities as utl
 
 
-def confidence_intervals(params, samples, dic, inds, circular=False):
-    """Calculates the 68% confidence intervals from a set of weighted posterior samples.
+def credible_intervals(params, samples, dic, inds, circular=False):
+    """Calculates the 68% credible intervals from a set of weighted posterior samples.
 
     Parameters
     ----------
@@ -18,7 +18,7 @@ def confidence_intervals(params, samples, dic, inds, circular=False):
     samples : array_like
         Array containing the weighted posterior samples.
     dic : dict
-        Dictionary to store the confidence intervals.
+        Dictionary to store the credible intervals.
     inds : list
         List of indices that point to the desired parameters.
     circular : bool, optional
@@ -51,7 +51,7 @@ def confidence_intervals(params, samples, dic, inds, circular=False):
                 elif shifted[j] > np.pi:
                     shifted[j] -= 2 * np.pi
 
-            # calculate confidence intervals of the wrapped samples
+            # calculate credible intervals of the wrapped samples
             vshift, upper, lower = quantiles(shifted)
 
             # shift back
@@ -59,7 +59,7 @@ def confidence_intervals(params, samples, dic, inds, circular=False):
 
 
 def quantiles(samples):
-    """Calculates quantiles for the 68% confidence intervals.
+    """Calculates quantiles for the 68% credible intervals.
 
     Parameters
     ----------

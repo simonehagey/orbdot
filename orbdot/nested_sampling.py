@@ -739,9 +739,9 @@ class NestedSampling:
         return orbital_elements, time_dependant, radial_velocity
 
     def get_best_fit(self, samples):
-        """Retrieves the 68% confidence intervals on each parameter.
+        """Retrieves the 68% credible intervals on each parameter.
 
-        This method returns the 68% confidence intervals on each free parameter with a given
+        This method returns the 68% credible intervals on each free parameter with a given
         array of weighted posterior samples. If a model parameter was not allowed to vary in the
         model fit, its default value is recorded for completeness.
 
@@ -765,34 +765,34 @@ class NestedSampling:
 
         # orbital elements
         try:
-            stat.confidence_intervals(self.vary, samples, dic, [self.it0])
+            stat.credible_intervals(self.vary, samples, dic, [self.it0])
         except AttributeError:
             dic['t0'] = [self.fixed['t0']]
         try:
-            stat.confidence_intervals(self.vary, samples, dic, [self.iP0])
+            stat.credible_intervals(self.vary, samples, dic, [self.iP0])
         except AttributeError:
             dic['P0'] = [self.fixed['P0']]
         try:
-            stat.confidence_intervals(self.vary, samples, dic, [self.ie0])
+            stat.credible_intervals(self.vary, samples, dic, [self.ie0])
         except AttributeError:
             dic['e0'] = [self.fixed['e0']]
         try:
-            stat.confidence_intervals(self.vary, samples, dic, [self.iw0], circular=True)
+            stat.credible_intervals(self.vary, samples, dic, [self.iw0], circular=True)
         except AttributeError:
             dic['w0'] = [self.fixed['w0']]
         try:
-            stat.confidence_intervals(self.vary, samples, dic, [self.ii0])
+            stat.credible_intervals(self.vary, samples, dic, [self.ii0])
         except AttributeError:
             dic['i0'] = [self.fixed['i0']]
         try:
-            stat.confidence_intervals(self.vary, samples, dic, [self.iO0], circular=True)
+            stat.credible_intervals(self.vary, samples, dic, [self.iO0], circular=True)
         except AttributeError:
             dic['O0'] = [self.fixed['O0']]
 
         # coupled parameters
         try:
-            stat.confidence_intervals(self.vary, samples, dic, [self.iecosw])
-            stat.confidence_intervals(self.vary, samples, dic, [self.iesinw])
+            stat.credible_intervals(self.vary, samples, dic, [self.iecosw])
+            stat.credible_intervals(self.vary, samples, dic, [self.iesinw])
 
             e_res, w_res = stat.propagate_err_ecosw_esinw(dic['ecosw'], dic['esinw'])
 
@@ -804,8 +804,8 @@ class NestedSampling:
             pass
 
         try:
-            stat.confidence_intervals(self.vary, samples, dic, [self.isq_ecosw])
-            stat.confidence_intervals(self.vary, samples, dic, [self.isq_esinw])
+            stat.credible_intervals(self.vary, samples, dic, [self.isq_ecosw])
+            stat.credible_intervals(self.vary, samples, dic, [self.isq_esinw])
 
             e_res, w_res = stat.propagate_err_sq_ecosw_sq_esinw(dic['sq_ecosw'], dic['sq_esinw'])
 
@@ -818,51 +818,51 @@ class NestedSampling:
 
         # time-dependent parameters
         try:
-            stat.confidence_intervals(self.vary, samples, dic, [self.idP])
+            stat.credible_intervals(self.vary, samples, dic, [self.idP])
         except AttributeError:
             dic['PdE'] = [self.fixed['PdE']]
         try:
-            stat.confidence_intervals(self.vary, samples, dic, [self.idw])
+            stat.credible_intervals(self.vary, samples, dic, [self.idw])
         except AttributeError:
             dic['wdE'] = [self.fixed['wdE']]
         try:
-            stat.confidence_intervals(self.vary, samples, dic, [self.ide])
+            stat.credible_intervals(self.vary, samples, dic, [self.ide])
         except AttributeError:
             dic['edE'] = [self.fixed['edE']]
         try:
-            stat.confidence_intervals(self.vary, samples, dic, [self.idi])
+            stat.credible_intervals(self.vary, samples, dic, [self.idi])
         except AttributeError:
             dic['idE'] = [self.fixed['idE']]
         try:
-            stat.confidence_intervals(self.vary, samples, dic, [self.idO])
+            stat.credible_intervals(self.vary, samples, dic, [self.idO])
         except AttributeError:
             dic['OdE'] = [self.fixed['OdE']]
 
         # radial velocity
         try:
-            stat.confidence_intervals(self.vary, samples, dic, [self.iK])
+            stat.credible_intervals(self.vary, samples, dic, [self.iK])
         except AttributeError:
             dic['K'] = [self.fixed['K']]
         try:
-            stat.confidence_intervals(self.vary, samples, dic, [self.idv])
+            stat.credible_intervals(self.vary, samples, dic, [self.idv])
         except AttributeError:
             dic['dvdt'] = [self.fixed['dvdt']]
         try:
-            stat.confidence_intervals(self.vary, samples, dic, [self.iddv])
+            stat.credible_intervals(self.vary, samples, dic, [self.iddv])
         except AttributeError:
             dic['ddvdt'] = [self.fixed['ddvdt']]
         try:
-            stat.confidence_intervals(self.vary, samples, dic, [self.iKt])
+            stat.credible_intervals(self.vary, samples, dic, [self.iKt])
         except AttributeError:
             dic['K_tide'] = [self.fixed['K_tide']]
 
         # radial velocity - instrument specific parameters
         try:
-            stat.confidence_intervals(self.vary, samples, dic, self.iv0)
+            stat.credible_intervals(self.vary, samples, dic, self.iv0)
         except AttributeError:
             dic['v0'] = [self.fixed['v0']]
         try:
-            stat.confidence_intervals(self.vary, samples, dic, self.ijit)
+            stat.credible_intervals(self.vary, samples, dic, self.ijit)
         except AttributeError:
             dic['jit'] = [self.fixed['jit']]
 
