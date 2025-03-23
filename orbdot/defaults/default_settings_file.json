@@ -53,10 +53,10 @@
          "i0": ["gaussian", 90, 5],
          "O0": ["uniform", 0, 6.28319],
 
-         "ecosw": ["uniform", -0.5, 0.5],
-         "esinw": ["uniform", -0.5, 0.5],
-         "sq_ecosw": ["uniform", -0.5, 0.5],
-         "sq_esinw": ["uniform", -0.5, 0.5],
+         "ecosw": ["uniform", -1, 1],
+         "esinw": ["uniform", -1, 1],
+         "sq_ecosw": ["uniform", -1, 1],
+         "sq_esinw": ["uniform", -1, 1],
 
          "PdE": ["uniform", -1e-7, 1e-7],
          "wdE": ["uniform", 0, 0.1],

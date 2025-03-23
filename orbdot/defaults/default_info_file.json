@@ -52,5 +52,5 @@
       "jit [m/s]": [0.0],
       "dvdt [m/s/day]": [0.0],
       "ddvdt [m/s/day^2]": [0.0],
-      "K_tide [m/s]": 0.0
+      "K_tide [m/s]": [0.0]
 }

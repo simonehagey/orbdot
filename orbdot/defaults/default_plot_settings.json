@@ -41,9 +41,21 @@
           "legend.borderpad": 0.5,
           "legend.loc": "upper right"}  },
 
-  "RV_PLOT": {"title": "None", "show_RV_curve": "True",
+  "RV_PLOT": {
 
     "_comment4": "RV general plot settings",
+        "title": "None",
+        "title_fontsize": 20,
+        "show_RV_curve": "True",
+        "show_t0_line": "True",
+        "show_t0_line_fontsize": 12,
+        "show_transit_line": "True",
+        "show_transit_line_fontsize": 12,
+
+        "y_limits_ax1": "None",
+        "y_limits_ax2": "None",
+        "y_limits_ax3": "None",
+
         "samples_alpha": 0.1,
         "samples_linewidth": 1,
         "model_alpha": 0.4,
@@ -65,16 +77,19 @@
         "rcParams": {
           "figure.figsize": [18, 7],
           "font.family": "serif",
+          "mathtext.fontset": "stixsans",
           "xtick.direction": "out",
           "ytick.direction": "in",
           "xtick.labelsize": 12,
           "ytick.labelsize": 12,
           "axes.labelsize": 13,
           "axes.titlesize": 16,
-          "legend.fontsize": 9.5,
-          "legend.labelspacing": 0.5,
+          "axes.labelpad": 8,
+          "legend.fontsize": 10,
+          "legend.labelspacing": 0.3,
           "legend.framealpha": 1.0,
-          "legend.borderpad": 0.5}  },
+          "legend.borderpad": 0.5,
+          "legend.loc": "lower right"}},
 
   "TDV_PLOT": {"title": "None",
 
