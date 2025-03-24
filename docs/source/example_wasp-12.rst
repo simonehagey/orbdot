@@ -69,13 +69,13 @@ The WASP-12 :ref:`system info file <info-file>` is saved as: ``examples/info_fil
 
             "__comment4": "Orbital Elements",
 
+               "_comment4_1": "Orbital Elements",
                "t0 [BJD_TDB]": [2456305.455522],
                "P [days]": [1.09141953],
                "e": [0.0],
                "w [rad]": [0.0],
 
-            "__comment4_2": "Time-Dependant",
-
+               "__comment4_2": "Time-Dependant",
                "PdE [days/E]": [0.0],
                "wdE [rad/E]": [0.0]
         }
@@ -89,16 +89,15 @@ The :ref:`settings file <settings-file>` is saved as: ``examples/settings_files/
 
     .. code-block:: JSON
 
-        {
-          "_comment1": "WASP-12 b Settings",
+        {"_comment0": "WASP-12 b Settings",
 
-          "_comment2": "Input Files",
+          "_comment1": "Input Files",
 
               "main_save_dir": "results/",
               "system_info_file": "info_files/WASP-12_info.json",
               "plot_settings_file": "settings_files/WASP-12_plot_settings.json",
 
-          "_comment3": "Model Fits",
+          "_comment2": "Model Fits",
 
                "TTV_fit": {
                  "save_dir": "ttv_fits/",
@@ -109,9 +108,10 @@ The :ref:`settings file <settings-file>` is saved as: ``examples/settings_files/
                  "evidence_tolerance": 0.01
                },
 
-          "_comment4": "Priors",
+          "_comment3": "Priors",
 
                "prior": {
+
                  "t0": ["gaussian", 2456305.4555, 0.01],
                  "P0": ["gaussian", 1.09142, 0.0001],
                  "e0": ["uniform", 0.0, 0.1],
@@ -129,7 +129,6 @@ The :ref:`settings file <settings-file>` is saved as: ``examples/settings_files/
         {"_comment1": "TTV (O-C) plot settings",
 
           "TTV_PLOT": {
-
                 "num_epochs_pre_data": 300,
                 "num_epochs_post_data": 600,
                 "y_axis_limits": [-8, 8],
@@ -142,9 +141,9 @@ The first part of the settings file specifies path names for the other input fil
 
 .. code-block:: JSON
 
-    {"_comment1": "WASP-12 b Settings",
+    {"_comment0": "WASP-12 b Settings",
 
-        "_comment2": "Input Files",
+      "_comment1": "Input Files",
 
           "main_save_dir": "results/",
           "system_info_file": "info_files/WASP-12_info.json",
@@ -159,7 +158,7 @@ In this case, the ``"nestle"`` sampler has been specified with 1000 live points 
 
     ...
 
-        "_comment3": "Model Fits",
+        "_comment2": "Model Fits",
 
            "TTV_fit": {
              "save_dir": "ttv_fits/",
@@ -181,9 +180,10 @@ For WASP-12 b, we have chosen broad uniform prior distributions for ``"e0"``, ``
 
     ...
 
-        "_comment4": "Priors",
+        "_comment3": "Priors",
 
            "prior": {
+
              "t0": ["gaussian", 2456305.4555, 0.01],
              "P0": ["gaussian", 1.09142, 0.0001],
              "e0": ["uniform", 0.0, 0.1],
@@ -191,6 +191,7 @@ For WASP-12 b, we have chosen broad uniform prior distributions for ``"e0"``, ``
              "PdE": ["uniform", -1e-7, 0],
              "wdE": ["uniform", 0.0, 0.01]
            }
+    }
 
 ------------
 
