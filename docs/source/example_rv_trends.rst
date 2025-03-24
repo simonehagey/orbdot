@@ -17,7 +17,7 @@ Before running the model fits, we need to compile the radial velocity measuremen
 
 Data
 ----
-The radial velocity measurements are taken from :cite:author:`Bonomo2017` and :cite:author:`Knutson2014` and saved in the files ``examples/data/HAT-P-4_rvs.txt`` and ``examples/data/HAT-P-22_rvs.txt``.
+The radial velocity data are taken from :cite:author:`Bonomo2017` and :cite:author:`Knutson2014` and saved in the files ``examples/data/HAT-P-4_rvs.txt`` and ``examples/data/HAT-P-22_rvs.txt``. The RV measurements must be in units of meters per second (m/s).
 
 .. admonition:: Partial table of HAT-P-4 RV data:
   :class: dropdown
@@ -87,7 +87,6 @@ The :ref:`system info files <info-file>` are saved as: ``examples/info_files/HAT
           "_comment4": "Model Parameters",
 
               "_comment4_1": "Orbital Elements",
-
               "t0 [BJD_TDB]": [2454245.81521],
               "P [days]": [3.0565254]
         }
@@ -118,7 +117,6 @@ The :ref:`system info files <info-file>` are saved as: ``examples/info_files/HAT
           "_comment4": "Model Parameters",
 
               "_comment4_1": "Orbital Elements",
-
               "t0 [BJD_TDB]": [2454930.22077],
               "P [days]": [3.21222]
         }
@@ -132,15 +130,14 @@ The :ref:`settings files <settings-file>`, shown in the dropdown menus below, ar
 
     .. code-block:: JSON
 
-        {
-          "_comment1": "HAT-P-4 b Settings",
+        {"_comment0": "HAT-P-4 b Settings",
 
-          "_comment2": "Input Files",
+          "_comment1": "Input Files",
 
               "main_save_dir": "results/",
               "system_info_file": "info_files/HAT-P-4_info.json",
 
-          "_comment3": "Model Fits",
+          "_comment2": "Model Fits",
 
                "RV_fit": {
                  "save_dir": "rv_fits/",
@@ -151,9 +148,10 @@ The :ref:`settings files <settings-file>`, shown in the dropdown menus below, ar
                  "evidence_tolerance": 0.01
                },
 
-          "_comment4": "Priors",
+          "_comment3": "Priors",
 
                "prior": {
+
                  "t0": ["gaussian", 2454245.81521, 0.001],
                  "P0": ["gaussian", 3.0565254, 0.00001],
                  "ecosw": ["uniform", -0.1, 0.1],
@@ -171,15 +169,14 @@ The :ref:`settings files <settings-file>`, shown in the dropdown menus below, ar
 
     .. code-block:: JSON
 
-        {
-          "_comment1": "HAT-P-22 b Settings",
+        {"_comment0": "HAT-P-22 b Settings",
 
-          "_comment2": "Input Files",
+          "_comment1": "Input Files",
 
               "main_save_dir": "results/",
               "system_info_file": "info_files/HAT-P-22_info.json",
 
-          "_comment3": "Model Fits",
+          "_comment2": "Model Fits",
 
                "RV_fit": {
                  "save_dir": "rv_fits/",
@@ -190,9 +187,10 @@ The :ref:`settings files <settings-file>`, shown in the dropdown menus below, ar
                  "evidence_tolerance": 0.01
                },
 
-          "_comment4": "Priors",
+          "_comment3": "Priors",
 
                "prior": {
+
                  "t0": ["gaussian", 2454930.22077, 0.001],
                  "P0": ["gaussian", 3.21222, 0.00001],
                  "ecosw": ["uniform", -0.1, 0.1],
@@ -209,10 +207,9 @@ The first part of the settings file specifies the path name for the system infor
 
 .. code-block:: JSON
 
-    {
-      "_comment1": "HAT-P-4 b Settings",
+    {"_comment0": "HAT-P-4 b Settings",
 
-      "_comment2": "Input Files",
+      "_comment1": "Input Files",
 
           "main_save_dir": "results/",
           "system_info_file": "info_files/HAT-P-4_info.json",
@@ -228,27 +225,30 @@ For this example, the ``"nestle"`` sampler has been specified with 1000 live poi
 
     ...
 
-      "_comment3": "Model Fits",
+    "_comment2": "Model Fits",
 
-           "RV_fit": {
-             "save_dir": "rv_fits/",
-             "data_file": "data/HAT-P-4b_rvs.txt",
-             "data_delimiter": " ",
-             "sampler": "nestle",
-             "n_live_points": 1000,
-             "evidence_tolerance": 0.01
-           },
+       "RV_fit": {
+         "save_dir": "rv_fits/",
+         "data_file": "data/HAT-P-4b_rvs.txt",
+         "data_delimiter": " ",
+         "sampler": "nestle",
+         "n_live_points": 1000,
+         "evidence_tolerance": 0.01
+       },
     ...
 
-The remaining portion of the settings file defines the ``"prior"`` dictionary, which defines the :ref:`prior distributions <priors>` for the model parameters. We need only populate this with the parameters that are to be included in the model fits, which in this case are the reference transit mid-time ``"t0"``, orbital period ``"P0"``, RV semi-amplitude ``"K"``, systemic velocity ``"v0"``, jitter parameter ``"jit"``, the first-order acceleration term ``"dvdt"``, the second-order acceleration term ``"ddvdt"``, and the coupled parameters ``"ecosw"`` and ``"esinw"``.
+The remaining portion of the settings file defines the ``"prior"`` dictionary, which defines the :ref:`prior distributions <priors>` for the model parameters. For Gaussian priors, the first value represents the mean and the second the standard deviation. Uniform priors are defined by their minimum and maximum limits, while log priors follow the same structure but use :math:`\log_10 (\text{min})` and :math:`\log_10 (\text{max})` instead.
+
+We need only populate this with the parameters that are to be included in the model fits, which in this case are the reference transit mid-time ``"t0"``, orbital period ``"P0"``, RV semi-amplitude ``"K"``, systemic velocity ``"v0"``, jitter parameter ``"jit"``, the first-order acceleration term ``"dvdt"``, the second-order acceleration term ``"ddvdt"``, and the coupled parameters ``"ecosw"`` and ``"esinw"``.
 
 .. code-block:: JSON
 
     ...
 
-      "_comment4": "Priors",
+      "_comment3": "Priors",
 
            "prior": {
+
              "t0": ["gaussian", 2454245.81521, 0.001],
              "P0": ["gaussian", 3.0565254, 0.00001],
              "ecosw": ["uniform", -0.1, 0.1],
@@ -364,12 +364,10 @@ Once the model fits are complete, the output files are found in the directory th
 
         Fixed Parameters
         ----------------
-        e0 = 0.0
-        w0 = 0.0
         dvdt = 0.0
         ddvdt = 0.0
 
-The best-fit parameter values are shown, with uncertainties derived from the 68% confidence intervals, as well as other useful information about the model fit. Notice how the instrument-dependent free parameters, ``"v0"`` and ``"jit"``, were automatically split into different variables for each data source.
+The best-fit parameter values are shown, with uncertainties derived from the 68% credible intervals, as well as other useful information about the model fit. Notice how the instrument-dependent free parameters, ``"v0"`` and ``"jit"``, were automatically split into different variables for each data source.
 
 Though the Bayesian evidences for the two models, ``log(Z) = -161.6`` and ``log(Z) = -161.7``, are indistinguishable, the result of the eccentric orbit fit is consistent with that of a circular orbit. This finding is consistent with the results from both :cite:author:`Bonomo2017` and :cite:author:`Knutson2014`.
 
@@ -549,14 +547,14 @@ This appends the following summary to the output file:
     ---------------------------------------------------------------------------
      * Slope of the linear trend in the best-fit radial velocity model:
           dvdt = 2.24E-02 m/s/day
-     * Minimum outer companion mass from slope (assuming P_min = 1.25 * baseline = 9.32 days):
+     * Minimum outer companion mass from slope (assuming P_min = 1.25 * baseline = 9.32 years):
           M_c > 2.27 M_jup
           a_c > 4.77 AU
           K_c > 30.51 m/s
      * Apparent orbital period derivative induced by the line-of-sight acceleration:
           dP/dt = 7.21E+00 ms/yr
 
-The following table shows that these lower limits are compatible with the findings of :cite:author:`Knutson2014`. It is important to note that upper limits cannot be obtained from radial velocity data alone, and that :cite:author:`Knutson2014` performed additional analyses of AO imaging for this purpose.
+The following table shows that these lower limits are consistent with the findings of :cite:author:`Knutson2014`. Upper limits cannot be determined from radial velocity data alone, and :cite:author:`Knutson2014` performed additional analyses using AO imaging to address this limitation. The :cite:author:`Bonomo2017` study did not report these constraints directly but instead referenced :cite:author:`Knutson2014`, stating that their best-fit parameters are in agreement.
 
 .. list-table::
    :header-rows: 1
@@ -573,8 +571,6 @@ The following table shows that these lower limits are compatible with the findin
      - :math:`\mathrm{AU}`
      - :math:`5-60`
      - :math:`>4.8`
-
-We note that the :cite:author:`Bonomo2017` study did not report these constraints, instead citing :cite:author:`Knutson2014` and noting that their best-fit parameters agree.
 
 The following image displays a plot of the best-fit linear trend over the RV residuals, which is automatically generated by the :meth:`~orbdot.analysis.Analyzer.unknown_companion` method.
 
@@ -674,8 +670,6 @@ Once the model fits are complete, the output files are found in the directory: `
 
         Fixed Parameters
         ----------------
-        e0 = 0.0
-        w0 = 0.0
         dvdt = 0.0
         ddvdt = 0.0
 
@@ -854,9 +848,9 @@ This appends the following summary to the ``analysis/rv_constant_analysis_quadra
           quadratic: ddvdt = 2.29E-05 m/s^2/day
      * Constraints on the mass and orbit of an outer companion from a quadratic RV:
           P_c > 20.25 years
+          M_c > 2.87 M_jup
           a_c > 7.21 AU
           K_c > 31.77 m/s
-          M_c > 2.87 M_jup
 
 The following table demonstrates that these values are in excellent agreement with the results from :cite:author:`Bonomo2017`:
 
