@@ -1,12 +1,11 @@
-{
-  "_comment1": "HAT-P-4 b Settings",
+{"_comment0": "HAT-P-4 b Settings",
 
-  "_comment2": "Input Files",
+  "_comment1": "Input Files",
 
       "main_save_dir": "results/",
       "system_info_file": "info_files/HAT-P-4_info.json",
 
-  "_comment3": "Model Fits",
+  "_comment2": "Model Fits",
 
        "RV_fit": {
          "save_dir": "rv_fits/",
@@ -17,9 +16,10 @@
          "evidence_tolerance": 0.01
        },
 
-  "_comment4": "Priors",
+  "_comment3": "Priors",
 
        "prior": {
+
          "t0": ["gaussian", 2454245.81521, 0.001],
          "P0": ["gaussian", 3.0565254, 0.00001],
          "ecosw": ["uniform", -0.1, 0.1],

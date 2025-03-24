@@ -20,13 +20,13 @@
 
     "__comment4": "Orbital Elements",
 
+       "_comment4_1": "Orbital Elements",
        "t0 [BJD_TDB]": [2456305.455522],
        "P [days]": [1.09141953],
        "e": [0.0],
        "w [rad]": [0.0],
 
-    "__comment4_2": "Time-Dependant",
-
+       "__comment4_2": "Time-Dependant",
        "PdE [days/E]": [0.0],
        "wdE [rad/E]": [0.0]
 }

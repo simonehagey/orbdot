@@ -1,7 +1,6 @@
 {"_comment1": "TTV (O-C) plot settings",
 
   "TTV_PLOT": {
-
         "num_epochs_pre_data": 300,
         "num_epochs_post_data": 600,
         "y_axis_limits": [-8, 8],
