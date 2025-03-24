@@ -1046,8 +1046,8 @@ class NestedSampling:
             f.write('-----\n')
             f.write('Sampler: {} \n'.format(sampler))
             f.write('Free parameters: {} \n'.format(str(self.vary)))
-            f.write('log(Z) = {} ± {}\n'.format(
-                round(dic['stats']['logZ'], 2), round(dic['stats']['logZ_err'], 2)))
+            f.write('log(Z) = {} ± {}\n'.format(round(dic['stats']['logZ'], 2),
+                                                round(dic['stats']['logZ_err'], 2)))
             f.write('Run time (s): {}\n'.format(round(dic['stats']['run_time'], 2)))
             f.write('Num live points: {}\n'.format(dic['stats']['n_live_points']))
             f.write('Evidence tolerance: {}\n'.format(dic['stats']['evidence_tolerance']))
@@ -1067,12 +1067,14 @@ class NestedSampling:
                     vals['e_derived'][0], vals['e_derived'][1], vals['e_derived'][2]))
                 f.write('w0 (derived) = {} + {} - {} \n'.format(
                     vals['w_derived'][0], vals['w_derived'][1], vals['w_derived'][2]))
+                not_model_params.extend(['e0', 'w0'])
 
             elif 'sq_ecosw' in self.vary and 'sq_esinw' in self.vary:
                 f.write('e (derived) = {} + {} - {}\n'.format(
                     vals['e_derived'][0], vals['e_derived'][1], vals['e_derived'][2]))
                 f.write('w0 (derived) = {} + {} - {}\n'.format(
                     vals['w_derived'][0], vals['w_derived'][1], vals['w_derived'][2]))
+                not_model_params.extend(['e0', 'w0'])
 
             f.write('\nFixed Parameters\n')
             f.write('----------------\n')
