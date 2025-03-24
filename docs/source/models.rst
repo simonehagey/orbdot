@@ -381,7 +381,7 @@ Equilibrium Tides
 -----------------
 Due to the close proximity of Hot Jupiters (HJs) to their host stars, significant tidal bulges—an ellipsoidal distortion—are raised in both the planet and the star. In the case of orbital decay, the planet's orbital rate is faster than the star's rotational rate, causing the star's tidal bulge to lag behind that of the planet. This lag raises a net torque that spins up the star, but at the expense of the planet's orbital angular momentum :cite:p:`levrard2009, Matsumura2010`.
 
-The tidal forces raised by the misaligned tidal bulges are known as "equilibrium tides" and are believed to be the most significant process governing the future evolution of HJ orbits :cite:p:`Ma2021, Barker2020`.
+The tidal forces raised by the misaligned tidal bulges are known as "equilibrium tides" and are believed to be the most significant process governing the future evolution of HJ orbits :cite:p:`Barker2020`.
 
 The following OrbDot functions are relevant to these effects:
 

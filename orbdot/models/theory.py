@@ -1836,8 +1836,8 @@ def resolved_binary_mass_from_rv_trend(theta, D, dvdt):
     .. math:: M_B = 5.341 \\times 10^{-6}(D \\rho)^2\\left|\\dot{\\gamma}\\right| \\Phi
 
     where :math:`\\rho` is the angular separation of the binary in arcseconds, :math:`D` is the
-    distance to the system in parsecs, and :math:`\\dot{\\gamma}` is the first-order radial
-    acceleration term.
+    distance to the system in parsecs, :math:`\\dot{\\gamma}` is the first-order radial
+    acceleration term in m/s/day, and :math:`M_B` is in units of solar masses.
 
     The parameter :math:`\\Phi` is a function of the eccentricity, longitude of pericenter,
     and inclination of the companion's orbit. Assuming that these parameters are unconstrained,

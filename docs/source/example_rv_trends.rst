@@ -237,7 +237,7 @@ For this example, the ``"nestle"`` sampler has been specified with 1000 live poi
        },
     ...
 
-The remaining portion of the settings file defines the ``"prior"`` dictionary, which defines the :ref:`prior distributions <priors>` for the model parameters. For Gaussian priors, the first value represents the mean and the second the standard deviation. Uniform priors are defined by their minimum and maximum limits, while log priors follow the same structure but use :math:`\log_10 (\text{min})` and :math:`\log_10 (\text{max})` instead.
+The remaining portion of the settings file defines the ``"prior"`` dictionary, which defines the :ref:`prior distributions <priors>` for the model parameters. For Gaussian priors, the first value represents the mean and the second the standard deviation. Uniform priors are defined by their minimum and maximum limits, while log priors follow the same structure but use :math:`\log_{10}(\text{min})` and :math:`\log_{10}(\text{max})` instead.
 
 We need only populate this with the parameters that are to be included in the model fits, which in this case are the reference transit mid-time ``"t0"``, orbital period ``"P0"``, RV semi-amplitude ``"K"``, systemic velocity ``"v0"``, jitter parameter ``"jit"``, the first-order acceleration term ``"dvdt"``, the second-order acceleration term ``"ddvdt"``, and the coupled parameters ``"ecosw"`` and ``"esinw"``.
 

@@ -252,7 +252,7 @@ The following table lists the keys of the ``*_results.json`` file:
    * - ``"model"``
      - ``str``
      - The model that was fit (e.g. ``"ttv_constant"``, ``"joint_precession"``, etc.).
-   * - ``"file_suffix"``
+   * - ``"suffix"``
      - ``str``
      - The file suffix that was given to the model fit.
    * - ``"results_filename"``
