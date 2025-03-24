@@ -1152,7 +1152,7 @@ class Analyzer:
         # plot the data and the linear fit
         x_all = np.linspace(min(x), max(x), 1000)
         plt.errorbar(x - 2450000, y, yerr=y_errs, label='Data', fmt='o', color='blue')
-        plt.plot(x_all - 2450000, linear(x_all, b), label='Quadratic Fit', color='firebrick')
+        plt.plot(x_all - 2450000, linear(x_all, b), label='Linear Fit', color='firebrick')
 
         # add a dot for the pivot point
         plt.scatter(t_pivot - 2450000, linear(t_pivot, b), color='green', s=60, label='t0')

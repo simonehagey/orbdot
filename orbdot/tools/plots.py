@@ -1003,7 +1003,7 @@ def make_rv_plots(plot_settings, outfile, suffix='', model='constant'):
         M_t0 = E_t0 - res['e0'][0] * np.sin(E_t0)
 
         ax3.axvline(x=M_t0, linestyle='--', color='dimgrey', linewidth=1)
-        ax3.text(M_t0 - 0.22, - (res['K'][0] + 3**res['K'][2]), 'Transit', rotation=90,
+        ax3.text(M_t0 - 0.15, -res['K'][0] + 1**res['K'][2], 'Transit', rotation=90,
                  fontsize=plot_settings["RV_PLOT"]['show_transit_line_fontsize'])
 
     if plot_settings["RV_PLOT"]['y_limits_ax1'] != 'None':
