@@ -20,6 +20,7 @@
       "R_s [R_sun]": null,
       "k2_s": null,
       "P_rot_s [days]": null,
+      "epsilon_s [deg]": null,
 
   "_comment3": "Planet Properties",
 
@@ -28,6 +29,7 @@
       "R_p [R_earth]": [null],
       "k2_p": [null],
       "P_rot_p [days]": [null],
+      "epsilon_p [deg]": [null],
 
   "_comment4": "Model Parameters",
 

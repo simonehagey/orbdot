@@ -109,12 +109,14 @@ class Analyzer:
         self.R_s = self.info['R_s [R_sun]']
         self.k2_s = self.info['k2_s']
         self.P_rot_s = self.info['P_rot_s [days]']
+        self.epsilon_s = self.info['epsilon_s [deg]']
 
         # load planet properties
         self.M_p = self.info['M_p [M_earth]'][planet.planet_index]
         self.R_p = self.info['R_p [R_earth]'][planet.planet_index]
         self.k2_p = self.info['k2_p'][planet.planet_index]
         self.P_rot_p = self.info['P_rot_p [days]'][planet.planet_index]
+        self.epsilon_s = self.info['epsilon_p [deg]'][planet.planet_index]
 
         # create a save directory if not found
         parent_dir = os.path.abspath(os.getcwd()) + '/'
@@ -466,6 +468,7 @@ class Analyzer:
 
         return
 
+    # TODO: change
     def orbital_decay_fit(self, printout=False):
         """Interprets the results of an orbital decay model fit.
 
@@ -565,6 +568,7 @@ class Analyzer:
 
         return
 
+    # TODO: change
     def orbital_decay_predicted(self, printout=False):
         """Calculates various orbital decay parameters that are predicted by theory.
 
