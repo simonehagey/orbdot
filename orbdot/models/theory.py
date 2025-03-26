@@ -450,142 +450,6 @@ def companion_mass_from_precession(P, P2, dwdE, M_s):
     return M2 / M_earth
 
 
-def decay_pdot_from_quality_factor(P, M_s, M_p, R_s, Q_star):
-    """Calculate an orbital decay rate given the host star's modified tidal quality factor.
-
-    This method returns an orbital decay rate for a given "modified" stellar tidal quality
-    factor, assuming that the star-planet system is coplanar and that equilibrium tides dominate
-    the dynamical evolution.
-
-    Parameters
-    ----------
-    P : float
-        Orbital period in days.
-    M_s : float
-        Host star mass in solar masses.
-    M_p : float
-        Planet mass in earth masses.
-    R_s : float
-        Host star radius in solar radii.
-    Q_star : float
-        The modified stellar tidal quality factor.
-
-    Returns
-    -------
-    float
-        Orbital decay rate in days per epoch.
-
-    Notes
-    -----
-    Assuming that equilibrium tides dominate the evolution of a planet's orbit, the rate of
-    orbital decay depends on the efficiency of tidal energy dissipation within the star,
-    which is parameterized by the tidal quality factor. In the constant-phase lag model for
-    equilibrium tides, the orbital decay rate is [1]_:
-
-    .. math::
-        \\dot{P}_{\\mathrm{decay}} = -\\frac{27\\pi}{2 Q_\\star^{'}}\\left(\\frac{M_p}{
-        M_\\star}\\right)\\left(\\frac{R_\\star}{a}\\right)^5
-
-    where :math:`M_\\star` is the host star mass, :math:`M_p` is the planet mass,
-    :math:`R_\\star` is the host star radius, :math:`a` is the orbital semi major axis,
-    and :math:`Q_\\star^{'}` is the star's "modified" tidal quality factor, defined as:
-
-    .. math:: Q_\\star^{'} = \\frac{3}{2} \\frac{Q_\\star}{k_{2,\\star}}
-
-    where :math:`Q_\\star` is the tidal quality factor and :math:`k_{2,\\star}` is the second-order
-    potential Love number [2]_. The theoretical upper limit is :math:`k_{2,\\star}=3/2`, that of a
-    uniform density sphere, in which case :math:`Q_\\star^{'} = Q_\\star`.
-
-    References
-    ----------
-    .. [1] :cite:t:`Goldreich1966`. https://doi.org/10.1016/0019-1035(66)90051-0
-    .. [2] :cite:t:`Ogilvie2007`. https://doi.org/10.1017/9781108304061
-
-    """
-
-    # derive parameters
-    a = get_semi_major_axis_from_period(P, M_s)
-
-    # unit conversions
-    M_p *= M_earth  # earth masses to kg
-    M_s *= M_sun    # solar masses to kg
-    R_s *= R_sun    # solar radii to m
-
-    # calculate the predicted orbital decay rate (days/day)
-    pdot = -27 * np.pi / (2 * Q_star) * (M_p / M_s) * (R_s / a) ** 5
-
-    return pdot * P   # days/E
-
-
-def decay_quality_factor_from_pdot(P, dPdE, M_s, M_p, R_s):
-    """Calculate the modified stellar quality factor given an orbital decay rate.
-
-    This method returns a modified stellar quality factor for a given orbital decay rate,
-    assuming that the star-planet system is coplanar and that equilibrium tides dominate the
-    dynamical evolution.
-
-    Parameters
-    ----------
-    P : float
-        Orbital period in days.
-    dPdE : float
-        Orbital decay rate in days per epoch.
-    M_s : float
-        Host star mass in solar masses.
-    M_p : float
-        Planet mass in earth masses.
-    R_s : float
-        Host star radius in solar radii.
-
-    Returns
-    -------
-    float
-        The modified stellar quality tidal factor.
-
-    Notes
-    -----
-    Assuming that equilibrium tides dominate the evolution of a planet's orbit, the rate of
-    orbital decay depends on the efficiency of tidal energy dissipation within the star,
-    which is parameterized by the tidal quality factor :math:`Q`. In the constant-phase lag model
-    for equilibrium tides, the modified stellar tidal quality factor is [1]_:
-
-    .. math::
-        Q_\\star^{'} = -\\frac{27\\pi}{2\\dot{P}_{\\mathrm{decay}}}\\left(\\frac{M_p}{
-        M_\\star}\\right)\\left(\\frac{R_\\star}{a}\\right)^5
-
-    where :math:`M_\\star` is the host star mass, :math:`M_p` is the planet mass,
-    :math:`R_\\star` is the host star radius, :math:`a` is the orbital semi major axis,
-    and :math:`\\dot{P}_{\\mathrm{decay}}` is the orbital decay rate.
-
-    The modified tidal quality factor is defined as:
-
-    .. math:: Q_\\star^{'} = \\frac{3}{2} \\frac{Q_\\star}{k_{2,\\star}}
-
-    where :math:`k_{2,\\star}` is the second-order potential Love number [2]_. The theoretical
-    upper limit is :math:`k_{2,\\star}=3/2`, that of a uniform density sphere, in which case
-    :math:`Q_\\star^{'} = Q_\\star`.
-
-    References
-    ----------
-    .. [1] :cite:t:`Goldreich1966`. https://doi.org/10.1016/0019-1035(66)90051-0
-    .. [2] :cite:t:`Ogilvie2007`. https://doi.org/10.1017/9781108304061
-
-    """
-    # derive parameters
-    a = get_semi_major_axis_from_period(P, M_s)
-
-    # unit conversions
-    M_p *= M_earth    # earth masses to kg
-    M_s *= M_sun      # solar masses to kg
-    R_s *= R_sun      # solar radii to m
-    dPdt = dPdE / P   # days/E to days/day
-
-    # compute and return the stellar tidal quality factor
-    Q_star = -27 * np.pi / (2 * dPdt) * (M_p / M_s) * (R_s / a) ** 5
-
-    return Q_star
-
-
 def decay_empirical_quality_factor(P_orb, P_rot_s):
     """Calculate the modified stellar tidal quality factor from an empirical law.
 
@@ -647,6 +511,488 @@ def decay_empirical_quality_factor(P_orb, P_rot_s):
 
     # return the tidal quality factor Q'
     return Q_star, P_tide
+
+
+def decay_star_pdot_from_quality_factor(P, e, M_s, M_p, R_s, Q_star, epsilon_s=0.0, P_rot_s=None):
+    """Calculate the rate of orbital decay driven by equilibrium tides in the host star.
+
+    This method computes the orbital decay rate for a given "modified" stellar tidal quality
+    factor and, optionally, the host star’s rotation period and obliquity.
+
+    Parameters
+    ----------
+    P : float
+        The orbital period in days.
+    e : float
+        The eccentricity of the orbit.
+    M_s : float
+        Host star mass in solar masses.
+    M_p : float
+        Planet mass in earth masses.
+    R_s : float
+        Host star radius in solar radii.
+    Q_star : float
+        The host star's modified annual tidal quality factor.
+    epsilon_s : float, optional
+        Host star obliquity in degrees. Default is zero.
+    P_rot_s : float, optional
+        Host star rotation period in days.
+
+    Returns
+    -------
+    float
+        Orbital decay rate in days per epoch.
+
+    Notes
+    -----
+    If equilibrium tides are the dominant driver of orbital evolution, the rate of orbital
+    period decay due to stellar tides is given by:
+
+    .. math::
+        \\frac{dP}{dt}_{\\mathrm{(star)}} = -\\frac{27\\pi}{Q_\\star^{'}} \\left(\\frac{M_p}{
+        M_\\star}\\right) \\left(\\frac{R_\\star}{a}\\right)^5 \\times \\left[f(e) - g(e) \\cos{
+        \\varepsilon_\\star} \\frac{\\dot{\\theta}_\\star}{n}\\right]
+
+    where :math:`Q_\\star^{'}` is the modified annual tidal quality factor of the star,
+    :math:`\\varepsilon_\\star` is the stellar obliquity (defined as the angle between the
+    stellar spin and orbital angular momentum vectors), :math:`\\dot{\\theta}_\\star` is the
+    stellar spin frequency, :math:`n` is the orbital mean motion, $a$ is the semi major axis,
+    :math:`M_p` is the planet mass, :math:`M_\\star` is the stellar mass, and :math:`R_\\star` is
+    the stellar radius. The eccentricity-dependent functions :math:`f(e)` and :math:`g(e)` are
+    defined in the :meth:`~orbdot.models.theory.decay_get_f_e` and
+    :meth:`~orbdot.models.theory.decay_get_g_e` methods.
+
+    This equation is derived from Equations (2), (5), and (19) in :cite:t:`Leconte2010` [1]_ and is
+    valid for any :math:`\\dot{\\theta}_\\star`, :math:`\\varepsilon_\\star`, and :math:`e`.
+
+    If :math:`e=0` and :math:`\\varepsilon_\\star=0`, the equation simplifies to:
+
+      .. math::
+          \\frac{dP}{dt}_{\\mathrm{(star)}} = -\\frac{27\\pi}{Q_\\star^{'}} \\left(\\frac{M_p}{
+          M_\\star}\\right) \\left(\\frac{R_\\star}{a}\\right)^5 \\left[1 - \\frac{\\dot{
+          \\theta}_\\star}{n}\\right]
+
+    Further, the rotation period of the star is unknown it is assumed that :math:`\\dot{
+    \\theta}_\\star \\ll n`, in which case the bracketed term approaches unity and we have:
+
+        .. math::
+            \\frac{dP}{dt}_{\\mathrm{(star)}} = -\\frac{27\\pi}{Q_\\star^{'}} \\left(\\frac{M_p}{
+            M_\\star}\\right) \\left(\\frac{R_\\star}{a}\\right)^5
+
+    References
+    ----------
+    .. [1] :cite:t:`Leconte2010`. https://doi.org/10.1051/0004-6361/201014337
+
+    """
+    # derive parameters
+    a = m.get_semi_major_axis_from_period(P, M_s)
+    f_e = decay_get_f_e(e)
+    g_e = decay_get_g_e(e)
+    mean_motion = 2 * np.pi / P
+
+    # calculate spin frequency if stellar rotation period is provided
+    if P_rot_s is not None:
+        spin_freq_s = (2 * np.pi) / P_rot_s
+        beta = spin_freq_s / mean_motion
+
+    # assume P_rot_s >> P_orb if stellar rotation period is not provided
+    else:
+        beta = 0    # as P_orb/P_rot_s --> 0
+
+    # unit conversions
+    epsilon_s *= np.pi / 180   # deg to rad
+    R_s *= m.R_sun             # solar radii to m
+    M_p *= m.M_earth           # earth masses to kg
+    M_s *= m.M_sun             # solar masses to kg
+
+    # calculate the predicted orbital decay rate (days/day)
+    t1 = -27 * np.pi / Q_star * (M_p / M_s) * (R_s / a) ** 5
+    t2 = f_e - g_e * np.cos(epsilon_s) * beta
+    pdot = t1 * t2
+
+    # return the orbital decay rate in days per epoch (days/E)
+    return pdot * P
+
+
+def decay_star_quality_factor_from_pdot(P, e, M_s, M_p, R_s, dPdE, epsilon_s=0.0, P_rot_s=None):
+    """Calculate the host star's modified stellar quality factor given an orbital decay rate.
+
+    Given an orbital decay rate and, optionally, the host star's rotation period and obliquity,
+    this method returns the host star's modified tidal quality factor under the assumption
+    that the decay is driven by equilibrium tides in the host star. See the
+    :meth:`~orbdot.models.theory.decay_star_pdot_from_quality_factor` docstring for a more
+    detailed description of the relevant equations.
+
+    Parameters
+    ----------
+    P : float
+        The orbital period in days.
+    e : float
+        The eccentricity of the orbit.
+    M_s : float
+        Host star mass in solar masses.
+    M_p : float
+        Planet mass in earth masses.
+    R_s : float
+        Host star radius in solar radii.
+    dPdE : float
+        Orbital decay rate in days per epoch.
+    epsilon_s : float, optional
+        Host star obliquity in degrees. Default is zero.
+    P_rot_s : float, optional
+        Host star rotation period in days.
+
+    Returns
+    -------
+    float
+        The host star's modified annual tidal quality factor.
+
+    """
+    # derive parameters
+    a = m.get_semi_major_axis_from_period(P, M_s)
+    f_e = decay_get_f_e(e)
+    g_e = decay_get_g_e(e)
+    mean_motion = 2 * np.pi / P
+
+    # calculate spin frequency if stellar rotation period is provided
+    if P_rot_s is not None:
+        spin_freq_s = (2 * np.pi) / P_rot_s
+        beta = spin_freq_s / mean_motion
+
+    # assume P_rot_s >> P_orb if stellar rotation period is not provided
+    else:
+        beta = 0    # as P_orb/P_rot_s --> 0
+
+    # unit conversions
+    epsilon_s *= np.pi / 180  # deg to rad
+    R_s *= m.R_sun            # solar radii to m
+    M_p *= m.M_earth          # earth masses to kg
+    M_s *= m.M_sun            # solar masses to kg
+    dPdE *= (1 / P)           # days/E to days/day
+
+    # compute and return the host star's modified annual tidal quality factor
+    t1 = -27 * np.pi / dPdE * (M_p / M_s) * (R_s / a) ** 5
+    t2 = f_e - g_e * np.cos(epsilon_s) * beta
+
+    return t1 * t2
+
+
+def decay_planet_pdot_from_quality_factor(P, e, M_s, M_p, R_p, Q_planet, epsilon_p=0.0, P_rot_p=None):
+    """Calculate the rate of orbital decay driven by equilibrium tides in the planet.
+
+    This method computes the orbital decay rate for a given "modified" planetary tidal quality
+    factor and, optionally, the planet's rotation period and obliquity. This expression accounts
+    for both eccentricity-driven and obliquity-driven tidal dissipation, providing a unified
+    treatment of planetary tides.
+
+    Parameters
+    ----------
+    P : float
+        The orbital period in days.
+    e : float
+        The eccentricity of the orbit.
+    M_s : float
+        Host star mass in solar masses.
+    M_p : float
+        Planet mass in earth masses.
+    R_p : float
+        Planet radius in earth radii.
+    Q_planet : float
+        The planet's modified annual tidal quality factor.
+    epsilon_p : float, optional
+        Planetary obliquity in degrees. Default is zero.
+    P_rot_p : float, optional
+        Planet rotation period in days.
+
+    Returns
+    -------
+    float
+        Orbital decay rate in days per epoch.
+
+    Notes
+    -----
+    If equilibrium tides are the dominant driver of orbital evolution, the rate of orbital
+    period decay due to planetary tides is given by:
+
+    .. math::
+        \\frac{dP}{dt}_{\\mathrm{(planet)}} = -\\frac{27\\pi}{Q_p^{'}} \\left(\\frac{M_\\star}{
+        M_p}\\right) \\left(\\frac{R_p}{a}\\right)^5 \\left[f(e) - g(e) \\cos{\\varepsilon_p}
+        \\frac{\\dot{\\theta}_p}{n}\\right]
+
+    where :math:`Q_p^{'}` is the modified annual tidal quality factor of the planet,
+    :math:`\\varepsilon_p` is the planetary obliquity (defined as the angle between the
+    planet's spin and orbital angular momentum vectors), :math:`\\dot{\\theta}_p` is the
+    planet's spin frequency, :math:`n` is the orbital mean motion, $a$ is the semi major axis,
+    :math:`M_p` is the planet mass, :math:`M_\\star` is the stellar mass, and :math:`R_p` is
+    the planet's radius. The eccentricity-dependent functions :math:`f(e)` and :math:`g(e)` are
+    defined in the :meth:`~orbdot.models.theory.decay_get_f_e` and
+    :meth:`~orbdot.models.theory.decay_get_g_e` methods.
+
+    This equation is derived from Equations (2), (5), and (19) in :cite:t:`Leconte2010` [1]_ and is
+    valid for any :math:`\\dot{\\theta}_p`, :math:`\\varepsilon_p`, and :math:`e`.
+
+    If a rotation period is not provided, the planet's spin frequency is calculated as the
+    tidally-evolved equilibrium rate defined in
+    :meth:`~orbdot.models.theory.decay_get_equilibrium_spin_freq`, which is dependent on the
+    eccentricity and planetary obliquity. In this case, the above equation can be expressed as:
+
+    .. math:
+        \\frac{dP}{dt}_{\\mathrm{(planet)}} = -\\frac{27\\pi}{Q_p^{'}} \\left(\\frac{M_\\star}{
+        M_p}\\right) \\left(\\frac{R_p}{a}\\right)^5 \\times \\left[f(e) - \\frac{g^2(e)}{h(
+        e)}\\frac{2 \\cos^2{\\varepsilon_p}}{(1 + \\cos^2{\\varepsilon_p})}\\right]
+
+    The above equation shows that if the orbit is circular and aligned, meaning :math:`e=0` and
+    :math:`\\varepsilon_p=0`, the planetary contribution to orbital decay vanishes. In this case,
+    the functions :math:`f(e)`, :math:`g(e)`, and :math:`h(e)` approach unity, and the
+    equilibrium spin rate synchronizes with the mean motion, :math:`\\dot{\\theta}_p=n`,
+    leading to no net tidal energy dissipation in the planet.
+
+    """
+    # derive parameters
+    a = m.get_semi_major_axis_from_period(P, M_s)
+    f_e = decay_get_f_e(e)
+    g_e = decay_get_g_e(e)
+    mean_motion = 2 * np.pi / P
+
+    # calculate the planet spin frequency
+    if P_rot_p is None:  # if a rotation period is not provided
+        spin_freq_p = decay_get_equilibrium_spin_freq(P, e, epsilon_p)
+    else:                # if a rotation period is given
+        spin_freq_p = (2 * np.pi) / P_rot_p
+
+    beta = spin_freq_p / mean_motion
+
+    # unit conversions
+    epsilon_p *= np.pi / 180  # deg to rad
+    R_p *= m.R_earth          # earth radii to m
+    M_p *= m.M_earth          # earth masses to kg
+    M_s *= m.M_sun            # solar masses to kg
+
+    # calculate the predicted orbital decay rate (days/day)
+    t1 = -27 * np.pi / Q_planet * (M_s / M_p) * (R_p / a) ** 5
+    t2 = f_e - g_e * np.cos(epsilon_p) * beta
+    pdot = t1 * t2
+
+    # return the orbital decay rate in days per epoch (days/E)
+    return pdot * P
+
+
+def decay_planet_quality_factor_from_pdot(P, e, M_s, M_p, R_p, dPdE, epsilon_p=0.0, P_rot_p=None):
+    """Calculate the planet's modified planetary quality factor given an orbital decay rate.
+
+    Given an orbital decay rate and, optionally, the planet's rotation period and obliquity,
+    this method returns the planet's modified tidal quality factor under the assumption
+    that the decay is driven by equilibrium tides in the planet. See the
+    :meth:`~orbdot.models.theory.decay_planet_pdot_from_quality_factor` docstring for a more
+    detailed description of the relevant equations.
+
+    Parameters
+    ----------
+    P : float
+        The orbital period in days.
+    e : float
+        The eccentricity of the orbit.
+    M_s : float
+        Host star mass in solar masses.
+    M_p : float
+        Planet mass in earth masses.
+    R_p : float
+        Planet radius in earth radii.
+    dPdE : float
+        Orbital decay rate in days per epoch.
+    epsilon_p : float, optional
+        Planetary obliquity in degrees. Default is zero.
+    P_rot_p : float, optional
+        Planet rotation period in days.
+
+    Returns
+    -------
+    float
+        The planet's modified annual tidal quality factor.
+
+    Notes
+    -----
+    If a rotation period not provided for the planet, the planet's spin frequency is calculated
+    using the equation for the equilibrium spin rate implemented in the
+    :meth:`~orbdot.models.theory.decay_get_equilibrium_spin_freq` method.
+
+    """
+
+    # derive parameters
+    a = m.get_semi_major_axis_from_period(P, M_s)
+    f_e = decay_get_f_e(e)
+    g_e = decay_get_g_e(e)
+    mean_motion = 2 * np.pi / P
+
+    # calculate the planet spin frequency
+    if P_rot_p is None:  # if a rotation period is not provided
+        spin_freq_p = decay_get_equilibrium_spin_freq(P, e, epsilon_p)
+    else:                # if a rotation period is given
+        spin_freq_p = (2 * np.pi) / P_rot_p
+
+    beta = spin_freq_p / mean_motion
+
+    # unit conversions
+    epsilon_p *= np.pi / 180  # deg to rad
+    R_p *= m.R_earth          # earth radii to m
+    M_p *= m.M_earth          # earth masses to kg
+    M_s *= m.M_sun            # solar masses to kg
+    dPdE *= (1 / P)           # days/E to days/day
+
+    # compute and return the planet's modified annual tidal quality factor
+    t1 = -27 * np.pi / dPdE * (M_s / M_p) * (R_p / a) ** 5
+    t2 = f_e - g_e * np.cos(epsilon_p) * beta
+
+    return t1 * t2
+
+
+def decay_get_f_e(e):
+    """Computes the first eccentricity function for the equilibrium tide methods, f(e).
+
+    This method compute one of three eccentricity-dependent functions called by the equilibrium
+    tidal theory methods, given by Equation (4) in [1]_:
+
+    .. math::
+        f(e) = \\frac{1+\\frac{31}{2} e^2+\\frac{255}{8} e^4+\\frac{185}{16} e^6+\\frac{25}{64}
+        e^8}{(1-e^2)^{15/2}}
+
+    Parameters
+    ----------
+    e : float
+        The orbit eccentricity.
+
+    Returns
+    -------
+    float
+        The computed value of f(e).
+
+    References
+    ----------
+    .. [1] :cite:t:`Leconte2010`. https://doi.org/10.1051/0004-6361/201014337
+
+    """
+    t1 = (1 + (31 / 2) * e**2 + (255 / 8) * e**4 + (185 / 16) * e**6 + (25 / 64) * e**8)
+    t2 = (1 - e**2) ** (15 / 2)
+
+    return t1 / t2
+
+
+def decay_get_g_e(e):
+    """Computes the second eccentricity function for the equilibrium tide methods, g(e).
+
+    This method compute one of three eccentricity-dependent functions called by the equilibrium
+    tidal theory methods, given by Equation (3) in [1]_:
+
+    .. math::
+        g(e) = \\frac{1+\\frac{15}{2} e^2+\\frac{45}{8} e^4+\\frac{5}{16} e^6}{(1-e^2)^6}
+
+    Parameters
+    ----------
+    e : float
+        The orbit eccentricity.
+
+    Returns
+    -------
+    float
+        The computed value of g(e).
+
+    References
+    ----------
+    .. [1] :cite:t:`Leconte2010`. https://doi.org/10.1051/0004-6361/201014337
+
+    """
+    t1 = (1 + (15 / 2) * e**2 + (45 / 8) * e**4 + (5 / 16) * e**6)
+    t2 = (1 - e**2) ** 6
+
+    return t1 / t2
+
+
+def decay_get_h_e(e):
+    """Computes the third eccentricity function for the equilibrium tide methods, h(e).
+
+    This method compute one of three eccentricity-dependent functions called by the equilibrium
+    tidal theory methods, given by Equation (11) in [1]_:
+
+    .. math::
+        h(e) = \\frac{1+3 e^2+\\frac{3}{8} e^4}{(1-e^2)^{9/2}}
+
+    Parameters
+    ----------
+    e : float
+        The orbit eccentricity.
+
+    Returns
+    -------
+    float
+        The calculates value of h(e).
+
+    References
+    ----------
+    .. [1] :cite:t:`Leconte2010`. https://doi.org/10.1051/0004-6361/201014337
+
+    """
+    t1 = (1 + 3 * e**2 + (3 / 8) * e**4)
+    t2 = (1 - e**2) ** (9 / 2)
+
+    return t1 / t2
+
+
+def decay_get_equilibrium_spin_freq(P, e, epsilon_p):
+    """Calculate the equilibrium spin frequency of a planet.
+
+    This method returns the equilibrium spin frequency of a planet with nonzero obliquity and/or
+    orbit eccentricity.
+
+    Parameters
+    ----------
+    P : float
+        The orbital period in days.
+    e : float
+        The eccentricity of the orbit.
+    epsilon_p : float
+        The planetary obliquity.
+
+    Returns
+    -------
+    float
+        Equilibrium spin frequency in days^{-1}.
+
+    Notes
+    -----
+    Planetary rotation periods are typically unconstrained, and it is not always reasonable to
+    assume that they are tidally locked (i.e. synchronous rotation). When the orbit eccentricity
+    and/or planetary obliquity are nonzero, the rotation state of the planet may be asynchronous.
+
+    In this case, a reasonable assumption is that the planet's spin has tidally evolved toward a
+    equilibrium rate that is dependent on the eccentricity and obliquity, given by [1]_:
+
+    .. math::
+        \\dot{\\theta}_{eq} \\equiv n \\frac{g(e)}{h(e)}\\frac{2\\cos{\\varepsilon_p}}{(1 +
+        \\cos^2{\\varepsilon_p})}
+
+    where
+
+    where :math:`\\varepsilon_p` is the planetary obliquity (defined as the angle between the
+    planet's spin and orbital angular momentum vectors), :math:`n` is the orbital mean motion,
+    and :math:`g(e)` and :math:`h(e)` are eccentricity-dependent functions that are defined in
+    :meth:`~orbdot.models.theory.decay_get_g_e` and :meth:`~orbdot.models.theory.decay_get_h_e`.
+
+    References
+    ----------
+    .. [1] :cite:t:`Leconte2010`. https://doi.org/10.1051/0004-6361/201014337
+
+    """
+    # derive parameters
+    g_e = decay_get_g_e(e)
+    h_e = decay_get_h_e(e)
+
+    # unit conversions
+    epsilon_p *= np.pi / 180  # deg to rad
+
+    t1 = (2 * np.pi / P) * (g_e / h_e)
+    t2 = 2 * np.cos(epsilon_p) / (1 + np.cos(epsilon_p) ** 2)
+
+    return t1 * t2
 
 
 def decay_timescale(P, dPdE):
