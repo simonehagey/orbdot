@@ -90,10 +90,9 @@ For example,
 
 .. code-block:: JSON
 
-    {
-      "_comment1": "WASP-12 b Settings",
+    {"_comment0": "WASP-12 b Settings",
 
-      "_comment2": "Input Files",
+      "_comment1": "Input Files",
 
           "main_save_dir": "results/",
           "system_info_file": "info_files/WASP-12_info.json",
@@ -133,7 +132,7 @@ For example,
 
     ...
 
-      "_comment3": "Model Fits",
+      "_comment2": "Model Fits",
 
            "TTV_fit": {
              "save_dir": "ttv_fits/",
@@ -166,9 +165,10 @@ Finally, the ``"priors"`` key corresponds to a dictionary with key-value pairs t
 
     ...
 
-      "_comment4": "Priors",
+      "_comment3": "Priors",
 
            "prior": {
+
              "t0": ["gaussian", 2456305.4555, 0.01],
              "P0": ["gaussian", 1.09142, 0.0001],
              "e0": ["uniform", 0.0, 0.1],
@@ -242,10 +242,10 @@ Whenever a :class:`~orbdot.star_planet.StarPlanet` object is created, the defaul
              "i0": ["gaussian", 90, 5],
              "O0": ["uniform", 0, 6.28319],
 
-             "ecosw": ["uniform", -0.5, 0.5],
-             "esinw": ["uniform", -0.5, 0.5],
-             "sq_ecosw": ["uniform", -0.5, 0.5],
-             "sq_esinw": ["uniform", -0.5, 0.5],
+             "ecosw": ["uniform", -1, 1],
+             "esinw": ["uniform", -1, 1],
+             "sq_ecosw": ["uniform", -1, 1],
+             "sq_esinw": ["uniform", -1, 1],
 
              "PdE": ["uniform", -1e-7, 1e-7],
              "wdE": ["uniform", 0, 0.1],
@@ -400,6 +400,7 @@ The default info file (``orbdot/defaults/default_info_file.json``) is merged wit
           "R_s [R_sun]": null,
           "k2_s": null,
           "P_rot_s [days]": null,
+          "epsilon_s [deg]": 0.0,
 
       "_comment3": "Planet Properties",
 
@@ -408,6 +409,7 @@ The default info file (``orbdot/defaults/default_info_file.json``) is merged wit
           "R_p [R_earth]": [null],
           "k2_p": [null],
           "P_rot_p [days]": [null],
+          "epsilon_p [deg]": [0.0],
 
       "_comment4": "Model Parameters",
 
@@ -432,7 +434,7 @@ The default info file (``orbdot/defaults/default_info_file.json``) is merged wit
           "jit [m/s]": [0.0],
           "dvdt [m/s/day]": [0.0],
           "ddvdt [m/s/day^2]": [0.0],
-          "K_tide [m/s]": 0.0
+          "K_tide [m/s]": [0.0]
     }
 
 Note:
