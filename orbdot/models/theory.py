@@ -477,7 +477,7 @@ def decay_empirical_quality_factor(P_orb, P_rot_s):
     .. math:: Q_\\star^{'} = \\frac{3}{2} \\frac{Q_\\star}{k_{2,\\star}}
 
     where :math:`Q_\\star` is the tidal quality factor and :math:`k_{2,\\star}` is the second-order
-    potential Love number [2]_. The theoretical upper limit is :math:`k_{2,\\star}=3/2`, that of a
+    potential Love number. The theoretical upper limit is :math:`k_{2,\\star}=3/2`, that of a
     uniform density sphere, in which case :math:`Q_\\star^{'} = Q_\\star`.
 
     This method estimates a value for :math:`Q_\\star^{'}` using an empirical law derived by
@@ -499,7 +499,6 @@ def decay_empirical_quality_factor(P_orb, P_rot_s):
     References
     ----------
     .. [1] :cite:t:`Penev2018`. https://doi.org/10.3847/1538-3881/aaaf71
-    .. [2] :cite:t:`Ogilvie2007`. https://doi.org/10.1017/9781108304061
 
     """
     # determine the tidal forcing period
