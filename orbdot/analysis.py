@@ -116,7 +116,7 @@ class Analyzer:
         self.R_p = self.info['R_p [R_earth]'][planet.planet_index]
         self.k2_p = self.info['k2_p'][planet.planet_index]
         self.P_rot_p = self.info['P_rot_p [days]'][planet.planet_index]
-        self.epsilon_s = self.info['epsilon_p [deg]'][planet.planet_index]
+        self.epsilon_p = self.info['epsilon_p [deg]'][planet.planet_index]
 
         # create a save directory if not found
         parent_dir = os.path.abspath(os.getcwd()) + '/'
@@ -468,7 +468,6 @@ class Analyzer:
 
         return
 
-    # TODO: change
     def orbital_decay_fit(self, printout=False):
         """Interprets the results of an orbital decay model fit.
 
@@ -528,8 +527,9 @@ class Analyzer:
                     print(str1, str2, str3)
 
                 # calculate the modified stellar quality factor from the decay rate
-                q_fit = m.decay_quality_factor_from_pdot(self.P0, self.PdE, self.M_s, self.M_p,
-                                                         self.R_s)
+                q_fit = m.decay_star_quality_factor_from_pdot(self.P0, self.e0, self.M_s,
+                                                              self.M_p, self.R_s, self.PdE,
+                                                              self.epsilon_s, self.P_rot_s)
                 str1 = ' * Modified stellar quality factor:\n'
                 str2 = '\t  Q\' = {:.2E}\n'.format(q_fit)
                 f.write(str1 + str2)
@@ -568,7 +568,6 @@ class Analyzer:
 
         return
 
-    # TODO: change
     def orbital_decay_predicted(self, printout=False):
         """Calculates various orbital decay parameters that are predicted by theory.
 
@@ -624,8 +623,9 @@ class Analyzer:
                 print(str1, str2)
 
             # calculate the predicted decay rate
-            pdot_pred = m.decay_pdot_from_quality_factor(self.P0, self.M_s, self.M_p, self.R_s,
-                                                         q_pred)
+            pdot_pred = m.decay_star_pdot_from_quality_factor(self.P0, self.e0,
+                                                              self.M_s, self.M_p, self.R_s,
+                                                              q_pred, self.epsilon_s, self.P_rot_s)
             str1 = ' * Predicted decay rate:\n'
             str2 = '\t  dP/dE = {:.2E} days/E\n'.format(pdot_pred)
             str3 = '\t  dP/dt = {:.2f} ms/yr\n'.format(pdot_pred * 365.25 * 8.64e+7 / self.P0)
