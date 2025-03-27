@@ -379,14 +379,16 @@ The :py:mod:`~orbdot.models.theory` module provides several analytical models fo
 
 Equilibrium Tides
 -----------------
-Due to the close proximity of Hot Jupiters (HJs) to their host stars, significant tidal bulges—an ellipsoidal distortion—are raised in both the planet and the star. In the case of orbital decay, the planet's orbital rate is faster than the star's rotational rate, causing the star's tidal bulge to lag behind that of the planet. This lag raises a net torque that spins up the star, but at the expense of the planet's orbital angular momentum :cite:p:`levrard2009, Matsumura2010`.
+Due to the close proximity of Hot Jupiters (HJs) to their host stars, significant tidal bulges - an ellipsoidal distortion - are raised in both the planet and the star. In the classical framework of equilibrium tides developed by :cite:t:`Darwin1908`, orbital decay occurs when a planet's orbital rate is faster than the host star's rotational rate, causing the star's tidal bulge to lag behind that of the planet. This mismatch generates a net torque that transfers angular momentum from the planet’s orbit to the star’s rotation.
 
-The tidal forces raised by the misaligned tidal bulges are known as "equilibrium tides" and are believed to be the most significant process governing the future evolution of HJ orbits :cite:p:`Barker2020`.
+Orbital decay is driven by energy dissipation due to tides in the star and, if the planet remains in a non-synchronous rotation state, within the planet itself. The efficiency of this energy loss is typically quantified by the tidal quality factor of the body, :math:`Q`, which is inversely proportional to the energy dissipated per cycle :cite:`Goldreich1966`. Further, an even more useful parameter the "modified" quality factor, :math:`Q^{'} = \\frac{3}{2} \\frac{Q}{k_2}`, which is scaled by the second-order potential Love number, :math:`k_2`, for which the theoretical upper limit is :math:`k_2=3/2` (a uniform density sphere).
 
-The following OrbDot functions are relevant to these effects:
+The tidal evolution models implemented in OrbDot are derived from the constant time lag (or "viscous") approach to equilibrium tides (e.g., :cite:`Hut1981,Levrard2007,Correia2010,Leconte2010`) and are exact for any eccentricity, obliquity, and rotation rates. The following OrbDot functions are relevant to these effects:
 
-.. autofunction:: orbdot.models.theory.decay_pdot_from_quality_factor
-.. autofunction:: orbdot.models.theory.decay_quality_factor_from_pdot
+.. autofunction:: orbdot.models.theory.decay_star_pdot_from_quality_factor
+.. autofunction:: orbdot.models.theory.decay_star_quality_factor_from_pdot
+.. autofunction:: orbdot.models.theory.decay_planet_pdot_from_quality_factor
+.. autofunction:: orbdot.models.theory.decay_planet_quality_factor_from_pdot
 .. autofunction:: orbdot.models.theory.decay_empirical_quality_factor
 .. autofunction:: orbdot.models.theory.decay_timescale
 .. autofunction:: orbdot.models.theory.decay_energy_loss
