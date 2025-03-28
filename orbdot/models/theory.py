@@ -584,7 +584,7 @@ def decay_star_pdot_from_quality_factor(P, e, M_s, M_p, R_s, Q_star, epsilon_s=0
 
     """
     # derive parameters
-    a = m.get_semi_major_axis_from_period(P, M_s)
+    a = get_semi_major_axis_from_period(P, M_s)
     f_e = decay_get_f_e(e)
     g_e = decay_get_g_e(e)
     mean_motion = 2 * np.pi / P
@@ -600,9 +600,9 @@ def decay_star_pdot_from_quality_factor(P, e, M_s, M_p, R_s, Q_star, epsilon_s=0
 
     # unit conversions
     epsilon_s *= np.pi / 180   # deg to rad
-    R_s *= m.R_sun             # solar radii to m
-    M_p *= m.M_earth           # earth masses to kg
-    M_s *= m.M_sun             # solar masses to kg
+    R_s *= R_sun             # solar radii to m
+    M_p *= M_earth           # earth masses to kg
+    M_s *= M_sun             # solar masses to kg
 
     # calculate the predicted orbital decay rate (days/day)
     t1 = -27 * np.pi / Q_star * (M_p / M_s) * (R_s / a) ** 5
@@ -648,7 +648,7 @@ def decay_star_quality_factor_from_pdot(P, e, M_s, M_p, R_s, dPdE, epsilon_s=0.0
 
     """
     # derive parameters
-    a = m.get_semi_major_axis_from_period(P, M_s)
+    a = get_semi_major_axis_from_period(P, M_s)
     f_e = decay_get_f_e(e)
     g_e = decay_get_g_e(e)
     mean_motion = 2 * np.pi / P
@@ -664,9 +664,9 @@ def decay_star_quality_factor_from_pdot(P, e, M_s, M_p, R_s, dPdE, epsilon_s=0.0
 
     # unit conversions
     epsilon_s *= np.pi / 180  # deg to rad
-    R_s *= m.R_sun            # solar radii to m
-    M_p *= m.M_earth          # earth masses to kg
-    M_s *= m.M_sun            # solar masses to kg
+    R_s *= R_sun            # solar radii to m
+    M_p *= M_earth          # earth masses to kg
+    M_s *= M_sun            # solar masses to kg
     dPdE *= (1 / P)           # days/E to days/day
 
     # compute and return the host star's modified annual tidal quality factor
@@ -748,7 +748,7 @@ def decay_planet_pdot_from_quality_factor(P, e, M_s, M_p, R_p, Q_planet, epsilon
 
     """
     # derive parameters
-    a = m.get_semi_major_axis_from_period(P, M_s)
+    a = get_semi_major_axis_from_period(P, M_s)
     f_e = decay_get_f_e(e)
     g_e = decay_get_g_e(e)
     mean_motion = 2 * np.pi / P
@@ -763,9 +763,9 @@ def decay_planet_pdot_from_quality_factor(P, e, M_s, M_p, R_p, Q_planet, epsilon
 
     # unit conversions
     epsilon_p *= np.pi / 180  # deg to rad
-    R_p *= m.R_earth          # earth radii to m
-    M_p *= m.M_earth          # earth masses to kg
-    M_s *= m.M_sun            # solar masses to kg
+    R_p *= R_earth          # earth radii to m
+    M_p *= M_earth          # earth masses to kg
+    M_s *= M_sun            # solar masses to kg
 
     # calculate the predicted orbital decay rate (days/day)
     t1 = -27 * np.pi / Q_planet * (M_s / M_p) * (R_p / a) ** 5
@@ -818,7 +818,7 @@ def decay_planet_quality_factor_from_pdot(P, e, M_s, M_p, R_p, dPdE, epsilon_p=0
     """
 
     # derive parameters
-    a = m.get_semi_major_axis_from_period(P, M_s)
+    a = get_semi_major_axis_from_period(P, M_s)
     f_e = decay_get_f_e(e)
     g_e = decay_get_g_e(e)
     mean_motion = 2 * np.pi / P
@@ -833,9 +833,9 @@ def decay_planet_quality_factor_from_pdot(P, e, M_s, M_p, R_p, dPdE, epsilon_p=0
 
     # unit conversions
     epsilon_p *= np.pi / 180  # deg to rad
-    R_p *= m.R_earth          # earth radii to m
-    M_p *= m.M_earth          # earth masses to kg
-    M_s *= m.M_sun            # solar masses to kg
+    R_p *= R_earth          # earth radii to m
+    M_p *= M_earth          # earth masses to kg
+    M_s *= M_sun            # solar masses to kg
     dPdE *= (1 / P)           # days/E to days/day
 
     # compute and return the planet's modified annual tidal quality factor

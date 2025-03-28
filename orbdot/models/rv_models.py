@@ -191,7 +191,7 @@ def rv_decay(t0, P0, e0, w0, K, v0, dvdt, ddvdt, PdE, t):
      .. math::
             P\\left(E\\right) = P_0 + \\frac{dP}{dE}\\,E
 
-     where :math:`E` is determined by rounding the result of the following equation to an
+     where :math:`E` is determined by truncating the result of the following equation to an
      integer value:
 
      .. math::
@@ -348,7 +348,7 @@ def rv_precession(t0, P0, e0, w0, K, v0, dvdt, ddvdt, wdE, t):
      .. math::
             \\omega_p\\left(E\\right) = \\omega_0 + \\frac{d\\omega}{dE}\\,E.
 
-     where :math:`E` is determined by rounding the result of the following equation to an
+     where :math:`E` is determined by truncating the result of the following equation to an
      integer value:
 
      .. math::
