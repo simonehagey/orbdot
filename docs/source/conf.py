@@ -27,7 +27,14 @@ html_theme_options = {
     'prev_next_buttons_location': 'both',
     'style_external_links': True,
     'style_nav_header_background': 'white',
-    'display_github': True,
+}
+
+html_context = {
+    "display_github": True,
+    "github_user": "simonehagey",
+    "github_repo": "orbdot",
+    "github_version": "master",
+    "conf_py_path": "/orbdot/",
 }
 
 napoleon_google_docstring = False
