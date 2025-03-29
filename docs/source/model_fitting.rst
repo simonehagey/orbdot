@@ -401,7 +401,7 @@ It calls the following methods from the :ref:`theory module <theory_module>`:
 .. autosummary::
    :nosignatures:
 
-   orbdot.models.theory.decay_quality_factor_from_pdot
+   orbdot.models.theory.decay_star_quality_factor_from_pdot
    orbdot.models.theory.decay_timescale
    orbdot.models.theory.decay_energy_loss
    orbdot.models.theory.decay_angular_momentum_loss
@@ -462,7 +462,7 @@ It calls the following methods from the :ref:`theory module <theory_module>`:
    :nosignatures:
 
    orbdot.models.theory.decay_empirical_quality_factor
-   orbdot.models.theory.decay_pdot_from_quality_factor
+   orbdot.models.theory.decay_star_pdot_from_quality_factor
    orbdot.models.theory.decay_timescale
    orbdot.models.theory.decay_energy_loss
    orbdot.models.theory.decay_angular_momentum_loss

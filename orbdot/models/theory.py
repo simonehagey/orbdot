@@ -516,7 +516,7 @@ def decay_star_pdot_from_quality_factor(P, e, M_s, M_p, R_s, Q_star, epsilon_s=0
     """Calculate the rate of orbital decay driven by equilibrium tides in the host star.
 
     This method computes the orbital decay rate for a given "modified" stellar tidal quality
-    factor and, optionally, the host star’s rotation period and obliquity.
+    factor and, optionally, the host star’s rotation period and/or obliquity.
 
     Parameters
     ----------
@@ -553,26 +553,26 @@ def decay_star_pdot_from_quality_factor(P, e, M_s, M_p, R_s, Q_star, epsilon_s=0
         \\varepsilon_\\star} \\frac{\\dot{\\theta}_\\star}{n}\\right]
 
     where :math:`Q_\\star^{'}` is the modified annual tidal quality factor of the star,
-    :math:`\\varepsilon_\\star` is the stellar obliquity (defined as the angle between the
-    stellar spin and orbital angular momentum vectors), :math:`\\dot{\\theta}_\\star` is the
-    stellar spin frequency, :math:`n` is the orbital mean motion, $a$ is the semi major axis,
-    :math:`M_p` is the planet mass, :math:`M_\\star` is the stellar mass, and :math:`R_\\star` is
-    the stellar radius. The eccentricity-dependent functions :math:`f(e)` and :math:`g(e)` are
-    defined in the :meth:`~orbdot.models.theory.decay_get_f_e` and
-    :meth:`~orbdot.models.theory.decay_get_g_e` methods.
+    :math:`\\varepsilon_\\star` is the stellar obliquity (defined as the angle between the spin
+    and orbital angular momentum vectors), :math:`\\dot{\\theta}_\\star` is the stellar spin
+    frequency, :math:`n` is the orbital mean motion, :math:`a` is the semi major axis, :math:`M_p` is
+    the planet mass, :math:`M_\\star` is the stellar mass, and :math:`R_\\star` is the stellar
+    radius. The eccentricity-dependent functions :math:`f(e)` and :math:`g(e)` are defined in the
+    :meth:`~orbdot.models.theory.decay_get_f_e` and :meth:`~orbdot.models.theory.decay_get_g_e`
+    methods.
 
-    This equation is derived from Equations (2), (5), and (19) in :cite:t:`Leconte2010` [1]_ and is
-    valid for any :math:`\\dot{\\theta}_\\star`, :math:`\\varepsilon_\\star`, and :math:`e`.
+    This equation is derived using Equations (2), (5), and (19) from [1]_ and is valid for any
+    value of :math:`\\dot{\\theta}_\\star`, :math:`\\varepsilon_\\star`, and :math:`e`.
 
-    If :math:`e=0` and :math:`\\varepsilon_\\star=0`, the equation simplifies to:
+    We see that if :math:`e=0` and :math:`\\varepsilon_\\star=0`, the expression simplifies to:
 
       .. math::
           \\frac{dP}{dt}_{\\mathrm{(star)}} = -\\frac{27\\pi}{Q_\\star^{'}} \\left(\\frac{M_p}{
           M_\\star}\\right) \\left(\\frac{R_\\star}{a}\\right)^5 \\left[1 - \\frac{\\dot{
           \\theta}_\\star}{n}\\right]
 
-    Further, the rotation period of the star is unknown it is assumed that :math:`\\dot{
-    \\theta}_\\star \\ll n`, in which case the bracketed term approaches unity and we have:
+    If the rotation rate of the star is unknown, it is assumed that :math:`\\dot{\\theta}_\\star
+    \\ll n`, in which case the bracketed term approaches unity, leaving:
 
         .. math::
             \\frac{dP}{dt}_{\\mathrm{(star)}} = -\\frac{27\\pi}{Q_\\star^{'}} \\left(\\frac{M_p}{
@@ -727,21 +727,21 @@ def decay_planet_pdot_from_quality_factor(P, e, M_s, M_p, R_p, Q_planet, epsilon
     defined in the :meth:`~orbdot.models.theory.decay_get_f_e` and
     :meth:`~orbdot.models.theory.decay_get_g_e` methods.
 
-    This equation is derived from Equations (2), (5), and (19) in :cite:t:`Leconte2010` [1]_ and is
-    valid for any :math:`\\dot{\\theta}_p`, :math:`\\varepsilon_p`, and :math:`e`.
+    This equation is derived using Equations (2), (5), and (19) from [1]_ and is valid for any
+    value of :math:`\\dot{\\theta}_p`, :math:`\\varepsilon_p`, and :math:`e`.
 
-    If a rotation period is not provided, the planet's spin frequency is calculated as the
+    If a rotation period is not provided, the planet's spin frequency is calculated using the
     tidally-evolved equilibrium rate defined in
     :meth:`~orbdot.models.theory.decay_get_equilibrium_spin_freq`, which is dependent on the
     eccentricity and planetary obliquity. In this case, the above equation can be expressed as:
 
-    .. math:
+    .. math::
         \\frac{dP}{dt}_{\\mathrm{(planet)}} = -\\frac{27\\pi}{Q_p^{'}} \\left(\\frac{M_\\star}{
         M_p}\\right) \\left(\\frac{R_p}{a}\\right)^5 \\times \\left[f(e) - \\frac{g^2(e)}{h(
         e)}\\frac{2 \\cos^2{\\varepsilon_p}}{(1 + \\cos^2{\\varepsilon_p})}\\right]
 
-    The above equation shows that if the orbit is circular and aligned, meaning :math:`e=0` and
-    :math:`\\varepsilon_p=0`, the planetary contribution to orbital decay vanishes. In this case,
+     We see that if the orbit is circular and aligned, meaning :math:`e=0` and
+     :math:`\\varepsilon_p=0`, the planetary contribution to orbital decay vanishes. In this case,
     the functions :math:`f(e)`, :math:`g(e)`, and :math:`h(e)` approach unity, and the
     equilibrium spin rate synchronizes with the mean motion, :math:`\\dot{\\theta}_p=n`,
     leading to no net tidal energy dissipation in the planet.
@@ -812,8 +812,7 @@ def decay_planet_quality_factor_from_pdot(P, e, M_s, M_p, R_p, dPdE, epsilon_p=0
     Notes
     -----
     If a rotation period not provided for the planet, the planet's spin frequency is calculated
-    using the equation for the equilibrium spin rate implemented in the
-    :meth:`~orbdot.models.theory.decay_get_equilibrium_spin_freq` method.
+    with the :meth:`~orbdot.models.theory.decay_get_equilibrium_spin_freq` method.
 
     """
 
@@ -958,18 +957,16 @@ def decay_get_equilibrium_spin_freq(P, e, epsilon_p):
 
     Notes
     -----
-    Planetary rotation periods are typically unconstrained, and it is not always reasonable to
-    assume that they are tidally locked (i.e. synchronous rotation). When the orbit eccentricity
+    Planetary rotation periods are typically unconstrained, and it is not always appropriate to
+    assume that they are tidally locked (synchronous rotation). When the orbit eccentricity
     and/or planetary obliquity are nonzero, the rotation state of the planet may be asynchronous.
 
-    In this case, a reasonable assumption is that the planet's spin has tidally evolved toward a
-    equilibrium rate that is dependent on the eccentricity and obliquity, given by [1]_:
+    In this case, a reasonable assumption is that the planet's spin has tidally evolved toward an
+    equilibrium rate, given by Equation (12) of [1]_:
 
     .. math::
         \\dot{\\theta}_{eq} \\equiv n \\frac{g(e)}{h(e)}\\frac{2\\cos{\\varepsilon_p}}{(1 +
         \\cos^2{\\varepsilon_p})}
-
-    where
 
     where :math:`\\varepsilon_p` is the planetary obliquity (defined as the angle between the
     planet's spin and orbital angular momentum vectors), :math:`n` is the orbital mean motion,

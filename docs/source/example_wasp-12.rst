@@ -433,17 +433,17 @@ Now the analysis file looks like this:
 
     Model Comparison
     ---------------------------------------------------------------------------
-     * Decisive evidence for Model 1 vs. Model 2  (B = 2.93e+43)
+     * Very strong evidence for Model 1 vs. Model 2  (B = 2.93e+43)
           Model 1: 'ttv_decay', logZ = -104.47
           Model 2: 'ttv_constant', logZ = -204.56
 
     Model Comparison
     ---------------------------------------------------------------------------
-     * Decisive evidence for Model 1 vs. Model 2  (B = 1.33e+05)
+     * Very strong evidence for Model 1 vs. Model 2  (B = 1.33e+05)
           Model 1: 'ttv_decay', logZ = -104.47
           Model 2: 'ttv_precession', logZ = -116.27
 
-confirming that the evidence for the orbital decay model is decisive.
+confirming that the evidence for the orbital decay model is very strong.
 
 Orbital Decay Analysis
 ----------------------

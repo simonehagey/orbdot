@@ -512,13 +512,13 @@ Now the analysis file looks like this:
 
     Model Comparison
     ---------------------------------------------------------------------------
-     * Decisive evidence for Model 1 vs. Model 2  (B = 5.63e+04)
+     * Very strong evidence for Model 1 vs. Model 2  (B = 5.63e+04)
           Model 1: 'rv_constant_linear', logZ = -150.66
           Model 2: 'rv_constant_circular', logZ = -161.60
 
     Model Comparison
     ---------------------------------------------------------------------------
-     * Decisive evidence for Model 1 vs. Model 2  (B = 6.24e+04)
+     * Very strong evidence for Model 1 vs. Model 2  (B = 6.24e+04)
           Model 1: 'rv_constant_linear', logZ = -150.66
           Model 2: 'rv_constant_eccentric', logZ = -161.70
 
@@ -810,23 +810,23 @@ Now the analysis file looks like this:
 
     Model Comparison
     ---------------------------------------------------------------------------
-     * Decisive evidence for Model 1 vs. Model 2  (B = 3.35e+08)
+     * Very strong evidence for Model 1 vs. Model 2  (B = 3.35e+08)
           Model 1: 'rv_constant_quadratic', logZ = -176.67
           Model 2: 'rv_constant_circular', logZ = -196.30
 
     Model Comparison
     ---------------------------------------------------------------------------
-     * Decisive evidence for Model 1 vs. Model 2  (B = 8.59e+09)
+     * Very strong evidence for Model 1 vs. Model 2  (B = 8.59e+09)
           Model 1: 'rv_constant_quadratic', logZ = -176.67
           Model 2: 'rv_constant_eccentric', logZ = -199.54
 
     Model Comparison
     ---------------------------------------------------------------------------
-     * Decisive evidence for Model 1 vs. Model 2  (B = 1.86e+07)
+     * Very strong evidence for Model 1 vs. Model 2  (B = 1.86e+07)
           Model 1: 'rv_constant_quadratic', logZ = -176.67
           Model 2: 'rv_constant_linear', logZ = -193.41
 
-This comparison confirms that the evidence supporting the model of a circular orbit with a long-term quadratic trend is decisive.
+This comparison confirms that the evidence supporting the model of a circular orbit with a long-term quadratic trend is very strong.
 
 Outer Companion Constraints
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^

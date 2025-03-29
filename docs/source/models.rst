@@ -379,11 +379,11 @@ The :py:mod:`~orbdot.models.theory` module provides several analytical models fo
 
 Equilibrium Tides
 -----------------
-In the classical framework of equilibrium tides developed by :cite:t:`Darwin1908`, orbital decay occurs when a planet’s orbital rate is faster than the rate of the host star’s rotation. This leads to the star's tidal bulge to lag behind that of the planet, generating a net torque that transfers angular momentum from the planet’s orbit to the star’s spin.
+In the classical framework of equilibrium tides developed by :cite:t:`Darwin1908`, orbital decay occurs when a planet’s orbital rate is faster than the rate of the host star’s rotation. This causes the star's tidal bulge to lag behind the planet's, generating a net torque that transfers angular momentum from the planet’s orbit to the star’s spin.
 
 Orbital decay is driven by energy dissipation due to tides in the star and, if the planet remains in a non-synchronous rotation state, within the planet itself. The efficiency of this energy loss is typically quantified by the tidal quality factor, :math:`Q`, which is inversely proportional to the energy lost per cycle :cite:`Goldreich1966`. A lower :math:`Q` value corresponds to more efficient energy dissipation and, consequently, faster orbital decay. An even more useful parameter, used in the methods below, is the "modified" quality factor, :math:`Q^{'} = \frac{3}{2} \frac{Q}{k_2}`, which incorporates the second-order Love number of the body, :math:`k_2`.
 
-The tidal evolution models implemented in OrbDot follow the constant time lag (or "viscous") equilibrium tide approach (e.g., :cite:t:`Hut1981, Levrard2007, Correia2010, Leconte2010`). These models are exact for any eccentricity, obliquity, or rotation rate. The following OrbDot functions are relevant to these effects:
+The tidal evolution models implemented in OrbDot follow the constant time lag (or "viscous") equilibrium tide approach (e.g., :cite:t:`Hut1981, Levrard2007, Correia2010, Leconte2010`) and are exact for any eccentricity, obliquity, or rotation rate. The following OrbDot functions are relevant to these effects:
 
 .. autofunction:: orbdot.models.theory.decay_star_pdot_from_quality_factor
 .. autofunction:: orbdot.models.theory.decay_star_quality_factor_from_pdot

@@ -217,7 +217,7 @@ class Analyzer:
                     print(str1)
 
             if 150. < B:
-                str1 = ' * Decisive evidence for Model 1 vs. Model 2  ' \
+                str1 = ' * Very strong evidence for Model 1 vs. Model 2  ' \
                        '(B = {:0.2e})\n'.format(B)
                 f.write(str1)
                 if printout:
@@ -1080,7 +1080,6 @@ class Analyzer:
                         print(str1)
 
                 f.write('\n')
-                print(' ')
 
                 # return the calculated masses and separations
                 return np.column_stack((companion_periods, companion_masses))
