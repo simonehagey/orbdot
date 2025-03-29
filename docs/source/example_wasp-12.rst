@@ -464,7 +464,7 @@ This appends the following summary to the ``analysis/ttv_decay_analysis.txt`` fi
           dP/dE = -1.00E-09 + 6.98E-11 - 6.88E-11 days/E
           dP/dt = -29.02 + 2.02 - 1.99 ms/yr
      * Modified stellar quality factor:
-          Q' = 1.73E+05
+          Q' = 3.46E+05
      * Remaining lifetime:
           tau = 3.25E+00 Myr
      * Energy loss rate:
@@ -472,7 +472,7 @@ This appends the following summary to the ``analysis/ttv_decay_analysis.txt`` fi
      * Angular momentum loss rate:
           dLdt = -7.22E+27 kg m^2 / s^2
 
-We see that the best-fit orbital decay model yields a stellar tidal quality factor of :math:`1.73 \times 10^5`, a remaining lifetime of :math:`3.25 \, \mathrm{Myr}`, and a decrease in orbital energy and angular momentum equal to :math:`-4.8 \times 10^{23} \, \mathrm{W}` and :math:`-7.2 \times 10^{27} \, \mathrm{kg \, m^2 \, s^{-2}}`, respectively. The following table shows that all of these derived results agree with :cite:author:`Yee2020`.
+We see that the best-fit orbital decay model yields a stellar tidal quality factor of :math:`3.46 \times 10^5`, a remaining lifetime of :math:`3.25 \, \mathrm{Myr}`, and a decrease in orbital energy and angular momentum equal to :math:`-4.8 \times 10^{23} \, \mathrm{W}` and :math:`-7.2 \times 10^{27} \, \mathrm{kg \, m^2 \, s^{-2}}`, respectively. The following table shows that all of these derived results agree with :cite:author:`Yee2020`.
 
 .. list-table::
    :header-rows: 1
@@ -484,7 +484,7 @@ We see that the best-fit orbital decay model yields a stellar tidal quality fact
    * - :math:`Q'_*`
      - --
      - :math:`1.75 \times 10^5`
-     - :math:`1.73 \times 10^5`
+     - :math:`3.46 \times 10^5`
    * - :math:`\tau`
      - :math:`\mathrm{Myr}`
      - :math:`3.25`
@@ -497,6 +497,9 @@ We see that the best-fit orbital decay model yields a stellar tidal quality fact
      - :math:`\mathrm{kg \, m^2 \, s^{-2}}`
      - :math:`-7 \times 10^{27}`
      - :math:`-7.2 \times 10^{27}`
+
+.. note::
+    The value of :math:`Q'_*` from OrbDot is twice the value from :cite:t:`Yee2020` (:math:`3.46 \times 10^5 / 2 = :math:`1.73 \times 10^5``). This is because the tidal evolution models used in OrbDot are derived from the "constant time lag" approach to equilibrium tidal theory, whereas the :cite:t:`Yee2020` study adopts an equation for :math:`Q'_*` that is derived from the “constant phase lag” approach of :cite:`Goldreich1966`. The former approach does not rely on the assumption that the star-planet system is coplanar, allowing for applications to a wider variety of system architectures that are unlike the Solar System. See :cite:t:`Correia2010` for a thorough description and comparison of these approaches.
 
 ------------
 
