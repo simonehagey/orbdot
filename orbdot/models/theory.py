@@ -562,9 +562,8 @@ def decay_star_pdot_from_quality_factor(P, e, M_s, M_p, R_s, Q_star, epsilon_s=0
     methods.
 
     This equation is derived using Equations (2), (5), and (19) from [1]_ and is valid for any
-    value of :math:`\\dot{\\theta}_\\star`, :math:`\\varepsilon_\\star`, and :math:`e`.
-
-    We see that if :math:`e=0` and :math:`\\varepsilon_\\star=0`, the expression simplifies to:
+    value of :math:`\\dot{\\theta}_\\star`, :math:`\\varepsilon_\\star`, and :math:`e`. We see
+    that if :math:`e=0` and :math:`\\varepsilon_\\star=0`, the expression simplifies to:
 
       .. math::
           \\frac{dP}{dt}_{\\mathrm{(star)}} = -\\frac{27\\pi}{Q_\\star^{'}} \\left(\\frac{M_p}{
@@ -721,7 +720,7 @@ def decay_planet_pdot_from_quality_factor(P, e, M_s, M_p, R_p, Q_planet, epsilon
     where :math:`Q_p^{'}` is the modified annual tidal quality factor of the planet,
     :math:`\\varepsilon_p` is the planetary obliquity (defined as the angle between the
     planet's spin and orbital angular momentum vectors), :math:`\\dot{\\theta}_p` is the
-    planet's spin frequency, :math:`n` is the orbital mean motion, $a$ is the semi major axis,
+    planet's spin frequency, :math:`n` is the orbital mean motion, :math:`a` is the semi major axis,
     :math:`M_p` is the planet mass, :math:`M_\\star` is the stellar mass, and :math:`R_p` is
     the planet's radius. The eccentricity-dependent functions :math:`f(e)` and :math:`g(e)` are
     defined in the :meth:`~orbdot.models.theory.decay_get_f_e` and
@@ -740,8 +739,8 @@ def decay_planet_pdot_from_quality_factor(P, e, M_s, M_p, R_p, Q_planet, epsilon
         M_p}\\right) \\left(\\frac{R_p}{a}\\right)^5 \\times \\left[f(e) - \\frac{g^2(e)}{h(
         e)}\\frac{2 \\cos^2{\\varepsilon_p}}{(1 + \\cos^2{\\varepsilon_p})}\\right]
 
-     We see that if the orbit is circular and aligned, meaning :math:`e=0` and
-     :math:`\\varepsilon_p=0`, the planetary contribution to orbital decay vanishes. In this case,
+    We see that if the orbit is circular and aligned, meaning :math:`e=0` and
+    :math:`\\varepsilon_p=0`, the planetary contribution to orbital decay vanishes. In this case,
     the functions :math:`f(e)`, :math:`g(e)`, and :math:`h(e)` approach unity, and the
     equilibrium spin rate synchronizes with the mean motion, :math:`\\dot{\\theta}_p=n`,
     leading to no net tidal energy dissipation in the planet.
