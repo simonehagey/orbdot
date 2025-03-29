@@ -27,6 +27,7 @@ html_theme_options = {
     'prev_next_buttons_location': 'both',
     'style_external_links': True,
     'style_nav_header_background': 'white',
+    'display_github': True,
 }
 
 napoleon_google_docstring = False

@@ -60,6 +60,7 @@ Contents
    installation
    citing-orbdot
    bibliography
+   acknowledgements
 
 .. toctree::
    :caption: Examples
