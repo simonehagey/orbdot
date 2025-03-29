@@ -499,7 +499,7 @@ We see that the best-fit orbital decay model yields a stellar tidal quality fact
      - :math:`-7.2 \times 10^{27}`
 
 .. note::
-    The value of :math:`Q'_*` from OrbDot is twice the value from :cite:t:`Yee2020` (:math:`3.46 \times 10^5 / 2 = :math:`1.73 \times 10^5``). This is because the tidal evolution models used in OrbDot are derived from the "constant time lag" approach to equilibrium tidal theory, whereas the :cite:t:`Yee2020` study adopts an equation for :math:`Q'_*` that is derived from the “constant phase lag” approach of :cite:`Goldreich1966`. The former approach does not rely on the assumption that the star-planet system is coplanar, allowing for applications to a wider variety of system architectures that are unlike the Solar System. See :cite:t:`Correia2010` for a thorough description and comparison of these approaches.
+    The value of :math:`Q'_*` from OrbDot is twice the value from :cite:t:`Yee2020` (:math:`3.46 \times 10^5 / 2 = 1.73 \times 10^5`). This is because the tidal evolution models used in OrbDot are derived from the "constant time lag" approach to equilibrium tidal theory, whereas the :cite:t:`Yee2020` study adopts an equation for :math:`Q'_*` that is derived from the “constant phase lag” approach of :cite:t:`Goldreich1966`. The former approach does not rely on the assumption that the star-planet system is coplanar, allowing for applications to a wider variety of star-planet system architectures. See :cite:t:`Correia2010` for a thorough description and comparison of these models.
 
 ------------
 
