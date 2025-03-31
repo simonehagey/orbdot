@@ -1,24 +1,25 @@
-"""
-TransitTiming
+"""TransitTiming
 =============
 This module defines the ``TransitTiming`` class, which extends the capabilities of the
 ``NestedSampling`` class to facilitate model fitting of transit and eclipse mid-times.
 """
 
-import os
 import csv
+import os
+
 import numpy as np
+
+import orbdot.models.ttv_models as ttv
 import orbdot.tools.plots as pl
 import orbdot.tools.stats as stat
 import orbdot.tools.utilities as utl
-import orbdot.models.ttv_models as ttv
 
 
 class TransitTiming:
-    """
-    This class utilizes the capabilities of the :class:`~orbdot.nested_sampling.NestedSampling`
+    """This class utilizes the capabilities of the :class:`~orbdot.nested_sampling.NestedSampling`
     class to facilitate model fitting of transit and eclipse mid-times.
     """
+
     def __init__(self, ttv_settings):
         """Initializes the TransitTiming class.
 
@@ -29,22 +30,22 @@ class TransitTiming:
 
         """
         # directory for saving the output files
-        self.ttv_save_dir = ttv_settings['save_dir']
+        self.ttv_save_dir = ttv_settings["save_dir"]
 
         # the requested sampler ('nestle' or 'multinest')
-        self.ttv_sampler = ttv_settings['sampler']
+        self.ttv_sampler = ttv_settings["sampler"]
 
         # the number of live points for the nested sampling analysis
-        self.ttv_n_points = ttv_settings['n_live_points']
+        self.ttv_n_points = ttv_settings["n_live_points"]
 
         # the evidence tolerance for the nested sampling analysis
-        self.ttv_tol = ttv_settings['evidence_tolerance']
+        self.ttv_tol = ttv_settings["evidence_tolerance"]
 
         # create a save directory if not found
-        parent_dir = os.path.abspath(os.getcwd()) + '/'
+        parent_dir = os.path.abspath(os.getcwd()) + "/"
 
         try:
-            os.makedirs(os.path.join(parent_dir, ttv_settings['save_dir']))
+            os.makedirs(os.path.join(parent_dir, ttv_settings["save_dir"]))
 
         except FileExistsError:
             pass
@@ -75,13 +76,17 @@ class TransitTiming:
             return -1e10  # return a very low likelihood if eccentricity is invalid
 
         # calculate log-likelihood with transit timing data
-        mod_tr = ttv.ttv_constant(tc, pp, ee, ww, self.ttv_data['epoch'])
-        ll = stat.calc_chi2(self.ttv_data['bjd'], mod_tr, self.ttv_data['err'])
+        mod_tr = ttv.ttv_constant(tc, pp, ee, ww, self.ttv_data["epoch"])
+        ll = stat.calc_chi2(self.ttv_data["bjd"], mod_tr, self.ttv_data["err"])
 
         # calculate log-likelihood with eclipse timing data (if available)
         try:
-            mod_ecl = ttv.ttv_constant(tc, pp, ee, ww, self.ttv_data['epoch_ecl'], primary=False)
-            ll += stat.calc_chi2(self.ttv_data['bjd_ecl'], mod_ecl, self.ttv_data['err_ecl'])
+            mod_ecl = ttv.ttv_constant(
+                tc, pp, ee, ww, self.ttv_data["epoch_ecl"], primary=False
+            )
+            ll += stat.calc_chi2(
+                self.ttv_data["bjd_ecl"], mod_ecl, self.ttv_data["err_ecl"]
+            )
 
         except KeyError:
             pass  # no eclipse timing data available
@@ -115,13 +120,17 @@ class TransitTiming:
             return -1e10  # return a very low likelihood if eccentricity is invalid
 
         # calculate log-likelihood with transit timing data
-        mod_tr = ttv.ttv_decay(tc, pp, dp, ee, ww, self.ttv_data['epoch'])
-        ll = stat.calc_chi2(self.ttv_data['bjd'], mod_tr, self.ttv_data['err'])
+        mod_tr = ttv.ttv_decay(tc, pp, dp, ee, ww, self.ttv_data["epoch"])
+        ll = stat.calc_chi2(self.ttv_data["bjd"], mod_tr, self.ttv_data["err"])
 
         # calculate log-likelihood with eclipse timing data (if available)
         try:
-            mod_ecl = ttv.ttv_decay(tc, pp, dp, ee, ww, self.ttv_data['epoch_ecl'], primary=False)
-            ll += stat.calc_chi2(self.ttv_data['bjd_ecl'], mod_ecl, self.ttv_data['err_ecl'])
+            mod_ecl = ttv.ttv_decay(
+                tc, pp, dp, ee, ww, self.ttv_data["epoch_ecl"], primary=False
+            )
+            ll += stat.calc_chi2(
+                self.ttv_data["bjd_ecl"], mod_ecl, self.ttv_data["err_ecl"]
+            )
 
         except KeyError:
             pass  # no eclipse timing data available
@@ -155,22 +164,32 @@ class TransitTiming:
             return -1e10  # return a very low likelihood if eccentricity is invalid
 
         # calculate log-likelihood with transit timing data
-        model_tc = ttv.ttv_precession(tc, pp, ee, ww, dw, self.ttv_data['epoch'])
-        ll = stat.calc_chi2(self.ttv_data['bjd'], model_tc, self.ttv_data['err'])
+        model_tc = ttv.ttv_precession(tc, pp, ee, ww, dw, self.ttv_data["epoch"])
+        ll = stat.calc_chi2(self.ttv_data["bjd"], model_tc, self.ttv_data["err"])
 
         # calculate log-likelihood with eclipse timing data (if available)
         try:
-            model_ecl = ttv.ttv_precession(tc, pp, ee, ww, dw,
-                                           self.ttv_data['epoch_ecl'], primary=False)
-            ll += stat.calc_chi2(self.ttv_data['bjd_ecl'], model_ecl, self.ttv_data['err_ecl'])
+            model_ecl = ttv.ttv_precession(
+                tc, pp, ee, ww, dw, self.ttv_data["epoch_ecl"], primary=False
+            )
+            ll += stat.calc_chi2(
+                self.ttv_data["bjd_ecl"], model_ecl, self.ttv_data["err_ecl"]
+            )
 
         except KeyError:
             pass  # no eclipse timing data available
 
         return ll
 
-    def run_ttv_fit(self, free_params, model='constant', file_suffix='', make_plot=True,
-                    sigma_clip=False, clip_model='linear'):
+    def run_ttv_fit(
+        self,
+        free_params,
+        model="constant",
+        file_suffix="",
+        make_plot=True,
+        sigma_clip=False,
+        clip_model="linear",
+    ):
         """Run a model fit of the observed transit and/or eclipse mid-times.
 
         This method executes a model fit of the observed transit and/or eclipse mid-times using
@@ -205,21 +224,26 @@ class TransitTiming:
         .. [2] PyMultiNest by Johannes Buchner. http://johannesbuchner.github.io/PyMultiNest
 
         """
-        if model == 'constant':
-            res = self.run_ttv_constant(free_params, file_suffix, make_plot,
-                                        sigma_clip, clip_model, save=True)
+        if model == "constant":
+            res = self.run_ttv_constant(
+                free_params, file_suffix, make_plot, sigma_clip, clip_model, save=True
+            )
 
-        elif model == 'decay':
-            res = self.run_ttv_decay(free_params, file_suffix, make_plot,
-                                     sigma_clip, clip_model, save=True)
+        elif model == "decay":
+            res = self.run_ttv_decay(
+                free_params, file_suffix, make_plot, sigma_clip, clip_model, save=True
+            )
 
-        elif model == 'precession':
-            res = self.run_ttv_precession(free_params, file_suffix, make_plot,
-                                          sigma_clip, clip_model, save=True)
+        elif model == "precession":
+            res = self.run_ttv_precession(
+                free_params, file_suffix, make_plot, sigma_clip, clip_model, save=True
+            )
 
         else:
-            raise ValueError('The string \'{}\' does not represent a valid TTV model. Options '
-                             'are: \'constant\', \'decay\', or \'precession\'.'.format(model))
+            raise ValueError(
+                f"The string '{model}' does not represent a valid TTV model. Options "
+                "are: 'constant', 'decay', or 'precession'."
+            )
 
         return res
 
@@ -268,79 +292,111 @@ class TransitTiming:
         .. [2] PyMultiNest by Johannes Buchner. http://johannesbuchner.github.io/PyMultiNest
 
         """
-        free_params = np.array(free_params, dtype='<U16')
+        free_params = np.array(free_params, dtype="<U16")
 
         try:
             self.ttv_data
 
         except AttributeError:
-            raise Exception('\n\nNo transit and/or eclipse mid-time data was detected. Please give '
-                            'a valid\npath name in the settings file before running the TTV fit.')
+            raise Exception(
+                "\n\nNo transit and/or eclipse mid-time data was detected. Please give "
+                "a valid\npath name in the settings file before running the TTV fit."
+            )
 
         # define parameters that are not in the model
-        illegal_params = ['i0', 'O0',
-                          'PdE', 'wdE', 'idE', 'edE', 'OdE',
-                          'K', 'v0', 'jit', 'dvdt', 'ddvdt', 'K_tide']
+        illegal_params = [
+            "i0",
+            "O0",
+            "PdE",
+            "wdE",
+            "idE",
+            "edE",
+            "OdE",
+            "K",
+            "v0",
+            "jit",
+            "dvdt",
+            "ddvdt",
+            "K_tide",
+        ]
 
         # raise an exception if the free parameter(s) are not valid
         utl.raise_not_valid_param_error(free_params, self.legal_params, illegal_params)
 
-        self.plot_settings['TTV_PLOT']['data_file'+suffix] = self.ttv_data_filename
+        self.plot_settings["TTV_PLOT"]["data_file" + suffix] = self.ttv_data_filename
 
         if clip:
-            print('-' * 100)
-            print('Running sigma-clipping routine on transit mid-times')
-            print('-' * 100)
+            print("-" * 100)
+            print("Running sigma-clipping routine on transit mid-times")
+            print("-" * 100)
 
-            cleaned_filename = self.ttv_save_dir + 'mid_times_cleaned' + suffix + '.txt'
-            clipped_filename = self.ttv_save_dir + 'mid_times_clipped' + suffix + '.txt'
+            cleaned_filename = self.ttv_save_dir + "mid_times_cleaned" + suffix + ".txt"
+            clipped_filename = self.ttv_save_dir + "mid_times_clipped" + suffix + ".txt"
 
             self.clip(cleaned_filename, clipped_filename, method=clip_method)
 
-            self.plot_settings['TTV_PLOT']['data_file'] = cleaned_filename
-            self.plot_settings['TTV_PLOT']['clipped_data_file'] = clipped_filename
+            self.plot_settings["TTV_PLOT"]["data_file"] = cleaned_filename
+            self.plot_settings["TTV_PLOT"]["clipped_data_file"] = clipped_filename
 
         if save:
-            print('-' * 100)
-            print('Running constant-period TTV fit with free parameters: {}'.format(free_params))
-            print('-' * 100)
+            print("-" * 100)
+            print(
+                f"Running constant-period TTV fit with free parameters: {free_params}"
+            )
+            print("-" * 100)
 
         # specify a prefix for output file names
-        prefix = self.ttv_save_dir + 'ttv_constant'
+        prefix = self.ttv_save_dir + "ttv_constant"
 
         # if selected, run the Nestle sampling algorithm
-        if self.ttv_sampler == 'nestle':
-            res, samples, random_samples = \
-                self.run_nestle(self.ttv_loglike_constant, free_params,
-                                'multi', self.ttv_n_points, self.ttv_tol)
+        if self.ttv_sampler == "nestle":
+            res, samples, random_samples = self.run_nestle(
+                self.ttv_loglike_constant,
+                free_params,
+                "multi",
+                self.ttv_n_points,
+                self.ttv_tol,
+            )
 
         # if selected, run the MultiNest sampling algorithm
-        elif self.ttv_sampler == 'multinest':
-            res, samples, random_samples = \
-                self.run_multinest(self.ttv_loglike_constant, free_params,
-                                   self.ttv_n_points, self.ttv_tol, prefix + suffix)
+        elif self.ttv_sampler == "multinest":
+            res, samples, random_samples = self.run_multinest(
+                self.ttv_loglike_constant,
+                free_params,
+                self.ttv_n_points,
+                self.ttv_tol,
+                prefix + suffix,
+            )
         else:
-            raise ValueError('Unrecognized sampler, specify \'nestle\' or \'multinest\'')
+            raise ValueError("Unrecognized sampler, specify 'nestle' or 'multinest'")
 
         if save:
 
-            rf = prefix + '_results' + suffix + '.json'
-            sf = prefix + '_random_samples' + suffix + '.txt'
+            rf = prefix + "_results" + suffix + ".json"
+            sf = prefix + "_random_samples" + suffix + ".txt"
 
-            res['model'] = 'ttv_constant'
-            res['suffix'] = suffix
-            res['results_filename'] = rf
-            res['samples_filename'] = sf
+            res["model"] = "ttv_constant"
+            res["suffix"] = suffix
+            res["results_filename"] = rf
+            res["samples_filename"] = sf
 
-            self.save_results(random_samples, samples, res, free_params,
-                              self.ttv_sampler, suffix, prefix, illegal_params)
+            self.save_results(
+                random_samples,
+                samples,
+                res,
+                free_params,
+                self.ttv_sampler,
+                suffix,
+                prefix,
+                illegal_params,
+            )
 
             # generate a TTV ("O-C") plot
-            self.plot_settings['TTV_PLOT']['ttv_constant_results_file' + suffix] = rf
-            self.plot_settings['TTV_PLOT']['ttv_constant_samples_file' + suffix] = sf
+            self.plot_settings["TTV_PLOT"]["ttv_constant_results_file" + suffix] = rf
+            self.plot_settings["TTV_PLOT"]["ttv_constant_samples_file" + suffix] = sf
 
             if plot:
-                plot_filename = prefix + '_plot' + suffix
+                plot_filename = prefix + "_plot" + suffix
                 pl.make_ttv_plot(self.plot_settings, plot_filename, suffix=suffix)
 
         return res
@@ -390,80 +446,109 @@ class TransitTiming:
         .. [2] PyMultiNest by Johannes Buchner. http://johannesbuchner.github.io/PyMultiNest
 
         """
-        free_params = np.array(free_params, dtype='<U16')
+        free_params = np.array(free_params, dtype="<U16")
 
         # raise an exception if timing data not provided
         try:
             self.ttv_data
 
         except AttributeError:
-            raise Exception('\n\nNo transit and/or eclipse mid-time data was detected. Please give '
-                            'a valid\npath name in the settings file before running the TTV fit.')
+            raise Exception(
+                "\n\nNo transit and/or eclipse mid-time data was detected. Please give "
+                "a valid\npath name in the settings file before running the TTV fit."
+            )
 
         # define parameters that are not in the model
-        illegal_params = ['i0', 'O0',
-                          'wdE', 'idE', 'edE', 'OdE',
-                          'K', 'v0', 'jit', 'dvdt', 'ddvdt', 'K_tide']
+        illegal_params = [
+            "i0",
+            "O0",
+            "wdE",
+            "idE",
+            "edE",
+            "OdE",
+            "K",
+            "v0",
+            "jit",
+            "dvdt",
+            "ddvdt",
+            "K_tide",
+        ]
 
         # raise an exception if the free parameter(s) are not valid
         utl.raise_not_valid_param_error(free_params, self.legal_params, illegal_params)
 
-        self.plot_settings['TTV_PLOT']['data_file'+suffix] = self.ttv_data_filename
+        self.plot_settings["TTV_PLOT"]["data_file" + suffix] = self.ttv_data_filename
 
         if clip:
-            print('-' * 100)
-            print('Running sigma-clipping routine on transit mid-times')
-            print('-' * 100)
+            print("-" * 100)
+            print("Running sigma-clipping routine on transit mid-times")
+            print("-" * 100)
 
-            cleaned_filename = self.ttv_save_dir + 'mid_times_cleaned' + suffix + '.txt'
-            clipped_filename = self.ttv_save_dir + 'mid_times_clipped' + suffix + '.txt'
+            cleaned_filename = self.ttv_save_dir + "mid_times_cleaned" + suffix + ".txt"
+            clipped_filename = self.ttv_save_dir + "mid_times_clipped" + suffix + ".txt"
 
             self.clip(cleaned_filename, clipped_filename, method=clip_method)
 
-            self.plot_settings['TTV_PLOT']['data_file'] = cleaned_filename
-            self.plot_settings['TTV_PLOT']['clipped_data_file'] = clipped_filename
+            self.plot_settings["TTV_PLOT"]["data_file"] = cleaned_filename
+            self.plot_settings["TTV_PLOT"]["clipped_data_file"] = clipped_filename
 
         if save:
-            print('-' * 100)
-            print('Running orbital decay TTV fit with free parameters: {}'.format(free_params))
-            print('-' * 100)
+            print("-" * 100)
+            print(f"Running orbital decay TTV fit with free parameters: {free_params}")
+            print("-" * 100)
 
         # specify a prefix for output file names
-        prefix = self.ttv_save_dir + 'ttv_decay'
+        prefix = self.ttv_save_dir + "ttv_decay"
 
         # if selected, run the Nestle sampling algorithm
-        if self.ttv_sampler == 'nestle':
-            res, samples, random_samples = \
-                self.run_nestle(self.ttv_loglike_decay, free_params, 'multi',
-                                self.ttv_n_points, self.ttv_tol)
+        if self.ttv_sampler == "nestle":
+            res, samples, random_samples = self.run_nestle(
+                self.ttv_loglike_decay,
+                free_params,
+                "multi",
+                self.ttv_n_points,
+                self.ttv_tol,
+            )
 
         # if selected, run the MultiNest sampling algorithm
-        elif self.ttv_sampler == 'multinest':
-            res, samples, random_samples = \
-                self.run_multinest(self.ttv_loglike_decay, free_params,
-                                   self.ttv_n_points, self.ttv_tol, prefix + suffix)
+        elif self.ttv_sampler == "multinest":
+            res, samples, random_samples = self.run_multinest(
+                self.ttv_loglike_decay,
+                free_params,
+                self.ttv_n_points,
+                self.ttv_tol,
+                prefix + suffix,
+            )
         else:
-            raise ValueError('Unrecognized sampler, specify \'nestle\' or \'multinest\'')
+            raise ValueError("Unrecognized sampler, specify 'nestle' or 'multinest'")
 
         if save:
 
-            rf = prefix + '_results' + suffix + '.json'
-            sf = prefix + '_random_samples' + suffix + '.txt'
+            rf = prefix + "_results" + suffix + ".json"
+            sf = prefix + "_random_samples" + suffix + ".txt"
 
-            res['model'] = 'ttv_decay'
-            res['suffix'] = suffix
-            res['results_filename'] = rf
-            res['samples_filename'] = sf
+            res["model"] = "ttv_decay"
+            res["suffix"] = suffix
+            res["results_filename"] = rf
+            res["samples_filename"] = sf
 
-            self.save_results(random_samples, samples, res, free_params,
-                              self.ttv_sampler, suffix, prefix, illegal_params)
+            self.save_results(
+                random_samples,
+                samples,
+                res,
+                free_params,
+                self.ttv_sampler,
+                suffix,
+                prefix,
+                illegal_params,
+            )
 
             # generate a TTV ("O-C") plot
-            self.plot_settings['TTV_PLOT']['ttv_decay_results_file' + suffix] = rf
-            self.plot_settings['TTV_PLOT']['ttv_decay_samples_file' + suffix] = sf
+            self.plot_settings["TTV_PLOT"]["ttv_decay_results_file" + suffix] = rf
+            self.plot_settings["TTV_PLOT"]["ttv_decay_samples_file" + suffix] = sf
 
             if plot:
-                plot_filename = prefix + '_plot' + suffix
+                plot_filename = prefix + "_plot" + suffix
                 pl.make_ttv_plot(self.plot_settings, plot_filename, suffix=suffix)
 
         return res
@@ -513,85 +598,116 @@ class TransitTiming:
         .. [2] PyMultiNest by Johannes Buchner. http://johannesbuchner.github.io/PyMultiNest
 
         """
-        free_params = np.array(free_params, dtype='<U16')
+        free_params = np.array(free_params, dtype="<U16")
 
         # raise an exception if timing data not provided
         try:
             self.ttv_data
 
         except AttributeError:
-            raise Exception('\n\nNo transit and/or eclipse mid-time data was detected. Please give '
-                            'a valid\npath name in the settings file before running the TTV fit.')
+            raise Exception(
+                "\n\nNo transit and/or eclipse mid-time data was detected. Please give "
+                "a valid\npath name in the settings file before running the TTV fit."
+            )
 
         # define parameters that are not in the model
-        illegal_params = ['i0', 'O0',
-                          'PdE', 'idE', 'edE', 'OdE',
-                          'K', 'v0', 'jit', 'dvdt', 'ddvdt', 'K_tide']
+        illegal_params = [
+            "i0",
+            "O0",
+            "PdE",
+            "idE",
+            "edE",
+            "OdE",
+            "K",
+            "v0",
+            "jit",
+            "dvdt",
+            "ddvdt",
+            "K_tide",
+        ]
 
         # raise an exception if the free parameter(s) are not valid
         utl.raise_not_valid_param_error(free_params, self.legal_params, illegal_params)
 
-        self.plot_settings['TTV_PLOT']['data_file'+suffix] = self.ttv_data_filename
+        self.plot_settings["TTV_PLOT"]["data_file" + suffix] = self.ttv_data_filename
 
         if clip:
-            print('-' * 100)
-            print('Running sigma-clipping routine on transit mid-times')
-            print('-' * 100)
+            print("-" * 100)
+            print("Running sigma-clipping routine on transit mid-times")
+            print("-" * 100)
 
-            cleaned_filename = self.ttv_save_dir + 'mid_times_cleaned' + suffix + '.txt'
-            clipped_filename = self.ttv_save_dir + 'mid_times_clipped' + suffix + '.txt'
+            cleaned_filename = self.ttv_save_dir + "mid_times_cleaned" + suffix + ".txt"
+            clipped_filename = self.ttv_save_dir + "mid_times_clipped" + suffix + ".txt"
 
             self.clip(cleaned_filename, clipped_filename, method=clip_method)
 
-            self.plot_settings['TTV_PLOT']['data_file'] = cleaned_filename
-            self.plot_settings['TTV_PLOT']['clipped_data_file'] = clipped_filename
+            self.plot_settings["TTV_PLOT"]["data_file"] = cleaned_filename
+            self.plot_settings["TTV_PLOT"]["clipped_data_file"] = clipped_filename
 
         if save:
-            print('-' * 100)
-            print('Running apsidal precession TTV fit with free parameters: {}'.format(free_params))
-            print('-' * 100)
+            print("-" * 100)
+            print(
+                f"Running apsidal precession TTV fit with free parameters: {free_params}"
+            )
+            print("-" * 100)
 
         # specify a prefix for output file names
-        prefix = self.ttv_save_dir + 'ttv_precession'
+        prefix = self.ttv_save_dir + "ttv_precession"
 
         # if selected, run the Nestle sampling algorithm
-        if self.ttv_sampler == 'nestle':
-            res, samples, random_samples = \
-                self.run_nestle(self.ttv_loglike_precession, free_params,
-                                'multi', self.ttv_n_points, self.ttv_tol)
+        if self.ttv_sampler == "nestle":
+            res, samples, random_samples = self.run_nestle(
+                self.ttv_loglike_precession,
+                free_params,
+                "multi",
+                self.ttv_n_points,
+                self.ttv_tol,
+            )
 
         # if selected, run the MultiNest sampling algorithm
-        elif self.ttv_sampler == 'multinest':
-            res, samples, random_samples = \
-                self.run_multinest(self.ttv_loglike_precession, free_params,
-                                   self.ttv_n_points, self.ttv_tol, prefix + suffix)
+        elif self.ttv_sampler == "multinest":
+            res, samples, random_samples = self.run_multinest(
+                self.ttv_loglike_precession,
+                free_params,
+                self.ttv_n_points,
+                self.ttv_tol,
+                prefix + suffix,
+            )
         else:
-            raise ValueError('Unrecognized sampler, specify \'nestle\' or \'multinest\'')
+            raise ValueError("Unrecognized sampler, specify 'nestle' or 'multinest'")
 
         if save:
 
-            rf = prefix + '_results' + suffix + '.json'
-            sf = prefix + '_random_samples' + suffix + '.txt'
+            rf = prefix + "_results" + suffix + ".json"
+            sf = prefix + "_random_samples" + suffix + ".txt"
 
-            res['model'] = 'ttv_precession'
-            res['suffix'] = suffix
-            res['results_filename'] = rf
-            res['samples_filename'] = sf
+            res["model"] = "ttv_precession"
+            res["suffix"] = suffix
+            res["results_filename"] = rf
+            res["samples_filename"] = sf
 
-            self.save_results(random_samples, samples, res, free_params,
-                              self.ttv_sampler, suffix, prefix, illegal_params)
+            self.save_results(
+                random_samples,
+                samples,
+                res,
+                free_params,
+                self.ttv_sampler,
+                suffix,
+                prefix,
+                illegal_params,
+            )
 
             # generate a TTV ("O-C") plot
-            self.plot_settings['TTV_PLOT']['ttv_precession_results_file' + suffix] = rf
-            self.plot_settings['TTV_PLOT']['ttv_precession_samples_file' + suffix] = sf
+            self.plot_settings["TTV_PLOT"]["ttv_precession_results_file" + suffix] = rf
+            self.plot_settings["TTV_PLOT"]["ttv_precession_samples_file" + suffix] = sf
 
             if plot:
-                plot_filename = prefix + '_plot' + suffix
+                plot_filename = prefix + "_plot" + suffix
                 pl.make_ttv_plot(self.plot_settings, plot_filename, suffix=suffix)
 
         return res
 
-    def clip(self, outfile_cleaned, outfile_clipped, method='linear', max_iters=20):
+    def clip(self, outfile_cleaned, outfile_clipped, method="linear", max_iters=20):
         """Remove outliers from the transit timing data.
 
         This method runs an iterative sigma-clipping routine on the observed transit mid-times,
@@ -619,43 +735,70 @@ class TransitTiming:
 
         """
         # define dictionary to hold all removed data
-        clip_dic = {'epoch': [], 'bjd': [], 'err': [], 'src': []}
+        clip_dic = {"epoch": [], "bjd": [], "err": [], "src": []}
 
         # run initial model fit
-        if method == 'linear':
-            res = self.run_ttv_constant(['t0', 'P0'], suffix='', plot=False, clip=False,
-                                        clip_method='', save=False)
-            print('\n')
+        if method == "linear":
+            res = self.run_ttv_constant(
+                ["t0", "P0"],
+                suffix="",
+                plot=False,
+                clip=False,
+                clip_method="",
+                save=False,
+            )
+            print("\n")
 
-        elif method == 'quadratic':
-            res = self.run_ttv_decay(['t0', 'P0', 'PdE'], suffix='', plot=False, clip=False,
-                                     clip_method='', save=False)
-            print('\n')
+        elif method == "quadratic":
+            res = self.run_ttv_decay(
+                ["t0", "P0", "PdE"],
+                suffix="",
+                plot=False,
+                clip=False,
+                clip_method="",
+                save=False,
+            )
+            print("\n")
 
         else:
 
-            raise ValueError('Not a valid method for clipping algorithm, '
-                             'choose \'linear\' (default) or \'quadratic\'.')
+            raise ValueError(
+                "Not a valid method for clipping algorithm, "
+                "choose 'linear' (default) or 'quadratic'."
+            )
 
         current_fit = res
         iters = 0
         for i in range(max_iters):
 
             # start with results from initial fit
-            vals = current_fit['params']
+            vals = current_fit["params"]
 
             # calculate residuals by subtracting best-fit model
-            if method == 'linear':
-                residuals = np.array(self.ttv_data['bjd']) - np.array(ttv.ttv_constant(
-                    vals['t0'][0], vals['P0'][0], 0., 0., self.ttv_data['epoch']))
+            if method == "linear":
+                residuals = np.array(self.ttv_data["bjd"]) - np.array(
+                    ttv.ttv_constant(
+                        vals["t0"][0], vals["P0"][0], 0.0, 0.0, self.ttv_data["epoch"]
+                    )
+                )
 
-            elif method == 'quadratic':
-                residuals = np.array(self.ttv_data['bjd']) - np.array(ttv.ttv_decay(
-                    vals['t0'][0], vals['P0'][0], vals['PdE'][0], 0., 0., self.ttv_data['epoch']))
+            elif method == "quadratic":
+                residuals = np.array(self.ttv_data["bjd"]) - np.array(
+                    ttv.ttv_decay(
+                        vals["t0"][0],
+                        vals["P0"][0],
+                        vals["PdE"][0],
+                        0.0,
+                        0.0,
+                        self.ttv_data["epoch"],
+                    )
+                )
 
             else:
-                raise ValueError('Unrecognized sigma-clipping model, specify \'linear\' or '
-                                 '\'quadratic\'')
+                raise ValueError(
+                    "Unrecognized sigma-clipping model, specify 'linear' or "
+                    "'quadratic'"
+                )
 
             # calculate mean and standard deviation of residuals
             std = np.std(residuals)
@@ -666,7 +809,9 @@ class TransitTiming:
             count = 0
             for j in range(len(residuals)):
 
-                if (residuals[j]) < (mean - 3 * std) or (residuals[j]) > (mean + 3 * std):
+                if (residuals[j]) < (mean - 3 * std) or (residuals[j]) > (
+                    mean + 3 * std
+                ):
                     count += 1
                     inds.append(j)
 
@@ -677,64 +822,87 @@ class TransitTiming:
 
             # save a record of removed data
             for x in inds:
-                clip_dic['epoch'].append(self.ttv_data['epoch'][x])
-                clip_dic['bjd'].append(self.ttv_data['bjd'][x])
-                clip_dic['err'].append(self.ttv_data['err'][x])
-                clip_dic['src'].append(self.ttv_data['src'][x])
+                clip_dic["epoch"].append(self.ttv_data["epoch"][x])
+                clip_dic["bjd"].append(self.ttv_data["bjd"][x])
+                clip_dic["err"].append(self.ttv_data["err"][x])
+                clip_dic["src"].append(self.ttv_data["src"][x])
 
             # remove flagged data
-            self.ttv_data['epoch'] = np.delete(self.ttv_data['epoch'], inds)
-            self.ttv_data['bjd'] = np.delete(self.ttv_data['bjd'], inds)
-            self.ttv_data['err'] = np.delete(self.ttv_data['err'], inds)
-            self.ttv_data['src'] = np.delete(self.ttv_data['src'], inds)
+            self.ttv_data["epoch"] = np.delete(self.ttv_data["epoch"], inds)
+            self.ttv_data["bjd"] = np.delete(self.ttv_data["bjd"], inds)
+            self.ttv_data["err"] = np.delete(self.ttv_data["err"], inds)
+            self.ttv_data["src"] = np.delete(self.ttv_data["src"], inds)
 
-            print(count, 'data point(s) removed', '\n')
+            print(count, "data point(s) removed", "\n")
 
             # repeat model fitting
-            if method == 'linear':
-                res = self.run_ttv_constant(['t0', 'P0'], suffix='', plot=False, clip=False,
-                                            clip_method='', save=False)
-                print('\n')
+            if method == "linear":
+                res = self.run_ttv_constant(
+                    ["t0", "P0"],
+                    suffix="",
+                    plot=False,
+                    clip=False,
+                    clip_method="",
+                    save=False,
+                )
+                print("\n")
 
-            elif method == 'quadratic':
-                res = self.run_ttv_decay(['t0', 'P0', 'PdE'], suffix='', plot=False, clip=False,
-                                         clip_method='', save=False)
-                print('\n')
+            elif method == "quadratic":
+                res = self.run_ttv_decay(
+                    ["t0", "P0", "PdE"],
+                    suffix="",
+                    plot=False,
+                    clip=False,
+                    clip_method="",
+                    save=False,
+                )
+                print("\n")
 
             current_fit = res
 
-        print(' --> The sigma-clipping routine removed {} epochs '
-              'in {} iterations'.format(len(clip_dic['epoch']), iters))
+        print(
+            " --> The sigma-clipping routine removed {} epochs "
+            "in {} iterations".format(len(clip_dic["epoch"]), iters)
+        )
 
         # save cleaned data as a .txt file
-        with open(outfile_cleaned, 'w') as f:
+        with open(outfile_cleaned, "w") as f:
             epoch_ecl = []
 
-            for e in self.ttv_data['epoch_ecl']:
+            for e in self.ttv_data["epoch_ecl"]:
                 if e < 0:
                     epoch_ecl.append(e - 0.5)
                 if e > 0:
                     epoch_ecl.append(e + 0.5)
 
-            writer = csv.writer(f, delimiter=' ')
-            writer.writerow(['Epoch', 'BJD', 'Err_Day', 'Source'])
-            writer.writerows(zip(self.ttv_data['epoch'],
-                                 self.ttv_data['bjd'],
-                                 self.ttv_data['err'],
-                                 self.ttv_data['src']))
+            writer = csv.writer(f, delimiter=" ")
+            writer.writerow(["Epoch", "BJD", "Err_Day", "Source"])
+            writer.writerows(
+                zip(
+                    self.ttv_data["epoch"],
+                    self.ttv_data["bjd"],
+                    self.ttv_data["err"],
+                    self.ttv_data["src"],
+                )
+            )
 
-            writer.writerows(zip(epoch_ecl,
-                                 self.ttv_data['bjd_ecl'],
-                                 self.ttv_data['err_ecl'],
-                                 self.ttv_data['src_ecl']))
+            writer.writerows(
+                zip(
+                    epoch_ecl,
+                    self.ttv_data["bjd_ecl"],
+                    self.ttv_data["err_ecl"],
+                    self.ttv_data["src_ecl"],
+                )
+            )
 
         # save clipped data as a .txt file
-        with open(outfile_clipped, 'w') as f:
-            writer = csv.writer(f, delimiter=' ')
-            writer.writerow(['Epoch', 'BJD', 'Err_Day', 'Source'])
-            writer.writerows(zip(clip_dic['epoch'],
-                                 clip_dic['bjd'],
-                                 clip_dic['err'],
-                                 clip_dic['src']))
+        with open(outfile_clipped, "w") as f:
+            writer = csv.writer(f, delimiter=" ")
+            writer.writerow(["Epoch", "BJD", "Err_Day", "Source"])
+            writer.writerows(
+                zip(
+                    clip_dic["epoch"], clip_dic["bjd"], clip_dic["err"], clip_dic["src"]
+                )
+            )
 
         return

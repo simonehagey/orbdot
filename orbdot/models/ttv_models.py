@@ -1,5 +1,4 @@
-"""
-Transit and Eclipse Timing Models
+"""Transit and Eclipse Timing Models
 =================================
 This module defines functions for modelling exoplanet transit and eclipse mid-times.
 """
@@ -43,8 +42,7 @@ def ttv_constant(t0, P0, e0, w0, E, primary=True):
     if primary:
         return t0 + P0 * E
 
-    else:
-        return t0 + P0 * E + P0 / 2 + 2 * P0 / np.pi * e0 * np.cos(w0)
+    return t0 + P0 * E + P0 / 2 + 2 * P0 / np.pi * e0 * np.cos(w0)
 
 
 def ttv_decay(t0, P0, PdE, e0, w0, E, primary=True):
@@ -84,10 +82,9 @@ def ttv_decay(t0, P0, PdE, e0, w0, E, primary=True):
 
     """
     if primary:
-        return t0 + P0 * E + 0.5 * (E ** 2) * PdE
+        return t0 + P0 * E + 0.5 * (E**2) * PdE
 
-    else:
-        return t0 + P0 * E + 0.5 * (E ** 2) * PdE + P0/2 + 2 * P0/np.pi * e0 * np.cos(w0)
+    return t0 + P0 * E + 0.5 * (E**2) * PdE + P0 / 2 + 2 * P0 / np.pi * e0 * np.cos(w0)
 
 
 def ttv_precession(t0, P0, e0, w0, wdE, E, primary=True):
@@ -135,5 +132,4 @@ def ttv_precession(t0, P0, e0, w0, wdE, E, primary=True):
     if primary:
         return t0 + P0 * E - (e0 * P_anom / np.pi) * np.cos(w)
 
-    else:
-        return t0 + P0 * E + (e0 * P_anom / np.pi) * np.cos(w) + P_anom / 2
+    return t0 + P0 * E + (e0 * P_anom / np.pi) * np.cos(w) + P_anom / 2

@@ -1,15 +1,16 @@
-"""
-NestedSampling
+"""NestedSampling
 ==============
 This module defines the ``NestedSampling`` class, which contains all of the methods required to
 run the model fitting routines in the other OrbDot classes.
 """
 
-import os
-import json
 import csv
+import json
+import os
 import time
+
 import numpy as np
+
 import orbdot.tools.priors as pr
 import orbdot.tools.stats as stat
 import orbdot.tools.utilities as utl
@@ -17,8 +18,7 @@ from orbdot.tools.plots import corner_plot
 
 
 class NestedSampling:
-    """
-    This class contains all of the methods required to run the model fitting routines defined in the
+    """This class contains all of the methods required to run the model fitting routines defined in the
     :class:`~orbdot.transit_timing.TransitTiming`, :class:`~orbdot.radial_velocity.RadialVelocity`,
     :class:`~orbdot.transit_duration.TransitDuration`, and :class:`~orbdot.joint_fit.JointFit`
     classes.
@@ -83,20 +83,33 @@ class NestedSampling:
         .. [1] Nestle by Kyle Barbary. http://kbarbary.github.io/nestle
 
         """
-        import nestle
+        try:
+            import nestle
+        except ImportError as exc:
+            raise NotImplementedError(
+                "`nestle` must be installed to use `run_nestle`!"
+            ) from exc
 
         # assign the list of free parameters
         self.vary = free_params
 
         # for a circular orbit, ensure that w0=0.0
-        if 'e0' not in self.vary and self.fixed['e0'] == 0.0 and self.fixed['w0'] != 0.0:
-            print('\nNOTE: the default value of \'w0\' was set to zero, as this it is a '
-                  'circular orbit. The previous value was {} rad.\n'.format(self.fixed['w0']))
+        if (
+            "e0" not in self.vary
+            and self.fixed["e0"] == 0.0
+            and self.fixed["w0"] != 0.0
+        ):
+            print(
+                "\nNOTE: the default value of 'w0' was set to zero, as this it is a "
+                "circular orbit. The previous value was {} rad.\n".format(
+                    self.fixed["w0"]
+                )
+            )
 
-            self.fixed['w0'] = 0.0
+            self.fixed["w0"] = 0.0
 
-        print('Number of live points: ', n_points)
-        print('Evidence tolerance: ', tol)
+        print("Number of live points: ", n_points)
+        print("Evidence tolerance: ", tol)
 
         # define the number of dimensions
         self.n_dims = len(self.vary)
@@ -106,10 +119,17 @@ class NestedSampling:
 
         # run Nestle and track the elapsed time
         t0 = time.time()
-        res = nestle.sample(loglike, self.prior_transform, self.n_dims, npoints=n_points,
-                            dlogz=tol, method=method, callback=nestle.print_progress)
+        res = nestle.sample(
+            loglike,
+            self.prior_transform,
+            self.n_dims,
+            npoints=n_points,
+            dlogz=tol,
+            method=method,
+            callback=nestle.print_progress,
+        )
         t1 = time.time()
-        run_time = (t1 - t0)
+        run_time = t1 - t0
 
         # retrieve logZ and uncertainty
         logZ = res.logz
@@ -129,26 +149,26 @@ class NestedSampling:
 
         # record important outputs
         res_dict = {
-            'stats': {
-                'logZ': logZ,
-                'logZ_err': logZ_err,
-                'run_time': run_time,
-                'evidence_tolerance': tol,
-                'method': method,
-                'n_dims': self.n_dims,
-                'n_live_points': n_points,
-                'n_samples': len(weighted_samples),
-                'eff_sample_size': eff_ss,
-                'eff_samples_per_s': int(eff_ss / run_time)
+            "stats": {
+                "logZ": logZ,
+                "logZ_err": logZ_err,
+                "run_time": run_time,
+                "evidence_tolerance": tol,
+                "method": method,
+                "n_dims": self.n_dims,
+                "n_live_points": n_points,
+                "n_samples": len(weighted_samples),
+                "eff_sample_size": eff_ss,
+                "eff_samples_per_s": int(eff_ss / run_time),
             }
         }
 
         # calculate best-fit parameters
         best_fit_params = self.get_best_fit(weighted_samples)
-        res_dict['params'] = best_fit_params
+        res_dict["params"] = best_fit_params
 
         # save the priors for reference
-        res_dict['prior'] = self.prior
+        res_dict["prior"] = self.prior
 
         # generate 300 random samples for plotting
         random_samples = self.generate_random_samples(weighted_samples)
@@ -158,7 +178,9 @@ class NestedSampling:
 
         return res_dict, weighted_samples, random_samples
 
-    def run_multinest(self, loglike, free_params, n_points, tol, save_dir, run_num=0, resume=False):
+    def run_multinest(
+        self, loglike, free_params, n_points, tol, save_dir, run_num=0, resume=False
+    ):
         """Runs a model fit with the nested sampling package PyMultiNest.
 
         This method is an overhead function that performs a model fit using the PyMultiNest Python
@@ -195,21 +217,29 @@ class NestedSampling:
         .. [1] PyMultiNest by Johannes Buchner. http://johannesbuchner.github.io/PyMultiNest/
 
         """
-        from pymultinest.solve import solve
         from pymultinest.analyse import Analyzer
+        from pymultinest.solve import solve
 
         # assign free parameters
         self.vary = free_params
 
         # for a circular orbit, ensure that w0=0.0
-        if 'e0' not in self.vary and self.fixed['e0'] == 0.0 and self.fixed['w0'] != 0.0:
-            print('\nNOTE: the default value of \'w0\' was set to zero, as this it is a '
-                  'circular orbit. The previous value was {} rad.\n'.format(self.fixed['w0']))
+        if (
+            "e0" not in self.vary
+            and self.fixed["e0"] == 0.0
+            and self.fixed["w0"] != 0.0
+        ):
+            print(
+                "\nNOTE: the default value of 'w0' was set to zero, as this it is a "
+                "circular orbit. The previous value was {} rad.\n".format(
+                    self.fixed["w0"]
+                )
+            )
 
-            self.fixed['w0'] = 0.0
+            self.fixed["w0"] = 0.0
 
-        print('Number of live points: ', n_points)
-        print('Evidence tolerance: ', tol)
+        print("Number of live points: ", n_points)
+        print("Evidence tolerance: ", tol)
 
         # define the number of dimensions
         self.n_dims = len(self.vary)
@@ -218,9 +248,9 @@ class NestedSampling:
         self.get_index()
 
         # set save path
-        path = os.path.abspath(os.getcwd()) + '/'
-        multinest_dir = save_dir + '_chains_' + f'{run_num}/'
-        prefix = multinest_dir + f'{run_num}'
+        path = os.path.abspath(os.getcwd()) + "/"
+        multinest_dir = save_dir + "_chains_" + f"{run_num}/"
+        prefix = multinest_dir + f"{run_num}"
         try:
             os.mkdir(path + multinest_dir)
         except FileExistsError:
@@ -228,11 +258,19 @@ class NestedSampling:
 
         # run PyMultiNest and track the elapsed time
         t0 = time.time()
-        solve(LogLikelihood=loglike, Prior=self.prior_transform,
-              n_dims=self.n_dims, n_live_points=n_points, evidence_tolerance=tol,
-              outputfiles_basename=prefix, verbose=True, resume=resume, multimodal=False)
+        solve(
+            LogLikelihood=loglike,
+            Prior=self.prior_transform,
+            n_dims=self.n_dims,
+            n_live_points=n_points,
+            evidence_tolerance=tol,
+            outputfiles_basename=prefix,
+            verbose=True,
+            resume=resume,
+            multimodal=False,
+        )
         t1 = time.time()
-        run_time = (t1 - t0)
+        run_time = t1 - t0
 
         # create a PyMultiNest analyzer object
         a = Analyzer(self.n_dims, outputfiles_basename=prefix)
@@ -247,27 +285,26 @@ class NestedSampling:
 
         # record important outputs
         res_dict = {
-            'stats': {
-                'logZ': stats['global evidence'],
-                'logZ_err': stats['global evidence error'],
-                'run_time': run_time,
-                'evidence_tolerance': tol,
-                'n_dims': self.n_dims,
-                'n_live_points': n_points,
-                'n_samples': len(weighted_samples),
-                'eff_sample_size': len(weighted_samples),
-                'eff_samples_per_s': int(len(weighted_samples) / run_time),
+            "stats": {
+                "logZ": stats["global evidence"],
+                "logZ_err": stats["global evidence error"],
+                "run_time": run_time,
+                "evidence_tolerance": tol,
+                "n_dims": self.n_dims,
+                "n_live_points": n_points,
+                "n_samples": len(weighted_samples),
+                "eff_sample_size": len(weighted_samples),
+                "eff_samples_per_s": int(len(weighted_samples) / run_time),
             },
-
-            'highest_likelihood': highest_likelihood
+            "highest_likelihood": highest_likelihood,
         }
 
         # calculate best-fit parameters
         best_fit_params, new_samples = self.get_best_fit(weighted_samples)
-        res_dict['params'] = best_fit_params
+        res_dict["params"] = best_fit_params
 
         # save the priors for reference
-        res_dict['prior'] = self.prior
+        res_dict["prior"] = self.prior
 
         # generate 300 random samples for plotting
         random_samples = self.generate_random_samples(new_samples)
@@ -299,97 +336,105 @@ class NestedSampling:
 
         # orbital elements
         try:
-            trans[self.it0] = pr.get_prior(theta[self.it0], self.prior['t0'])
+            trans[self.it0] = pr.get_prior(theta[self.it0], self.prior["t0"])
         except AttributeError:
             pass
         try:
-            trans[self.iP0] = pr.get_prior(theta[self.iP0], self.prior['P0'])
+            trans[self.iP0] = pr.get_prior(theta[self.iP0], self.prior["P0"])
         except AttributeError:
             pass
         try:
-            trans[self.ie0] = pr.get_prior(theta[self.ie0], self.prior['e0'])
+            trans[self.ie0] = pr.get_prior(theta[self.ie0], self.prior["e0"])
         except AttributeError:
             pass
         try:
-            trans[self.iw0] = pr.get_prior(theta[self.iw0], self.prior['w0'])
+            trans[self.iw0] = pr.get_prior(theta[self.iw0], self.prior["w0"])
         except AttributeError:
             pass
         try:
-            trans[self.ii0] = pr.get_prior(theta[self.ii0], self.prior['i0'])
+            trans[self.ii0] = pr.get_prior(theta[self.ii0], self.prior["i0"])
         except AttributeError:
             pass
         try:
-            trans[self.iO0] = pr.get_prior(theta[self.iO0], self.prior['O0'])
+            trans[self.iO0] = pr.get_prior(theta[self.iO0], self.prior["O0"])
         except AttributeError:
             pass
 
         # coupled parameters
         try:
-            trans[self.iecosw] = pr.get_prior(theta[self.iecosw], self.prior['ecosw'])
+            trans[self.iecosw] = pr.get_prior(theta[self.iecosw], self.prior["ecosw"])
         except AttributeError:
             pass
         try:
-            trans[self.iesinw] = pr.get_prior(theta[self.iesinw], self.prior['esinw'])
+            trans[self.iesinw] = pr.get_prior(theta[self.iesinw], self.prior["esinw"])
         except AttributeError:
             pass
         try:
-            trans[self.isq_ecosw] = pr.get_prior(theta[self.isq_ecosw], self.prior['sq_ecosw'])
+            trans[self.isq_ecosw] = pr.get_prior(
+                theta[self.isq_ecosw], self.prior["sq_ecosw"]
+            )
         except AttributeError:
             pass
         try:
-            trans[self.isq_esinw] = pr.get_prior(theta[self.isq_esinw], self.prior['sq_esinw'])
+            trans[self.isq_esinw] = pr.get_prior(
+                theta[self.isq_esinw], self.prior["sq_esinw"]
+            )
         except AttributeError:
             pass
 
         # time-dependent parameters
         try:
-            trans[self.idP] = pr.get_prior(theta[self.idP], self.prior['PdE'])
+            trans[self.idP] = pr.get_prior(theta[self.idP], self.prior["PdE"])
         except AttributeError:
             pass
         try:
-            trans[self.idw] = pr.get_prior(theta[self.idw], self.prior['wdE'])
+            trans[self.idw] = pr.get_prior(theta[self.idw], self.prior["wdE"])
         except AttributeError:
             pass
         try:
-            trans[self.ide] = pr.get_prior(theta[self.ide], self.prior['edE'])
+            trans[self.ide] = pr.get_prior(theta[self.ide], self.prior["edE"])
         except AttributeError:
             pass
         try:
-            trans[self.idi] = pr.get_prior(theta[self.idi], self.prior['idE'])
+            trans[self.idi] = pr.get_prior(theta[self.idi], self.prior["idE"])
         except AttributeError:
             pass
         try:
-            trans[self.idO] = pr.get_prior(theta[self.idO], self.prior['OdE'])
+            trans[self.idO] = pr.get_prior(theta[self.idO], self.prior["OdE"])
         except AttributeError:
             pass
 
         # radial velocity
         try:
-            trans[self.iK] = pr.get_prior(theta[self.iK], self.prior['K'])
+            trans[self.iK] = pr.get_prior(theta[self.iK], self.prior["K"])
         except AttributeError:
             pass
         try:
-            trans[self.idv] = pr.get_prior(theta[self.idv], self.prior['dvdt'])
+            trans[self.idv] = pr.get_prior(theta[self.idv], self.prior["dvdt"])
         except AttributeError:
             pass
         try:
-            trans[self.iddv] = pr.get_prior(theta[self.iddv], self.prior['ddvdt'])
+            trans[self.iddv] = pr.get_prior(theta[self.iddv], self.prior["ddvdt"])
         except AttributeError:
             pass
         try:
-            trans[self.iKt] = pr.get_prior(theta[self.iKt], self.prior['K_tide'])
+            trans[self.iKt] = pr.get_prior(theta[self.iKt], self.prior["K_tide"])
         except AttributeError:
             pass
 
         # radial velocity - instrument specific parameters
         try:
-            trans[self.ijit] = [pr.get_prior(x, self.prior['jit'][i])
-                                for i, x in enumerate(theta[self.ijit])]
+            trans[self.ijit] = [
+                pr.get_prior(x, self.prior["jit"][i])
+                for i, x in enumerate(theta[self.ijit])
+            ]
         except AttributeError:
             pass
         try:
-            trans[self.iv0] = [pr.get_prior(x, self.prior['v0'][i])
-                               for i, x in enumerate(theta[self.iv0])]
+            trans[self.iv0] = [
+                pr.get_prior(x, self.prior["v0"][i])
+                for i, x in enumerate(theta[self.iv0])
+            ]
         except AttributeError:
             pass
 
@@ -408,96 +453,96 @@ class NestedSampling:
         """
         # orbital elements
         try:
-            self.it0 = np.where(self.vary == 't0')[0][0]
+            self.it0 = np.where(self.vary == "t0")[0][0]
         except IndexError:
             pass
         try:
-            self.iP0 = np.where(self.vary == 'P0')[0][0]
+            self.iP0 = np.where(self.vary == "P0")[0][0]
         except IndexError:
             pass
         try:
-            self.ie0 = np.where(self.vary == 'e0')[0][0]
+            self.ie0 = np.where(self.vary == "e0")[0][0]
         except IndexError:
             pass
         try:
-            self.iw0 = np.where(self.vary == 'w0')[0][0]
+            self.iw0 = np.where(self.vary == "w0")[0][0]
         except IndexError:
             pass
         try:
-            self.ii0 = np.where(self.vary == 'i0')[0][0]
+            self.ii0 = np.where(self.vary == "i0")[0][0]
         except IndexError:
             pass
         try:
-            self.iO0 = np.where(self.vary == 'O0')[0][0]
+            self.iO0 = np.where(self.vary == "O0")[0][0]
         except IndexError:
             pass
 
         # coupled parameters
         try:
-            self.iecosw = np.where(self.vary == 'ecosw')[0][0]
+            self.iecosw = np.where(self.vary == "ecosw")[0][0]
         except IndexError:
             pass
         try:
-            self.iesinw = np.where(self.vary == 'esinw')[0][0]
+            self.iesinw = np.where(self.vary == "esinw")[0][0]
         except IndexError:
             pass
         try:
-            self.isq_ecosw = np.where(self.vary == 'sq_ecosw')[0][0]
+            self.isq_ecosw = np.where(self.vary == "sq_ecosw")[0][0]
         except IndexError:
             pass
         try:
-            self.isq_esinw = np.where(self.vary == 'sq_esinw')[0][0]
+            self.isq_esinw = np.where(self.vary == "sq_esinw")[0][0]
         except IndexError:
             pass
 
         # time-dependent parameters
         try:
-            self.idP = np.where(self.vary == 'PdE')[0][0]
+            self.idP = np.where(self.vary == "PdE")[0][0]
         except IndexError:
             pass
         try:
-            self.idw = np.where(self.vary == 'wdE')[0][0]
+            self.idw = np.where(self.vary == "wdE")[0][0]
         except IndexError:
             pass
         try:
-            self.ide = np.where(self.vary == 'edE')[0][0]
+            self.ide = np.where(self.vary == "edE")[0][0]
         except IndexError:
             pass
         try:
-            self.idi = np.where(self.vary == 'idE')[0][0]
+            self.idi = np.where(self.vary == "idE")[0][0]
         except IndexError:
             pass
         try:
-            self.idO = np.where(self.vary == 'OdE')[0][0]
+            self.idO = np.where(self.vary == "OdE")[0][0]
         except IndexError:
             pass
 
         # radial velocity
         try:
-            self.iK = np.where(self.vary == 'K')[0][0]
+            self.iK = np.where(self.vary == "K")[0][0]
         except IndexError:
             pass
         try:
-            self.idv = np.where(self.vary == 'dvdt')[0][0]
+            self.idv = np.where(self.vary == "dvdt")[0][0]
         except IndexError:
             pass
         try:
-            self.iddv = np.where(self.vary == 'ddvdt')[0][0]
+            self.iddv = np.where(self.vary == "ddvdt")[0][0]
         except IndexError:
             pass
         try:
-            self.iKt = np.where(self.vary == 'K_tide')[0][0]
+            self.iKt = np.where(self.vary == "K_tide")[0][0]
         except IndexError:
             pass
 
         # radial velocity - instrument specific parameters
-        split = np.array([s.split('_')[0] for s in self.vary])
+        split = np.array([s.split("_")[0] for s in self.vary])
 
-        if np.isin('v0', split):
-            self.iv0 = np.where(np.array(split == 'v0'))[0]
+        if np.isin("v0", split):
+            self.iv0 = np.where(np.array(split == "v0"))[0]
 
-        if np.isin('jit', split):
-            self.ijit = np.where(np.array(split == 'jit'))[0]
+        if np.isin("jit", split):
+            self.ijit = np.where(np.array(split == "jit"))[0]
 
         return
 
@@ -642,27 +687,27 @@ class NestedSampling:
         try:
             tc = theta[self.it0]
         except AttributeError:
-            tc = self.fixed['t0']
+            tc = self.fixed["t0"]
         try:
             pp = theta[self.iP0]
         except AttributeError:
-            pp = self.fixed['P0']
+            pp = self.fixed["P0"]
         try:
             ee = theta[self.ie0]
         except AttributeError:
-            ee = self.fixed['e0']
+            ee = self.fixed["e0"]
         try:
             ww = theta[self.iw0]
         except AttributeError:
-            ww = self.fixed['w0']
+            ww = self.fixed["w0"]
         try:
             ii = theta[self.ii0]
         except AttributeError:
-            ii = self.fixed['i0']
+            ii = self.fixed["i0"]
         try:
             om = theta[self.iO0]
         except AttributeError:
-            om = self.fixed['O0']
+            om = self.fixed["O0"]
 
         # coupled parameters
         try:
@@ -686,51 +731,51 @@ class NestedSampling:
         try:
             dp = theta[self.idP]
         except AttributeError:
-            dp = self.fixed['PdE']
+            dp = self.fixed["PdE"]
         try:
             dw = theta[self.idw]
         except AttributeError:
-            dw = self.fixed['wdE']
+            dw = self.fixed["wdE"]
         try:
             de = theta[self.ide]
         except AttributeError:
-            de = self.fixed['edE']
+            de = self.fixed["edE"]
         try:
             di = theta[self.idi]
         except AttributeError:
-            di = self.fixed['idE']
+            di = self.fixed["idE"]
         try:
             do = theta[self.idO]
         except AttributeError:
-            do = self.fixed['OdE']
+            do = self.fixed["OdE"]
 
         # radial velocity parameters
         try:
             kk = theta[self.iK]
         except AttributeError:
-            kk = self.fixed['K']
+            kk = self.fixed["K"]
         try:
             dv = theta[self.idv]
         except AttributeError:
-            dv = self.fixed['dvdt']
+            dv = self.fixed["dvdt"]
         try:
             ddv = theta[self.iddv]
         except AttributeError:
-            ddv = self.fixed['ddvdt']
+            ddv = self.fixed["ddvdt"]
         try:
             kt = theta[self.iKt]
         except AttributeError:
-            kt = self.fixed['K_tide']
+            kt = self.fixed["K_tide"]
 
         # radial velocity - instrument specific parameters
         try:
             v0 = theta[self.iv0]
         except AttributeError:
-            v0 = self.fixed['v0']
+            v0 = self.fixed["v0"]
         try:
             jj = theta[self.ijit]
         except AttributeError:
-            jj = self.fixed['jit']
+            jj = self.fixed["jit"]
 
         orbital_elements = [tc, pp, ee, ww, ii, om]
         time_dependant = [dp, dw, de, di, do]
@@ -767,39 +812,39 @@ class NestedSampling:
         try:
             stat.credible_intervals(self.vary, samples, dic, [self.it0])
         except AttributeError:
-            dic['t0'] = [self.fixed['t0']]
+            dic["t0"] = [self.fixed["t0"]]
         try:
             stat.credible_intervals(self.vary, samples, dic, [self.iP0])
         except AttributeError:
-            dic['P0'] = [self.fixed['P0']]
+            dic["P0"] = [self.fixed["P0"]]
         try:
             stat.credible_intervals(self.vary, samples, dic, [self.ie0])
         except AttributeError:
-            dic['e0'] = [self.fixed['e0']]
+            dic["e0"] = [self.fixed["e0"]]
         try:
             stat.credible_intervals(self.vary, samples, dic, [self.iw0], circular=True)
         except AttributeError:
-            dic['w0'] = [self.fixed['w0']]
+            dic["w0"] = [self.fixed["w0"]]
         try:
             stat.credible_intervals(self.vary, samples, dic, [self.ii0])
         except AttributeError:
-            dic['i0'] = [self.fixed['i0']]
+            dic["i0"] = [self.fixed["i0"]]
         try:
             stat.credible_intervals(self.vary, samples, dic, [self.iO0], circular=True)
         except AttributeError:
-            dic['O0'] = [self.fixed['O0']]
+            dic["O0"] = [self.fixed["O0"]]
 
         # coupled parameters
         try:
             stat.credible_intervals(self.vary, samples, dic, [self.iecosw])
             stat.credible_intervals(self.vary, samples, dic, [self.iesinw])
 
-            e_res, w_res = stat.propagate_err_ecosw_esinw(dic['ecosw'], dic['esinw'])
+            e_res, w_res = stat.propagate_err_ecosw_esinw(dic["ecosw"], dic["esinw"])
 
-            dic['e_derived'] = e_res
-            dic['w_derived'] = w_res
-            dic['e0'] = e_res
-            dic['w0'] = w_res
+            dic["e_derived"] = e_res
+            dic["w_derived"] = w_res
+            dic["e0"] = e_res
+            dic["w0"] = w_res
         except AttributeError:
             pass
 
@@ -807,12 +852,14 @@ class NestedSampling:
             stat.credible_intervals(self.vary, samples, dic, [self.isq_ecosw])
             stat.credible_intervals(self.vary, samples, dic, [self.isq_esinw])
 
-            e_res, w_res = stat.propagate_err_sq_ecosw_sq_esinw(dic['sq_ecosw'], dic['sq_esinw'])
+            e_res, w_res = stat.propagate_err_sq_ecosw_sq_esinw(
+                dic["sq_ecosw"], dic["sq_esinw"]
+            )
 
-            dic['e_derived'] = e_res
-            dic['w_derived'] = w_res
-            dic['e0'] = e_res
-            dic['w0'] = w_res
+            dic["e_derived"] = e_res
+            dic["w_derived"] = w_res
+            dic["e0"] = e_res
+            dic["w0"] = w_res
         except AttributeError:
             pass
 
@@ -820,51 +867,51 @@ class NestedSampling:
         try:
             stat.credible_intervals(self.vary, samples, dic, [self.idP])
         except AttributeError:
-            dic['PdE'] = [self.fixed['PdE']]
+            dic["PdE"] = [self.fixed["PdE"]]
         try:
             stat.credible_intervals(self.vary, samples, dic, [self.idw])
         except AttributeError:
-            dic['wdE'] = [self.fixed['wdE']]
+            dic["wdE"] = [self.fixed["wdE"]]
         try:
             stat.credible_intervals(self.vary, samples, dic, [self.ide])
         except AttributeError:
-            dic['edE'] = [self.fixed['edE']]
+            dic["edE"] = [self.fixed["edE"]]
         try:
             stat.credible_intervals(self.vary, samples, dic, [self.idi])
         except AttributeError:
-            dic['idE'] = [self.fixed['idE']]
+            dic["idE"] = [self.fixed["idE"]]
         try:
             stat.credible_intervals(self.vary, samples, dic, [self.idO])
         except AttributeError:
-            dic['OdE'] = [self.fixed['OdE']]
+            dic["OdE"] = [self.fixed["OdE"]]
 
         # radial velocity
         try:
             stat.credible_intervals(self.vary, samples, dic, [self.iK])
         except AttributeError:
-            dic['K'] = [self.fixed['K']]
+            dic["K"] = [self.fixed["K"]]
         try:
             stat.credible_intervals(self.vary, samples, dic, [self.idv])
         except AttributeError:
-            dic['dvdt'] = [self.fixed['dvdt']]
+            dic["dvdt"] = [self.fixed["dvdt"]]
         try:
             stat.credible_intervals(self.vary, samples, dic, [self.iddv])
         except AttributeError:
-            dic['ddvdt'] = [self.fixed['ddvdt']]
+            dic["ddvdt"] = [self.fixed["ddvdt"]]
         try:
             stat.credible_intervals(self.vary, samples, dic, [self.iKt])
         except AttributeError:
-            dic['K_tide'] = [self.fixed['K_tide']]
+            dic["K_tide"] = [self.fixed["K_tide"]]
 
         # radial velocity - instrument specific parameters
         try:
             stat.credible_intervals(self.vary, samples, dic, self.iv0)
         except AttributeError:
-            dic['v0'] = [self.fixed['v0']]
+            dic["v0"] = [self.fixed["v0"]]
         try:
             stat.credible_intervals(self.vary, samples, dic, self.ijit)
         except AttributeError:
-            dic['jit'] = [self.fixed['jit']]
+            dic["jit"] = [self.fixed["jit"]]
 
         return dic
 
@@ -929,18 +976,35 @@ class NestedSampling:
         None
 
         """
-        param_names = ['t0', 'P0', 'e0', 'w0', 'i0', 'O0',
-                       'PdE', 'wdE', 'edE', 'idE', 'OdE',
-                       'K', 'v0', 'jit', 'dvdt', 'ddvdt']
+        param_names = [
+            "t0",
+            "P0",
+            "e0",
+            "w0",
+            "i0",
+            "O0",
+            "PdE",
+            "wdE",
+            "edE",
+            "idE",
+            "OdE",
+            "K",
+            "v0",
+            "jit",
+            "dvdt",
+            "ddvdt",
+        ]
 
-        with open(filename, 'w') as f:
+        with open(filename, "w") as f:
 
-            writer = csv.writer(f, delimiter='\t')
+            writer = csv.writer(f, delimiter="\t")
             writer.writerow(param_names)
 
             for i in range(len(random_samples[0])):
 
-                writer.writerow(random_samples[0][i] + random_samples[1][i] + random_samples[2][i])
+                writer.writerow(
+                    random_samples[0][i] + random_samples[1][i] + random_samples[2][i]
+                )
 
         return
 
@@ -959,9 +1023,9 @@ class NestedSampling:
         None
 
         """
-        with open(filename, 'w') as f:
+        with open(filename, "w") as f:
 
-            writer = csv.writer(f, delimiter=' ')
+            writer = csv.writer(f, delimiter=" ")
             writer.writerow(self.vary)  # write header row
 
             for row in weighted_samples:
@@ -987,36 +1051,57 @@ class NestedSampling:
         None
 
         """
-        vals = dic['params'].copy()
+        vals = dic["params"].copy()
 
-        print('\n\n{} results:'.format(sampler))
+        print(f"\n\n{sampler} results:")
         for key in self.vary:
-            print('   {} = {} + {} - {}'.format(key, vals[key][0], vals[key][1], vals[key][2]))
+            print(f"   {key} = {vals[key][0]} + {vals[key][1]} - {vals[key][2]}")
 
-        if 'dPdt (ms/yr)' in vals.keys():
-            print('   {} = {} + {} - {}'.format('dPdt (ms/yr)', vals['dPdt (ms/yr)'][0],
-                                                vals['dPdt (ms/yr)'][1], vals['dPdt (ms/yr)'][2]))
+        if "dPdt (ms/yr)" in vals.keys():
+            print(
+                "   {} = {} + {} - {}".format(
+                    "dPdt (ms/yr)",
+                    vals["dPdt (ms/yr)"][0],
+                    vals["dPdt (ms/yr)"][1],
+                    vals["dPdt (ms/yr)"][2],
+                )
+            )
 
-        if 'ecosw' in self.vary and 'esinw' in self.vary:
-            print('   e (derived) = {} + {} - {}'.format(vals['e_derived'][0],
-                                                         vals['e_derived'][1],
-                                                         vals['e_derived'][2]))
+        if "ecosw" in self.vary and "esinw" in self.vary:
+            print(
+                "   e (derived) = {} + {} - {}".format(
+                    vals["e_derived"][0], vals["e_derived"][1], vals["e_derived"][2]
+                )
+            )
 
-            print('   w0 (derived) = {} + {} - {}'.format(vals['w_derived'][0],
-                                                          vals['w_derived'][1],
-                                                          vals['w_derived'][2]))
+            print(
+                "   w0 (derived) = {} + {} - {}".format(
+                    vals["w_derived"][0], vals["w_derived"][1], vals["w_derived"][2]
+                )
+            )
 
-        elif 'sq_ecosw' in self.vary and 'sq_esinw' in self.vary:
-            print('   e (derived) = {} + {} - {}'.format(vals['e_derived'][0],
-                                                         vals['e_derived'][1],
-                                                         vals['e_derived'][2]))
-            print('   w0 (derived) = {} + {} - {}'.format(dic['params']['w_derived'][0],
-                                                          vals['w_derived'][1],
-                                                          vals['w_derived'][2]))
+        elif "sq_ecosw" in self.vary and "sq_esinw" in self.vary:
+            print(
+                "   e (derived) = {} + {} - {}".format(
+                    vals["e_derived"][0], vals["e_derived"][1], vals["e_derived"][2]
+                )
+            )
+            print(
+                "   w0 (derived) = {} + {} - {}".format(
+                    dic["params"]["w_derived"][0],
+                    vals["w_derived"][1],
+                    vals["w_derived"][2],
+                )
+            )
 
-        print('log(Z) = {} ± {}'.format(round(dic['stats']['logZ'], 2),
-                                        round(dic['stats']['logZ_err'], 2)))
-        print('{} run time (s): {} \n'.format(sampler, round(dic['stats']['run_time'], 2)))
+        print(
+            "log(Z) = {} ± {}".format(
+                round(dic["stats"]["logZ"], 2), round(dic["stats"]["logZ_err"], 2)
+            )
+        )
+        print(
+            "{} run time (s): {} \n".format(sampler, round(dic["stats"]["run_time"], 2))
+        )
 
     def save_summary(self, dic, filename, sampler, not_model_params):
         """Saves a summary of the nested sampling results.
@@ -1039,58 +1124,93 @@ class NestedSampling:
         None
 
         """
-        vals = dic['params'].copy()
+        vals = dic["params"].copy()
 
-        with open(filename, 'w') as f:
-            f.write('Stats\n')
-            f.write('-----\n')
-            f.write('Sampler: {} \n'.format(sampler))
-            f.write('Free parameters: {} \n'.format(str(self.vary)))
-            f.write('log(Z) = {} ± {}\n'.format(round(dic['stats']['logZ'], 2),
-                                                round(dic['stats']['logZ_err'], 2)))
-            f.write('Run time (s): {}\n'.format(round(dic['stats']['run_time'], 2)))
-            f.write('Num live points: {}\n'.format(dic['stats']['n_live_points']))
-            f.write('Evidence tolerance: {}\n'.format(dic['stats']['evidence_tolerance']))
-            f.write('Eff. samples per second: {}\n'.format(dic['stats']['eff_samples_per_s']))
+        with open(filename, "w") as f:
+            f.write("Stats\n")
+            f.write("-----\n")
+            f.write(f"Sampler: {sampler} \n")
+            f.write(f"Free parameters: {self.vary!s} \n")
+            f.write(
+                "log(Z) = {} ± {}\n".format(
+                    round(dic["stats"]["logZ"], 2), round(dic["stats"]["logZ_err"], 2)
+                )
+            )
+            f.write("Run time (s): {}\n".format(round(dic["stats"]["run_time"], 2)))
+            f.write("Num live points: {}\n".format(dic["stats"]["n_live_points"]))
+            f.write(
+                "Evidence tolerance: {}\n".format(dic["stats"]["evidence_tolerance"])
+            )
+            f.write(
+                "Eff. samples per second: {}\n".format(
+                    dic["stats"]["eff_samples_per_s"]
+                )
+            )
 
-            f.write('\nResults\n')
-            f.write('-------\n')
+            f.write("\nResults\n")
+            f.write("-------\n")
             for key in self.vary:
-                f.write('{} = {} + {} - {}\n'.format(key, vals[key][0], vals[key][1], vals[key][2]))
+                f.write(f"{key} = {vals[key][0]} + {vals[key][1]} - {vals[key][2]}\n")
 
-            if 'PdE' in self.vary:
-                f.write('dPdt (ms/yr) = {} + {} - {} \n'.format(
-                    vals['dPdt (ms/yr)'][0], vals['dPdt (ms/yr)'][1], vals['dPdt (ms/yr)'][2]))
+            if "PdE" in self.vary:
+                f.write(
+                    "dPdt (ms/yr) = {} + {} - {} \n".format(
+                        vals["dPdt (ms/yr)"][0],
+                        vals["dPdt (ms/yr)"][1],
+                        vals["dPdt (ms/yr)"][2],
+                    )
+                )
 
-            if 'ecosw' in self.vary and 'esinw' in self.vary:
-                f.write('e (derived) = {} + {} - {} \n'.format(
-                    vals['e_derived'][0], vals['e_derived'][1], vals['e_derived'][2]))
-                f.write('w0 (derived) = {} + {} - {} \n'.format(
-                    vals['w_derived'][0], vals['w_derived'][1], vals['w_derived'][2]))
-                not_model_params.extend(['e0', 'w0'])
+            if "ecosw" in self.vary and "esinw" in self.vary:
+                f.write(
+                    "e (derived) = {} + {} - {} \n".format(
+                        vals["e_derived"][0], vals["e_derived"][1], vals["e_derived"][2]
+                    )
+                )
+                f.write(
+                    "w0 (derived) = {} + {} - {} \n".format(
+                        vals["w_derived"][0], vals["w_derived"][1], vals["w_derived"][2]
+                    )
+                )
+                not_model_params.extend(["e0", "w0"])
 
-            elif 'sq_ecosw' in self.vary and 'sq_esinw' in self.vary:
-                f.write('e (derived) = {} + {} - {}\n'.format(
-                    vals['e_derived'][0], vals['e_derived'][1], vals['e_derived'][2]))
-                f.write('w0 (derived) = {} + {} - {}\n'.format(
-                    vals['w_derived'][0], vals['w_derived'][1], vals['w_derived'][2]))
-                not_model_params.extend(['e0', 'w0'])
+            elif "sq_ecosw" in self.vary and "sq_esinw" in self.vary:
+                f.write(
+                    "e (derived) = {} + {} - {}\n".format(
+                        vals["e_derived"][0], vals["e_derived"][1], vals["e_derived"][2]
+                    )
+                )
+                f.write(
+                    "w0 (derived) = {} + {} - {}\n".format(
+                        vals["w_derived"][0], vals["w_derived"][1], vals["w_derived"][2]
+                    )
+                )
+                not_model_params.extend(["e0", "w0"])
 
-            f.write('\nFixed Parameters\n')
-            f.write('----------------\n')
+            f.write("\nFixed Parameters\n")
+            f.write("----------------\n")
 
             for key in self.fixed:
                 if key not in not_model_params:
-                    if key not in np.array([s.split('_')[0] for s in self.vary]):
-                        f.write('{} = {}\n'.format(key, self.fixed[key]))
+                    if key not in np.array([s.split("_")[0] for s in self.vary]):
+                        f.write(f"{key} = {self.fixed[key]}\n")
 
-            f.write('\n')
+            f.write("\n")
         f.close()
 
         return
 
-    def save_results(self, random_samples, weighted_samples, res_dic, free_params, sampler_type,
-                     suffix, prefix, not_model_params):
+    def save_results(
+        self,
+        random_samples,
+        weighted_samples,
+        res_dic,
+        free_params,
+        sampler_type,
+        suffix,
+        prefix,
+        not_model_params,
+    ):
         """Saves the results of the model fit by generating a set of output files.
 
         Parameters
@@ -1125,23 +1245,31 @@ class NestedSampling:
 
         """
         # save set of 300 random samples for plotting
-        self.save_random_samples(random_samples,
-                                 prefix + '_random_samples' + suffix + '.txt')
+        self.save_random_samples(
+            random_samples, prefix + "_random_samples" + suffix + ".txt"
+        )
 
         # save the whole set of weighted posterior samples
-        self.save_weighted_samples(weighted_samples,
-                                   prefix + '_weighted_samples' + suffix + '.txt')
+        self.save_weighted_samples(
+            weighted_samples, prefix + "_weighted_samples" + suffix + ".txt"
+        )
 
         # generate corner plot
-        corner_plot(res_dic['params'], weighted_samples, free_params, prefix + '_corner' + suffix)
+        corner_plot(
+            res_dic["params"],
+            weighted_samples,
+            free_params,
+            prefix + "_corner" + suffix,
+        )
 
         # convert dP/dE to dP/dt
         try:
-            conv = (365.25 * 24. * 3600. * 1e3) / res_dic['params']['P0'][0]
-            res_dic['params']['dPdt (ms/yr)'] = \
-                (res_dic['params']['PdE'][0] * conv,
-                 res_dic['params']['PdE'][1] * conv,
-                 res_dic['params']['PdE'][2] * conv)
+            conv = (365.25 * 24.0 * 3600.0 * 1e3) / res_dic["params"]["P0"][0]
+            res_dic["params"]["dPdt (ms/yr)"] = (
+                res_dic["params"]["PdE"][0] * conv,
+                res_dic["params"]["PdE"][1] * conv,
+                res_dic["params"]["PdE"][2] * conv,
+            )
 
         except IndexError:
             pass
@@ -1150,11 +1278,15 @@ class NestedSampling:
         self.print_results(res_dic, sampler_type)
 
         # save the model fitting results in a .json file
-        with open(prefix + '_results' + suffix + '.json', 'w') as fp:
+        with open(prefix + "_results" + suffix + ".json", "w") as fp:
             json.dump(res_dic, fp, indent=1)
 
         # save a text summary of the results
-        self.save_summary(res_dic, prefix + '_summary' + suffix + '.txt',
-                          sampler_type, not_model_params)
+        self.save_summary(
+            res_dic,
+            prefix + "_summary" + suffix + ".txt",
+            sampler_type,
+            not_model_params,
+        )
 
         return

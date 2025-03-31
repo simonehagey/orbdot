@@ -1,5 +1,4 @@
-"""
-Theory
+"""Theory
 ======
 This module defines analytical models for investigating the source of long-term variations of
 exoplanet orbits. These include equations for assessing the effects of tidal energy dissipation,
@@ -10,18 +9,18 @@ import numpy as np
 import scipy.special as sci
 
 # define constants
-c = 2.99792458e8   # m/s
-G = 6.6743e-11     # m^3 / kg / s^2
+c = 2.99792458e8  # m/s
+G = 6.6743e-11  # m^3 / kg / s^2
 
 # define unit conversions
-AU = 1.495978707e11    # 1 AU = 1.496 x 10^11 m
-parsec = 3.0857e16     # 1 pc = 3.0857 x 10^16 m
-R_earth = 6.371e6      # earth radius = 6,371.000 km
-M_earth = 5.9722e24    # earth mass = 5.9722 x 10^24 kg
-R_jup = 6.9911e7       # jupiter radius = 69911 km
-M_jup = 1.89813e27     # jupiter mass = 1,898.13 x 10^24 kg
-R_sun = 6.957e8        # solar radius = 695,700 km
-M_sun = 1.9885e30      # solar mass = 1,988,500 x 10^30 kg
+AU = 1.495978707e11  # 1 AU = 1.496 x 10^11 m
+parsec = 3.0857e16  # 1 pc = 3.0857 x 10^16 m
+R_earth = 6.371e6  # earth radius = 6,371.000 km
+M_earth = 5.9722e24  # earth mass = 5.9722 x 10^24 kg
+R_jup = 6.9911e7  # jupiter radius = 69911 km
+M_jup = 1.89813e27  # jupiter mass = 1,898.13 x 10^24 kg
+R_sun = 6.957e8  # solar radius = 695,700 km
+M_sun = 1.9885e30  # solar mass = 1,988,500 x 10^30 kg
 
 
 def companion_doppler_pdot_from_rv_trend(P, dvdt):
@@ -171,7 +170,7 @@ def companion_mass_from_rv_trend(tau, dvdt, M_s):
     K_c = 0.5 * tau * 365.25 * dvdt
 
     # calculate the companion planet mass (Jupiter masses)
-    M_c = 5.99 * tau ** (4/3) * np.abs(dvdt) * M_s ** (2/3)
+    M_c = 5.99 * tau ** (4 / 3) * np.abs(dvdt) * M_s ** (2 / 3)
 
     # convert to Earth masses
     M_c *= M_jup / M_earth
@@ -277,23 +276,22 @@ def companion_from_quadratic_rv(P_min, t_pivot, dvdt, ddvdt, M_s):
 
     """
     # unit conversions
-    M_s *= M_sun    # solar masses to kg
+    M_s *= M_sun  # solar masses to kg
 
     # calculate the lower limit of the RV semi-amplitude from the quadratic RV term in m/s
-    K_min = np.abs(ddvdt) * P_min ** 2 / (4 * np.pi ** 2)
+    K_min = np.abs(ddvdt) * P_min**2 / (4 * np.pi**2)
 
     # calculate the lower limit of the mass from K_min
-    M_min = K_min * M_s ** (2/3) * ((P_min * 86400) / (2 * np.pi * G)) ** (1/3)
+    M_min = K_min * M_s ** (2 / 3) * ((P_min * 86400) / (2 * np.pi * G)) ** (1 / 3)
 
     # solve for the time when the outer companion RV signal is at a minimum
-    tau_c = (-dvdt + ddvdt * t_pivot) / ddvdt - P_min/4
+    tau_c = (-dvdt + ddvdt * t_pivot) / ddvdt - P_min / 4
 
-    return P_min, K_min, M_min/M_earth, tau_c
+    return P_min, K_min, M_min / M_earth, tau_c
 
 
 def companion_precession(P, M2, P2, M_s):
-    """
-    Calculates the rate of apsidal precession driven by a nonresonant planetary companion.
+    """Calculates the rate of apsidal precession driven by a nonresonant planetary companion.
 
     This method returns the expected rate of apsidal precession due to a nonresonant companion
     planet, calculated using equation (8) from Heyl and Gladman (2007) [1]_.
@@ -355,15 +353,15 @@ def companion_precession(P, M2, P2, M_s):
     a2 = get_semi_major_axis_from_period(P2, M_s)
 
     # unit conversions
-    M_s *= M_sun    # solar masses to kg
-    M2 *= M_earth   # earth masses to kg
+    M_s *= M_sun  # solar masses to kg
+    M2 *= M_earth  # earth masses to kg
 
     # define the ratio of the semi major axes
     alpha = a1 / a2
 
     # calculate the rate of apsidal precession
     t1 = alpha / ((alpha + 1) * (alpha - 1) ** 2)
-    t2 = (alpha ** 2 + 1) * sci.ellipe(4 * alpha / (alpha + 1) ** 2)
+    t2 = (alpha**2 + 1) * sci.ellipe(4 * alpha / (alpha + 1) ** 2)
     t3 = (alpha - 1) ** 2 * sci.ellipk(4 * alpha / (alpha + 1) ** 2)
 
     dwdE = (M2 / M_s) * t1 * (t2 - t3)
@@ -434,14 +432,14 @@ def companion_mass_from_precession(P, P2, dwdE, M_s):
     a2 = get_semi_major_axis_from_period(P2, M_s)
 
     # unit conversions
-    M_s *= M_sun    # solar masses to kg
+    M_s *= M_sun  # solar masses to kg
 
     # define the ratio of the semi major axes
     alpha = a1 / a2
 
     # calculate the mass of the companion planet
     t1 = alpha / ((alpha + 1) * (alpha - 1) ** 2)
-    t2 = (alpha ** 2 + 1) * sci.ellipe(4 * alpha / (alpha + 1) ** 2)
+    t2 = (alpha**2 + 1) * sci.ellipe(4 * alpha / (alpha + 1) ** 2)
     t3 = (alpha - 1) ** 2 * sci.ellipk(4 * alpha / (alpha + 1) ** 2)
 
     M2 = dwdE * M_s / (t1 * (t2 - t3))
@@ -506,13 +504,15 @@ def decay_empirical_quality_factor(P_orb, P_rot_s):
     P_tide = 1 / (2 * t1)
 
     # use the empirical law for Q'
-    Q_star = 10 ** 6.0 / P_tide ** 3.1
+    Q_star = 10**6.0 / P_tide**3.1
 
     # return the tidal quality factor Q'
     return Q_star, P_tide
 
 
-def decay_star_pdot_from_quality_factor(P, e, M_s, M_p, R_s, Q_star, epsilon_s=0.0, P_rot_s=None):
+def decay_star_pdot_from_quality_factor(
+    P, e, M_s, M_p, R_s, Q_star, epsilon_s=0.0, P_rot_s=None
+):
     """Calculate the rate of orbital decay driven by equilibrium tides in the host star.
 
     This method computes the orbital decay rate for a given "modified" stellar tidal quality
@@ -595,13 +595,13 @@ def decay_star_pdot_from_quality_factor(P, e, M_s, M_p, R_s, Q_star, epsilon_s=0
 
     # assume P_rot_s >> P_orb if stellar rotation period is not provided
     else:
-        beta = 0    # as P_orb/P_rot_s --> 0
+        beta = 0  # as P_orb/P_rot_s --> 0
 
     # unit conversions
-    epsilon_s *= np.pi / 180   # deg to rad
-    R_s *= R_sun             # solar radii to m
-    M_p *= M_earth           # earth masses to kg
-    M_s *= M_sun             # solar masses to kg
+    epsilon_s *= np.pi / 180  # deg to rad
+    R_s *= R_sun  # solar radii to m
+    M_p *= M_earth  # earth masses to kg
+    M_s *= M_sun  # solar masses to kg
 
     # calculate the predicted orbital decay rate (days/day)
     t1 = -27 * np.pi / Q_star * (M_p / M_s) * (R_s / a) ** 5
@@ -612,7 +612,9 @@ def decay_star_pdot_from_quality_factor(P, e, M_s, M_p, R_s, Q_star, epsilon_s=0
     return pdot * P
 
 
-def decay_star_quality_factor_from_pdot(P, e, M_s, M_p, R_s, dPdE, epsilon_s=0.0, P_rot_s=None):
+def decay_star_quality_factor_from_pdot(
+    P, e, M_s, M_p, R_s, dPdE, epsilon_s=0.0, P_rot_s=None
+):
     """Calculate the host star's modified stellar quality factor given an orbital decay rate.
 
     Given an orbital decay rate and, optionally, the host star's rotation period and obliquity,
@@ -659,14 +661,14 @@ def decay_star_quality_factor_from_pdot(P, e, M_s, M_p, R_s, dPdE, epsilon_s=0.0
 
     # assume P_rot_s >> P_orb if stellar rotation period is not provided
     else:
-        beta = 0    # as P_orb/P_rot_s --> 0
+        beta = 0  # as P_orb/P_rot_s --> 0
 
     # unit conversions
     epsilon_s *= np.pi / 180  # deg to rad
-    R_s *= R_sun            # solar radii to m
-    M_p *= M_earth          # earth masses to kg
-    M_s *= M_sun            # solar masses to kg
-    dPdE *= (1 / P)           # days/E to days/day
+    R_s *= R_sun  # solar radii to m
+    M_p *= M_earth  # earth masses to kg
+    M_s *= M_sun  # solar masses to kg
+    dPdE *= 1 / P  # days/E to days/day
 
     # compute and return the host star's modified annual tidal quality factor
     t1 = -27 * np.pi / dPdE * (M_p / M_s) * (R_s / a) ** 5
@@ -675,7 +677,9 @@ def decay_star_quality_factor_from_pdot(P, e, M_s, M_p, R_s, dPdE, epsilon_s=0.0
     return t1 * t2
 
 
-def decay_planet_pdot_from_quality_factor(P, e, M_s, M_p, R_p, Q_planet, epsilon_p=0.0, P_rot_p=None):
+def decay_planet_pdot_from_quality_factor(
+    P, e, M_s, M_p, R_p, Q_planet, epsilon_p=0.0, P_rot_p=None
+):
     """Calculate the rate of orbital decay driven by equilibrium tides in the planet.
 
     This method computes the orbital decay rate for a given "modified" planetary tidal quality
@@ -755,16 +759,16 @@ def decay_planet_pdot_from_quality_factor(P, e, M_s, M_p, R_p, Q_planet, epsilon
     # calculate the planet spin frequency
     if P_rot_p is None:  # if a rotation period is not provided
         spin_freq_p = decay_get_equilibrium_spin_freq(P, e, epsilon_p)
-    else:                # if a rotation period is given
+    else:  # if a rotation period is given
         spin_freq_p = (2 * np.pi) / P_rot_p
 
     beta = spin_freq_p / mean_motion
 
     # unit conversions
     epsilon_p *= np.pi / 180  # deg to rad
-    R_p *= R_earth          # earth radii to m
-    M_p *= M_earth          # earth masses to kg
-    M_s *= M_sun            # solar masses to kg
+    R_p *= R_earth  # earth radii to m
+    M_p *= M_earth  # earth masses to kg
+    M_s *= M_sun  # solar masses to kg
 
     # calculate the predicted orbital decay rate (days/day)
     t1 = -27 * np.pi / Q_planet * (M_s / M_p) * (R_p / a) ** 5
@@ -775,7 +779,9 @@ def decay_planet_pdot_from_quality_factor(P, e, M_s, M_p, R_p, Q_planet, epsilon
     return pdot * P
 
 
-def decay_planet_quality_factor_from_pdot(P, e, M_s, M_p, R_p, dPdE, epsilon_p=0.0, P_rot_p=None):
+def decay_planet_quality_factor_from_pdot(
+    P, e, M_s, M_p, R_p, dPdE, epsilon_p=0.0, P_rot_p=None
+):
     """Calculate the planet's modified planetary quality factor given an orbital decay rate.
 
     Given an orbital decay rate and, optionally, the planet's rotation period and obliquity,
@@ -814,7 +820,6 @@ def decay_planet_quality_factor_from_pdot(P, e, M_s, M_p, R_p, dPdE, epsilon_p=0
     with the :meth:`~orbdot.models.theory.decay_get_equilibrium_spin_freq` method.
 
     """
-
     # derive parameters
     a = get_semi_major_axis_from_period(P, M_s)
     f_e = decay_get_f_e(e)
@@ -824,17 +829,17 @@ def decay_planet_quality_factor_from_pdot(P, e, M_s, M_p, R_p, dPdE, epsilon_p=0
     # calculate the planet spin frequency
     if P_rot_p is None:  # if a rotation period is not provided
         spin_freq_p = decay_get_equilibrium_spin_freq(P, e, epsilon_p)
-    else:                # if a rotation period is given
+    else:  # if a rotation period is given
         spin_freq_p = (2 * np.pi) / P_rot_p
 
     beta = spin_freq_p / mean_motion
 
     # unit conversions
     epsilon_p *= np.pi / 180  # deg to rad
-    R_p *= R_earth          # earth radii to m
-    M_p *= M_earth          # earth masses to kg
-    M_s *= M_sun            # solar masses to kg
-    dPdE *= (1 / P)           # days/E to days/day
+    R_p *= R_earth  # earth radii to m
+    M_p *= M_earth  # earth masses to kg
+    M_s *= M_sun  # solar masses to kg
+    dPdE *= 1 / P  # days/E to days/day
 
     # compute and return the planet's modified annual tidal quality factor
     t1 = -27 * np.pi / dPdE * (M_s / M_p) * (R_p / a) ** 5
@@ -868,7 +873,7 @@ def decay_get_f_e(e):
     .. [1] :cite:t:`Leconte2010`. https://doi.org/10.1051/0004-6361/201014337
 
     """
-    t1 = (1 + (31 / 2) * e**2 + (255 / 8) * e**4 + (185 / 16) * e**6 + (25 / 64) * e**8)
+    t1 = 1 + (31 / 2) * e**2 + (255 / 8) * e**4 + (185 / 16) * e**6 + (25 / 64) * e**8
     t2 = (1 - e**2) ** (15 / 2)
 
     return t1 / t2
@@ -898,7 +903,7 @@ def decay_get_g_e(e):
     .. [1] :cite:t:`Leconte2010`. https://doi.org/10.1051/0004-6361/201014337
 
     """
-    t1 = (1 + (15 / 2) * e**2 + (45 / 8) * e**4 + (5 / 16) * e**6)
+    t1 = 1 + (15 / 2) * e**2 + (45 / 8) * e**4 + (5 / 16) * e**6
     t2 = (1 - e**2) ** 6
 
     return t1 / t2
@@ -928,7 +933,7 @@ def decay_get_h_e(e):
     .. [1] :cite:t:`Leconte2010`. https://doi.org/10.1051/0004-6361/201014337
 
     """
-    t1 = (1 + 3 * e**2 + (3 / 8) * e**4)
+    t1 = 1 + 3 * e**2 + (3 / 8) * e**4
     t2 = (1 - e**2) ** (9 / 2)
 
     return t1 / t2
@@ -1066,10 +1071,10 @@ def decay_energy_loss(P, dPdE, M_s, M_p):
 
     """
     # unit conversions
-    M_p *= M_earth     # earth masses to kg
-    M_s *= M_sun       # solar masses to kg
-    dPdt = dPdE / P    # days/E to days/day
-    P *= 86400         # days to seconds
+    M_p *= M_earth  # earth masses to kg
+    M_s *= M_sun  # solar masses to kg
+    dPdt = dPdE / P  # days/E to days/day
+    P *= 86400  # days to seconds
 
     # calculate the time derivative of the orbital energy
     t1 = (2 * np.pi) ** (2 / 3) * M_p / 3
@@ -1122,10 +1127,10 @@ def decay_angular_momentum_loss(P, dPdE, M_s, M_p):
 
     """
     # unit conversions
-    M_p *= M_earth     # earth masses to kg
-    M_s *= M_sun       # solar masses to kg
-    dPdt = dPdE / P    # days/E to days/day
-    P *= 86400         # days to seconds
+    M_p *= M_earth  # earth masses to kg
+    M_s *= M_sun  # solar masses to kg
+    dPdt = dPdE / P  # days/E to days/day
+    P *= 86400  # days to seconds
 
     # calculate the time derivative of the orbit angular momentum
     t1 = M_p / (3 * (2 * np.pi) ** (1 / 3))
@@ -1177,11 +1182,11 @@ def precession_gr(P, e, M_s):
     nu = 2 * np.pi / P
 
     # unit conversions
-    M_s *= M_sun    # solar masses to kg
-    nu *= 1 / 86400      # 1/days to 1/s
+    M_s *= M_sun  # solar masses to kg
+    nu *= 1 / 86400  # 1/days to 1/s
 
     # calculate the precession rate
-    wdot = 3 * G * M_s * nu / (a * c ** 2 * (1 - e ** 2))
+    wdot = 3 * G * M_s * nu / (a * c**2 * (1 - e**2))
 
     # convert from rad/s to rad/E
     wdot *= 86400 * P
@@ -1250,7 +1255,7 @@ def precession_rotational_planet(P, e, M_s, M_p, R_p, k2_p, P_rot_p):
     nu = 2 * np.pi / P
 
     # calculate the eccentricity expansion and rotational velocity
-    g = (1 - e ** 2) ** (-2)
+    g = (1 - e**2) ** (-2)
     v_p = 2 * np.pi / P_rot_p  # rad/day
 
     # unit conversions
@@ -1260,9 +1265,9 @@ def precession_rotational_planet(P, e, M_s, M_p, R_p, k2_p, P_rot_p):
     v_p *= 1 / 86400  # rad/day to rad/s
 
     # calculate precession rate in rad/E
-    wdot = (k2_p / 2) * (R_p / a) ** 5 * (v_p ** 2 * a ** 3 / (G * M_p)) * g * nu  # rad/s
+    wdot = (k2_p / 2) * (R_p / a) ** 5 * (v_p**2 * a**3 / (G * M_p)) * g * nu  # rad/s
 
-    wdot *= (86400 * P)  # convert rad/s to rad/E
+    wdot *= 86400 * P  # convert rad/s to rad/E
 
     return wdot  # rad/E
 
@@ -1308,18 +1313,18 @@ def precession_rotational_planet_k2(P, e, M_s, M_p, R_p, P_rot_p, dwdE):
     nu = 2 * np.pi / P
 
     # calculate the eccentricity expansion and rotational velocity
-    g = (1 - e ** 2) ** (-2)
+    g = (1 - e**2) ** (-2)
     v_p = 2 * np.pi / P_rot_p  # rad/day
 
     # unit conversions
-    M_p *= M_earth      # earth masses to kg
-    R_p *= R_earth      # earth radii to m
-    nu *= 1 / 86400     # 1/days to 1/s
-    v_p *= 1 / 86400    # rad/day to rad/s
+    M_p *= M_earth  # earth masses to kg
+    R_p *= R_earth  # earth radii to m
+    nu *= 1 / 86400  # 1/days to 1/s
+    v_p *= 1 / 86400  # rad/day to rad/s
     dwdt = dwdE / (86400 * P)  # rad/E to rad/s
 
     # compute and return the Love number
-    t1 = (1 / 2) * (R_p / a) ** 5 * (v_p ** 2 * a ** 3 / (G * M_p)) * g * nu
+    t1 = (1 / 2) * (R_p / a) ** 5 * (v_p**2 * a**3 / (G * M_p)) * g * nu
     k2_p = dwdt * t1 ** (-1)
 
     return k2_p
@@ -1384,18 +1389,18 @@ def precession_rotational_star(P, e, M_s, R_s, k2_s, P_rot_s):
     nu = 2 * np.pi / P
 
     # calculate the eccentricity expansion and rotational velocity
-    g = (1 - e ** 2) ** (-2)
+    g = (1 - e**2) ** (-2)
     v_s = 2 * np.pi / P_rot_s  # rad/day
 
     # unit conversions
-    M_s *= M_sun        # solar masses to kg
-    R_s *= R_sun        # solar radii to m
-    nu *= 1 / 86400     # 1/days to 1/s
-    v_s *= 1 / 86400    # rad/day to rad/s
+    M_s *= M_sun  # solar masses to kg
+    R_s *= R_sun  # solar radii to m
+    nu *= 1 / 86400  # 1/days to 1/s
+    v_s *= 1 / 86400  # rad/day to rad/s
 
     # calculate precession rate
-    wdot = (k2_s / 2) * (R_s / a) ** 5 * (v_s ** 2 * a ** 3 / (G * M_s)) * g * nu
-    wdot *= (86400 * P)  # convert rad/s to rad/E
+    wdot = (k2_s / 2) * (R_s / a) ** 5 * (v_s**2 * a**3 / (G * M_s)) * g * nu
+    wdot *= 86400 * P  # convert rad/s to rad/E
 
     return wdot  # rad/E
 
@@ -1439,18 +1444,18 @@ def precession_rotational_star_k2(P, e, M_s, R_s, P_rot_s, dwdE):
     nu = 2 * np.pi / P
 
     # calculate the eccentricity expansion and rotational velocity
-    g = (1 - e ** 2) ** (-2)
+    g = (1 - e**2) ** (-2)
     v_s = 2 * np.pi / P_rot_s  # rad/day
 
     # unit conversions
-    M_s *= M_sun        # solar masses to kg
-    R_s *= R_sun        # solar radii to m
-    nu *= 1 / 86400     # 1/days to 1/s
-    v_s *= 1 / 86400    # rad/day to rad/s
+    M_s *= M_sun  # solar masses to kg
+    R_s *= R_sun  # solar radii to m
+    nu *= 1 / 86400  # 1/days to 1/s
+    v_s *= 1 / 86400  # rad/day to rad/s
     dwdt = dwdE / (86400 * P)  # rad/E to rad/s
 
     # compute and return the Love number
-    t1 = (1 / 2) * (R_s / a) ** 5 * (v_s ** 2 * a ** 3 / (G * M_s)) * g * nu
+    t1 = (1 / 2) * (R_s / a) ** 5 * (v_s**2 * a**3 / (G * M_s)) * g * nu
     k2_s = dwdt * t1 ** (-1)
 
     return k2_s
@@ -1513,18 +1518,18 @@ def precession_tidal_planet(P, e, M_s, M_p, R_p, k2_p):
     nu = 2 * np.pi / P
 
     # calculate the eccentricity expansion
-    f = (1 - e ** 2) ** (-5) * (1 + (3 / 2) * e ** 2 + (1 / 8) * e ** 4)
+    f = (1 - e**2) ** (-5) * (1 + (3 / 2) * e**2 + (1 / 8) * e**4)
 
     # unit conversions
-    M_p *= M_earth      # earth masses to kg
-    M_s *= M_sun        # solar masses to kg
-    R_p *= R_earth        # earth radii to m
-    nu *= 1 / 86400     # 1/days to 1/s
+    M_p *= M_earth  # earth masses to kg
+    M_s *= M_sun  # solar masses to kg
+    R_p *= R_earth  # earth radii to m
+    nu *= 1 / 86400  # 1/days to 1/s
 
     # calculate precession rate in rad/E
     wdot = (15 / 2) * k2_p * nu * f * (R_p / a) ** 5 * (M_s / M_p)  # rad/s
 
-    wdot *= (86400 * P)  # convert rad/s to rad/E
+    wdot *= 86400 * P  # convert rad/s to rad/E
 
     return wdot  # rad/E
 
@@ -1568,7 +1573,7 @@ def precession_tidal_planet_k2(P, e, M_s, M_p, R_p, dwdE):
     nu = 2 * np.pi / P
 
     # calculate the eccentricity expansion
-    f = (1 - e ** 2) ** (-5) * (1 + (3 / 2) * e ** 2 + (1 / 8) * e ** 4)
+    f = (1 - e**2) ** (-5) * (1 + (3 / 2) * e**2 + (1 / 8) * e**4)
 
     # unit conversions
     M_p *= M_earth  # earth masses to kg
@@ -1641,18 +1646,18 @@ def precession_tidal_star(P, e, M_s, M_p, R_s, k2_s):
     nu = 2 * np.pi / P
 
     # calculate the eccentricity expansion
-    f = (1 - e ** 2) ** (-5) * (1 + (3 / 2) * e ** 2 + (1 / 8) * e ** 4)
+    f = (1 - e**2) ** (-5) * (1 + (3 / 2) * e**2 + (1 / 8) * e**4)
 
     # unit conversions
-    M_p *= M_earth      # earth masses to kg
-    M_s *= M_sun        # solar masses to kg
-    R_s *= R_sun        # solar radii to m
-    nu *= 1 / 86400     # 1/days to 1/s
+    M_p *= M_earth  # earth masses to kg
+    M_s *= M_sun  # solar masses to kg
+    R_s *= R_sun  # solar radii to m
+    nu *= 1 / 86400  # 1/days to 1/s
 
     # calculate precession rate in rad/E
     wdot = (15 / 2) * k2_s * nu * f * (R_s / a) ** 5 * (M_p / M_s)  # rad/s
 
-    wdot *= (86400 * P)  # convert rad/s to rad/E
+    wdot *= 86400 * P  # convert rad/s to rad/E
 
     return wdot  # rad/E
 
@@ -1696,13 +1701,13 @@ def precession_tidal_star_k2(P, e, M_s, M_p, R_s, dwdE):
     nu = 2 * np.pi / P
 
     # calculate the eccentricity expansion
-    f = (1 - e ** 2) ** (-5) * (1 + (3 / 2) * e ** 2 + (1 / 8) * e ** 4)
+    f = (1 - e**2) ** (-5) * (1 + (3 / 2) * e**2 + (1 / 8) * e**4)
 
     # unit conversions
-    M_p *= M_earth      # earth masses to kg
-    M_s *= M_sun        # solar masses to kg
-    R_s *= R_sun        # solar radii to m
-    nu *= 1 / 86400     # 1/days to 1/s
+    M_p *= M_earth  # earth masses to kg
+    M_s *= M_sun  # solar masses to kg
+    R_s *= R_sun  # solar radii to m
+    nu *= 1 / 86400  # 1/days to 1/s
     dwdt = dwdE / (86400 * P)  # rad/E to rad/s
 
     # compute and return the Love number
@@ -1761,15 +1766,15 @@ def get_pdot_from_wdot(P, e, w, dwdE):
     nu = 2 * np.pi / P
 
     # unit conversions
-    dwdt = dwdE * (1 / P) * 365.25   # rad/E to rad/yr
+    dwdt = dwdE * (1 / P) * 365.25  # rad/E to rad/yr
 
     # calculate the apparent period derivative
-    t1 = e * np.cos(w) * (1 - e ** 2) ** (3 / 2) / (1 + e * np.sin(w)) ** 3
+    t1 = e * np.cos(w) * (1 - e**2) ** (3 / 2) / (1 + e * np.sin(w)) ** 3
     t2 = 4 * np.pi * (dwdt / nu) ** 2
-    pdot = t1 * t2   # days^2/yr^2
+    pdot = t1 * t2  # days^2/yr^2
 
     # return the apparent period derivative in ms/yr
-    return pdot * (1 / 365.25) * 8.64e+7
+    return pdot * (1 / 365.25) * 8.64e7
 
 
 def get_tdot_from_wdot(P, e, w, i, T, dwdE, M_s, R_s):
@@ -1827,20 +1832,20 @@ def get_tdot_from_wdot(P, e, w, i, T, dwdE, M_s, R_s):
 
     """
     # unit conversions
-    i *= np.pi / 180     # degrees to radians
-    R_s *= R_sun         # solar radii to m
-    T *= 60 * 1000       # minutes to ms
-    wdot = dwdE * (1 / P) * 365.25   # rad/E to rad/yr
+    i *= np.pi / 180  # degrees to radians
+    R_s *= R_sun  # solar radii to m
+    T *= 60 * 1000  # minutes to ms
+    wdot = dwdE * (1 / P) * 365.25  # rad/E to rad/yr
 
     # derive parameters
     a = get_semi_major_axis_from_period(P, M_s)
-    b = (a / R_s) * np.cos(i) * (1 - e ** 2) / (1 + e * np.sin(w))
-    g = (a / R_s) * b / (1 - b ** 2)
+    b = (a / R_s) * np.cos(i) * (1 - e**2) / (1 + e * np.sin(w))
+    g = (a / R_s) * b / (1 - b**2)
 
     # calculate the transit duration variation
-    t1 = - T / (1 + e * np.sin(w))
+    t1 = -T / (1 + e * np.sin(w))
     t2 = e * wdot * np.cos(w)
-    t3 = - g * (wdot * np.cos(i) * e * np.cos(w)/(1 + e * np.sin(w)))
+    t3 = -g * (wdot * np.cos(i) * e * np.cos(w) / (1 + e * np.sin(w)))
 
     # return the TDV rate in ms/yr
     return t1 * (t2 + t3)
@@ -1885,11 +1890,11 @@ def proper_motion_idot(mu, beta):
 
     """
     # unit conversions
-    beta *= np.pi / 180         # degrees to radians
-    mu *= 1 / (1000 * 206265)   # mas/yr to rad/yr
+    beta *= np.pi / 180  # degrees to radians
+    mu *= 1 / (1000 * 206265)  # mas/yr to rad/yr
 
     # return the time derivative of the inclination in rad/yr
-    return - mu * np.cos(beta)
+    return -mu * np.cos(beta)
 
 
 def proper_motion_wdot(mu, i, beta):
@@ -1933,12 +1938,12 @@ def proper_motion_wdot(mu, i, beta):
 
     """
     # unit conversions
-    beta *= np.pi / 180         # degrees to radians
-    i *= np.pi / 180            # degrees to radians
-    mu *= 1 / (1000 * 206265)   # mas/yr to rad/yr
+    beta *= np.pi / 180  # degrees to radians
+    i *= np.pi / 180  # degrees to radians
+    mu *= 1 / (1000 * 206265)  # mas/yr to rad/yr
 
     # return the apparent precession rate in rad/yr
-    return - mu * np.sin(beta) / np.sin(i)
+    return -mu * np.sin(beta) / np.sin(i)
 
 
 def proper_motion_pdot(P, e, w, mu):
@@ -1997,16 +2002,16 @@ def proper_motion_pdot(P, e, w, mu):
     # derive parameters
     nu = 2 * np.pi / P
     dwdt = mu
-    ddwdt = mu ** 2
+    ddwdt = mu**2
 
     # calculate apparent period derivative
-    t1 = - 2 * np.pi * (1 / nu) ** 2
-    t2 = (1 - e ** 2) ** (3/2) / (1 + e * np.sin(w)) ** 2
-    t3 = ddwdt - 2 * dwdt ** 2 * (e * np.cos(w)) / (1 + e * np.sin(w))
-    pdot_pm = (t1 * t2 * t3)  # days^2/yr^2
+    t1 = -2 * np.pi * (1 / nu) ** 2
+    t2 = (1 - e**2) ** (3 / 2) / (1 + e * np.sin(w)) ** 2
+    t3 = ddwdt - 2 * dwdt**2 * (e * np.cos(w)) / (1 + e * np.sin(w))
+    pdot_pm = t1 * t2 * t3  # days^2/yr^2
 
     # return the apparent period derivative in ms/yr
-    return pdot_pm * (1 / 365.25) * 8.64e+7
+    return pdot_pm * (1 / 365.25) * 8.64e7
 
 
 def proper_motion_tdot(P, e, w, i, T, wdot_pm, idot_pm, M_s, R_s):
@@ -2043,7 +2048,6 @@ def proper_motion_tdot(P, e, w, i, T, wdot_pm, idot_pm, M_s, R_s):
 
     Notes
     -----
-
     The systemic proper motion of a transiting star-planet system can have a significant
     influence on the observed transit duration, :math:`T`, due to the proper motion-induced
     variation of the line-of-sight inclination :math:`\\dot{i}_\\mu` and the *apparent* apsidal
@@ -2072,17 +2076,19 @@ def proper_motion_tdot(P, e, w, i, T, wdot_pm, idot_pm, M_s, R_s):
     a = get_semi_major_axis_from_period(P, M_s)
 
     # unit conversions
-    i *= np.pi / 180      # degrees to radians
-    R_s *= R_sun          # solar radii to m
-    T *= 60 * 1000        # minutes to ms
+    i *= np.pi / 180  # degrees to radians
+    R_s *= R_sun  # solar radii to m
+    T *= 60 * 1000  # minutes to ms
 
-    b = (a / R_s) * np.cos(i) * (1 - e ** 2) / (1 + e * np.sin(w))
-    g = (a / R_s) * b / (1 - b ** 2)
+    b = (a / R_s) * np.cos(i) * (1 - e**2) / (1 + e * np.sin(w))
+    g = (a / R_s) * b / (1 - b**2)
 
     # calculate the transit duration variation
-    t1 = - T / (1 + e * np.sin(w))
+    t1 = -T / (1 + e * np.sin(w))
     t2 = e * wdot_pm * np.cos(w)
-    t3 = - g * (idot_pm * np.sin(i) + wdot_pm * np.cos(i) * e * np.cos(w)/(1 + e * np.sin(w)))
+    t3 = -g * (
+        idot_pm * np.sin(i) + wdot_pm * np.cos(i) * e * np.cos(w) / (1 + e * np.sin(w))
+    )
 
     # return the transit duration variation in ms/yr
     return t1 * (t2 + t3)
@@ -2274,8 +2280,8 @@ def get_semi_major_axis_from_period(P, M_s):
 
     """
     # unit conversions
-    P *= 86400      # days to seconds
-    M_s *= M_sun    # solar masses to kg
+    P *= 86400  # days to seconds
+    M_s *= M_sun  # solar masses to kg
 
     # return the semi major axis in meters
-    return (G * M_s * P ** 2 / (4 * np.pi ** 2)) ** (1/3)
+    return (G * M_s * P**2 / (4 * np.pi**2)) ** (1 / 3)
