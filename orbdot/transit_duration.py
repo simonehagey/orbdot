@@ -1,21 +1,21 @@
-"""
-TransitDuration
+"""TransitDuration
 ===============
 This module defines the ``TransitDuration`` class, which extends the capabilities of the
 ``NestedSampling`` class to facilitate model fitting of transit durations.
 """
 
 import os
+
 import numpy as np
+
+import orbdot.models.tdv_models as tdv
 import orbdot.tools.plots as pl
 import orbdot.tools.stats as stat
 import orbdot.tools.utilities as utl
-import orbdot.models.tdv_models as tdv
 
 
 class TransitDuration:
-    """
-    This class utilizes the capabilities of the :class:`~orbdot.nested_sampling.NestedSampling`
+    """This class utilizes the capabilities of the :class:`~orbdot.nested_sampling.NestedSampling`
     class to facilitate model fitting of transit durations.
     """
 
@@ -28,26 +28,26 @@ class TransitDuration:
             A dictionary specifying directories and settings for the nested sampling analysis.
 
         """
-        self.M_s = system_info['M_s [M_sun]']  # star mass in solar masses
-        self.R_s = system_info['R_s [R_sun]']  # star radius in solar radii
+        self.M_s = system_info["M_s [M_sun]"]  # star mass in solar masses
+        self.R_s = system_info["R_s [R_sun]"]  # star radius in solar radii
 
         # directory for saving the output files
-        self.tdv_save_dir = tdv_settings['save_dir']
+        self.tdv_save_dir = tdv_settings["save_dir"]
 
         # the requested sampler ('nestle' or 'multinest')
-        self.tdv_sampler = tdv_settings['sampler']
+        self.tdv_sampler = tdv_settings["sampler"]
 
         # the number of live points for the nested sampling analysis
-        self.tdv_n_points = tdv_settings['n_live_points']
+        self.tdv_n_points = tdv_settings["n_live_points"]
 
         # the evidence tolerance for the nested sampling analysis
-        self.tdv_tol = tdv_settings['evidence_tolerance']
+        self.tdv_tol = tdv_settings["evidence_tolerance"]
 
         # create a save directory if not found
-        parent_dir = os.path.abspath(os.getcwd()) + '/'
+        parent_dir = os.path.abspath(os.getcwd()) + "/"
 
         try:
-            os.makedirs(os.path.join(parent_dir, tdv_settings['save_dir']))
+            os.makedirs(os.path.join(parent_dir, tdv_settings["save_dir"]))
 
         except FileExistsError:
             pass
@@ -78,12 +78,14 @@ class TransitDuration:
             return -1e10  # return a very low likelihood if eccentricity is invalid
 
         # calculate log-likelihood with transit duration data
-        mod = tdv.tdv_constant(pp, ee, ww, ii, self.tdv_data['epoch'], self.M_s, self.R_s)
+        mod = tdv.tdv_constant(
+            pp, ee, ww, ii, self.tdv_data["epoch"], self.M_s, self.R_s
+        )
 
         if mod is None:
             return -1e10
 
-        ll = stat.calc_chi2(self.tdv_data['dur'], mod, self.tdv_data['err'])
+        ll = stat.calc_chi2(self.tdv_data["dur"], mod, self.tdv_data["err"])
 
         return ll
 
@@ -114,12 +116,14 @@ class TransitDuration:
             return -1e10  # return a very low likelihood if eccentricity is invalid
 
         # calculate log-likelihood with transit duration data
-        mod = tdv.tdv_decay(pp, ee, ww, ii, dp, self.tdv_data['epoch'], self.M_s, self.R_s)
+        mod = tdv.tdv_decay(
+            pp, ee, ww, ii, dp, self.tdv_data["epoch"], self.M_s, self.R_s
+        )
 
         if mod is None:
             return -1e10
 
-        ll = stat.calc_chi2(self.tdv_data['dur'], mod, self.tdv_data['err'])
+        ll = stat.calc_chi2(self.tdv_data["dur"], mod, self.tdv_data["err"])
 
         return ll
 
@@ -150,16 +154,20 @@ class TransitDuration:
             return -1e10  # return a very low likelihood if eccentricity is invalid
 
         # calculate log-likelihood with transit duration data
-        mod = tdv.tdv_precession(pp, ee, ww, ii, dw, self.tdv_data['epoch'], self.M_s, self.R_s)
+        mod = tdv.tdv_precession(
+            pp, ee, ww, ii, dw, self.tdv_data["epoch"], self.M_s, self.R_s
+        )
 
         if mod is None:
             return -1e10
 
-        ll = stat.calc_chi2(self.tdv_data['dur'], mod, self.tdv_data['err'])
+        ll = stat.calc_chi2(self.tdv_data["dur"], mod, self.tdv_data["err"])
 
         return ll
 
-    def run_tdv_fit(self, free_params, model='constant', file_suffix='', make_plot=True):
+    def run_tdv_fit(
+        self, free_params, model="constant", file_suffix="", make_plot=True
+    ):
         """Run a model fit of the observed transit durations.
 
         This method executes a model fit of the observed transit durations using one of two
@@ -189,18 +197,20 @@ class TransitDuration:
         .. [2] PyMultiNest by Johannes Buchner. http://johannesbuchner.github.io/PyMultiNest
 
         """
-        if model == 'constant':
+        if model == "constant":
             res = self.run_tdv_constant(free_params, file_suffix, make_plot)
 
-        elif model == 'decay':
+        elif model == "decay":
             res = self.run_tdv_decay(free_params, file_suffix, make_plot)
 
-        elif model == 'precession':
+        elif model == "precession":
             res = self.run_tdv_precession(free_params, file_suffix, make_plot)
 
         else:
-            raise ValueError('The string \'{}\' does not represent a valid TDV model. Options '
-                             'are: \'constant\', \'decay\', or \'precession\'.'.format(model))
+            raise ValueError(
+                f"The string '{model}' does not represent a valid TDV model. Options "
+                "are: 'constant', 'decay', or 'precession'."
+            )
 
         return res
 
@@ -242,67 +252,97 @@ class TransitDuration:
         .. [2] PyMultiNest by Johannes Buchner. http://johannesbuchner.github.io/PyMultiNest
 
         """
-        free_params = np.array(free_params, dtype='<U16')
+        free_params = np.array(free_params, dtype="<U16")
 
         try:
             self.tdv_data
 
         except AttributeError:
-            raise Exception('\n\nNo transit duration data was detected. Please give a valid\n'
-                            'path name in the settings file before running the TDV fit.')
+            raise Exception(
+                "\n\nNo transit duration data was detected. Please give a valid\n"
+                "path name in the settings file before running the TDV fit."
+            )
 
         # define parameters that are not in the model
-        illegal_params = ['t0', 'O0',
-                          'PdE', 'wdE', 'idE', 'edE', 'OdE',
-                          'K', 'v0', 'jit', 'dvdt', 'ddvdt', 'K_tide']
+        illegal_params = [
+            "t0",
+            "O0",
+            "PdE",
+            "wdE",
+            "idE",
+            "edE",
+            "OdE",
+            "K",
+            "v0",
+            "jit",
+            "dvdt",
+            "ddvdt",
+            "K_tide",
+        ]
 
         # raise an exception if the free parameter(s) are not valid
         utl.raise_not_valid_param_error(free_params, self.legal_params, illegal_params)
 
-        self.plot_settings['TDV_PLOT']['data_file'+suffix] = self.tdv_data_filename
+        self.plot_settings["TDV_PLOT"]["data_file" + suffix] = self.tdv_data_filename
 
-        print('-' * 100)
-        print('Running constant-period TDV fit with free parameters: {}'.format(free_params))
-        print('-' * 100)
+        print("-" * 100)
+        print(f"Running constant-period TDV fit with free parameters: {free_params}")
+        print("-" * 100)
 
         # specify a prefix for output file names
-        prefix = self.tdv_save_dir + 'tdv_constant'
+        prefix = self.tdv_save_dir + "tdv_constant"
 
         # if selected, run the Nestle sampling algorithm
-        if self.tdv_sampler == 'nestle':
-            res, samples, random_samples = \
-                self.run_nestle(self.tdv_loglike_constant, free_params,
-                                'multi', self.tdv_n_points, self.tdv_tol)
+        if self.tdv_sampler == "nestle":
+            res, samples, random_samples = self.run_nestle(
+                self.tdv_loglike_constant,
+                free_params,
+                "multi",
+                self.tdv_n_points,
+                self.tdv_tol,
+            )
 
         # if selected, run the MultiNest sampling algorithm
-        elif self.tdv_sampler == 'multinest':
-            res, samples, random_samples = \
-                self.run_multinest(self.tdv_loglike_constant, free_params,
-                                   self.tdv_n_points, self.tdv_tol, prefix + suffix)
+        elif self.tdv_sampler == "multinest":
+            res, samples, random_samples = self.run_multinest(
+                self.tdv_loglike_constant,
+                free_params,
+                self.tdv_n_points,
+                self.tdv_tol,
+                prefix + suffix,
+            )
 
         else:
-            raise ValueError('Unrecognized sampler, specify \'nestle\' or \'multinest\'')
+            raise ValueError("Unrecognized sampler, specify 'nestle' or 'multinest'")
 
-        res['params']['M_s'] = self.M_s
-        res['params']['R_s'] = self.R_s
+        res["params"]["M_s"] = self.M_s
+        res["params"]["R_s"] = self.R_s
 
-        rf = prefix + '_results' + suffix + '.json'
-        sf = prefix + '_random_samples' + suffix + '.txt'
+        rf = prefix + "_results" + suffix + ".json"
+        sf = prefix + "_random_samples" + suffix + ".txt"
 
-        res['model'] = 'tdv_constant'
-        res['suffix'] = suffix
-        res['results_filename'] = rf
-        res['samples_filename'] = sf
+        res["model"] = "tdv_constant"
+        res["suffix"] = suffix
+        res["results_filename"] = rf
+        res["samples_filename"] = sf
 
-        self.save_results(random_samples, samples, res, free_params,
-                          self.tdv_sampler, suffix, prefix, illegal_params)
+        self.save_results(
+            random_samples,
+            samples,
+            res,
+            free_params,
+            self.tdv_sampler,
+            suffix,
+            prefix,
+            illegal_params,
+        )
 
         # generate a TDV plot
-        self.plot_settings['TDV_PLOT']['tdv_constant_results_file' + suffix] = rf
-        self.plot_settings['TDV_PLOT']['tdv_constant_samples_file' + suffix] = sf
+        self.plot_settings["TDV_PLOT"]["tdv_constant_results_file" + suffix] = rf
+        self.plot_settings["TDV_PLOT"]["tdv_constant_samples_file" + suffix] = sf
 
         if plot:
-            plot_filename = prefix + '_plot' + suffix
+            plot_filename = prefix + "_plot" + suffix
             pl.make_tdv_plot(self.plot_settings, plot_filename, suffix=suffix)
 
         return res
@@ -345,66 +385,96 @@ class TransitDuration:
         .. [2] PyMultiNest by Johannes Buchner. http://johannesbuchner.github.io/PyMultiNest
 
         """
-        free_params = np.array(free_params, dtype='<U16')
+        free_params = np.array(free_params, dtype="<U16")
 
         try:
             self.tdv_data
 
         except AttributeError:
-            raise Exception('\n\nNo transit duration data was detected. Please give a valid\n'
-                            'path name in the settings file before running the TDV fit.')
+            raise Exception(
+                "\n\nNo transit duration data was detected. Please give a valid\n"
+                "path name in the settings file before running the TDV fit."
+            )
 
         # define parameters that are not in the model
-        illegal_params = ['t0', 'O0', 'wdE', 'idE', 'edE', 'OdE',
-                          'K', 'v0', 'jit', 'dvdt', 'ddvdt', 'K_tide']
+        illegal_params = [
+            "t0",
+            "O0",
+            "wdE",
+            "idE",
+            "edE",
+            "OdE",
+            "K",
+            "v0",
+            "jit",
+            "dvdt",
+            "ddvdt",
+            "K_tide",
+        ]
 
         # raise an exception if the free parameter(s) are not valid
         utl.raise_not_valid_param_error(free_params, self.legal_params, illegal_params)
 
-        self.plot_settings['TDV_PLOT']['data_file'+suffix] = self.tdv_data_filename
+        self.plot_settings["TDV_PLOT"]["data_file" + suffix] = self.tdv_data_filename
 
-        print('-' * 100)
-        print('Running orbital decay TDV fit with free parameters: {}'.format(free_params))
-        print('-' * 100)
+        print("-" * 100)
+        print(f"Running orbital decay TDV fit with free parameters: {free_params}")
+        print("-" * 100)
 
         # specify a prefix for output file names
-        prefix = self.tdv_save_dir + 'tdv_decay'
+        prefix = self.tdv_save_dir + "tdv_decay"
 
         # if selected, run the Nestle sampling algorithm
-        if self.tdv_sampler == 'nestle':
-            res, samples, random_samples = \
-                self.run_nestle(self.tdv_loglike_decay, free_params,
-                                'multi', self.tdv_n_points, self.tdv_tol)
+        if self.tdv_sampler == "nestle":
+            res, samples, random_samples = self.run_nestle(
+                self.tdv_loglike_decay,
+                free_params,
+                "multi",
+                self.tdv_n_points,
+                self.tdv_tol,
+            )
 
         # if selected, run the MultiNest sampling algorithm
-        elif self.tdv_sampler == 'multinest':
-            res, samples, random_samples = \
-                self.run_multinest(self.tdv_loglike_decay, free_params,
-                                   self.tdv_n_points, self.tdv_tol, prefix + suffix)
+        elif self.tdv_sampler == "multinest":
+            res, samples, random_samples = self.run_multinest(
+                self.tdv_loglike_decay,
+                free_params,
+                self.tdv_n_points,
+                self.tdv_tol,
+                prefix + suffix,
+            )
 
         else:
-            raise ValueError('Unrecognized sampler, specify \'nestle\' or \'multinest\'')
+            raise ValueError("Unrecognized sampler, specify 'nestle' or 'multinest'")
 
-        res['params']['M_s'] = self.M_s
-        res['params']['R_s'] = self.R_s
+        res["params"]["M_s"] = self.M_s
+        res["params"]["R_s"] = self.R_s
 
-        rf = prefix + '_results' + suffix + '.json'
-        sf = prefix + '_random_samples' + suffix + '.txt'
+        rf = prefix + "_results" + suffix + ".json"
+        sf = prefix + "_random_samples" + suffix + ".txt"
 
-        res['model'] = 'tdv_decay'
-        res['suffix'] = suffix
-        res['results_filename'] = rf
-        res['samples_filename'] = sf
+        res["model"] = "tdv_decay"
+        res["suffix"] = suffix
+        res["results_filename"] = rf
+        res["samples_filename"] = sf
 
-        self.save_results(random_samples, samples, res, free_params,
-                          self.tdv_sampler, suffix, prefix, illegal_params)
+        self.save_results(
+            random_samples,
+            samples,
+            res,
+            free_params,
+            self.tdv_sampler,
+            suffix,
+            prefix,
+            illegal_params,
+        )
 
         # generate a TDV plot
-        self.plot_settings['TDV_PLOT']['tdv_decay_results_file' + suffix] = rf
-        self.plot_settings['TDV_PLOT']['tdv_decay_samples_file' + suffix] = sf
+        self.plot_settings["TDV_PLOT"]["tdv_decay_results_file" + suffix] = rf
+        self.plot_settings["TDV_PLOT"]["tdv_decay_samples_file" + suffix] = sf
 
         if plot:
-            plot_filename = prefix + '_plot' + suffix
+            plot_filename = prefix + "_plot" + suffix
             pl.make_tdv_plot(self.plot_settings, plot_filename, suffix=suffix)
 
         return res
@@ -447,64 +517,95 @@ class TransitDuration:
         .. [2] PyMultiNest by Johannes Buchner. http://johannesbuchner.github.io/PyMultiNest
 
         """
-        free_params = np.array(free_params, dtype='<U16')
+        free_params = np.array(free_params, dtype="<U16")
 
         try:
             self.tdv_data
 
         except AttributeError:
-            raise Exception('\n\nNo transit duration data was detected. Please give a valid\n'
-                            'path name in the settings file before running the TDV fit.')
+            raise Exception(
+                "\n\nNo transit duration data was detected. Please give a valid\n"
+                "path name in the settings file before running the TDV fit."
+            )
 
         # define parameters that are not in the model
-        illegal_params = ['t0', 'O0', 'PdE', 'idE', 'edE', 'OdE',
-                          'K', 'v0', 'jit', 'dvdt', 'ddvdt', 'K_tide']
+        illegal_params = [
+            "t0",
+            "O0",
+            "PdE",
+            "idE",
+            "edE",
+            "OdE",
+            "K",
+            "v0",
+            "jit",
+            "dvdt",
+            "ddvdt",
+            "K_tide",
+        ]
 
         # raise an exception if the free parameter(s) are not valid
         utl.raise_not_valid_param_error(free_params, self.legal_params, illegal_params)
 
-        self.plot_settings['TDV_PLOT']['data_file' + suffix] = self.tdv_data_filename
+        self.plot_settings["TDV_PLOT"]["data_file" + suffix] = self.tdv_data_filename
 
-        print('-' * 100)
-        print('Running apsidal precession TDV fit with free parameters: {}'.format(free_params))
-        print('-' * 100)
+        print("-" * 100)
+        print(f"Running apsidal precession TDV fit with free parameters: {free_params}")
+        print("-" * 100)
 
         # specify a prefix for output file names
-        prefix = self.tdv_save_dir + 'tdv_precession'
+        prefix = self.tdv_save_dir + "tdv_precession"
 
         # if selected, run the Nestle sampling algorithm
-        if self.tdv_sampler == 'nestle':
-            res, samples, random_samples = self.run_nestle(self.tdv_loglike_precession, free_params,
-                                                           'multi', self.tdv_n_points, self.tdv_tol)
+        if self.tdv_sampler == "nestle":
+            res, samples, random_samples = self.run_nestle(
+                self.tdv_loglike_precession,
+                free_params,
+                "multi",
+                self.tdv_n_points,
+                self.tdv_tol,
+            )
         # if selected, run the MultiNest sampling algorithm
-        elif self.tdv_sampler == 'multinest':
-            res, samples, random_samples = self.run_multinest(self.tdv_loglike_precession,
-                                                              free_params, self.tdv_n_points,
-                                                              self.tdv_tol, prefix + suffix)
+        elif self.tdv_sampler == "multinest":
+            res, samples, random_samples = self.run_multinest(
+                self.tdv_loglike_precession,
+                free_params,
+                self.tdv_n_points,
+                self.tdv_tol,
+                prefix + suffix,
+            )
 
         else:
-            raise ValueError('Unrecognized sampler, specify \'nestle\' or \'multinest\'')
+            raise ValueError("Unrecognized sampler, specify 'nestle' or 'multinest'")
 
-        res['params']['M_s'] = self.M_s
-        res['params']['R_s'] = self.R_s
+        res["params"]["M_s"] = self.M_s
+        res["params"]["R_s"] = self.R_s
 
-        rf = prefix + '_results' + suffix + '.json'
-        sf = prefix + '_random_samples' + suffix + '.txt'
+        rf = prefix + "_results" + suffix + ".json"
+        sf = prefix + "_random_samples" + suffix + ".txt"
 
-        res['model'] = 'tdv_precession'
-        res['suffix'] = suffix
-        res['results_filename'] = rf
-        res['samples_filename'] = sf
+        res["model"] = "tdv_precession"
+        res["suffix"] = suffix
+        res["results_filename"] = rf
+        res["samples_filename"] = sf
 
-        self.save_results(random_samples, samples, res, free_params,
-                          self.tdv_sampler, suffix, prefix, illegal_params)
+        self.save_results(
+            random_samples,
+            samples,
+            res,
+            free_params,
+            self.tdv_sampler,
+            suffix,
+            prefix,
+            illegal_params,
+        )
 
         # generate a TDV plot
-        self.plot_settings['TDV_PLOT']['tdv_precession_results_file' + suffix] = rf
-        self.plot_settings['TDV_PLOT']['tdv_precession_samples_file' + suffix] = sf
+        self.plot_settings["TDV_PLOT"]["tdv_precession_results_file" + suffix] = rf
+        self.plot_settings["TDV_PLOT"]["tdv_precession_samples_file" + suffix] = sf
 
         if plot:
-            plot_filename = prefix + '_plot' + suffix
+            plot_filename = prefix + "_plot" + suffix
             pl.make_tdv_plot(self.plot_settings, plot_filename, suffix=suffix)
 
         return res

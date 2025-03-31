@@ -1,5 +1,4 @@
-"""
-Radial Velocity Models
+"""Radial Velocity Models
 ======================
 This module defines functions for modelling exoplanet radial velocity observations.
 """
@@ -276,7 +275,7 @@ def rv_decay(t0, P0, e0, w0, K, v0, dvdt, ddvdt, PdE, t):
     M_tra = E_tra - e0 * np.sin(E_tra)
 
     # calculate the most recent transit center time
-    t_tra = t0 + P0 * epoch + 0.5 * PdE * epoch ** 2
+    t_tra = t0 + P0 * epoch + 0.5 * PdE * epoch**2
 
     # calculate the time of pericenter passage
     t_p = t_tra - (1 / nu) * M_tra

@@ -1,21 +1,21 @@
-"""
-RadialVelocity
+"""RadialVelocity
 ==============
 This module defines the ``RadialVelocity`` class, which extends the capabilities of the
 ``NestedSampling`` class to facilitate model fitting of radial velocity observations.
 """
 
-import os
 import csv
+import os
+
 import numpy as np
+
+import orbdot.models.rv_models as rv
 import orbdot.tools.plots as pl
 import orbdot.tools.utilities as utl
-import orbdot.models.rv_models as rv
 
 
 class RadialVelocity:
-    """
-    This class utilizes the capabilities of the :class:`~orbdot.nested_sampling.NestedSampling`
+    """This class utilizes the capabilities of the :class:`~orbdot.nested_sampling.NestedSampling`
     class to facilitate model fitting of radial velocity data.
     """
 
@@ -29,22 +29,22 @@ class RadialVelocity:
 
         """
         # directory for saving the output files
-        self.rv_save_dir = rv_settings['save_dir']
+        self.rv_save_dir = rv_settings["save_dir"]
 
         # the requested sampler ('nestle' or 'multinest')
-        self.rv_sampler = rv_settings['sampler']
+        self.rv_sampler = rv_settings["sampler"]
 
         # the number of live points for the nested sampling analysis
-        self.rv_n_points = rv_settings['n_live_points']
+        self.rv_n_points = rv_settings["n_live_points"]
 
         # the evidence tolerance for the nested sampling analysis
-        self.rv_tol = rv_settings['evidence_tolerance']
+        self.rv_tol = rv_settings["evidence_tolerance"]
 
         # create a save directory if not found
-        parent_dir = os.path.abspath(os.getcwd()) + '/'
+        parent_dir = os.path.abspath(os.getcwd()) + "/"
 
         try:
-            os.makedirs(os.path.join(parent_dir, rv_settings['save_dir']))
+            os.makedirs(os.path.join(parent_dir, rv_settings["save_dir"]))
 
         except FileExistsError:
             pass
@@ -77,15 +77,17 @@ class RadialVelocity:
 
         # calculate log-likelihood with the jitter term
         loglike = 0
-        for i in self.rv_data['src_order']:
+        for i in self.rv_data["src_order"]:
             # calculate model-predicted radial velocities
-            rv_model = rv.rv_constant(tc, pp, ee, ww, kk, v0[i], dv, ddv, self.rv_data['trv'][i])
+            rv_model = rv.rv_constant(
+                tc, pp, ee, ww, kk, v0[i], dv, ddv, self.rv_data["trv"][i]
+            )
 
             # calculate error term including jitter
-            err_jit = self.rv_data['err'][i] ** 2 + jj[i] ** 2
+            err_jit = self.rv_data["err"][i] ** 2 + jj[i] ** 2
 
             # calculate log-likelihood contribution for this dataset
-            chi2 = np.sum((self.rv_data['rvs'][i] - rv_model) ** 2 / err_jit)
+            chi2 = np.sum((self.rv_data["rvs"][i] - rv_model) ** 2 / err_jit)
             loglike += -0.5 * chi2 - np.sum(np.log(np.sqrt(2 * np.pi * err_jit)))
 
         return loglike
@@ -119,15 +121,17 @@ class RadialVelocity:
 
         # calculate log-likelihood with the jitter term
         loglike = 0
-        for i in self.rv_data['src_order']:
+        for i in self.rv_data["src_order"]:
             # calculate model-predicted radial velocities
-            rv_model = rv.rv_decay(tc, pp, ee, ww, kk, v0[i], dv, ddv, dp, self.rv_data['trv'][i])
+            rv_model = rv.rv_decay(
+                tc, pp, ee, ww, kk, v0[i], dv, ddv, dp, self.rv_data["trv"][i]
+            )
 
             # calculate error term including jitter
-            err_jit = self.rv_data['err'][i] ** 2 + jj[i] ** 2
+            err_jit = self.rv_data["err"][i] ** 2 + jj[i] ** 2
 
             # calculate log-likelihood contribution for this dataset
-            chi2 = np.sum((self.rv_data['rvs'][i] - rv_model) ** 2 / err_jit)
+            chi2 = np.sum((self.rv_data["rvs"][i] - rv_model) ** 2 / err_jit)
             loglike += -0.5 * chi2 - np.sum(np.log(np.sqrt(2 * np.pi * err_jit)))
 
         return loglike
@@ -161,21 +165,22 @@ class RadialVelocity:
 
         # calculate log-likelihood with the jitter term
         loglike = 0
-        for i in self.rv_data['src_order']:
+        for i in self.rv_data["src_order"]:
             # calculate model-predicted radial velocities
-            rv_model = rv.rv_precession(tc, pp, ee, ww, kk, v0[i], dv, ddv, dw,
-                                        self.rv_data['trv'][i])
+            rv_model = rv.rv_precession(
+                tc, pp, ee, ww, kk, v0[i], dv, ddv, dw, self.rv_data["trv"][i]
+            )
 
             # calculate error term including jitter
-            err_jit = self.rv_data['err'][i] ** 2 + jj[i] ** 2
+            err_jit = self.rv_data["err"][i] ** 2 + jj[i] ** 2
 
             # calculate log-likelihood contribution for this dataset
-            chi2 = np.sum((self.rv_data['rvs'][i] - rv_model) ** 2 / err_jit)
+            chi2 = np.sum((self.rv_data["rvs"][i] - rv_model) ** 2 / err_jit)
             loglike += -0.5 * chi2 - np.sum(np.log(np.sqrt(2 * np.pi * err_jit)))
 
         return loglike
 
-    def run_rv_fit(self, free_params, model='constant', file_suffix='', make_plot=True):
+    def run_rv_fit(self, free_params, model="constant", file_suffix="", make_plot=True):
         """Run a model fit of the radial velocity measurements.
 
         This method executes a model fit of the observed radial velocities using one of two
@@ -207,18 +212,20 @@ class RadialVelocity:
         .. [2] PyMultiNest by Johannes Buchner. http://johannesbuchner.github.io/PyMultiNest
 
         """
-        if model == 'constant':
+        if model == "constant":
             res = self.run_rv_constant(free_params, file_suffix, make_plot)
 
-        elif model == 'decay':
+        elif model == "decay":
             res = self.run_rv_decay(free_params, file_suffix, make_plot)
 
-        elif model == 'precession':
+        elif model == "precession":
             res = self.run_rv_precession(free_params, file_suffix, make_plot)
 
         else:
-            raise ValueError('The string \'{}\' does not represent a valid RV model. Options '
-                             'are: \'constant\', \'decay\', or \'precession\'.'.format(model))
+            raise ValueError(
+                f"The string '{model}' does not represent a valid RV model. Options "
+                "are: 'constant', 'decay', or 'precession'."
+            )
 
         return res
 
@@ -262,77 +269,102 @@ class RadialVelocity:
         .. [2] PyMultiNest by Johannes Buchner. http://johannesbuchner.github.io/PyMultiNest
 
         """
-        free_params = np.array(free_params, dtype='<U16')
+        free_params = np.array(free_params, dtype="<U16")
 
         # raise an exception if RV data is not available
         try:
             self.rv_data
 
         except AttributeError:
-            raise Exception('\n\nNo radial velocity data was detected. Please give a valid path '
-                            'name in the\nsettings file before running the RV model fit.')
+            raise Exception(
+                "\n\nNo radial velocity data was detected. Please give a valid path "
+                "name in the\nsettings file before running the RV model fit."
+            )
 
         # define parameters that are not in the model
-        illegal_params = ['i0', 'O0', 'PdE', 'wdE', 'idE', 'edE', 'OdE', 'K_tide']
+        illegal_params = ["i0", "O0", "PdE", "wdE", "idE", "edE", "OdE", "K_tide"]
 
         # raise an exception if any of the the free parameters are not valid
         utl.raise_not_valid_param_error(free_params, self.legal_params, illegal_params)
 
-        self.plot_settings['RV_PLOT']['data_file' + suffix] = self.rv_data_filename
+        self.plot_settings["RV_PLOT"]["data_file" + suffix] = self.rv_data_filename
 
         # split multi-instrument RV parameters ('v0', 'jit') into separate sources
-        free_params = utl.split_rv_instrument_params(self.rv_data['src_order'],
-                                                     self.rv_data['src_tags'],
-                                                     free_params)
+        free_params = utl.split_rv_instrument_params(
+            self.rv_data["src_order"], self.rv_data["src_tags"], free_params
+        )
 
-        print('-' * 100)
-        print('Running RV model fit with free parameters: {}'.format(free_params))
-        print('-' * 100)
+        print("-" * 100)
+        print(f"Running RV model fit with free parameters: {free_params}")
+        print("-" * 100)
 
         # specify a prefix for output file names
-        prefix = self.rv_save_dir + 'rv_constant'
+        prefix = self.rv_save_dir + "rv_constant"
 
         # if selected, run the Nestle sampling algorithm
-        if self.rv_sampler == 'nestle':
-            res, samples, random_samples = self.run_nestle(self.rv_loglike_constant, free_params,
-                                                           'multi', self.rv_n_points, self.rv_tol)
+        if self.rv_sampler == "nestle":
+            res, samples, random_samples = self.run_nestle(
+                self.rv_loglike_constant,
+                free_params,
+                "multi",
+                self.rv_n_points,
+                self.rv_tol,
+            )
         # if selected, run the MultiNest sampling algorithm
-        elif self.rv_sampler == 'multinest':
-            res, samples, random_samples = self.run_multinest(self.rv_loglike_constant, free_params,
-                                                              self.rv_n_points, self.rv_tol,
-                                                              prefix + suffix)
+        elif self.rv_sampler == "multinest":
+            res, samples, random_samples = self.run_multinest(
+                self.rv_loglike_constant,
+                free_params,
+                self.rv_n_points,
+                self.rv_tol,
+                prefix + suffix,
+            )
 
         else:
-            raise ValueError('Unrecognized sampler, specify \'nestle\' or \'multinest\'')
+            raise ValueError("Unrecognized sampler, specify 'nestle' or 'multinest'")
 
         # split multi-instrument RV parameter results ('v0', 'jit') into separate sources
-        res['params'] = utl.split_rv_instrument_results(free_params, self.rv_data['src_order'],
-                                                        self.rv_data['src_tags'], res['params'])
+        res["params"] = utl.split_rv_instrument_results(
+            free_params,
+            self.rv_data["src_order"],
+            self.rv_data["src_tags"],
+            res["params"],
+        )
 
         # save results
-        rf = prefix + '_results' + suffix + '.json'
-        sf = prefix + '_random_samples' + suffix + '.txt'
-        resf = prefix + '_residuals' + suffix + '.txt'
+        rf = prefix + "_results" + suffix + ".json"
+        sf = prefix + "_random_samples" + suffix + ".txt"
+        resf = prefix + "_residuals" + suffix + ".txt"
 
-        res['model'] = 'rv_constant'
-        res['suffix'] = suffix
-        res['results_filename'] = rf
-        res['samples_filename'] = sf
+        res["model"] = "rv_constant"
+        res["suffix"] = suffix
+        res["results_filename"] = rf
+        res["samples_filename"] = sf
 
-        self.save_results(random_samples, samples, res, free_params,
-                          self.rv_sampler, suffix, prefix, illegal_params)
+        self.save_results(
+            random_samples,
+            samples,
+            res,
+            free_params,
+            self.rv_sampler,
+            suffix,
+            prefix,
+            illegal_params,
+        )
 
         # save residuals
         self.save_rv_residuals(res, resf)
 
         # generate radial velocity plot
-        self.plot_settings['RV_PLOT']['rv_constant_results_file' + suffix] = rf
-        self.plot_settings['RV_PLOT']['rv_constant_samples_file' + suffix] = sf
-        self.plot_settings['RV_PLOT']['rv_constant_residuals_file' + suffix] = resf
+        self.plot_settings["RV_PLOT"]["rv_constant_results_file" + suffix] = rf
+        self.plot_settings["RV_PLOT"]["rv_constant_samples_file" + suffix] = sf
+        self.plot_settings["RV_PLOT"]["rv_constant_residuals_file" + suffix] = resf
 
         if plot:
-            plot_filename = prefix + '_plot' + suffix
-            pl.make_rv_plots(self.plot_settings, plot_filename, suffix=suffix, model='constant')
+            plot_filename = prefix + "_plot" + suffix
+            pl.make_rv_plots(
+                self.plot_settings, plot_filename, suffix=suffix, model="constant"
+            )
 
         return res
 
@@ -376,76 +408,101 @@ class RadialVelocity:
         .. [2] PyMultiNest by Johannes Buchner. http://johannesbuchner.github.io/PyMultiNest
 
         """
-        free_params = np.array(free_params, dtype='<U16')
+        free_params = np.array(free_params, dtype="<U16")
 
         # raise an exception if RV data is not available
         try:
             self.rv_data
 
         except AttributeError:
-            raise Exception('\n\nNo radial velocity data was detected. Please give a valid path '
-                            'name in the\nsettings file before running the RV model fit.')
+            raise Exception(
+                "\n\nNo radial velocity data was detected. Please give a valid path "
+                "name in the\nsettings file before running the RV model fit."
+            )
 
         # define parameters that are not in the model
-        illegal_params = ['i0', 'O0', 'wdE', 'idE', 'edE', 'OdE', 'K_tide']
+        illegal_params = ["i0", "O0", "wdE", "idE", "edE", "OdE", "K_tide"]
 
         # raise an exception if the free parameter(s) are not valid
         utl.raise_not_valid_param_error(free_params, self.legal_params, illegal_params)
 
-        self.plot_settings['RV_PLOT']['data_file' + suffix] = self.rv_data_filename
+        self.plot_settings["RV_PLOT"]["data_file" + suffix] = self.rv_data_filename
 
         # split multi-instrument RV parameters ('v0', 'jit') into separate sources
-        free_params = utl.split_rv_instrument_params(self.rv_data['src_order'],
-                                                     self.rv_data['src_tags'],
-                                                     free_params)
-        print('-' * 100)
-        print('Running orbital decay RV fit with free parameters: {}'.format(free_params))
-        print('-' * 100)
+        free_params = utl.split_rv_instrument_params(
+            self.rv_data["src_order"], self.rv_data["src_tags"], free_params
+        )
+        print("-" * 100)
+        print(f"Running orbital decay RV fit with free parameters: {free_params}")
+        print("-" * 100)
 
         # specify a prefix for output file names
-        prefix = self.rv_save_dir + 'rv_decay'
+        prefix = self.rv_save_dir + "rv_decay"
 
         # if selected, run the Nestle sampling algorithm
-        if self.rv_sampler == 'nestle':
-            res, samples, random_samples = self.run_nestle(self.rv_loglike_decay, free_params,
-                                                           'multi', self.rv_n_points, self.rv_tol)
+        if self.rv_sampler == "nestle":
+            res, samples, random_samples = self.run_nestle(
+                self.rv_loglike_decay,
+                free_params,
+                "multi",
+                self.rv_n_points,
+                self.rv_tol,
+            )
 
         # if selected, run the MultiNest sampling algorithm
-        elif self.rv_sampler == 'multinest':
-            res, samples, random_samples = self.run_multinest(self.rv_loglike_decay, free_params,
-                                                              self.rv_n_points, self.rv_tol,
-                                                              prefix + suffix)
+        elif self.rv_sampler == "multinest":
+            res, samples, random_samples = self.run_multinest(
+                self.rv_loglike_decay,
+                free_params,
+                self.rv_n_points,
+                self.rv_tol,
+                prefix + suffix,
+            )
         else:
-            raise ValueError('Unrecognized sampler, specify \'nestle\' or \'multinest\'')
+            raise ValueError("Unrecognized sampler, specify 'nestle' or 'multinest'")
 
         # split multi-instrument RV parameter results ('v0', 'jit') into separate sources
-        res['params'] = utl.split_rv_instrument_results(free_params, self.rv_data['src_order'],
-                                                        self.rv_data['src_tags'], res['params'])
+        res["params"] = utl.split_rv_instrument_results(
+            free_params,
+            self.rv_data["src_order"],
+            self.rv_data["src_tags"],
+            res["params"],
+        )
 
         # save results
-        rf = prefix + '_results' + suffix + '.json'
-        sf = prefix + '_random_samples' + suffix + '.txt'
-        resf = prefix + '_residuals' + suffix + '.txt'
+        rf = prefix + "_results" + suffix + ".json"
+        sf = prefix + "_random_samples" + suffix + ".txt"
+        resf = prefix + "_residuals" + suffix + ".txt"
 
-        res['model'] = 'rv_decay'
-        res['suffix'] = suffix
-        res['results_filename'] = rf
-        res['samples_filename'] = sf
+        res["model"] = "rv_decay"
+        res["suffix"] = suffix
+        res["results_filename"] = rf
+        res["samples_filename"] = sf
 
-        self.save_results(random_samples, samples, res, free_params,
-                          self.rv_sampler, suffix, prefix, illegal_params)
+        self.save_results(
+            random_samples,
+            samples,
+            res,
+            free_params,
+            self.rv_sampler,
+            suffix,
+            prefix,
+            illegal_params,
+        )
 
         # save residuals
         self.save_rv_residuals(res, resf)
 
         # generate radial velocity plot
-        self.plot_settings['RV_PLOT']['rv_decay_results_file' + suffix] = rf
-        self.plot_settings['RV_PLOT']['rv_decay_samples_file' + suffix] = sf
-        self.plot_settings['RV_PLOT']['rv_decay_residuals_file' + suffix] = resf
+        self.plot_settings["RV_PLOT"]["rv_decay_results_file" + suffix] = rf
+        self.plot_settings["RV_PLOT"]["rv_decay_samples_file" + suffix] = sf
+        self.plot_settings["RV_PLOT"]["rv_decay_residuals_file" + suffix] = resf
 
         if plot:
-            plot_filename = prefix + '_plot' + suffix
-            pl.make_rv_plots(self.plot_settings, plot_filename, suffix=suffix, model='decay')
+            plot_filename = prefix + "_plot" + suffix
+            pl.make_rv_plots(
+                self.plot_settings, plot_filename, suffix=suffix, model="decay"
+            )
 
         return res
 
@@ -489,77 +546,101 @@ class RadialVelocity:
         .. [2] PyMultiNest by Johannes Buchner. http://johannesbuchner.github.io/PyMultiNest
 
         """
-        free_params = np.array(free_params, dtype='<U16')
+        free_params = np.array(free_params, dtype="<U16")
 
         # raise an exception if RV data is not available
         try:
             self.rv_data
 
         except AttributeError:
-            raise Exception('\n\nNo radial velocity data was detected. Please give a valid path '
-                            'name in the\nsettings file before running the RV model fit.')
+            raise Exception(
+                "\n\nNo radial velocity data was detected. Please give a valid path "
+                "name in the\nsettings file before running the RV model fit."
+            )
 
         # define parameters that are not in the model
-        illegal_params = ['i0', 'O0', 'PdE', 'idE', 'edE', 'OdE', 'K_tide']
+        illegal_params = ["i0", "O0", "PdE", "idE", "edE", "OdE", "K_tide"]
 
         # raise an exception if the free parameter(s) are not valid
         utl.raise_not_valid_param_error(free_params, self.legal_params, illegal_params)
 
-        self.plot_settings['RV_PLOT']['data_file' + suffix] = self.rv_data_filename
+        self.plot_settings["RV_PLOT"]["data_file" + suffix] = self.rv_data_filename
 
         # split multi-instrument RV parameters ('v0', 'jit') into separate sources
-        free_params = utl.split_rv_instrument_params(self.rv_data['src_order'],
-                                                     self.rv_data['src_tags'],
-                                                     free_params)
-        print('-' * 100)
-        print('Running apsidal precession RV fit with free parameters: {}'.format(free_params))
-        print('-' * 100)
+        free_params = utl.split_rv_instrument_params(
+            self.rv_data["src_order"], self.rv_data["src_tags"], free_params
+        )
+        print("-" * 100)
+        print(f"Running apsidal precession RV fit with free parameters: {free_params}")
+        print("-" * 100)
 
         # specify a prefix for output file names
-        prefix = self.rv_save_dir + 'rv_precession'
+        prefix = self.rv_save_dir + "rv_precession"
 
         # if selected, run the Nestle sampling algorithm
-        if self.rv_sampler == 'nestle':
-            res, samples, random_samples = self.run_nestle(self.rv_loglike_precession, free_params,
-                                                           'multi', self.rv_n_points, self.rv_tol)
+        if self.rv_sampler == "nestle":
+            res, samples, random_samples = self.run_nestle(
+                self.rv_loglike_precession,
+                free_params,
+                "multi",
+                self.rv_n_points,
+                self.rv_tol,
+            )
         # if selected, run the MultiNest sampling algorithm
-        elif self.rv_sampler == 'multinest':
-            res, samples, random_samples = self.run_multinest(self.rv_loglike_precession,
-                                                              free_params, self.rv_n_points,
-                                                              self.rv_tol,
-                                                              prefix + suffix)
+        elif self.rv_sampler == "multinest":
+            res, samples, random_samples = self.run_multinest(
+                self.rv_loglike_precession,
+                free_params,
+                self.rv_n_points,
+                self.rv_tol,
+                prefix + suffix,
+            )
 
         else:
-            raise ValueError('Unrecognized sampler, specify \'nestle\' or \'multinest\'')
+            raise ValueError("Unrecognized sampler, specify 'nestle' or 'multinest'")
 
         # split multi-instrument RV parameter results ('v0', 'jit') into separate sources
-        res['params'] = utl.split_rv_instrument_results(free_params, self.rv_data['src_order'],
-                                                        self.rv_data['src_tags'], res['params'])
+        res["params"] = utl.split_rv_instrument_results(
+            free_params,
+            self.rv_data["src_order"],
+            self.rv_data["src_tags"],
+            res["params"],
+        )
 
         # save results
-        rf = prefix + '_results' + suffix + '.json'
-        sf = prefix + '_random_samples' + suffix + '.txt'
-        resf = prefix + '_residuals' + suffix + '.txt'
+        rf = prefix + "_results" + suffix + ".json"
+        sf = prefix + "_random_samples" + suffix + ".txt"
+        resf = prefix + "_residuals" + suffix + ".txt"
 
-        res['model'] = 'rv_precession'
-        res['suffix'] = suffix
-        res['results_filename'] = rf
-        res['samples_filename'] = sf
+        res["model"] = "rv_precession"
+        res["suffix"] = suffix
+        res["results_filename"] = rf
+        res["samples_filename"] = sf
 
-        self.save_results(random_samples, samples, res, free_params,
-                          self.rv_sampler, suffix, prefix, illegal_params)
+        self.save_results(
+            random_samples,
+            samples,
+            res,
+            free_params,
+            self.rv_sampler,
+            suffix,
+            prefix,
+            illegal_params,
+        )
 
         # save residuals
         self.save_rv_residuals(res, resf)
 
         # generate radial velocity plot
-        self.plot_settings['RV_PLOT']['rv_precession_results_file' + suffix] = rf
-        self.plot_settings['RV_PLOT']['rv_precession_samples_file' + suffix] = sf
-        self.plot_settings['RV_PLOT']['rv_precession_residuals_file' + suffix] = resf
+        self.plot_settings["RV_PLOT"]["rv_precession_results_file" + suffix] = rf
+        self.plot_settings["RV_PLOT"]["rv_precession_samples_file" + suffix] = sf
+        self.plot_settings["RV_PLOT"]["rv_precession_residuals_file" + suffix] = resf
 
         if plot:
-            plot_filename = prefix + '_plot' + suffix
-            pl.make_rv_plots(self.plot_settings, plot_filename, suffix=suffix, model='precession')
+            plot_filename = prefix + "_plot" + suffix
+            pl.make_rv_plots(
+                self.plot_settings, plot_filename, suffix=suffix, model="precession"
+            )
 
         return res
 
@@ -581,54 +662,91 @@ class RadialVelocity:
         None
 
         """
-
         # extract fit parameters
-        vals = fit_results['params']
+        vals = fit_results["params"]
 
-        with open(outfile, 'w') as f:
-            writer = csv.writer(f, delimiter=' ')
+        with open(outfile, "w") as f:
+            writer = csv.writer(f, delimiter=" ")
 
             # write header row
-            writer.writerow(['Time', 'Velocity', 'Err', 'Source'])
+            writer.writerow(["Time", "Velocity", "Err", "Source"])
 
-            if fit_results['model'] == 'rv_constant':
-
-                # iterate over radial velocity data sets
-                for i in self.rv_data['src_order']:
-                    rv_model = rv.rv_constant(vals['t0'][0], vals['P0'][0], vals['e0'][0],
-                                              vals['w0'][0], vals['K'][0],
-                                              vals['v0_' + self.rv_data['src_tags'][i]][0],
-                                              vals['dvdt'][0], vals['ddvdt'][0],
-                                              self.rv_data['trv'][i])
-
-                    # write time, velocity residuals, velocity errors, and source to CSV
-                    writer.writerows(zip(self.rv_data['trv'][i], self.rv_data['rvs'][i] - rv_model,
-                                         self.rv_data['err'][i], self.rv_data['src'][i]))
-
-            if fit_results['model'] == 'rv_decay':
+            if fit_results["model"] == "rv_constant":
 
                 # iterate over radial velocity data sets
-                for i in self.rv_data['src_order']:
-                    rv_model = rv.rv_decay(vals['t0'][0], vals['P0'][0], vals['e0'][0],
-                                           vals['w0'][0], vals['K'][0],
-                                           vals['v0_' + self.rv_data['src_tags'][i]][0],
-                                           vals['dvdt'][0], vals['ddvdt'][0], vals['PdE'][0],
-                                           self.rv_data['trv'][i])
+                for i in self.rv_data["src_order"]:
+                    rv_model = rv.rv_constant(
+                        vals["t0"][0],
+                        vals["P0"][0],
+                        vals["e0"][0],
+                        vals["w0"][0],
+                        vals["K"][0],
+                        vals["v0_" + self.rv_data["src_tags"][i]][0],
+                        vals["dvdt"][0],
+                        vals["ddvdt"][0],
+                        self.rv_data["trv"][i],
+                    )
 
                     # write time, velocity residuals, velocity errors, and source to CSV
-                    writer.writerows(zip(self.rv_data['trv'][i], self.rv_data['rvs'][i] - rv_model,
-                                         self.rv_data['err'][i], self.rv_data['src'][i]))
+                    writer.writerows(
+                        zip(
+                            self.rv_data["trv"][i],
+                            self.rv_data["rvs"][i] - rv_model,
+                            self.rv_data["err"][i],
+                            self.rv_data["src"][i],
+                        )
+                    )
 
-            if fit_results['model'] == 'rv_precession':
+            if fit_results["model"] == "rv_decay":
 
                 # iterate over radial velocity data sets
-                for i in self.rv_data['src_order']:
-                    rv_model = rv.rv_precession(vals['t0'][0], vals['P0'][0],
-                                                vals['e0'][0], vals['w0'][0], vals['K'][0],
-                                                vals['v0_' + self.rv_data['src_tags'][i]][0],
-                                                vals['dvdt'][0], vals['ddvdt'][0], vals['wdE'][0],
-                                                self.rv_data['trv'][i])
+                for i in self.rv_data["src_order"]:
+                    rv_model = rv.rv_decay(
+                        vals["t0"][0],
+                        vals["P0"][0],
+                        vals["e0"][0],
+                        vals["w0"][0],
+                        vals["K"][0],
+                        vals["v0_" + self.rv_data["src_tags"][i]][0],
+                        vals["dvdt"][0],
+                        vals["ddvdt"][0],
+                        vals["PdE"][0],
+                        self.rv_data["trv"][i],
+                    )
 
                     # write time, velocity residuals, velocity errors, and source to CSV
-                    writer.writerows(zip(self.rv_data['trv'][i], self.rv_data['rvs'][i] - rv_model,
-                                         self.rv_data['err'][i], self.rv_data['src'][i]))
+                    writer.writerows(
+                        zip(
+                            self.rv_data["trv"][i],
+                            self.rv_data["rvs"][i] - rv_model,
+                            self.rv_data["err"][i],
+                            self.rv_data["src"][i],
+                        )
+                    )
+
+            if fit_results["model"] == "rv_precession":
+
+                # iterate over radial velocity data sets
+                for i in self.rv_data["src_order"]:
+                    rv_model = rv.rv_precession(
+                        vals["t0"][0],
+                        vals["P0"][0],
+                        vals["e0"][0],
+                        vals["w0"][0],
+                        vals["K"][0],
+                        vals["v0_" + self.rv_data["src_tags"][i]][0],
+                        vals["dvdt"][0],
+                        vals["ddvdt"][0],
+                        vals["wdE"][0],
+                        self.rv_data["trv"][i],
+                    )
+
+                    # write time, velocity residuals, velocity errors, and source to CSV
+                    writer.writerows(
+                        zip(
+                            self.rv_data["trv"][i],
+                            self.rv_data["rvs"][i] - rv_model,
+                            self.rv_data["err"][i],
+                            self.rv_data["src"][i],
+                        )
+                    )

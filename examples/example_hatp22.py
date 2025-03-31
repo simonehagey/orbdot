@@ -1,5 +1,4 @@
-"""
-Long-Term Radial Velocity Trends : HAT-P-22
+"""Long-Term Radial Velocity Trends : HAT-P-22
 ===========================================
 This example executes an OrbDot reproduction of the radial velocity analyses of the Hot Jupiter
 host star HAT-P-22 from "The GAPS Programme with HARPS-N at TNG. XIV" by Bonomo et al. (2017),
@@ -19,31 +18,34 @@ The ``Analyzer`` class is then used to compare the the Bayesian evidences and co
 properties of the possible companion.
 """
 
-from orbdot.star_planet import StarPlanet
 from orbdot.analysis import Analyzer
-
+from orbdot.star_planet import StarPlanet
 
 # initialize the StarPlanet class
-hatp22 = StarPlanet('settings_files/HAT-P-22_settings.json')
+hatp22 = StarPlanet("settings_files/HAT-P-22_settings.json")
 
 """
 Model Fitting
 """
 # run an RV model fit of a circular orbit
-fit_circular = hatp22.run_rv_fit(['t0', 'P0', 'K', 'v0', 'jit'],
-                                 file_suffix='_circular')
+fit_circular = hatp22.run_rv_fit(
+    ["t0", "P0", "K", "v0", "jit"], file_suffix="_circular"
+)
 
 # run an RV model fit of an eccentric orbit
-fit_eccentric = hatp22.run_rv_fit(['t0', 'P0', 'K', 'v0', 'jit', 'ecosw', 'esinw'],
-                                  file_suffix='_eccentric')
+fit_eccentric = hatp22.run_rv_fit(
+    ["t0", "P0", "K", "v0", "jit", "ecosw", "esinw"], file_suffix="_eccentric"
+)
 
 # run an RV model fit of a circular orbit with a linear trend
-fit_linear = hatp22.run_rv_fit(['t0', 'P0', 'K', 'v0', 'jit', 'dvdt'],
-                               file_suffix='_linear')
+fit_linear = hatp22.run_rv_fit(
+    ["t0", "P0", "K", "v0", "jit", "dvdt"], file_suffix="_linear"
+)
 
 # run an RV model fit of a circular orbit with a quadratic trend
-fit_quadratic = hatp22.run_rv_fit(['t0', 'P0', 'K', 'v0', 'jit', 'dvdt', 'ddvdt'],
-                                  file_suffix='_quadratic')
+fit_quadratic = hatp22.run_rv_fit(
+    ["t0", "P0", "K", "v0", "jit", "dvdt", "ddvdt"], file_suffix="_quadratic"
+)
 
 """
 Interpretation

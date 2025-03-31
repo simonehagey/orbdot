@@ -1,10 +1,10 @@
-"""
-Stats
+"""Stats
 =====
 This module defines methods for statistical analyses and error propagation.
 """
 
 import numpy as np
+
 import orbdot.tools.utilities as utl
 
 
@@ -40,7 +40,7 @@ def credible_intervals(params, samples, dic, inds, circular=False):
 
             s = samples[:, i]
             mean = np.mean(s)
-            shifted = s - mean    # shift samples to zero at the mean value
+            shifted = s - mean  # shift samples to zero at the mean value
 
             # wrap shifted samples to fall within [-pi, pi] of mean
             for j in range(len(shifted)):
@@ -111,16 +111,16 @@ def propagate_err_ecosw_esinw(ecosw_results, esinw_results):
     # compute the partial derivatives
     de_df = f / np.sqrt(f**2 + h**2)
     de_dh = h / np.sqrt(f**2 + h**2)
-    dw_df = - h / (f**2 + h**2)
+    dw_df = -h / (f**2 + h**2)
     dw_dh = f / (f**2 + h**2)
 
     # propagate the upper and lower uncertainties to e0
-    e_upper = np.sqrt((de_df * f_upper)**2 + (de_dh * h_upper)**2)
-    e_lower = np.sqrt((de_df * f_lower)**2 + (de_dh * h_lower)**2)
+    e_upper = np.sqrt((de_df * f_upper) ** 2 + (de_dh * h_upper) ** 2)
+    e_lower = np.sqrt((de_df * f_lower) ** 2 + (de_dh * h_lower) ** 2)
 
     # propagate the upper and lower uncertainties to w0
-    w_upper = np.sqrt((dw_df * f_upper)**2 + (dw_dh * h_upper)**2)
-    w_lower = np.sqrt((dw_df * f_lower)**2 + (dw_dh * h_lower)**2)
+    w_upper = np.sqrt((dw_df * f_upper) ** 2 + (dw_dh * h_upper) ** 2)
+    w_lower = np.sqrt((dw_df * f_lower) ** 2 + (dw_dh * h_lower) ** 2)
 
     return (e, e_upper, e_lower), (w, w_upper, w_lower)
 
@@ -160,12 +160,12 @@ def propagate_err_sq_ecosw_sq_esinw(sq_ecosw_results, sq_esinw_results):
     dw_dh = f / (f**2 + h**2)
 
     # propagate the upper and lower uncertainties to e0
-    e_upper = np.sqrt((de_df * f_upper)**2 + (de_dh * h_upper)**2)
-    e_lower = np.sqrt((de_df * f_lower)**2 + (de_dh * h_lower)**2)
+    e_upper = np.sqrt((de_df * f_upper) ** 2 + (de_dh * h_upper) ** 2)
+    e_lower = np.sqrt((de_df * f_lower) ** 2 + (de_dh * h_lower) ** 2)
 
     # propagate the upper and lower uncertainties to w0
-    w_upper = np.sqrt((dw_df * f_upper)**2 + (dw_dh * h_upper)**2)
-    w_lower = np.sqrt((dw_df * f_lower)**2 + (dw_dh * h_lower)**2)
+    w_upper = np.sqrt((dw_df * f_upper) ** 2 + (dw_dh * h_upper) ** 2)
+    w_lower = np.sqrt((dw_df * f_lower) ** 2 + (dw_dh * h_lower) ** 2)
 
     return (e, e_upper, e_lower), (w, w_upper, w_lower)
 
@@ -188,4 +188,4 @@ def calc_chi2(data, model, errors):
         The chi-squared value.
 
     """
-    return -0.5 * (np.sum((data - model) ** 2 / (errors ** 2)))
+    return -0.5 * (np.sum((data - model) ** 2 / (errors**2)))

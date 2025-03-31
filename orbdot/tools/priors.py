@@ -1,5 +1,4 @@
-"""
-Priors
+"""Priors
 ======
 The methods in this module are designed for the :class:`~orbdot.nested_sampling.NestedSampling`
 class, or similar algorithms for which sampling from a unit hypercube is required to explore the
@@ -90,15 +89,16 @@ def get_prior(hypval, prior):
     prior_type = prior[0]
     prior_params = prior[1:3]
 
-    if prior_type == 'uniform':
+    if prior_type == "uniform":
         return uniform_prior(hypval, prior_params)
 
-    elif prior_type == 'gaussian' or type == 'normal':
+    if prior_type == "gaussian" or type == "normal":
         return gaussian_prior(hypval, prior_params)
 
-    elif prior_type == 'log':
+    if prior_type == "log":
         return log_prior(hypval, prior_params)
 
-    else:
-        raise ValueError('Prior type \'{}\' not recognized.\n Accepted priors are:'
-                         '\'uniform\', \'gaussian\', and \'log\''.format(prior_type))
+    raise ValueError(
+        f"Prior type '{prior_type}' not recognized.\n Accepted priors are:"
+        "'uniform', 'gaussian', and 'log'"
+    )

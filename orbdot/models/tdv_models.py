@@ -1,10 +1,10 @@
-"""
-Transit Duration Models
+"""Transit Duration Models
 =======================
 This module defines functions for modelling exoplanet transit durations.
 """
 
 import numpy as np
+
 from orbdot.models.theory import G, M_sun, R_sun, get_semi_major_axis_from_period
 
 
@@ -94,8 +94,8 @@ def tdv_decay(P0, e0, w0, i0, PdE, E, M_s, R_s):
         return None
 
     # unit conversions
-    i0 *= np.pi/180     # degrees to radians
-    R_s *= R_sun        # solar radii to m
+    i0 *= np.pi / 180  # degrees to radians
+    R_s *= R_sun  # solar radii to m
 
     # calculate the current orbital period
     P = P0 + PdE * E
@@ -108,7 +108,7 @@ def tdv_decay(P0, e0, w0, i0, PdE, E, M_s, R_s):
     f_c = (np.pi / 2 - w0) % (2 * np.pi)
 
     # calculate the planet-star separation at mid-transit
-    rho_c = (1 - e0 ** 2) / (1 + e0 * np.cos(f_c))
+    rho_c = (1 - e0**2) / (1 + e0 * np.cos(f_c))
 
     # calculate the impact parameter
     b = rho_c * a_r * np.cos(i0)
@@ -123,13 +123,21 @@ def tdv_decay(P0, e0, w0, i0, PdE, E, M_s, R_s):
     PdE *= 86400
 
     # determine the change in the semi major axis in metres per second
-    dadP = 1 / 3 * (G * M_s * P ** 2 / (4 * np.pi ** 2)) ** (-2/3) * G * M_s * P / (4 * np.pi ** 2)
+    dadP = (
+        1
+        / 3
+        * (G * M_s * P**2 / (4 * np.pi**2)) ** (-2 / 3)
+        * G
+        * M_s
+        * P
+        / (4 * np.pi**2)
+    )
 
     # calculate the change in the transit duration in seconds per metre
     t1 = P / np.pi
-    t2 = (rho_c ** 2) / (a * np.sqrt(1 - e0 ** 2))
-    t3 = (3 / 2) * np.arcsin(np.sqrt(1 - b ** 2) / (a_r * rho_c * np.sin(i0)))
-    t4 = -1 / (np.sqrt(1 - b ** 2) * np.sqrt(a_r ** 2 * rho_c ** 2 - 1))
+    t2 = (rho_c**2) / (a * np.sqrt(1 - e0**2))
+    t3 = (3 / 2) * np.arcsin(np.sqrt(1 - b**2) / (a_r * rho_c * np.sin(i0)))
+    t4 = -1 / (np.sqrt(1 - b**2) * np.sqrt(a_r**2 * rho_c**2 - 1))
     dTda = t1 * t2 * (t3 + t4)
 
     # calculate the change in the transit duration in seconds per epoch
@@ -183,8 +191,8 @@ def tdv_precession(P0, e0, w0, i0, wdE, E, M_s, R_s):
         return None
 
     # unit conversions
-    i0 *= np.pi/180     # degrees to radians
-    R_s *= R_sun        # solar radii to m
+    i0 *= np.pi / 180  # degrees to radians
+    R_s *= R_sun  # solar radii to m
 
     # anomalistic period
     P_anom = P0 / (1 - wdE / (2 * np.pi))
@@ -200,7 +208,7 @@ def tdv_precession(P0, e0, w0, i0, wdE, E, M_s, R_s):
     f_c = (np.pi / 2 - w_p) % (2 * np.pi)
 
     # calculate the planet-star separation at mid-transit
-    rho_c = (1 - e0 ** 2) / (1 + e0 * np.cos(f_c))
+    rho_c = (1 - e0**2) / (1 + e0 * np.cos(f_c))
 
     # calculate the impact parameter
     b = rho_c * a_r * np.cos(i0)
@@ -214,10 +222,10 @@ def tdv_precession(P0, e0, w0, i0, wdE, E, M_s, R_s):
 
     # calculate the change in the transit duration in seconds per radian
     t1 = P_anom / np.pi
-    t2 = rho_c ** 3 * e0 * np.cos(w_p)
-    t3 = 1 / ((1 - e0 ** 2) ** (3/2))
-    t4 = 1 / (np.sqrt(1 - b ** 2) * np.sqrt(a_r ** 2 * rho_c ** 2 - 1))
-    t5 = -2 * np.arcsin(np.sqrt(1 - b ** 2) / (a_r * rho_c * np.sin(i0)))
+    t2 = rho_c**3 * e0 * np.cos(w_p)
+    t3 = 1 / ((1 - e0**2) ** (3 / 2))
+    t4 = 1 / (np.sqrt(1 - b**2) * np.sqrt(a_r**2 * rho_c**2 - 1))
+    t5 = -2 * np.arcsin(np.sqrt(1 - b**2) / (a_r * rho_c * np.sin(i0)))
     dTdw = t1 * t2 * t3 * (t4 + t5)
 
     # calculate the change in the transit duration in seconds per epoch
@@ -258,8 +266,8 @@ def transit_duration(P0, e0, w0, i0, M_s, R_s):
 
     """
     # unit conversions
-    i0 *= np.pi/180     # degrees to radians
-    R_s *= R_sun        # solar radii to m
+    i0 *= np.pi / 180  # degrees to radians
+    R_s *= R_sun  # solar radii to m
 
     # calculate the semi major axis in units of stellar radii
     a = get_semi_major_axis_from_period(P0, M_s)
@@ -269,7 +277,7 @@ def transit_duration(P0, e0, w0, i0, M_s, R_s):
     f_c = (np.pi / 2 - w0) % (2 * np.pi)
 
     # calculate the planet-star separation at mid-transit
-    rho_c = (1 - e0 ** 2) / (1 + e0 * np.sin(f_c))
+    rho_c = (1 - e0**2) / (1 + e0 * np.sin(f_c))
 
     # calculate the impact parameter
     b = rho_c * a_r * np.cos(i0)
@@ -282,7 +290,7 @@ def transit_duration(P0, e0, w0, i0, M_s, R_s):
     P0 *= 86400
 
     # compute terms of the transit duration equation
-    t1 = (P0 / np.pi) * rho_c ** 2 / np.sqrt(1 - e0 ** 2)
+    t1 = (P0 / np.pi) * rho_c**2 / np.sqrt(1 - e0**2)
     t2 = np.sqrt(1 - b**2) / (rho_c * a_r * np.sin(i0))
 
     # return the transit duration in minutes

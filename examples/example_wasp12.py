@@ -1,5 +1,4 @@
-"""
-Orbital Decay of WASP-12 b
+"""Orbital Decay of WASP-12 b
 ==========================
 This example executes an OrbDot reproduction of the results from "The Orbit of WASP-12b Is
 Decaying" by Yee et al. (2020), in which the authors performed a comprehensive analysis of
@@ -11,24 +10,23 @@ period, orbital decay, and apsidal precession models to the data, compares the B
 evidences, and utilizes OrbDot's ``Analyzer`` class to derive the results.
 """
 
-from orbdot.star_planet import StarPlanet
 from orbdot.analysis import Analyzer
+from orbdot.star_planet import StarPlanet
 
-
-wasp12 = StarPlanet('settings_files/WASP-12_settings.json')
+wasp12 = StarPlanet("settings_files/WASP-12_settings.json")
 
 
 """
 Model Fitting
 """
 # run the constant-period TTV model fit
-fit_c = wasp12.run_ttv_fit(['t0', 'P0'], model='constant')
+fit_c = wasp12.run_ttv_fit(["t0", "P0"], model="constant")
 
 # run the orbital decay TTV model fit
-fit_d = wasp12.run_ttv_fit(['t0', 'P0', 'PdE'], model='decay')
+fit_d = wasp12.run_ttv_fit(["t0", "P0", "PdE"], model="decay")
 
 # run the apsidal precession TTV model fit
-fit_p = wasp12.run_ttv_fit(['t0', 'P0', 'e0', 'w0', 'wdE'], model='precession')
+fit_p = wasp12.run_ttv_fit(["t0", "P0", "e0", "w0", "wdE"], model="precession")
 
 """
 Interpretation

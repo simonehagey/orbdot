@@ -1,32 +1,36 @@
 import os
 import sys
 
+sys.path.insert(0, os.path.abspath("../.."))
 
-sys.path.insert(0, os.path.abspath('../..'))
+extensions = [
+    "sphinx.ext.autodoc",
+    "sphinx.ext.napoleon",
+    "sphinx_togglebutton",
+    "sphinxcontrib.bibtex",
+    "sphinx_copybutton",
+    "sphinx.ext.autosummary",
+    "sphinx.ext.viewcode",
+]
 
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.napoleon',
-              'sphinx_togglebutton', 'sphinxcontrib.bibtex', 'sphinx_copybutton',
-              'sphinx.ext.autosummary', 'sphinx.ext.viewcode'
-              ]
-
-templates_path = ['_templates']
-source_suffix = '.rst'
-master_doc = 'index'
-pygments_style = 'sphinx'
+templates_path = ["_templates"]
+source_suffix = ".rst"
+master_doc = "index"
+pygments_style = "sphinx"
 
 html_theme = "sphinx_rtd_theme"
-html_static_path = ['_static']
+html_static_path = ["_static"]
 html_logo = "_static/orbdot_logo.png"
 
 html_theme_options = {
-    'logo_only': False,
-    'display_version': True,
-    'collapse_navigation': False,
-    'sticky_navigation': True,
-    'navigation_depth': -1,
-    'prev_next_buttons_location': 'both',
-    'style_external_links': True,
-    'style_nav_header_background': 'white',
+    "logo_only": False,
+    "display_version": True,
+    "collapse_navigation": False,
+    "sticky_navigation": True,
+    "navigation_depth": -1,
+    "prev_next_buttons_location": "both",
+    "style_external_links": True,
+    "style_nav_header_background": "white",
 }
 
 html_context = {
@@ -43,6 +47,5 @@ napoleon_include_init_with_doc = True
 napoleon_use_admonition_for_notes = False
 
 bibtex_bibfiles = ["references.bib"]
-bibtex_reference_style = 'author_year'
+bibtex_reference_style = "author_year"
 autosummary_generate = True
-
