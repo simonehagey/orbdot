@@ -7,8 +7,7 @@ Fixes # (issue)
 # Checklist:
 
 - [ ] I have performed a self-review of my own code.
-- [ ] My code is PEP8 compliant (`flake8 orbdot tests`).
-- [ ] My code contains compliant docstrings (`pydocstyle --convention=numpy primpy`).
-- [ ] New and existing unit tests pass locally with my changes (`python -m pytest`).
+- [ ] My code is PEP8 compliant and contains numpy-compliant docstrings (`black .`, `ruff check .`).
+- [ ] New and existing unit tests pass locally with my changes (`python -m pytest tests/`).
 - [ ] I have added tests that prove my fix is effective or that my feature works.
 - [ ] I have appropriately incremented the [semantic version number](https://semver.org/) in both `README.rst` and `orbdot/__version__.py`.
