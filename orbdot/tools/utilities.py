@@ -242,6 +242,7 @@ def merge_dictionaries(default_file, user_file):
     For any given key, the user-defined setting overrides the default setting.
 
     """
+
     default_file = impresources.files(defaults) / default_file
 
     if user_file.split('/')[0] == 'defaults':

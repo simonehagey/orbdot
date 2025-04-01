@@ -1,0 +1,30 @@
+{"_comment0": "WASP-12 b Settings",
+
+  "_comment1": "Input Files",
+
+      "main_save_dir": "results/",
+      "system_info_file": "info_files/WASP-12_info.json",
+
+  "_comment2": "Model Fits",
+
+       "TTV_fit": {
+         "save_dir": "ttv_fits/",
+         "data_file": "data/WASP-12b_mid_times.txt",
+         "data_delimiter": " ",
+         "sampler": "nestle",
+         "n_live_points": 1000,
+         "evidence_tolerance": 0.01
+       },
+
+  "_comment3": "Priors",
+
+       "prior": {
+
+         "t0": ["gaussian", 2456305.4555, 0.01],
+         "P0": ["gaussian", 1.09142, 0.0001],
+         "e0": ["uniform", 0.0, 0.1],
+         "w0": ["uniform", 0.0, 6.2831853072],
+         "PdE": ["uniform", -1e-7, 0],
+         "wdE": ["uniform", 0.0, 0.01]
+       }
+}
