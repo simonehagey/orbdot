@@ -9,7 +9,7 @@ Citing OrbDot
 
 OrbDot is free software made available under the MIT License. If you use OrbDot in your research or projects, please cite the `JOSS paper <LINK>`__  and the `GitHub repository <LINK>`__ .
 
-If relevant to your work, please also consider citing the `complementary case study <LINK>`__ of Hot Jupiter TrES-1 b, which demonstrates the full capabilities of the `OrbDot` package.
+If relevant to your work, please also consider citing the `complementary case study <LINK>`__ of Hot Jupiter TrES-1 b, which demonstrates the full capabilities of the OrbDot package.
 
 BibTeX
 ------
