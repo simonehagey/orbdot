@@ -36,13 +36,13 @@ The necessity to search over long periods of time coupled with an ever-growing a
 
 A key advantage of `OrbDot` is its ability to fit multiple data types simultaneously, which can help to break parameter degeneracies. `OrbDot` also excels at assisting in result interpretation by generating automatic reports of model comparisons, as well as assessing various physical effects in the context of models and their corresponding theory. For example, analysis reports could determine key parameters for assessing tidal energy dissipation, apsidal precession mechanisms, variations due to systemic proper motion, and non-resonant companion objects, depending on the applied models.
 
-`OrbDot` remains highly efficient with multiple data types and a high number of free parameters, as it utilizes the powerful nested sampling algorithms of the `Nestle` [@nestle, @Skilling:2006] and `PyMultiNest` [@Buchner:2014; @Feroz:2008, @Feroz:2009, @Feroz:2019] packages. The intricacies of the implementation are abstracted such that the `OrbDot` input files are simple and the method calls require only a list of free parameters, along with the desired model for fitting.
+`OrbDot` remains highly efficient with multiple data types and a high number of free parameters, as it utilizes the powerful nested sampling algorithms of the `Nestle` [@nestle; @Skilling:2006] and `PyMultiNest` [@pymultinest; @Buchner:2014; @Feroz:2009] packages. The intricacies of the implementation are abstracted such that the `OrbDot` input files are simple and the method calls require only a list of free parameters, along with the desired model for fitting.
 
 Extensive documentation, including examples, is hosted on [ReadTheDocs](https://`orbdot.readthedocs.io).
 
 The examples demonstrate that `OrbDot` can reproduce literature results quickly using only a few lines of code. Readers may be especially interested in the `OrbDot` example analysis of the transit and eclipse mid-times of Hot Jupiter WASP-12 b, which is well-known for showing strong evidence for orbital decay.
   
-In addition to the documentation, there is a complementary case study of Hot Jupiter TrES-1 b <CITE AAS> that demonstrates the full capabilities of the `OrbDot` model fitting functions and interpretive tools, placing the need for this software in deeper scientific context. The TrES-1 b example may further leave the reader with ideas for how to utilize `OrbDot` in their own work. Moreover, an early version of this code was used for the orbital analysis of the Hot Neptune LTT-9779 b, published in @Edwards:2023.
+In addition to the documentation, there is a complementary case study of Hot Jupiter TrES-1 b (CITE) that demonstrates the full capabilities of the `OrbDot` model fitting functions and interpretive tools, placing the need for this software in deeper scientific context. The TrES-1 b example may further leave the reader with ideas for how to utilize `OrbDot` in their own work. Moreover, an early version of this code was used for the orbital analysis of the Hot Neptune LTT-9779 b, published in @Edwards:2023.
 
 # Statement of need
 
