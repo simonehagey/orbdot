@@ -8,13 +8,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "orbdot"
-description = "A set of tools for studying secular evolution of exoplanet orbits."
+description = "A Python package for studying the secular evolution of exoplanet orbits using observational data."
 license = {file = "LICENSE"}
 maintainers = [
     { name="Simone R. Hagey", email="shagey@phas.ubc.ca" },
 ]
 authors = [
     { name="Simone R. Hagey", email="shagey@phas.ubc.ca" },
+    { name="Aaron C. Boley", email="acboley@phas.ubc.ca" },
 ]
 dynamic = ["readme", "version"]
 requires-python = ">=3.10"
@@ -45,7 +46,6 @@ classifiers = [
 "Homepage" = "https://github.com/simonehagey/orbdot"
 "Bug Tracker" = "https://github.com/simonehagey/orbdot/issues"
 "Documentation" = "https://orbdot.readthedocs.io/en/latest/"
-# "JOSS paper" = "add JOSS paper link"
 
 [project.optional-dependencies]
 docs = [
