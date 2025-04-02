@@ -4,7 +4,7 @@
 OrbDot
 ======
 :Author: Simone R. Hagey
-:Version: 1.0.0
+:Version: 1.0.0 COMING SOON
 
 .. |OrbDot Logo| image:: https://github.com/simonehagey/orbdot/blob/main/docs/source/_static/orbdot_logo.png?raw=true
    :width: 250px
@@ -19,15 +19,20 @@ OrbDot
 
 Welcome to OrbDot!
 ==================
+OrbDot is a Python package for studying the secular (long-term) evolution of exoplanet orbits using observational data. Using nested sampling algorithms, it fits evolutionary models using any combination of transit and eclipse timing, radial velocities, and transit durations.
 
-OrbDot is a Python package that uses observational data to study the secular (long-term) evolution of exoplanet orbits. Powered by nested sampling algorithms, it fits evolutionary models using any combination of transit and eclipse timing, radial velocities, and transit durations. OrbDot can further aid in the interpretation of model fitting results by generating reports of model comparisons, derived tidal decay parameters, predicted precession rates, implications for planetary companions, and more.
+In addition to model fitting, OrbDot offers tools for interpreting results, generating reports on model comparisons, derived tidal decay parameters, predicted precession rates, implications for planetary companions, and more.
 
-The documentation, including examples, are hosted on `Read the Docs <https://orbdot.readthedocs.io/>`__.
+Comprehensive documentation, including examples, is available on `Read the Docs <https://orbdot.readthedocs.io/>`__.
+
+TrES-1 b Case Study
+-------------------
+In addition to the documentation, there is a complementary `TrES-1 b case study <LINK>`__ that showcases the full functionality of OrbDot’s model-fitting and interpretive tools while providing a deeper dive into the theoretical foundations behind the package. This paper consolidates key equations in one place, making it a valuable reference for researchers looking to apply OrbDot to their own work.
 
 Installation
 ------------
-See the `installation guide <https://orbdot.readthedocs.io/en/latest/installation.html>`__ for instructions on installing OrbDot and its dependencies.
+For installation instructions and dependency requirements, see the `installation guide <https://orbdot.readthedocs.io/en/latest/installation.html>`__.
 
 Citing OrbDot
 -------------
-Please see the `citation instructions <https://orbdot.readthedocs.io/en/latest/citing-orbdot.html>`__ if you are using OrbDot in your research.
+If you use OrbDot in your research, please refer to the `citation instructions <https://orbdot.readthedocs.io/en/latest/citing-orbdot.html>`__.
