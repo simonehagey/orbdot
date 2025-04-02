@@ -38,7 +38,7 @@ html_context = {
     "github_user": "simonehagey",
     "github_repo": "orbdot",
     "github_version": "master",
-    "conf_py_path": "/orbdot/",
+    "conf_py_path": "/orbdot/docs/",
 }
 
 napoleon_google_docstring = False
