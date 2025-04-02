@@ -58,8 +58,8 @@ Contents
    :titlesonly:
 
    installation
-   bibliography
    citing-orbdot
+   bibliography
    acknowledgements
 
 .. toctree::
