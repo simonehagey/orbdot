@@ -4,7 +4,8 @@
 OrbDot
 ======
 :Author: Simone R. Hagey
-:Version: 1.0.0 COMING SOON
+:Contact: shagey@phas.ubc.ca
+:Version: v1.0.0 is COMING SOON
 
 .. |OrbDot Logo| image:: https://github.com/simonehagey/orbdot/blob/main/docs/source/_static/orbdot_logo.png?raw=true
    :width: 250px
@@ -16,6 +17,8 @@ OrbDot
 .. image:: https://img.shields.io/badge/license-MIT-blue.svg
    :target: https://github.com/simonehagey/orbdot/blob/main/LICENSE
    :alt: License Information
+
+---
 
 Welcome to OrbDot!
 ==================

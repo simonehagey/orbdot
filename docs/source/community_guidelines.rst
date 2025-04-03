@@ -1,8 +1,8 @@
 .. _contributing-guidelines:
 
-#######################
-Contributing Guidelines
-#######################
+######################
+Contributing to OrbDot
+######################
 
 Thank you for your interest in contributing to OrbDot! Your feedback, bug reports, and code contributions are always welcome. If you have any questions or concerns, feel free to reach out via email (shagey@phas.ubc.ca).
 
