@@ -61,9 +61,9 @@ Contents
 
    installation
    citing-orbdot
-   community_guidelines
    bibliography
    acknowledgements
+   community_guidelines
 
 .. toctree::
    :caption: Examples

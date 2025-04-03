@@ -22,10 +22,6 @@ html_theme = "sphinx_rtd_theme"
 html_static_path = ["_static"]
 html_logo = "_static/orbdot_logo.png"
 
-# html_copy_source = True
-# html_show_sourcelink = True
-# html_sourcelink_suffix = ""
-
 html_theme_options = {
     "logo_only": False,
     "collapse_navigation": False,

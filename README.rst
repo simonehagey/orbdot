@@ -24,12 +24,6 @@ In addition to model fitting, OrbDot offers tools for interpreting results, gene
 
 Comprehensive documentation, including examples, is available on `Read the Docs <https://orbdot.readthedocs.io/>`__.
 
-TrES-1 b Case Study
-===================
-In addition to the documentation, there is a complementary `TrES-1 b case study <LINK>`__ that showcases the full functionality of OrbDot’s model-fitting and interpretive tools while providing a deeper dive into the theoretical foundations behind the package. This paper consolidates key equations in one place, making it a valuable reference for researchers looking to apply OrbDot to their own work.
-
------
-
 Installation
 ============
 For installation instructions and dependency requirements, see the `installation guide <https://orbdot.readthedocs.io/en/latest/installation.html>`__.
@@ -41,4 +35,11 @@ If you use OrbDot in your research, please refer to the `citation instructions <
 Contributing to OrbDot
 ======================
 Feedback, bug reports, feature requests, and code contributions are welcome! Please refer to the `contributing guidelines <https://orbdot.readthedocs.io/en/latest/community_guidelines.html>`__ for more information.
+
+-----
+
+TrES-1 b Case Study
+===================
+In addition to the documentation, there is a complementary `TrES-1 b case study <LINK>`__ that showcases the full functionality of OrbDot’s model-fitting and interpretive tools while providing a deeper dive into the theoretical foundations behind the package. This paper consolidates key equations in one place, making it a valuable reference for researchers looking to apply OrbDot to their own work.
+
 
