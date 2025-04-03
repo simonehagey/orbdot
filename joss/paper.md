@@ -29,7 +29,7 @@ aas-journal: Astrophysical Journal <- The name of the AAS journal.
 ---
 
 # Summary
-Gradual changes in exoplanet orbits, known as secular variations, can be detected through observations of transits, eclipses, and radial velocities that span multiple decades in time. Their detection and characterization enable the study of a wide range of dynamical phenomena, such as orbital decay and precession, which operate on timescales of millions of years. Under certain conditions, measurements of secular variations can even probe the interior structure of exoplanets, providing a unique tool for understanding exoplanet formation, evolution, and dynamics.
+Gradual changes in exoplanet orbits, known as secular variations, can be detected through observations of transits, eclipses, and radial velocities that span multiple decades in time. Their detection and characterization enable the study of a wide range of dynamical phenomena, such as orbital decay and precession, which operate on timescales of millions of years. Under certain conditions, measurements of secular variations can even probe the interior structure of exoplanets, providing a unique tool for understanding exoplanet formation and evolution.
 
 The necessity to search over long periods of time coupled with an ever-growing archive of exoplanet observations creates a need for fast and flexible open-source software that can reliably detect gradual changes in exoplanet orbits. `OrbDot` addresses this need by offering robust tools for fitting secular evolution models to exoplanet transit and eclipse mid-times, transit durations, and radial velocity data.
 
@@ -37,9 +37,9 @@ A key advantage of `OrbDot` is its ability to fit multiple data types simultaneo
 
 `OrbDot` remains highly efficient with multiple data types and a high number of free parameters, as it utilizes the powerful nested sampling algorithms of the `Nestle` [@nestle; @Skilling:2006] and `PyMultiNest` [@Buchner:2014; @Feroz:2009] packages. The intricacies of the implementation are abstracted such that the `OrbDot` input files are simple and the method calls require only a list of free parameters, along with the desired model for fitting.
 
-Extensive documentation, including examples, is hosted on [ReadTheDocs](https://orbdot.readthedocs.io). The examples demonstrate that `OrbDot` quickly reproduce literature results with just a few lines of code using only a few lines of code. Readers may be especially interested in the `OrbDot` example analysis of the transit and eclipse mid-times of Hot Jupiter WASP-12 b, which is well-known for showing strong evidence for orbital decay.
+Extensive documentation, including examples, is hosted on [ReadTheDocs](https://orbdot.readthedocs.io). The examples demonstrate that `OrbDot` can quickly reproduce literature results using only a few lines of code. Readers may be especially interested in the `OrbDot` example analysis of the transit and eclipse mid-times of Hot Jupiter WASP-12 b, which is well-known for showing strong evidence for orbital decay.
   
-Additionally, a complementary case study of TrES-1 b (CITE) illustrates the full capabilities of OrbDot, placing it in a broader scientific context. Moreover, an early version of this code was used for the orbital analysis of the Hot Neptune LTT-9779 b, published in @Edwards:2023.
+A complementary case study of TrES-1 b (CITE) illustrates the full capabilities of OrbDot, placing it in a broader scientific context. Moreover, an early version of this code was used for the orbital analysis of the Hot Neptune LTT-9779 b, published in @Edwards:2023.
 
 # Statement of need
 Many exoplanet systems now have transit and radial velocity data spanning over a decade, enabling studies of secular variations. While tools for analyzing short-term transit variations exist, there is a lack of open-source software dedicated to long-term orbital evolution. This does not, however, reflect a lack of interest, as the number of such studies is growing rapidly.
