@@ -1,6 +1,6 @@
 |OrbDot Logo|
 
-:Author: Simone R. Hagey
+:Authors: Simone R. Hagey
 :Contact: shagey@phas.ubc.ca
 :Version: v1.0.0 is COMING SOON
 
@@ -30,17 +30,14 @@ In addition to the documentation, there is a complementary `TrES-1 b case study 
 
 -----
 
-============
 Installation
 ============
 For installation instructions and dependency requirements, see the `installation guide <https://orbdot.readthedocs.io/en/latest/installation.html>`__.
 
-=============
 Citing OrbDot
 =============
 If you use OrbDot in your research, please refer to the `citation instructions <https://orbdot.readthedocs.io/en/latest/citing-orbdot.html>`__.
 
-======================
 Contributing to OrbDot
 ======================
 Feedback, bug reports, feature requests, and code contributions are welcome! Please refer to the `contributing guidelines <https://orbdot.readthedocs.io/en/latest/community_guidelines.html>`__ for more information.

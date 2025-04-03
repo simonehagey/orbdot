@@ -31,21 +31,23 @@ Contributing Code
 We welcome contributions in the form of bug fixes, new features, and documentation improvements! To contribute:
 
 1. **Fork and Clone the Repository**
+
    - First, fork the OrbDot repository and clone it to your local machine.
    - Keep your local ``main`` branch up-to-date with the repository to avoid conflicts.
 
 2. **Create a Development Branch**
+
    - Create a new branch with a descriptive name.
 
 3. **Write and Test Your Code**
-   - Follow the project's coding style and best practices.
-   - Include comments and **docstrings in `NumPy style <https://numpydoc.readthedocs.io/en/latest/format.html>`_.
+
+   - Include comments and docstrings in `NumPy style <https://numpydoc.readthedocs.io/en/latest/format.html>`_.
    - Test your changes to ensure they work as expected.
 
 4. **Submit a Pull Request**
+
    - When you're ready, open a `pull request on GitHub <https://github.com/simonehagey/orbdot/pulls>`_.
    - Provide a clear summary of your changes and how they improve OrbDot.
    - If your PR addresses an open issue, reference the issue number to help track the fix.
-
-A `pull request template <https://github.com/simonehagey/orbdot/blob/main/.github/pull_request_template.md>`_ is available to guide you through the process.
+   - A `pull request template <https://github.com/simonehagey/orbdot/blob/main/.github/pull_request_template.md>`_ is available to guide you through the process.
 
