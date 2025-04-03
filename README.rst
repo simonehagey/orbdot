@@ -5,7 +5,7 @@
 :Version: v1.0.0 is COMING SOON
 
 .. |OrbDot Logo| image:: https://github.com/simonehagey/orbdot/blob/main/docs/source/_static/orbdot_logo.png?raw=true
-   :width: 350px
+   :width: 325px
 
 .. image:: https://readthedocs.org/projects/orbdot/badge/?version=latest
    :target: https://orbdot.readthedocs.io/

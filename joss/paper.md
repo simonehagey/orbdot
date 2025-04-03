@@ -37,7 +37,9 @@ A key advantage of `OrbDot` is its ability to fit multiple data types simultaneo
 
 `OrbDot` remains highly efficient with multiple data types and a high number of free parameters, as it utilizes the powerful nested sampling algorithms of the `Nestle` [@nestle; @Skilling:2006] and `PyMultiNest` [@Buchner:2014; @Feroz:2009] packages. The intricacies of the implementation are abstracted such that the `OrbDot` input files are simple and the method calls require only a list of free parameters, along with the desired model for fitting.
 
-Extensive documentation, including examples, is hosted on [ReadTheDocs](https://orbdot.readthedocs.io). The examples demonstrate that `OrbDot` can quickly reproduce literature results using only a few lines of code. Readers may be especially interested in the `OrbDot` example analysis of the transit and eclipse mid-times of Hot Jupiter WASP-12 b, which is well-known for showing strong evidence for orbital decay.
+Extensive documentation, including examples, is hosted on [ReadTheDocs](https://orbdot.readthedocs.io). 
+
+The examples demonstrate that `OrbDot` can quickly reproduce literature results using only a few lines of code. Readers may be especially interested in the `OrbDot` example analysis of the transit and eclipse mid-times of Hot Jupiter WASP-12 b, which is well-known for showing strong evidence for orbital decay.
   
 A complementary case study of TrES-1 b (CITE) illustrates the full capabilities of OrbDot, placing it in a broader scientific context. Moreover, an early version of this code was used for the orbital analysis of the Hot Neptune LTT-9779 b, published in @Edwards:2023.
 
