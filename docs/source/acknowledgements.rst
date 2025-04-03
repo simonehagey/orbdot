@@ -8,4 +8,4 @@ Thank you to Liam Gray and Lukas Hergt for generously sharing their time and exp
 
 Additionally, this project would not have been possible without the insights and expertise of Aaron Boley, whose teaching and guidance on the theoretical foundations of this work was instrumental in shaping and validating the project.
 
-Finally, the development of OrbDot was supported financially, in part, by an NSERC Discovery Grant (DG-2020-04635) and the University of British Columbia. SH's contribution was further supported, in part, by an NSERC PGS-D and a Li Tze Fong Fellowship.
+The development of OrbDot was supported financially, in part, by an NSERC Discovery Grant (DG-2020-04635) and the University of British Columbia. SH's contribution was further supported, in part, by an NSERC PGS-D and a Li Tze Fong Fellowship.
