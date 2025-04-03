@@ -28,30 +28,21 @@ html_logo = "_static/orbdot_logo.png"
 
 html_theme_options = {
     "logo_only": False,
-    "display_version": True,
     "collapse_navigation": False,
     "sticky_navigation": True,
     "navigation_depth": -1,
     "prev_next_buttons_location": "both",
     "style_external_links": True,
     "style_nav_header_background": "white",
-
-    "path_to_docs": "docs/source/",
-    "repository_url": "https://github.com/simonehagey/orbdot",
-    "repository_branch": "main",
-    "use_edit_page_button": True,
-    "use_issues_button": True,
-    "use_repository_button": True,
-    "use_download_button": True,
 }
 
-# html_context = {
-#     "display_github": True,
-#     "github_user": "simonehagey",
-#     "github_repo": "orbdot",
-#     "github_version": "main",
-#     "conf_py_path": "/orbdot/docs/",
-# }
+html_context = {
+    "display_github": True,
+    "github_user": "simonehagey",
+    "github_repo": "orbdot",
+    "github_version": "main",
+    "conf_py_path": "/docs/source/",
+}
 
 napoleon_google_docstring = False
 napoleon_numpy_docstring = True
