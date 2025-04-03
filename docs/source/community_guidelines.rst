@@ -4,24 +4,22 @@
 Contributing Guidelines
 #######################
 
-Thank you for your interest in contributing to OrbDot! Your feedback, bug reports, and code contributions are always welcome. If you have any questions or concerns, feel free to reach out via email.
+Thank you for your interest in contributing to OrbDot! Your feedback, bug reports, and code contributions are always welcome. If you have any questions or concerns, feel free to reach out via email (shagey@phas.ubc.ca).
 
 Bug Reports and Feature Requests
 ================================
-
-If you encounter a bug, unexpected behavior, or have an idea for a new feature, please open an issue on the `GitHub repository <https://github.com/simonehagey/orbdot/issues>`_.
-
-When submitting an issue, please provide as much relevant information as possible, including:
+If you encounter a bug or unexpected behavior, please open an `issue on GitHub <https://github.com/simonehagey/orbdot/issues>`_. When submitting an issue, please provide as much relevant information as possible, including:
 
 - A clear and descriptive title.
 - A minimal code snippet that reproduces the issue (if applicable).
 - Any additional details that might help diagnose the problem, such as your system information (e.g., OS, Python version, and dependencies).
 
-To make this process easier, a bug report template is available. Simply copy the contents of the appropriate template, modify it to demonstrate the issue, and paste it into the issue description.
+To make this process easier, a `bug report template <https://github.com/simonehagey/orbdot/blob/main/.github/bug_report.md>` is available. Simply copy the contents of the appropriate template, modify it to demonstrate the issue, and paste it into the issue description.
+
+If you would like to suggest a new feature, please open a GitHub issue using the `feature request template <https://github.com/simonehagey/orbdot/blob/main/.github/feature_request.md>`__.
 
 Fixing Bugs
 ===========
-
 If you’ve fixed a bug, thank you! To submit your fix:
 
 1. Open a new pull request (PR) on GitHub.
@@ -30,7 +28,6 @@ If you’ve fixed a bug, thank you! To submit your fix:
 
 Contributing Code
 =================
-
 We welcome contributions in the form of bug fixes, new features, and documentation improvements! To contribute:
 
 1. **Fork and Clone the Repository**
