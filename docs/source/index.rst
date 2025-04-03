@@ -61,6 +61,7 @@ Contents
 
    installation
    citing-orbdot
+   contributing-guidelines
    bibliography
    acknowledgements
 
