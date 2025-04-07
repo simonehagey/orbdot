@@ -57,7 +57,7 @@ OrbDot requires Python 3.10 or higher and depends on the following libraries:
 - `astropy <https://github.com/astropy/astropy>`_ (>=5.1.1)
 - `corner <https://github.com/dfm/corner.py>`_ (>=2.2.1)
 - `nestle <https://github.com/kbarbary/nestle>`_ (>=0.2.0)
-- `matplotlib <https://github.com/matplotlib/matplotlib>`_
+- `matplotlib <https://github.com/matplotlib/matplotlib>`_ (=3.5.0)
 
 Additional optional dependencies:
 
