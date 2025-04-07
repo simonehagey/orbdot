@@ -67,8 +67,14 @@ readme = { file = ["README.rst"], content-type = "text/x-rst" }
 [tool.setuptools-git-versioning]
 enabled = true
 
-[tool.setuptools.packages]
-find = {}
+#[tool.setuptools.packages]
+#find = {}
+
+[tool.setuptools.packages.find]
+where = ["orbdot"]
+
+[tool.setuptools.package-data]
+mypkg = ["*.json"]
 
 [tool.ruff]
 # Enable:
