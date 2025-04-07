@@ -71,7 +71,7 @@ enabled = true
 find = {}
 
 [tool.setuptools.package-data]
-"" = ["defaults/*.json"]
+"orbdot" = ["defaults/*.json"]
 
 [tool.ruff]
 # Enable:
