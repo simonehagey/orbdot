@@ -70,11 +70,16 @@ enabled = true
 [tool.setuptools.packages]
 find = {}
 
+[tool.setuptools]
+py-modules = ['hello']
+
+#[tool.setuptools.package-data]
+#hello = ['my_data/*']
+
 #[tool.setuptools.packages.find]
 #where = ["orbdot"]
-
 [tool.setuptools.package-data]
-"" = ["*.json"]
+"" = ["defaults/*.json"]
 
 [tool.ruff]
 # Enable:
