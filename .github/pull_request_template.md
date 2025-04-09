@@ -1,13 +1,24 @@
 # Description
 
-Please include a summary of the change and which issue is fixed. Please also include relevant motivation and context.
+Briefly describe what you’ve changed and why, including as much context as possible.
 
-Fixes # (issue)
+If this pull request addresses an open issue, please reference it here: <issue number>
+
+# Type of change
+
+Please delete options that are not relevant.
+
+- [ ] Bug fix (non-breaking change that fixes an issue).
+- [ ] New feature (non-breaking change that adds functionality).
+- [ ] Documentation update (change that affects only docs).
 
 # Checklist:
 
-- [ ] I have performed a self-review of my own code.
-- [ ] My code is PEP8 compliant and contains numpy-compliant docstrings (`black .`, `ruff check .`).
-- [ ] New and existing unit tests pass locally with my changes (`python -m pytest tests/`).
-- [ ] I have added tests that prove my fix is effective or that my feature works.
-- [ ] I have appropriately incremented the [semantic version number](https://semver.org/) in both `README.rst` and `orbdot/__version__.py`.
+Here’s a quick checklist to help ensure everything’s in order. If an item does not apply to your changes, feel free to skip it or leave a brief note.
+
+- [ ] I have reviewed and tested my code to ensure the fix or feature works.
+- [ ] I have commented my code, particularly in hard-to-understand areas.
+- [ ] My code is PEP8 compliant and contains Numpy-style docstrings.
+- [ ] I have updated the documentation, if needed.
+- [ ] All existing unit tests pass with my changes.
+- [ ] I have considered backwards compatibility and noted any breaking changes.
