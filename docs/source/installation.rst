@@ -6,8 +6,6 @@ Installation
 
 To install the OrbDot package, you have different options depending on your environment and preferences. Before installing OrbDot, it is recommended to create and activate a virtual environment using ``venv`` to prevent dependency conflicts.
 
-OrbDot currently requires Python 3.9 or higher to run.
-
 Using `pip <http://www.pip-installer.org/>`_
 --------------------------------------------
 The recommended way to install the stable version of OrbDot is using ``pip``:
@@ -52,21 +50,21 @@ If the model fitting process starts successfully, the installation was successfu
 
 Dependencies
 ------------
-OrbDot requires Python 3.10 or higher and depends on the following libraries:
+OrbDot requires Python 3.9 or higher and depends on the following libraries:
 
-- `numpy <https://github.com/numpy/numpy>`_ [>=1.24] :cite:`numpy`
-- `scipy <https://github.com/scipy/scipy>`_ [>=1.13] :cite:`scipy`
-- `astropy <https://github.com/astropy/astropy>`_ [>=5.1.1] :cite:`astropy`
-- `corner <https://github.com/dfm/corner.py>`_ [>=2.2.1] :cite:`corner`
-- `nestle <https://github.com/kbarbary/nestle>`_ [>=0.2.0] :cite:`nestle`
-- `matplotlib <https://github.com/matplotlib/matplotlib>`_ [>=3.5.0] :cite:`matplotlib`
+- `numpy <https://github.com/numpy/numpy>`_ (>=1.24) :cite:p:`numpy`
+- `scipy <https://github.com/scipy/scipy>`_ (>=1.13) :cite:p:`scipy`
+- `astropy <https://github.com/astropy/astropy>`_ (>=5.1.1) :cite:p:`astropy`
+- `corner <https://github.com/dfm/corner.py>`_ (>=2.2.1) :cite:p:`corner`
+- `nestle <https://github.com/kbarbary/nestle>`_ (>=0.2.0) :cite:p:`nestle`
+- `matplotlib <https://github.com/matplotlib/matplotlib>`_ (>=3.5.0) :cite:p:`matplotlib`
 
 Additional optional dependencies:
 
-- `PyMultiNest <https://github.com/JohannesBuchner/PyMultiNest>`_ by Johannes Buchner :cite:`pymultinest, Buchner2014`, a Python interface
-  for `MultiNest <https://github.com/farhanferoz/MultiNestt>`_ :cite:`multinest, Feroz2019`.
+- `PyMultiNest <https://github.com/JohannesBuchner/PyMultiNest>`_ by Johannes Buchner :cite:p:`pymultinest, Buchner2014`, a Python interface
+  for `MultiNest <https://github.com/farhanferoz/MultiNestt>`_ :cite:p:`multinest, Feroz2019`.
 
 .. note::
-    When using the nested sampling methods :cite:`Skilling2006, Feroz2008` the users can choose between two packages: Nestle and PyMultiNest. PyMultiNest is generally faster and more robust, but it can be difficult to install. Therefore, it is not required for using OrbDot.
+    When using the nested sampling methods :cite:p:`Skilling2006, Feroz2008` the users can choose between two packages: Nestle and PyMultiNest. PyMultiNest is generally faster and more robust, but it can be difficult to install. Therefore, it is not required for using OrbDot.
 
     Nestle is included as a dependency and will be installed automatically. In order to use PyMultiNest, you will have to follow their installation instructions `here <https://johannesbuchner.github.io/PyMultiNest/install.html>`_ after setting up OrbDot.
