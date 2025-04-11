@@ -5,7 +5,7 @@ Long-Term Radial Velocity Trends
 ********************************
 This example demonstrates an OrbDot reproduction of the results from *"The GAPS Programme with HARPS-N at TNG XIV"* by :cite:t:`Bonomo2017` and *"Friends of Hot Jupiters I"* by :cite:t:`Knutson2014` of analyses of the Hot Jupiter host stars HAT-P-4 and HAT-P-22.
 
-In both studies, the authors detect a statistically significant long-term linear trend in the radial velocity measurements of HAT-P-4. For HAT-P-22, :cite:author:`Bonomo2017` measure a significant quadratic trend when combining their data with that of :cite:author:`Knutson2014`. In both cases, these long-term trends are suggestive of an outer planetary companion.
+In both studies, the authors detect a statistically significant long-term linear trend in the radial velocity measurements of HAT-P-4. For HAT-P-22, :cite:author:`Bonomo2017` measure a significant quadratic trend when combining their data with that of :cite:author:`Knutson2014` In both cases, these long-term trends are suggestive of an outer planetary companion.
 
 Using compiled radial velocity measurements of HAT-P-4 and HAT-P-22 from :cite:author:`Bonomo2017` and :cite:author:`Knutson2014`, this example runs various model fits, compares the Bayesian evidences, and uses OrbDot's :class:`~orbdot.analysis.Analyzer` class to constrain properties of a possible outer companion.
 
@@ -297,7 +297,7 @@ The following code snippet fits the radial velocity data to both circular and ec
     # run an RV model fit of an eccentric orbit
     fit_eccentric = hatp4.run_rv_fit(['t0', 'P0', 'K', 'v0', 'jit', 'ecosw', 'esinw'], file_suffix='_eccentric')
 
-Notice how the ``file_suffix`` argument is used to differentiate the fits, which is necessary because they both apply the stable-orbit model (i.e. ``model="constant"``)
+Notice how the ``file_suffix`` argument is used to differentiate the fits, which is necessary because they both apply the stable-orbit model (i.e., ``model="constant"``).
 
 Once the model fits are complete, the output files are found in the directory that was given in the settings file, in this case: ``examples/results/HAT-P-4/rv_fits/``. The dropdown menus below show the contents of the ``*_summary.txt`` files, which provide a convenient summary of the results.
 
@@ -369,7 +369,7 @@ Once the model fits are complete, the output files are found in the directory th
 
 The best-fit parameter values are shown, with uncertainties derived from the 68% credible intervals, as well as other useful information about the model fit. Notice how the instrument-dependent free parameters, ``"v0"`` and ``"jit"``, were automatically split into different variables for each data source.
 
-Though the Bayesian evidences for the two models, ``log(Z) = -161.6`` and ``log(Z) = -161.7``, are indistinguishable, the result of the eccentric orbit fit is consistent with that of a circular orbit. This finding is consistent with the results from both :cite:author:`Bonomo2017` and :cite:author:`Knutson2014`.
+Though the Bayesian evidences for the two models, ``log(Z) = -161.6`` and ``log(Z) = -161.7``, are indistinguishable, the result of the eccentric orbit fit is consistent with that of a circular orbit. This finding is consistent with the results from both :cite:author:`Bonomo2017` and :cite:author:`Knutson2014`
 
 Next, we will focus on the circular orbit model for HAT-P-4 b, this time including the long-term linear and quadratic trends with the ``"dvdt"`` and ``"ddvdt"`` parameters (Models 3 and 4):
 
@@ -554,7 +554,7 @@ This appends the following summary to the output file:
      * Apparent orbital period derivative induced by the line-of-sight acceleration:
           dP/dt = 7.21E+00 ms/yr
 
-The following table shows that these lower limits are consistent with the findings of :cite:author:`Knutson2014`. Upper limits cannot be determined from radial velocity data alone, and :cite:author:`Knutson2014` performed additional analyses using AO imaging to address this limitation. The :cite:author:`Bonomo2017` study did not report these constraints directly but instead referenced :cite:author:`Knutson2014`, stating that their best-fit parameters are in agreement.
+The following table shows that these lower limits are consistent with the findings of :cite:author:`Knutson2014` Upper limits cannot be determined from radial velocity data alone, and :cite:author:`Knutson2014` performed additional analyses using AO imaging to address this limitation. The :cite:author:`Bonomo2017` study did not report these constraints directly but instead referenced :cite:author:`Knutson2014`, stating that their best-fit parameters are in agreement.
 
 .. list-table::
    :header-rows: 1
@@ -581,9 +581,9 @@ The following image displays a plot of the best-fit linear trend over the RV res
 
 HAT-P-22 b
 ==========
-We will now study the radial velocities of the Hot Jupiter host star HAT-P-22, for which :cite:author:`Bonomo2017` found strong evidence of a long-term quadratic trend when combining their data with that of :cite:author:`Knutson2014`. At the time of the :cite:author:`Knutson2014` study, the observational baseline was not long enough for them to detect curvature in the data.
+We will now study the radial velocities of the Hot Jupiter host star HAT-P-22, for which :cite:author:`Bonomo2017` found strong evidence of a long-term quadratic trend when combining their data with that of :cite:author:`Knutson2014` At the time of the :cite:author:`Knutson2014` study, the observational baseline was not long enough for them to detect curvature in the data.
 
-As this analysis follows the same procedure as above, we will move through it more quickly. Same as before, the first step is to create an instance of :class:`~orbdot.star_planet.StarPlanet` that represents HAT-P-22 b:
+As this analysis follows the same procedure as above, we will move through it quickly. Same as before, the first step is to create an instance of :class:`~orbdot.star_planet.StarPlanet` that represents HAT-P-22 b:
 
 .. code-block:: python
 
