@@ -1,7 +1,6 @@
 |OrbDot Logo|
 
-:Author: Simone R. Hagey
-:Contact: shagey@phas.ubc.ca
+:Contact: Simone R. Hagey (shagey@phas.ubc.ca)
 
 .. |OrbDot Logo| image:: https://github.com/simonehagey/orbdot/blob/main/docs/source/_static/orbdot_logo.png?raw=true
    :width: 310px
