@@ -1,8 +1,7 @@
 |OrbDot Logo|
 
-:Authors: Simone R. Hagey
+:Author: Simone R. Hagey
 :Contact: shagey@phas.ubc.ca
-:Version: v1.0.0 is COMING SOON
 
 .. |OrbDot Logo| image:: https://github.com/simonehagey/orbdot/blob/main/docs/source/_static/orbdot_logo.png?raw=true
    :width: 310px
@@ -40,6 +39,6 @@ Feedback, bug reports, feature requests, and code contributions are welcome! Ple
 
 TrES-1 b Case Study
 ===================
-In addition to the documentation, there is a complementary `TrES-1 b case study <LINK>`__ that showcases the full functionality of OrbDot’s model-fitting and interpretive tools while providing a deeper dive into the theoretical foundations behind the package. This paper consolidates key equations in one place, making it a valuable reference for researchers looking to apply OrbDot to their own work.
+In addition to the documentation, there is a complementary `TrES-1 b case study <LINK>`__ that showcases the full functionality of OrbDot’s model-fitting and interpretive tools, while providing a deeper dive into the theoretical foundations behind the package. This paper consolidates key equations in one place, making it a valuable reference for researchers looking to apply OrbDot to their own work.
 
 
