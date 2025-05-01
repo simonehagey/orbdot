@@ -14,12 +14,12 @@ authors:
     orcid: 0000-0001-8072-0590
     affiliation: 1
   - name: Aaron Boley
-    orcid: 0000-0000-0000-0000
+    orcid: 0000-0002-0574-4418
     affiliation: 1
 affiliations:
   - name: Department of Physics and Astronomy, The University of British Columbia, 6224 Agricultural Road Vancouver, BC V6T 1Z1, Canada
     index: 1
-date: 4 April 2025
+date: 1 May 2025
 bibliography: paper.bib
 
 # Optional fields if submitting to a AAS journal too, see this blog post:
@@ -31,7 +31,7 @@ aas-journal: Astrophysical Journal <- The name of the AAS journal.
 # Summary
 Gradual changes in exoplanet orbits, known as secular variations, can be detected through observations of transits, eclipses, and radial velocities that span multiple decades in time. Their detection and characterization enable the study of a wide range of dynamical phenomena, such as orbital decay and precession, which operate on timescales of millions of years. Under certain conditions, measurements of secular variations can even probe the interior structure of exoplanets, providing a unique tool for understanding exoplanet formation and evolution.
 
-The necessity to search over long periods of time coupled with an ever-growing archive of exoplanet observations creates a need for fast and flexible open-source software that can reliably detect gradual changes in exoplanet orbits. `OrbDot` addresses this need by offering robust tools for fitting secular evolution models to exoplanet transit and eclipse mid-times, transit durations, and radial velocity data.
+The necessity to search over many orbital epochs coupled with an ever-growing archive of exoplanet observations creates a need for fast and flexible open-source software that can reliably detect gradual changes in exoplanet orbits. `OrbDot` addresses this need by offering robust tools for fitting secular evolution models to exoplanet transit and eclipse mid-times, transit durations, and radial velocity data.
 
 A key advantage of `OrbDot` is its ability to fit multiple data types simultaneously, which can help to break parameter degeneracies. It also excels at assisting in result interpretation by generating reports on model comparisons and assessments of various physical effects in the context of the models and their corresponding theory. For example, analysis reports could determine key parameters for assessing tidal energy dissipation, apsidal precession mechanisms, variations due to systemic proper motion, and the dynamical effects of non-resonant companion objects, depending on the applied models.
 
