@@ -44,6 +44,8 @@ napoleon_google_docstring = False
 napoleon_numpy_docstring = True
 napoleon_include_init_with_doc = True
 napoleon_use_admonition_for_notes = False
+napoleon_use_admonition_for_references = False
+napoleon_use_rtype = False
 
 bibtex_bibfiles = ["references.bib"]
 bibtex_reference_style = "author_year"
