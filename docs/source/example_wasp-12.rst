@@ -15,7 +15,7 @@ Before running the model fits, we need to save the transit and eclipse mid-times
 
 Data
 ----
-The transit mid-times are taken from Table 5 of :cite:author:`Yee2020`, and saved in the file: ``examples/data/WASP-12_mid_times.txt``.
+The transit mid-times are taken from Table 5 of :cite:author:`Yee2020` and saved in the file: ``examples/data/WASP-12_mid_times.txt``.
 
 .. important::
     Note that the eclipse mid-times, listed at the end of the file, are specified by a half-orbit (0.5) in the ``Epoch`` column, which is required for OrbDot to treat them separately from the transit mid-times.
@@ -197,7 +197,7 @@ For WASP-12 b, we have chosen broad uniform prior distributions for ``"e0"``, ``
 
 Model Fits
 ==========
-In the following sections we will fit the WASP-12 b mid-times to the constant-period, orbital decay, and apsidal precession models, and compare the results to those of :cite:author:`Yee2020`. The first step is to import the :class:`~orbdot.star_planet.StarPlanet` and :class:`~orbdot.analysis.Analyzer` classes, and then to create an instance of :class:`~orbdot.star_planet.StarPlanet` that represents WASP-12 b:
+In the following sections we will fit the WASP-12 b mid-times to the constant-period, orbital decay, and apsidal precession models, and compare the results to those of :cite:author:`Yee2020` The first step is to import the :class:`~orbdot.star_planet.StarPlanet` and :class:`~orbdot.analysis.Analyzer` classes, and then to create an instance of :class:`~orbdot.star_planet.StarPlanet` that represents WASP-12 b:
 
 .. code-block:: python
 
@@ -245,7 +245,7 @@ Once the fit is complete, the output files can be found in the directory that wa
         e0 = 0.0
         w0 = 0.0
 
-This shows us that it took 3.58 seconds to run the model fit and that the Bayesian evidence (``log(Z)``) for the is -204.6. The best-fit parameter values are also shown, with the uncertainties derived from the 68% credible intervals. The following table compares these results with those of :cite:author:`Yee2020`, and we see that they agree.
+This shows us that it took 3.58 seconds to run the model fit and that the Bayesian evidence (``log(Z)``) for the is -204.6. The best-fit parameter values are also shown, with the uncertainties derived from the 68% credible intervals. The following table compares these results with those of :cite:author:`Yee2020` and we see that they agree.
 
 .. list-table::
    :header-rows: 1
@@ -301,7 +301,7 @@ The ``ttv_decay_summary.txt`` file shows us that the fitting routine ran for 7.0
         e0 = 0.0
         w0 = 0.0
 
-The following table compares the orbital decay fit with that of :cite:author:`Yee2020`, and we again see that the OrbDot results are in excellent agreement!
+The following table compares the orbital decay fit with that of :cite:author:`Yee2020` and we again see that the OrbDot results are in excellent agreement!
 
 .. list-table::
    :header-rows: 1
@@ -364,7 +364,7 @@ This time the summary file (``ttv_precession_summary.txt``) shows us that the mo
         Fixed Parameters
         ----------------
 
-The table below shows again that the OrbDot result agrees with :cite:author:`Yee2020`!
+The table below shows again that the OrbDot result agrees with :cite:author:`Yee2020`
 
 .. list-table::
    :header-rows: 1
@@ -472,7 +472,7 @@ This appends the following summary to the ``analysis/ttv_decay_analysis.txt`` fi
      * Angular momentum loss rate:
           dLdt = -7.22E+27 kg m^2 / s^2
 
-We see that the best-fit orbital decay model yields a stellar tidal quality factor of :math:`3.46 \times 10^5`, a remaining lifetime of :math:`3.25 \, \mathrm{Myr}`, and a decrease in orbital energy and angular momentum equal to :math:`-4.8 \times 10^{23} \, \mathrm{W}` and :math:`-7.2 \times 10^{27} \, \mathrm{kg \, m^2 \, s^{-2}}`, respectively. The following table shows that all of these derived results agree with :cite:author:`Yee2020`.
+We see that the best-fit orbital decay model yields a stellar tidal quality factor of :math:`3.46 \times 10^5`, a remaining lifetime of :math:`3.25 \, \mathrm{Myr}`, and a decrease in orbital energy and angular momentum equal to :math:`-4.8 \times 10^{23} \, \mathrm{W}` and :math:`-7.2 \times 10^{27} \, \mathrm{kg \, m^2 \, s^{-2}}`, respectively. The following table shows that all of these derived results agree with :cite:author:`Yee2020`
 
 .. list-table::
    :header-rows: 1
@@ -484,7 +484,7 @@ We see that the best-fit orbital decay model yields a stellar tidal quality fact
    * - :math:`Q'_*`
      - --
      - :math:`1.75 \times 10^5`
-     - :math:`3.46 \times 10^5`
+     - :math:`3.46 \times 10^5` (see note below)
    * - :math:`\tau`
      - :math:`\mathrm{Myr}`
      - :math:`3.25`
