@@ -17,15 +17,15 @@ authors:
     orcid: 0000-0002-0574-4418
     affiliation: 1
 affiliations:
-  - name: Department of Physics and Astronomy, The University of British Columbia, 6224 Agricultural Road Vancouver, BC V6T 1Z1, Canada
+  - name: Department of Physics and Astronomy, The University of British Columbia, 6224 Agricultural Road Vancouver, BC, V6T 1Z1, Canada
     index: 1
-date: 1 May 2025
+date: 5 May 2025
 bibliography: paper.bib
 
 # Optional fields if submitting to a AAS journal too, see this blog post:
 # https://blog.joss.theoj.org/2018/12/a-new-collaboration-with-aas-publishing
-aas-doi: 10.3847/xxxxx <- update this with the DOI from AAS once you know it.
-aas-journal: Astrophysical Journal <- The name of the AAS journal.
+aas-doi: 10.3847/xxxxx
+aas-journal: Astronomical Journal
 ---
 
 # Summary
@@ -41,12 +41,12 @@ Extensive documentation, including examples, is hosted on [ReadTheDocs](https://
 
 The examples demonstrate that `OrbDot` can quickly reproduce literature results using only a few lines of code. Readers may be especially interested in the `OrbDot` example analysis of the transit and eclipse mid-times of Hot Jupiter WASP-12 b, which is well-known for showing strong evidence for orbital decay.
   
-A complementary case study of TrES-1 b (CITE) illustrates the full capabilities of OrbDot, placing it in a broader scientific context. Moreover, an early version of this code was used for the orbital analysis of the Hot Neptune LTT-9779 b, published in @Edwards:2023.
+A complementary case study of TrES-1 b (CITE) illustrates the full capabilities of `OrbDot`, placing it in a broader scientific context. Moreover, an early version of this code was used for the orbital analysis of the Hot Neptune LTT-9779 b, published in @Edwards:2023.
 
 # Statement of need
 Many exoplanet systems now have transit and radial velocity data spanning over a decade, enabling studies of secular variations. While tools for analyzing short-term transit variations exist, there is a lack of open-source software dedicated to long-term orbital evolution. This does not, however, reflect a lack of interest, as the number of such studies is growing rapidly.
 
-OrbDot lowers the barrier to entry for researchers at all levels, including undergraduates, by making advanced statistical methods accessible without requiring extensive computational experience. Despite its ease of use, `OrbDot` is not intended to be a black box. Rather, with extensive documentation, examples, and accessible source code, it is presented to the community with transparency that lends itself to community contributions and independent verification of results. It is designed to be easily extendable, as the nested sampling framework supports custom log-likelihood models with free parameters that are part of the `OrbDot` ecosystem. This ensures that the software may evolve to meet the needs of the research community.
+`OrbDot` lowers the barrier to entry for researchers at all levels, including undergraduates, by making advanced statistical methods accessible without requiring extensive computational experience. Despite its ease of use, `OrbDot` is not intended to be a black box. Rather, with extensive documentation, examples, and accessible source code, it is presented to the community with transparency that lends itself to community contributions and independent verification of results. It is designed to be easily extendable, as the nested sampling framework supports custom log-likelihood models with free parameters that are part of the `OrbDot` ecosystem. This ensures that the software may evolve to meet the needs of the research community.
 
 # Acknowledgements
 
