@@ -21,6 +21,15 @@
    :target: https://github.com/simonehagey/orbdot/actions/workflows/test.yaml
    :alt: Test Status
 
+.. image:: https://img.shields.io/pypi/v/orbdot?label=pypi%20package
+   :target: https://pypi.org/project/orbdot/1.0.0rc1/
+   :alt: PyPi Version
+
+.. image:: https://zenodo.org/badge/802446381.svg
+   :target: https://doi.org/10.5281/zenodo.15346681
+   :alt: Zenodo Badge
+
+
 ==================
 Welcome to OrbDot!
 ==================
