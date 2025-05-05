@@ -9,13 +9,17 @@
 .. |OrbDot Logo Dark| image:: https://github.com/simonehagey/orbdot/blob/main/docs/source/_static/orbdot_logo_dark.png?raw=true#gh-dark-mode-only
    :width: 310px
 
+.. image:: https://img.shields.io/badge/license-MIT-blue.svg
+   :target: https://github.com/simonehagey/orbdot/blob/main/LICENSE
+   :alt: License Information
+
 .. image:: https://readthedocs.org/projects/orbdot/badge/?version=latest
    :target: https://orbdot.readthedocs.io/
    :alt: Documentation Status
 
-.. image:: https://img.shields.io/badge/license-MIT-blue.svg
-   :target: https://github.com/simonehagey/orbdot/blob/main/LICENSE
-   :alt: License Information
+.. image:: https://github.com/simonehagey/orbdot/actions/workflows/test.yaml/badge.svg
+   :target: https://github.com/simonehagey/orbdot/actions/workflows/test.yaml
+   :alt: Test Status
 
 ==================
 Welcome to OrbDot!
