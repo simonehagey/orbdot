@@ -1,7 +1,3 @@
-|OrbDot Logo Light|
-|OrbDot Logo Dark|
-
-:Contact: Simone R. Hagey (shagey@phas.ubc.ca)
 
 .. |OrbDot Logo Light| image:: https://github.com/simonehagey/orbdot/blob/main/docs/source/_static/orbdot_logo.png?raw=true#gh-light-mode-only
    :width: 310px
@@ -12,26 +8,28 @@
 .. |JOSS Status| image:: https://joss.theoj.org/papers/a7fb37729237dec9e965d7ee38cfd2ee/status.svg
    :target: https://joss.theoj.org/papers/a7fb37729237dec9e965d7ee38cfd2ee
 
-.. image:: https://img.shields.io/badge/license-MIT-blue.svg
+.. |License Information| image:: https://img.shields.io/badge/license-MIT-blue.svg
    :target: https://github.com/simonehagey/orbdot/blob/main/LICENSE
-   :alt: License Information
 
-.. image:: https://readthedocs.org/projects/orbdot/badge/?version=latest
+.. |Documentation Status| image:: https://readthedocs.org/projects/orbdot/badge/?version=latest
    :target: https://orbdot.readthedocs.io/
-   :alt: Documentation Status
 
-.. image:: https://github.com/simonehagey/orbdot/actions/workflows/test.yaml/badge.svg
+.. |Test Status| image:: https://github.com/simonehagey/orbdot/actions/workflows/test.yaml/badge.svg
    :target: https://github.com/simonehagey/orbdot/actions/workflows/test.yaml
-   :alt: Test Status
 
-.. image:: https://img.shields.io/pypi/v/orbdot?label=pypi%20package
+.. |PyPi Version| image:: https://img.shields.io/pypi/v/orbdot?label=pypi%20package
    :target: https://pypi.org/project/orbdot/1.0.0rc1/
-   :alt: PyPi Version
 
-.. image:: https://zenodo.org/badge/802446381.svg
+.. |Zenodo Badge| image:: https://zenodo.org/badge/802446381.svg
    :target: https://doi.org/10.5281/zenodo.15346681
-   :alt: Zenodo Badge
 
+|OrbDot Logo Light|
+|OrbDot Logo Dark|
+
+:Contact: Simone R. Hagey (shagey@phas.ubc.ca)
+
+|JOSS Status| |License Information| |Zenodo Badge|
+|Documentation Status| |Test Status| |PyPi Version|
 
 ==================
 Welcome to OrbDot!
@@ -56,10 +54,8 @@ Feedback, bug reports, feature requests, and code contributions are welcome! Ple
 
 -----
 
-|JOSS Status|
-
-TrES-1 b Case Study
-===================
+TrES-1 b Case Study (coming soon!)
+==================================
 In addition to the documentation, there is a complementary `TrES-1 b case study <LINK>`__ that showcases the full functionality of OrbDot’s model-fitting and interpretive tools, while providing a deeper dive into the theoretical foundations behind the package. This paper consolidates key equations in one place, making it a valuable reference for researchers looking to apply OrbDot to their own work.
 
 
