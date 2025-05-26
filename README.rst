@@ -9,6 +9,9 @@
 .. |OrbDot Logo Dark| image:: https://github.com/simonehagey/orbdot/blob/main/docs/source/_static/orbdot_logo_dark.png?raw=true#gh-dark-mode-only
    :width: 310px
 
+.. |JOSS Status| image:: https://joss.theoj.org/papers/a7fb37729237dec9e965d7ee38cfd2ee/status.svg
+   :target: https://joss.theoj.org/papers/a7fb37729237dec9e965d7ee38cfd2ee
+
 .. image:: https://img.shields.io/badge/license-MIT-blue.svg
    :target: https://github.com/simonehagey/orbdot/blob/main/LICENSE
    :alt: License Information
@@ -53,8 +56,9 @@ Feedback, bug reports, feature requests, and code contributions are welcome! Ple
 
 -----
 
-TrES-1 b Case Study (COMING SOON!)
-==================================
+TrES-1 b Case Study
+===================
+|JOSS Status|
 In addition to the documentation, there is a complementary `TrES-1 b case study <LINK>`__ that showcases the full functionality of OrbDot’s model-fitting and interpretive tools, while providing a deeper dive into the theoretical foundations behind the package. This paper consolidates key equations in one place, making it a valuable reference for researchers looking to apply OrbDot to their own work.
 
 
