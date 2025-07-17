@@ -170,8 +170,6 @@ In this case, the ``"nestle"`` sampler has been specified with 1000 live points 
            },
     ...
 
-first number is the centre and the next is sigma. Uniform is between the values
-
 The remaining portion of the settings file is for the ``"prior"`` dictionary, which defines the :ref:`prior distributions <priors>` for the model parameters. We need only populate this with the parameters that are to be included in the model fits, which in this case are the reference transit mid-time ``"t0"``, orbital period ``"P0"``, eccentricity ``"e0"``, argument of pericentre ``"w0"``, orbital decay rate ``"PdE"``, and apsidal precession rate ``"wdE"``. If a model parameter is left out of the settings file, the default prior will be used, as specified in the file ``orbdot/defaults/default_info_file.json``. For more information on the available model parameters see :ref:`model_parameters`.
 
 For WASP-12 b, we have chosen broad uniform prior distributions for ``"e0"``, ``"w0"``, ``"PdE"``, and ``"wdE"``, and Gaussian distributions for ``"t0"`` and ``"P0"`` that are centered on the known orbit. In the case of Gaussian priors, the first value represents the mean and the second the standard deviation. For uniform priors, the first and second values correspond to the minimum and maximum limits, respectively.
