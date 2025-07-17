@@ -24,7 +24,7 @@ bibliography: paper.bib
 
 # Optional fields if submitting to a AAS journal too, see this blog post:
 # https://blog.joss.theoj.org/2018/12/a-new-collaboration-with-aas-publishing
-aas-doi: 10.3847/xxxxx
+aas-doi: 10.3847/1538-3881/aded15
 aas-journal: Astronomical Journal
 ---
 
@@ -41,7 +41,7 @@ Extensive documentation, including examples, is hosted on [ReadTheDocs](https://
 
 The examples demonstrate that `OrbDot` can quickly reproduce literature results using only a few lines of code. Readers may be especially interested in the `OrbDot` example analysis of the transit and eclipse mid-times of Hot Jupiter WASP-12 b, which is well-known for showing strong evidence for orbital decay.
   
-A complementary case study of TrES-1 b (CITE) illustrates the full capabilities of `OrbDot`, placing it in a broader scientific context. Moreover, an early version of this code was used for the orbital analysis of the Hot Neptune LTT-9779 b, published in @Edwards:2023.
+A complementary case study of TrES-1 b [@Hagey:2025] illustrates the full capabilities of `OrbDot`, placing it in a broader scientific context. Moreover, an early version of this code was used for the orbital analysis of the Hot Neptune LTT-9779 b, published in @Edwards:2023.
 
 # Statement of need
 Many exoplanet systems now have transit and radial velocity data spanning over a decade, enabling studies of secular variations. While tools for analyzing short-term transit variations exist, there is a lack of open-source software dedicated to long-term orbital evolution. This does not, however, reflect a lack of interest, as the number of such studies is growing rapidly.
