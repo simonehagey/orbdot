@@ -1,0 +1,33 @@
+{"_comment0": "HAT-P-22 b Settings",
+
+  "_comment1": "Input Files",
+
+      "main_save_dir": "results/",
+      "system_info_file": "info_files/HAT-P-22_info.json",
+
+  "_comment2": "Model Fits",
+
+       "RV_fit": {
+         "save_dir": "rv_fits/",
+         "data_file": "data/HAT-P-22b_rvs.txt",
+         "data_delimiter": " ",
+         "sampler": "nestle",
+         "n_live_points": 500,
+         "evidence_tolerance": 0.1
+       },
+
+  "_comment3": "Priors",
+
+       "prior": {
+
+         "t0": ["gaussian", 2454930.22077, 0.001],
+         "P0": ["gaussian", 3.21222, 0.00001],
+         "ecosw": ["uniform", -0.1, 0.1],
+         "esinw": ["uniform", -0.1, 0.1],
+         "K": ["uniform", 300.0, 330.0],
+         "v0": [["uniform", 12000.0, 13000.0], ["uniform", -100.0, 100.0]],
+         "jit": ["log", -1, 2],
+         "dvdt": ["uniform", -0.1, 0.1],
+         "ddvdt": ["uniform", -0.001, 0.001]
+       }
+}

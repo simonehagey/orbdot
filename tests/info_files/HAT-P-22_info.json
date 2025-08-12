@@ -1,0 +1,24 @@
+{
+  "_comment1": "HAT-P-22 System Info",
+
+      "star_name": "HAT-P-22",
+      "RA": "10h22m43.55s",
+      "DEC": "+50d07m43.36s",
+      "discovery_year": 2010,
+
+  "_comment2": "Star Properties",
+
+      "M_s [M_sun]": 0.916,
+      "R_s [R_sun]": 1.040,
+
+  "_comment3": "Planet Properties",
+
+      "planets": ["b"],
+      "M_p [M_earth]": [690.492],
+
+  "_comment4": "Model Parameters",
+
+      "_comment4_1": "Orbital Elements",
+      "t0 [BJD_TDB]": [2454930.22077],
+      "P [days]": [3.21222]
+}

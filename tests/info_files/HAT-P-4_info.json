@@ -1,0 +1,24 @@
+{
+  "_comment1": "HAT-P-4 System Info",
+
+      "star_name": "HAT-P-4",
+      "RA": "15h19m57.89s",
+      "DEC": "+36d13m46.36s",
+      "discovery_year": 2007,
+
+  "_comment2": "Star Properties",
+
+      "M_s [M_sun]": 1.248,
+      "R_s [R_sun]": 1.596,
+
+  "_comment3": "Planet Properties",
+
+      "planets": ["b"],
+      "M_p [M_earth]": [206.957],
+
+  "_comment4": "Model Parameters",
+
+      "_comment4_1": "Orbital Elements",
+      "t0 [BJD_TDB]": [2454245.81521],
+      "P [days]": [3.0565254]
+}
