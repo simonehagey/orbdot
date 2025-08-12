@@ -665,7 +665,7 @@ class RadialVelocity:
         # extract fit parameters
         vals = fit_results["params"]
 
-        with open(outfile, "w") as f:
+        with open(outfile, "w", newline="", encoding="utf-8") as f:
             writer = csv.writer(f, delimiter=" ")
 
             # write header row

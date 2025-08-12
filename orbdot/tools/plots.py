@@ -2143,7 +2143,8 @@ def read_random_samples(data_file, delim="\t"):
     radial_velocity = []
 
     # read samples from file
-    with open(data_file) as file:
+    with open(data_file, "r", newline="", encoding="utf-8") as file:
+
         reader = csv.reader(file, delimiter=delim)
 
         # skip header

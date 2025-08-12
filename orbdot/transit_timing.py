@@ -866,7 +866,7 @@ class TransitTiming:
         )
 
         # save cleaned data as a .txt file
-        with open(outfile_cleaned, "w") as f:
+        with open(outfile_cleaned, "w", newline="", encoding="utf-8") as f:
             epoch_ecl = []
 
             for e in self.ttv_data["epoch_ecl"]:
@@ -896,7 +896,7 @@ class TransitTiming:
             )
 
         # save clipped data as a .txt file
-        with open(outfile_clipped, "w") as f:
+        with open(outfile_clipped, "w", newline="", encoding="utf-8") as f:
             writer = csv.writer(f, delimiter=" ")
             writer.writerow(["Epoch", "BJD", "Err_Day", "Source"])
             writer.writerows(

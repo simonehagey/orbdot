@@ -995,7 +995,7 @@ class NestedSampling:
             "ddvdt",
         ]
 
-        with open(filename, "w") as f:
+        with open(filename, "w", newline="", encoding="utf-8") as f:
 
             writer = csv.writer(f, delimiter="\t")
             writer.writerow(param_names)
@@ -1023,7 +1023,7 @@ class NestedSampling:
         None
 
         """
-        with open(filename, "w") as f:
+        with open(filename, "w", newline="", encoding="utf-8") as f:
 
             writer = csv.writer(f, delimiter=" ")
             writer.writerow(self.vary)  # write header row
