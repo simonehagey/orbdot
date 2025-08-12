@@ -10,7 +10,9 @@ hatp4 = StarPlanet("settings_files/HAT-P-4_settings.json")
 hatp22 = StarPlanet("settings_files/HAT-P-22_settings.json")
 
 
-@pytest.mark.parametrize("planet, expected, tol", [(hatp4, 82.1, 0.5), (hatp22, 314.4, 0.5)])
+@pytest.mark.parametrize(
+    "planet, expected, tol", [(hatp4, 82.1, 0.5), (hatp22, 314.4, 0.5)]
+)
 def test_rv_fit(planet, expected, tol):
     """Test an RV fit."""
 
