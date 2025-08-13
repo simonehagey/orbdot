@@ -44,7 +44,7 @@ If you installed OrbDot from a local copy, navigate to the ``examples/`` directo
     cd orbdot/examples
     python example_wasp12.py
 
-If you installed via ``pip``, you will first need to download the ``examples/`` directory from the GitHub repository `here <https://github.com/simonehagey/orbdot/tree/main/examples>`_, or by clicking :download:`this link <_downloads/examples.zip>`.
+If you installed via ``pip``, you will first need to download the ``/examples`` directory from the `GitHub repository <https://github.com/simonehagey/orbdot/tree/main/examples>`_ or by clicking :download:`this link <_downloads/examples.zip>`.
 
 If the model fitting process starts successfully, the installation was successful!
 

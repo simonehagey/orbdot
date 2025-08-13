@@ -7,7 +7,7 @@ OrbDot is a Python package for studying the secular (long-term) evolution of exo
 
 OrbDot can further aid in the interpretation of model fitting results through its :class:`~orbdot.analysis.Analyzer` class, which generates reports of model comparisons, derived tidal decay parameters, predicted precession rates, implications for planetary companions, and more.
 
-To see the OrbDot source code, check out the GitHub repository `here <https://github.com/simonehagey/orbdot>`_.
+To see the OrbDot source code, check out the `GitHub repository. <https://github.com/simonehagey/orbdot>`_
 
 Why OrbDot?
 ------------

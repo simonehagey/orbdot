@@ -8,7 +8,9 @@ This example demonstrates an OrbDot reproduction of the results from *"The Orbit
 Using the authors' compiled table of transit and eclipse mid-times, we will fit the constant-period, orbital decay, and apsidal precession models to the data, compare the Bayesian evidences, and use OrbDot's :class:`~orbdot.analysis.Analyzer` class to reproduce the derived results.
 
 .. tip::
-    The files needed to run the OrbDot examples are stored in the `examples/ directory <https://github.com/simonehagey/orbdot/tree/main/examples>`_ and can be downloaded directly by clicking :download:`this link <_downloads/examples.zip>`. The full script for this example is saved in the file ``examples/example_wasp-12.py`` and can be run without modifications.
+    The files needed to run the OrbDot examples are stored in the `examples/ <https://github.com/simonehagey/orbdot/tree/main/examples>`_ directory, which can be downloaded by clicking :download:`this link <_downloads/examples.zip>`.
+
+    The full script for this example is saved in the file ``examples/example_wasp-12.py`` and can be run without modifications.
 
 ------------
 

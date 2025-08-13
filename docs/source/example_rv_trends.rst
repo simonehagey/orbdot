@@ -10,7 +10,9 @@ In both studies, the authors detect a statistically significant long-term linear
 Using compiled radial velocity measurements of HAT-P-4 and HAT-P-22 from :cite:author:`Bonomo2017` and :cite:author:`Knutson2014`, this example runs various model fits, compares the Bayesian evidences, and uses OrbDot's :class:`~orbdot.analysis.Analyzer` class to constrain properties of a possible outer companion.
 
 .. tip::
-    The files needed to run the OrbDot examples are stored in the `examples/ directory <https://github.com/simonehagey/orbdot/tree/main/examples>`_ and can be downloaded directly by clicking :download:`this link <_downloads/examples.zip>`. There are two Python scripts for this example that can be run without modifications, saved as ``examples/example_hatp4.py`` and ``examples/example_hatp22.py``.
+    The files needed to run the OrbDot examples are stored in the `examples/ <https://github.com/simonehagey/orbdot/tree/main/examples>`_ directory, which can be downloaded by clicking :download:`this link <_downloads/examples.zip>`.
+
+    There are two Python scripts for this example that can be run without modifications, saved as ``examples/example_hatp4.py`` and ``examples/example_hatp22.py``.
 
 Setup
 =====
