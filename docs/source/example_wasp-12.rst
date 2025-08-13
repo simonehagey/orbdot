@@ -5,7 +5,10 @@ Orbital Decay of WASP-12 b
 **************************
 This example demonstrates an OrbDot reproduction of the results from *"The Orbit of WASP-12b Is Decaying"* by :cite:t:`Yee2020`, in which the authors performed a comprehensive analysis of new and published transit and eclipse mid-times for the Hot Jupiter WASP-12 b. They conclude that the orbit is decaying at a rate of :math:`-29.0 \pm 2.0 \, \mathrm{ms \, yr^{-1}}`, which corresponds to a remaining lifetime of :math:`3.25 \, \mathrm{Myr}` and a modified stellar tidal quality factor of :math:`1.75 \times 10^5`.
 
-Using the authors' compiled table of transit and eclipse mid-times, we will fit the constant-period, orbital decay, and apsidal precession models to the data, compare the Bayesian evidences, and use OrbDot's :class:`~orbdot.analysis.Analyzer` class to reproduce the derived results. The full script for this example is saved in the file ``examples/example_wasp-12.py`` and can be run without modifications.
+Using the authors' compiled table of transit and eclipse mid-times, we will fit the constant-period, orbital decay, and apsidal precession models to the data, compare the Bayesian evidences, and use OrbDot's :class:`~orbdot.analysis.Analyzer` class to reproduce the derived results.
+
+.. tip::
+    The files needed to run the OrbDot examples are stored in the `examples/ directory <https://github.com/simonehagey/orbdot/tree/main/examples>`_ and can be downloaded directly by clicking :download:`this link <_downloads/examples.zip>`. The full script for this example is saved in the file ``examples/example_wasp-12.py`` and can be run without modifications.
 
 ------------
 
