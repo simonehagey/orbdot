@@ -144,6 +144,14 @@ For example,
            },
     ...
 
+.. note:: Nested sampling options
+
+    The ``sampler`` option can be set to either ``"nestle"`` or ``"multinest"``, depending on which nested sampling algorithm you wish to use. For an introduction to how nested sampling works, some great resources are :cite:t:`Skilling2006` and :cite:t:`Buchner2023`.
+
+    Specifying ``"sampler": "nestle"`` runs the model fits using the Python package `Nestle <https://github.com/kbarbary/nestle>`_ :cite:p:`nestle`, which is installed automatically with OrbDot and is the default option.
+
+    Alternatively, specifying ``"sampler": "multinest"`` uses the `PyMultiNest <https://github.com/JohannesBuchner/PyMultiNest>`_ package :cite:p:`pymultinest, Buchner2014` as the backend, which is generally faster and more robust. However, PyMultiNest is not included as an OrbDot dependency because it is more complex to install, so you must install it manually first (see the installation instructions `here <https://johannesbuchner.github.io/PyMultiNest/install.html>`_).
+
 If you want to fit multiple data types simultaneously, the ``"joint_fit"`` dictionary specifies the appropriate settings. For example,
 
 .. code-block:: JSON
