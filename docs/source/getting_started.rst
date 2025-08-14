@@ -144,9 +144,9 @@ For example,
            },
     ...
 
-.. note:: Nested sampling options
+.. note::
 
-    The ``sampler`` option can be set to either ``"nestle"`` or ``"multinest"``, depending on which nested sampling algorithm you wish to use. For an introduction to how nested sampling works, some great resources are :cite:t:`Skilling2006` and :cite:t:`Buchner2023`.
+    The ``sampler`` option can be set to either ``"nestle"`` or ``"multinest"``, depending on which nested sampling algorithm you wish OrbDot to use in the model fits. For an introduction to how nested sampling works, some great resources are :cite:t:`Skilling2006` and :cite:t:`Buchner2023`.
 
     Specifying ``"sampler": "nestle"`` runs the model fits using the Python package `Nestle <https://github.com/kbarbary/nestle>`_ :cite:p:`nestle`, which is installed automatically with OrbDot and is the default option.
 
