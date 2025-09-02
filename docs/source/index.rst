@@ -9,6 +9,8 @@ OrbDot can further aid in the interpretation of model fitting results through it
 
 To see the OrbDot source code, check out the `GitHub repository. <https://github.com/simonehagey/orbdot>`_
 
+In addition to this documentation, there is a complementary `TrES-1 b case study <https://arxiv.org/abs/2508.15075>`__ that showcases the full functionality of OrbDot’s model-fitting and interpretive tools, while providing a deeper dive into the theoretical foundations behind the package.
+
 Why OrbDot?
 ------------
 
