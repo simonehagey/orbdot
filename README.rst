@@ -18,7 +18,7 @@
    :target: https://github.com/simonehagey/orbdot/actions/workflows/test.yaml
 
 .. |PyPi Version| image:: https://img.shields.io/pypi/v/orbdot?label=pypi%20package
-   :target: https://pypi.org/project/orbdot/1.0.0rc1/
+   :target: https://pypi.org/project/orbdot/1.0.0/
 
 .. |Zenodo Badge| image:: https://zenodo.org/badge/802446381.svg
    :target: https://doi.org/10.5281/zenodo.15346681
