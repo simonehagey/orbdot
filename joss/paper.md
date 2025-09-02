@@ -19,7 +19,7 @@ authors:
 affiliations:
   - name: Department of Physics and Astronomy, The University of British Columbia, 6224 Agricultural Road Vancouver, BC, V6T 1Z1, Canada
     index: 1
-date: 5 May 2025
+date: 1 September 2025
 bibliography: paper.bib
 
 # Optional fields if submitting to a AAS journal too, see this blog post:
@@ -47,6 +47,15 @@ A complementary case study of TrES-1 b [@Hagey:2025] illustrates the full capabi
 Many exoplanet systems now have transit and radial velocity data spanning over a decade, enabling studies of secular variations. While tools for analyzing short-term transit variations exist, there is a lack of open-source software dedicated to long-term orbital evolution. This does not, however, reflect a lack of interest, as the number of such studies is growing rapidly.
 
 `OrbDot` lowers the barrier to entry for researchers at all levels, including undergraduates, by making advanced statistical methods accessible without requiring extensive computational experience. Despite its ease of use, `OrbDot` is not intended to be a black box. Rather, with extensive documentation, examples, and accessible source code, it is presented to the community with transparency that lends itself to community contributions and independent verification of results. It is designed to be easily extendable, as the nested sampling framework supports custom log-likelihood models with free parameters that are part of the `OrbDot` ecosystem. This ensures that the software may evolve to meet the needs of the research community.
+
+# Similar software
+Some existing tools have features that overlap with `OrbDot`’s functionality, but none provides its full suite of capabilities. The most similar codes, `Susie` [@susie; @Barker:2024] and `PdotQuest` [@Wang:2024], which are not fully packaged software, are designed to fit secular evolution models to transit and eclipse timing data, but not to radial velocities. `OrbDot` also has greater flexibility in model fitting than Susie and PdotQuest. For example, `Susie` [@susie; @Barker:2024] employs simple least-squares fitting, and while `PdotQuest` [@Wang:2024] uses MCMC, it currently supports only the orbital decay model, making both codes narrower in scope than `OrbDot`. Moreover, `OrbDot` includes tools for theoretical interpretation.
+
+The well-known package TTVFast [@Deck:2014] is highly robust and capable of modeling both transit and radial velocity data, but it is focused on short-term timing variations driven by multi-planet dynamics near mean-motion resonances. `OrbDot`, in contrast, explores long-term secular models. Similarly, general-purpose frameworks such as `Juliet` [@Espinoza:2019], `exoplanet` [@ForemanMackey:2021], `ExoFast` [@Eastman:2019], `ExoStriker` [@Trifonov:2019], and `allesfitter` [@Gunther:2021] can jointly model transit and RV data, but their TTV models are also restricted to short-term variations, with an emphasis on transit light curve fitting rather than directly using transit and eclipse mid-times to constrain models.
+
+The RV focused packages `RadVel` [@Fulton:2018] and `Kima` [@Faria:2018] provide flexible modeling of radial velocity datasets, but do not have a framework for incorporating transit and eclipse data into the modeling. The codes also have limited options for studying long-term trends. For example, `RadVel` [@Fulton:2018] includes linear and quadratic RV terms, which `OrbDot` also supports, but it does not model evolving orbital elements. `Kima` [@Faria:2018] incorporates an apsidal precession model, but only for circumbinary planets -- a niche application.
+
+In summary, `OrbDot` is a fully packaged, documented, and maintained software suite designed specifically for studies of secular orbital evolution. It unifies transit, eclipse, and RV data, bypasses light-curve fitting to focus directly on timing measurements, implements robust Bayesian inference with nested sampling, and provides a flexible framework for selecting models, priors, and parameterizations. In addition, it integrates tools for theoretical analysis, making `OrbDot` the first software to systematically support data-driven, comprehensive studies of long-term exoplanet orbital dynamics.
 
 # Acknowledgements
 
